@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed under the DataVisool License. See the LICENSE file distributed with this software. -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zsq.datavisoolservice.mapper.AuthPermissionMapper">
+
+    <select id="getUserPermissions" resultType="com.zsq.datavisoolservice.model.po.AuthPermissionPO">
+        SELECT ap.id, ap.name, ap.description
+        FROM auth_permission ap
+        INNER JOIN auth_role_permission arp ON ap.id = arp.permission_id
+        WHERE ap.deleted = 0
+        <if test="roleIds != null and roleIds.size() > 0">
+            AND arp.role_id IN
+            <foreach collection="roleIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="roleIds == null or roleIds.size() == 0">
+            AND 1 = 0
+        </if>
+    </select>
+
+</mapper>

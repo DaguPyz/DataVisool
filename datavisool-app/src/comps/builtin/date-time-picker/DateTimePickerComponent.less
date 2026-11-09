@@ -1,0 +1,48 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.date-time-picker-component {
+  width: 100%;
+  height: 100%;
+}
+
+.date-time-picker-input-wrap,
+.date-time-picker-range {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-time-picker-input-wrap {
+  position: relative;
+}
+
+.date-time-picker-range input,
+.date-time-picker-input-wrap input {
+  min-width: 0;
+  outline: none;
+}
+
+.date-time-picker-separator {
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1;
+}
+
+.date-time-picker-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+}

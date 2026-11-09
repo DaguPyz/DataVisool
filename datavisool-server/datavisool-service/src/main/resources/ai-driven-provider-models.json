@@ -1,0 +1,423 @@
+{
+  "schemaVersion": 1,
+  "providers": [
+    {
+      "provider": "openai",
+      "providerLabel": "OpenAI",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "gpt-5.5",
+          "label": "GPT-5.5",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1050000,
+          "defaultMaxOutputTokens": 25000,
+          "defaultMaxOutputTokensBasis": "recommended-budget",
+          "defaultMaxOutputTokensSource": "https://developers.openai.com/api/docs/guides/reasoning"
+        },
+        {
+          "modelName": "gpt-5.4-pro",
+          "label": "GPT-5.4 Pro",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1050000,
+          "defaultMaxOutputTokens": 25000,
+          "defaultMaxOutputTokensBasis": "recommended-budget",
+          "defaultMaxOutputTokensSource": "https://developers.openai.com/api/docs/guides/reasoning"
+        },
+        {
+          "modelName": "gpt-5.4",
+          "label": "GPT-5.4",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1050000,
+          "defaultMaxOutputTokens": 25000,
+          "defaultMaxOutputTokensBasis": "recommended-budget",
+          "defaultMaxOutputTokensSource": "https://developers.openai.com/api/docs/guides/reasoning"
+        },
+        {
+          "modelName": "gpt-5.4-mini",
+          "label": "GPT-5.4 mini",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 400000,
+          "defaultMaxOutputTokens": 25000,
+          "defaultMaxOutputTokensBasis": "recommended-budget",
+          "defaultMaxOutputTokensSource": "https://developers.openai.com/api/docs/guides/reasoning"
+        },
+        {
+          "modelName": "gpt-5.4-nano",
+          "label": "GPT-5.4 nano",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 400000,
+          "defaultMaxOutputTokens": 25000,
+          "defaultMaxOutputTokensBasis": "recommended-budget",
+          "defaultMaxOutputTokensSource": "https://developers.openai.com/api/docs/guides/reasoning"
+        }
+      ]
+    },
+    {
+      "provider": "qwen",
+      "providerLabel": "千问 Qwen",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "qwen3.7-plus",
+          "label": "Qwen3.7-Plus（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000
+        },
+        {
+          "modelName": "qwen3.8-max",
+          "label": "Qwen3.8-Max（旗舰）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000
+        },
+        {
+          "modelName": "qwen3.7-flash",
+          "label": "Qwen3.7-Flash（低成本）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000
+        }
+      ]
+    },
+    {
+      "provider": "kimi",
+      "providerLabel": "Kimi",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "kimi-k3",
+          "label": "Kimi K3（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 131072,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://www.kimi.com/help/kimi-api/api-troubleshooting"
+        },
+        {
+          "modelName": "kimi-k2.7-code",
+          "label": "Kimi K2.7 Code（编程）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 256000
+        },
+        {
+          "modelName": "kimi-k2.7-code-highspeed",
+          "label": "Kimi K2.7 Code Highspeed（高速编程）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 256000
+        },
+        {
+          "modelName": "kimi-k2.6",
+          "label": "Kimi K2.6（通用）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 256000
+        }
+      ]
+    },
+    {
+      "provider": "glm",
+      "providerLabel": "智谱 GLM",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "glm-5.2",
+          "label": "GLM-5.2（推荐）",
+          "isDefault": true,
+          "supportsImageInput": false,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://docs.bigmodel.cn/cn/guide/start/concept-param#max_tokens"
+        },
+        {
+          "modelName": "glm-5v-turbo",
+          "label": "GLM-5V-Turbo（视觉编程）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 200000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://docs.bigmodel.cn/cn/guide/start/concept-param#max_tokens"
+        },
+        {
+          "modelName": "glm-5",
+          "label": "GLM-5（Agent）",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 200000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://docs.bigmodel.cn/cn/guide/start/concept-param#max_tokens"
+        },
+        {
+          "modelName": "glm-4.7",
+          "label": "GLM-4.7（通用）",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 200000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://docs.bigmodel.cn/cn/guide/start/concept-param#max_tokens"
+        }
+      ]
+    },
+    {
+      "provider": "minimax",
+      "providerLabel": "MiniMax",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "MiniMax-M3",
+          "label": "MiniMax-M3（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000
+        },
+        {
+          "modelName": "MiniMax-M2.7",
+          "label": "MiniMax-M2.7",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2.7-highspeed",
+          "label": "MiniMax-M2.7-highspeed",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2.5",
+          "label": "MiniMax-M2.5",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2.5-highspeed",
+          "label": "MiniMax-M2.5-highspeed",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2.1",
+          "label": "MiniMax-M2.1",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2.1-highspeed",
+          "label": "MiniMax-M2.1-highspeed",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        },
+        {
+          "modelName": "MiniMax-M2",
+          "label": "MiniMax-M2",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 204800
+        }
+      ]
+    },
+    {
+      "provider": "doubao",
+      "providerLabel": "豆包（火山方舟）",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "doubao-seed-2-0-lite-260215",
+          "label": "Doubao Seed 2.0 Lite（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 256000
+        },
+        {
+          "modelName": "doubao-seed-2-0-pro-260215",
+          "label": "Doubao Seed 2.0 Pro",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 256000
+        },
+        {
+          "modelName": "doubao-seed-2-0-code-preview-260215",
+          "label": "Doubao Seed 2.0 Code",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 256000
+        }
+      ]
+    },
+    {
+      "provider": "hunyuan",
+      "providerLabel": "腾讯混元",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "hunyuan-turbos-latest",
+          "label": "hunyuan-turbos-latest（推荐）",
+          "isDefault": true,
+          "supportsImageInput": false,
+          "contextWindowTokens": 32000
+        },
+        {
+          "modelName": "hunyuan-vision",
+          "label": "hunyuan-vision（图片理解）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 32000
+        }
+      ]
+    },
+    {
+      "provider": "gemini",
+      "providerLabel": "Google Gemini",
+      "providerFamily": "gemini",
+      "models": [
+        {
+          "modelName": "gemini-3.6-flash",
+          "label": "Gemini 3.6 Flash（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1048576
+        },
+        {
+          "modelName": "gemini-3.5-flash-lite",
+          "label": "Gemini 3.5 Flash-Lite（高速）",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1048576
+        }
+      ]
+    },
+    {
+      "provider": "grok",
+      "providerLabel": "xAI Grok",
+      "providerFamily": "xai-responses",
+      "models": [
+        {
+          "modelName": "grok-4.6",
+          "label": "Grok 4.6（推荐）",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 500000
+        }
+      ]
+    },
+    {
+      "provider": "deepseek",
+      "providerLabel": "DeepSeek",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "deepseek-v4-pro",
+          "label": "DeepSeek-V4-Pro",
+          "isDefault": true,
+          "supportsImageInput": false,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://api-docs.deepseek.com/api/create-chat-completion/"
+        },
+        {
+          "modelName": "deepseek-v4-flash",
+          "label": "DeepSeek-V4-Flash",
+          "isDefault": false,
+          "supportsImageInput": false,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 65536,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://api-docs.deepseek.com/api/create-chat-completion/"
+        }
+      ]
+    },
+    {
+      "provider": "mimo",
+      "providerLabel": "小米 MiMo",
+      "providerFamily": "openai-compatible",
+      "models": [
+        {
+          "modelName": "mimo-v2.6-pro",
+          "label": "MiMo-V2.6-Pro",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 131072,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://mimo.mi.com/docs/en-US/api/chat/openai-api-post"
+        },
+        {
+          "modelName": "mimo-v2.6-flash",
+          "label": "MiMo-V2.6-Flash",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 131072,
+          "defaultMaxOutputTokensBasis": "api-default",
+          "defaultMaxOutputTokensSource": "https://mimo.mi.com/docs/en-US/api/chat/openai-api-post"
+        }
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "providerLabel": "Anthropic",
+      "providerFamily": "anthropic",
+      "models": [
+        {
+          "modelName": "claude-fable-5",
+          "label": "Claude Fable 5",
+          "isDefault": true,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 128000,
+          "defaultMaxOutputTokensBasis": "model-output-limit",
+          "defaultMaxOutputTokensSource": "https://platform.claude.com/docs/en/models/fable-5/overview"
+        },
+        {
+          "modelName": "claude-opus-4-8",
+          "label": "Claude Opus 4.8",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 128000,
+          "defaultMaxOutputTokensBasis": "model-output-limit",
+          "defaultMaxOutputTokensSource": "https://platform.claude.com/docs/en/models/opus-4-8/overview"
+        },
+        {
+          "modelName": "claude-sonnet-4-6",
+          "label": "Claude Sonnet 4.6",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 1000000,
+          "defaultMaxOutputTokens": 128000,
+          "defaultMaxOutputTokensBasis": "model-output-limit",
+          "defaultMaxOutputTokensSource": "https://platform.claude.com/docs/en/models/sonnet-4-6/overview"
+        },
+        {
+          "modelName": "claude-haiku-4-5-20251001",
+          "label": "Claude Haiku 4.5",
+          "isDefault": false,
+          "supportsImageInput": true,
+          "contextWindowTokens": 200000,
+          "defaultMaxOutputTokens": 64000,
+          "defaultMaxOutputTokensBasis": "model-output-limit",
+          "defaultMaxOutputTokensSource": "https://platform.claude.com/docs/en/models/haiku-4-5/overview"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.mlgis-config {
+  padding: 10px;
+}
+
+.mlgis-layer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.mlgis-empty {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--datavisool-color-border);
+  background: var(--datavisool-gradient-card);
+  color: var(--datavisool-color-text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.mlgis-layer-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--datavisool-color-border);
+  border-radius: 10px;
+  background: var(--datavisool-gradient-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--datavisool-color-ring);
+    box-shadow: var(--datavisool-shadow-glow-blue);
+  }
+}
+
+.mlgis-layer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mlgis-layer-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mlgis-layer-name {
+  color: var(--datavisool-color-text-primary);
+  font-size: 13px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mlgis-layer-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mlgis-layer-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mlgis-layer-id {
+  color: var(--datavisool-color-text-tertiary);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--datavisool-color-border);
+  background-color: rgba(59, 130, 255, 0.08);
+  user-select: text;
+  flex-shrink: 0;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mlgis-layer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mlgis-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--datavisool-color-text-tertiary);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--datavisool-color-info);
+    background-color: rgba(56, 189, 248, 0.10);
+  }
+}
+
+.mlgis-danger {
+  &:hover {
+    color: var(--datavisool-color-danger);
+    background-color: rgba(251, 113, 133, 0.10);
+  }
+}

@@ -1,0 +1,197 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.releaseNotes {
+  max-height: min(420px, calc(100dvh - 240px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 8px;
+  color: var(--datavisool-color-text-secondary);
+  scrollbar-gutter: stable;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 20px 0 10px;
+    color: var(--datavisool-color-text-primary);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  h1 {
+    margin-top: 0;
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 17px;
+  }
+
+  h3 {
+    font-size: 15px;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0 0 12px;
+  }
+
+  ul,
+  ol {
+    margin: 8px 0 16px;
+    padding-left: 24px;
+  }
+
+  li + li {
+    margin-top: 6px;
+  }
+
+  strong {
+    color: var(--datavisool-color-text-primary);
+    font-weight: 700;
+  }
+
+  a {
+    color: var(--datavisool-color-info);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    margin: 12px 0;
+    border-left: 3px solid color-mix(in srgb, var(--datavisool-color-info) 60%, transparent);
+    padding: 2px 0 2px 14px;
+    color: color-mix(in srgb, var(--datavisool-color-text-secondary) 86%, var(--datavisool-color-text-primary));
+  }
+
+  blockquote > :last-child {
+    margin-bottom: 0;
+  }
+
+  code {
+    border: 1px solid rgba(86, 110, 161, 0.28);
+    border-radius: 5px;
+    background: rgba(7, 14, 30, 0.72);
+    padding: 1px 5px;
+    color: color-mix(in srgb, var(--datavisool-color-text-primary) 88%, var(--datavisool-color-info));
+    font-family: var(--datavisool-font-mono, "SFMono-Regular", Consolas, monospace);
+    font-size: 0.9em;
+  }
+
+  pre {
+    overflow: auto;
+    margin: 12px 0 16px;
+    border: 1px solid rgba(86, 110, 161, 0.24);
+    border-radius: 8px;
+    background: rgba(3, 9, 22, 0.76);
+    padding: 12px 14px;
+  }
+
+  pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    white-space: pre;
+  }
+
+  .tableScroll {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 12px 0 16px;
+  }
+
+  table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 0.95em;
+  }
+
+  th,
+  td {
+    border: 1px solid rgba(86, 110, 161, 0.28);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: rgba(86, 110, 161, 0.13);
+    color: var(--datavisool-color-text-primary);
+    font-weight: 650;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(86, 110, 161, 0.055);
+  }
+
+  hr {
+    margin: 18px 0;
+    border: 0;
+    border-top: 1px solid rgba(86, 110, 161, 0.24);
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.embedded {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+  scrollbar-gutter: auto;
+}
+
+.streamingTail {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.streamingCursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.72;
+  vertical-align: -0.14em;
+  animation: markdown-streaming-cursor 850ms steps(2, jump-none) infinite;
+}
+
+@keyframes markdown-streaming-cursor {
+  50% {
+    opacity: 0.18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streamingCursor {
+    animation: none;
+  }
+}
+
+.releaseNotes::-webkit-scrollbar {
+  width: 8px;
+}
+
+.releaseNotes::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(116, 145, 205, 0.42);
+  background-clip: padding-box;
+}
+
+.releaseNotes::-webkit-scrollbar-track {
+  background: transparent;
+}

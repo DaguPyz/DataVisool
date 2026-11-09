@@ -1,0 +1,190 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.template-lib {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  background: var(--bg-surface-1);
+  font-family: var(--datavisool-font-family);
+
+  .template-search {
+    flex-shrink: 0;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+
+    .datavisool-input-shell {
+      width: 100%;
+      height: 40px;
+      background: var(--datavisool-control-bg);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: none;
+
+      &:hover {
+        border-color: var(--border-strong);
+      }
+
+      &:focus-within {
+        border-color: var(--border-focus);
+        box-shadow: var(--shadow-focus);
+      }
+    }
+  }
+
+  .template-lib-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-height: 0;
+    padding: var(--space-4);
+    overflow: auto;
+  }
+
+  .template-item {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface-2);
+    cursor: grab;
+    transition: border-color 140ms ease-out, background-color 140ms ease-out;
+
+    &:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-hover);
+    }
+  }
+
+  .template-preview {
+    pointer-events: none;
+
+    .preview-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+    }
+
+    .preview-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .template-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .template-name {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    overflow-wrap: anywhere;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .template-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .template-tag {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .template-delete-btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: color 140ms ease-out, background-color 140ms ease-out;
+
+    .delete-icon {
+      display: flex;
+    }
+
+    &:hover {
+      color: var(--danger);
+      background: var(--bg-active);
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  .template-empty {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-2);
+    text-align: center;
+  }
+
+  .template-empty-title {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .template-empty-desc {
+    max-width: 224px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .template-item,
+    .template-delete-btn {
+      transition: none;
+    }
+  }
+}

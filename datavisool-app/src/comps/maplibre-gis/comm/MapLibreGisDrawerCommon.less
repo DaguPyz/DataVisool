@@ -1,0 +1,227 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.mlgis-drawer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mlgis-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--datavisool-gradient-card);
+  border: 1px solid var(--datavisool-color-border);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22);
+}
+
+.mlgis-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(59, 130, 255, 0.12), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(124, 58, 237, 0.10), transparent 32%);
+}
+
+.mlgis-card > * {
+  position: relative;
+}
+
+.mlgis-card-title {
+  color: var(--datavisool-color-text-primary);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mlgis-card-title-text {
+  flex: 0 0 auto;
+}
+
+.mlgis-card-title-id {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--datavisool-color-text-tertiary);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.mlgis-card-desc {
+  margin-top: 6px;
+  color: var(--datavisool-color-text-tertiary);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.mlgis-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mlgis-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.mlgis-field-head {
+  display: flex;
+  align-items: baseline;
+}
+
+.mlgis-field-label,
+.mlgis-field-label-inline {
+  color: var(--datavisool-color-text-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mlgis-field-label-inline {
+  width: 78px;
+  flex-shrink: 0;
+}
+
+.mlgis-field-label-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.mlgis-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mlgis-field-body-inline {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mlgis-field-body {
+  margin-top: 7px;
+}
+
+.mlgis-field-body-inline .datavisool-field,
+.mlgis-field-body .datavisool-field,
+.mlgis-field-body-inline .datavisool-control,
+.mlgis-field-body .datavisool-control,
+.mlgis-field-body-inline .datavisool-select-root,
+.mlgis-field-body .datavisool-select-root {
+  width: 100%;
+  min-width: 0;
+}
+
+.mlgis-field-body-inline .datavisool-number-input[data-controls='false'],
+.mlgis-field-body .datavisool-number-input[data-controls='false'],
+.mlgis-sky-row .datavisool-number-input[data-controls='false'] {
+  display: flex;
+  min-width: 0;
+}
+
+.mlgis-field-body-inline .datavisool-number-input[data-controls='false'] .datavisool-number-input-native,
+.mlgis-field-body .datavisool-number-input[data-controls='false'] .datavisool-number-input-native,
+.mlgis-sky-row .datavisool-number-input[data-controls='false'] .datavisool-number-input-native {
+  flex: 1;
+  min-width: 0;
+}
+
+.mlgis-datasource {
+  margin-top: 10px;
+}
+
+.mlgis-drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(3, 7, 18, 0.48);
+  backdrop-filter: blur(6px);
+}
+
+.mlgis-config-drawer {
+  height: 100%;
+  max-width: 92vw;
+  background: linear-gradient(180deg, rgba(11, 18, 36, 0.98) 0%, rgba(6, 11, 25, 0.99) 100%);
+  border-left: 1px solid var(--datavisool-color-border-strong);
+  box-shadow: -24px 0 58px rgba(0, 0, 0, 0.42), var(--datavisool-shadow-glow-purple);
+  display: flex;
+  flex-direction: column;
+}
+
+.mlgis-config-drawer-header {
+  height: 54px;
+  padding: 0 14px 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--datavisool-color-border);
+  background: linear-gradient(90deg, rgba(59, 130, 255, 0.12), rgba(124, 58, 237, 0.10), transparent);
+}
+
+.mlgis-config-drawer-title {
+  min-width: 0;
+  color: var(--datavisool-color-text-primary);
+  font-weight: 650;
+}
+
+.mlgis-drawer-title-text {
+  display: block;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mlgis-config-drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mlgis-drawer-save {
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mlgis-config-drawer-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px;
+}
+
+.mlgis-config-drawer .data-config {
+  padding: 0;
+}

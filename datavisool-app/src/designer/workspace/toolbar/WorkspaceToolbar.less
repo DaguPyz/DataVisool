@@ -1,0 +1,68 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.workspace-toolbar-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workspace-toolbar,
+.workspace-home-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+  padding: 4px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  background: rgba(17, 26, 46, 0.96);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  color: var(--text-secondary, #aab7d1);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.workspace-home-control {
+  flex: 0 0 auto;
+}
+
+.workspace-toolbar {
+  min-width: 0;
+}
+
+.workspace-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.workspace-toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+  margin: 0 3px;
+}
+
+.workspace-text-icon {
+  font: 600 18px/1 var(--datavisool-font-family, sans-serif);
+}
+
+@media (max-width: 1399px) {
+  .workspace-toolbar-container {
+    top: var(--workspace-toolbar-row-offset, 54px);
+    left: auto;
+    right: 0;
+    transform: none;
+    max-width: calc(100vw - 20px);
+  }
+
+  .workspace-toolbar {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(113, 130, 190, 0.45) transparent;
+  }
+}

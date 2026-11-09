@@ -1,0 +1,85 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.datavisool-tab-component {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  box-sizing: border-box;
+  overflow: hidden; // 防止溢出
+
+  // 容器基础样式，通过 CSS 变量控制
+  background-color: var(--containerBgColor, transparent);
+  border-radius: var(--containerRadius, 8px);
+  border: var(--containerBorderWidth, 0) solid var(--containerBorderColor, transparent);
+  padding: var(--containerPadding, 4px);
+  gap: var(--itemGap, 8px);
+  box-shadow: var(--containerShadow, none);
+
+  // 布局方向与对齐
+  flex-direction: var(--flexDirection, row);
+  justify-content: var(--justifyContent, flex-start);
+  align-items: var(--alignItems, center);
+  flex-wrap: var(--flexWrap, nowrap);
+
+  // 单个 Tab 项样式
+  .tab-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+    white-space: nowrap; // 防止文字换行
+
+    // 默认（未选中）状态变量
+    background-color: var(--itemBgColor, #2C2C3E);
+    color: var(--itemColor, #A0A0B2);
+    border-radius: var(--itemRadius, 4px);
+    border: var(--itemBorderWidth, 1px) solid var(--itemBorderColor, transparent);
+    font-size: var(--itemFontSize, 14px);
+    font-weight: var(--itemFontWeight, 400);
+    font-family: var(--fontFamily, inherit);
+
+    // 尺寸控制
+    min-width: var(--itemMinWidth, auto);
+    padding: var(--itemPadding, 4px 12px);
+    height: var(--itemHeight, 32px);
+    box-shadow: var(--itemShadow, none);
+
+    // 悬停状态
+    &:hover:not(.disabled):not(.active) {
+      background-color: var(--itemHoverBgColor, #343447);
+      color: var(--itemHoverColor, #FFFFFF);
+      border-color: var(--itemHoverBorderColor, #4FB8FF);
+      transform: translateY(-1px); // 微动效
+    }
+
+    // 选中状态
+    &.active {
+      background-color: var(--activeBgColor, #4FB8FF);
+      color: var(--activeColor, #FFFFFF);
+      border-color: var(--activeBorderColor, transparent);
+      font-weight: var(--activeFontWeight, 600);
+      box-shadow: var(--activeShadow, 0 2px 8px rgba(79, 184, 255, 0.3));
+    }
+
+    // 禁用状态
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+
+    // 聚焦可视性 (无障碍)
+    &:focus-visible {
+      outline: 2px solid var(--activeBgColor, #4FB8FF);
+      outline-offset: 2px;
+    }
+  }
+}

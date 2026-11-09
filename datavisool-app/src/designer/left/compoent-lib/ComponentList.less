@@ -1,0 +1,175 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.dl-component-list {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  background: var(--bg-surface-1, #0b1222);
+  border-right: 1px solid var(--border-subtle, rgba(86, 110, 161, 0.22));
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+
+
+  .dl-cl-toolbar {
+    padding: var(--space-4) var(--space-5) 14px;
+    border-bottom: 1px solid rgba(86, 110, 161, 0.16);
+
+    .datavisool-input-shell {
+      height: 40px;
+      color: var(--text-secondary, #aeb8ca);
+      background: var(--bg-surface-2, rgba(100, 112, 166, 0.16));
+      border-color: var(--border-subtle, rgba(119, 134, 195, 0.12));
+      border-radius: 10px;
+      box-shadow: none;
+
+      &:focus-within {
+        border-color: var(--border-focus, rgba(90, 133, 255, 0.7));
+        box-shadow: 0 0 0 2px rgba(65, 104, 220, 0.18);
+      }
+    }
+
+    .datavisool-input-native {
+      color: var(--text-primary, #eff4ff);
+      font-size: 14px;
+
+      &::placeholder {
+        color: #7783a0;
+      }
+    }
+
+    .dl-cl-search-kbd {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 5px;
+      color: #8a94af;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .main-categories {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
+    .clo-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      cursor: pointer;
+      color: #8e98b6;
+      transition: all 0.2s ease;
+      background: rgba(80, 91, 137, 0.12);
+      border: 1px solid rgba(116, 132, 202, 0.1);
+      padding: 0;
+
+      &:focus-visible {
+        outline: 2px solid #8fb4ff;
+        outline-offset: 2px;
+      }
+
+      .i-icon {
+        margin-top: 2px;
+      }
+
+      &:hover {
+        color: #dce7ff;
+        background-color: rgba(79, 184, 255, 0.1);
+      }
+    }
+
+    .clo-item-active {
+      color: #8fb4ff;
+      background: rgba(79, 113, 255, 0.2);
+      border-color: rgba(93, 119, 255, 0.24);
+    }
+  }
+
+  .dl-cl-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+
+    .sub-categories {
+      width: 88px;
+      background: rgba(6, 11, 26, 0.34);
+      padding: 14px 0 18px 16px;
+      overflow-y: auto;
+      border-right: 1px solid rgba(86, 110, 161, 0.12);
+
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+
+      .clt-item {
+        display: block;
+        width: calc(100% - 8px);
+        padding: 8px 0;
+        margin: 0 8px 4px 0;
+        border: 0;
+        background: transparent;
+        font-family: inherit;
+        font-size: 12px;
+        line-height: 16px;
+        color: #8c96b3;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+
+        &:focus-visible {
+          outline: 2px solid #8fb4ff;
+          outline-offset: 2px;
+        }
+
+        &:hover {
+          color: #dce7ff;
+        }
+      }
+
+      .clt-item-active {
+        color: #f2f5ff;
+        font-weight: 700;
+      }
+    }
+
+    .component-list {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      padding: 14px 12px 18px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(113, 130, 190, 0.26);
+        border-radius: 999px;
+      }
+    }
+  }
+}

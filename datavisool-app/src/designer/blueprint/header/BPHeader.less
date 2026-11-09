@@ -1,0 +1,183 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.bp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.bp-header-identity,
+.bp-header-menu {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 44px;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-surface-1, #111a2e);
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  pointer-events: auto;
+}
+
+.bp-header-identity {
+  max-width: ~"min(320px, 50vw)";
+}
+
+.bp-header-title {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bp-header-page-name {
+  min-width: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  color: var(--text-secondary, #aab7d1);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-header-menu {
+  flex: 0 0 auto;
+  height: 44px;
+  padding: 5px;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.bp-header-config-toggle,
+.bp-header-return {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-sm, 8px);
+  background: var(--bg-surface-2, #162238);
+  color: var(--text-secondary, #aab7d1);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+
+  .i-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 0;
+  }
+
+  svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.bp-header-config-toggle:hover:not(:disabled),
+.bp-header-return:hover {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-hover, #1a2740);
+  border-color: var(--border-strong, rgba(255, 255, 255, 0.12));
+}
+
+.bp-header-config-toggle[aria-expanded="true"] {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-active, #1d3155);
+  border-color: var(--primary, #3b82f6);
+}
+
+.bp-header-config-toggle:disabled {
+  color: var(--text-disabled, #5e6a82);
+  cursor: not-allowed;
+}
+
+.bp-header-action {
+  position: relative;
+  display: inline-flex;
+}
+
+.bp-header-tooltip {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: max-content;
+  padding: 6px 10px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  background: var(--bg-surface-2, #162238);
+  color: var(--text-primary, #f3f7ff);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  font-size: 12px;
+  line-height: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 140ms ease, visibility 0s;
+}
+
+.bp-header-action:hover .bp-header-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 3s;
+}
+
+.bp-header-action button:focus-visible {
+  outline: 2px solid var(--primary, #3b82f6);
+  outline-offset: 2px;
+
+  + .bp-header-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+}
+
+@media (max-width: 699px) {
+  .bp-header {
+    gap: 6px;
+  }
+
+  .bp-header-identity {
+    height: 44px;
+    gap: 6px;
+    padding: 0 7px;
+  }
+
+  .bp-header-identity {
+    max-width: 38vw;
+  }
+
+  .bp-header-page-name {
+    display: none;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-header-tooltip {
+    transition-duration: 0s;
+  }
+}

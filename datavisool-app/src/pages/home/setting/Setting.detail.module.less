@@ -1,0 +1,880 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+/* Account detail: one surface with quiet separator rows. */
+.accountWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.accountCard {
+  overflow: hidden;
+  border: 1px solid var(--home-border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  background: var(--home-bg-surface-1, #111a2e);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.accountTop {
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+  background: var(--home-bg-surface-2, #162238) !important;
+  box-sizing: border-box;
+}
+
+.accountLeft {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 16px;
+}
+
+.accountAvatar {
+  position: relative;
+  flex: 0 0 auto;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--home-bg-active, #1d3155);
+  box-shadow: none;
+}
+
+.accountAvatar :global(img) {
+  border-radius: 50%;
+}
+
+.accountMeta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.accountNameRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.accountName {
+  max-width: 360px;
+  overflow: hidden;
+  color: var(--home-text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountIdTag {
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: #a9c8ff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.accountStatusDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 999px;
+  background: var(--home-success, #22c55e);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.14);
+}
+
+.accountStatusText,
+.accountSub {
+  color: var(--home-text-secondary, #aab7d1);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.accountSub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+}
+
+.accountSubLabel {
+  flex: 0 0 auto;
+  padding: 0 8px;
+  border: 1px solid var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--home-text-secondary, #aab7d1);
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.accountSubValue {
+  max-width: 420px;
+  overflow: hidden;
+  color: var(--home-text-primary, #f3f7ff);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountInfoList {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px;
+}
+
+.accountInfoRow {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 1px solid var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.accountInfoRow:last-child {
+  border-bottom: 0;
+}
+
+.accountInfoLeft,
+.accountInfoRight {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.accountInfoLeft {
+  gap: 12px;
+  color: var(--home-text-secondary, #aab7d1);
+}
+
+.accountInfoRight {
+  flex: 1;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.accountInfoIcon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  color: var(--home-text-tertiary, #7c8aa5);
+  line-height: 0;
+}
+
+.accountInfoIcon :global(.i-icon),
+.accountInfoIcon :global(.i-icon svg) {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.accountInfoLabel {
+  color: var(--home-text-secondary, #aab7d1);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.accountInfoValue {
+  min-width: 24px;
+  max-width: ~"min(54vw, 520px)";
+  overflow-wrap: anywhere;
+  color: var(--home-text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: right;
+}
+
+.accountInfoDivider {
+  width: 1px;
+  height: 24px;
+  flex: 0 0 auto;
+  background: var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.accountEditBtn {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--home-border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--home-text-tertiary, #7c8aa5);
+  line-height: 0;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+}
+
+.accountEditBtn :global(.i-icon),
+.accountEditBtn :global(.i-icon svg) {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.accountEditBtn:hover {
+  border-color: var(--home-border-strong, rgba(255, 255, 255, 0.12));
+  background: var(--home-bg-hover, #1a2740);
+  color: var(--home-text-primary, #f3f7ff);
+}
+
+.accountMuted {
+  color: var(--home-text-disabled, #5e6a82);
+  font-weight: 500;
+}
+
+.placeholder {
+  padding: 16px;
+  border: 1px dashed var(--home-border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.placeholderTitle {
+  color: var(--home-text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.placeholderDesc {
+  margin-top: 8px;
+  color: var(--home-text-tertiary, #7c8aa5);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* About detail: a restrained version banner and update-list style links. */
+.aboutWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aboutTopCard {
+  position: relative;
+  min-height: 104px;
+  overflow: hidden;
+  border: 1px solid var(--home-border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: var(--home-bg-surface-1, #111a2e);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.aboutTopCard::before {
+  display: none;
+}
+
+.aboutVersionBanner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.aboutTopRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+.aboutTopLeft {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.aboutTopMeta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aboutVersionRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.aboutTopVersion {
+  color: var(--home-text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.aboutVersionPill {
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: #a9c8ff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.aboutTopDate {
+  color: var(--home-text-tertiary, #7c8aa5);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.checkUpdateBtn {
+  display: inline-flex;
+  width: 108px;
+  height: 40px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  transition: background-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+}
+
+.checkUpdateBtn:global(.datavisool-button) {
+  border: 0;
+}
+
+.checkUpdateBtn:global(.datavisool-button:hover) {
+  background: #4a90ff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+.checkUpdateBtn:global(.datavisool-button:focus-visible) {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--home-border-focus, rgba(59, 130, 246, 0.45));
+}
+
+.aboutListCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--home-border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: var(--home-bg-surface-1, #111a2e);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.aboutRow {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px 10px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 0;
+  background: transparent;
+  color: var(--home-text-primary, #f3f7ff);
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+  transition: background-color 140ms ease-out, color 140ms ease-out;
+}
+
+.aboutRow:last-child {
+  border-bottom: 0;
+}
+
+.aboutRow:hover {
+  background: var(--home-bg-hover, #1a2740);
+}
+
+.aboutRow:focus-visible {
+  z-index: 1;
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--home-border-focus, rgba(59, 130, 246, 0.45));
+}
+
+.aboutRowMain {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.aboutRowIconWrap {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--home-primary, #3b82f6);
+  line-height: 0;
+}
+
+.aboutRowIconWrap :global(.i-icon),
+.aboutRowIconWrap :global(.i-icon svg) {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.aboutRowText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aboutRowLabel {
+  overflow: hidden;
+  color: var(--home-text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aboutRowDesc {
+  overflow: hidden;
+  color: var(--home-text-tertiary, #7c8aa5);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aboutRowIcon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  color: var(--home-text-tertiary, #7c8aa5);
+  line-height: 0;
+}
+
+.aboutRowIcon :global(.i-icon),
+.aboutRowIcon :global(.i-icon svg) {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accountEditBtn,
+  .checkUpdateBtn,
+  .aboutRow {
+    transition: none;
+  }
+}
+
+/* Web account editing and branding surfaces use the shared setting tokens. */
+.accountSections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 24px 24px;
+}
+
+.accountSection {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accountSectionTitle {
+  color: var(--setting-text-secondary, #aab7d1);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.accountFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.accountFieldCard {
+  min-width: 0;
+  min-height: 100px;
+  padding: 14px 16px;
+  border: 1px solid var(--setting-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: var(--setting-surface-raised, #162238);
+  box-sizing: border-box;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+}
+
+.accountFieldCard[data-editing="true"] {
+  border-color: var(--setting-focus, rgba(59, 130, 246, 0.45));
+  background: var(--setting-surface, #111a2e);
+}
+
+.accountFieldCardWide {
+  grid-column: ~"1 / -1";
+}
+
+.accountFieldHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.accountFieldIcon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  align-items: center;
+  justify-content: center;
+  color: var(--setting-text-tertiary, #7c8aa5);
+  line-height: 0;
+}
+
+.accountFieldIcon :global(.i-icon),
+.accountFieldIcon :global(.i-icon svg) {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.accountFieldLabel {
+  overflow: hidden;
+  color: var(--setting-text-secondary, #aab7d1);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountFieldEditButton {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--setting-text-tertiary, #7c8aa5);
+  cursor: pointer;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+}
+
+.accountFieldEditButton:hover {
+  border-color: var(--setting-border-strong, rgba(255, 255, 255, 0.12));
+  background: var(--setting-hover, #1a2740);
+  color: var(--setting-text, #f3f7ff);
+}
+
+.accountFieldEditButton:focus-visible,
+.accountSaveButton:focus-visible,
+.accountCancelButton:focus-visible,
+.brandUploadCard:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.28);
+}
+
+.accountFieldValue {
+  min-height: 22px;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  color: var(--setting-text, #f3f7ff);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.accountFieldPlaceholder {
+  color: var(--setting-text-tertiary, #7c8aa5);
+}
+
+.accountFieldEditor {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.accountFieldInput {
+  width: 100%;
+  height: 40px;
+}
+
+.accountFieldInput :global(.datavisool-input-shell) {
+  min-height: 40px !important;
+  padding: 0 12px;
+  border: 1px solid var(--setting-border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+.accountFieldInput :global(.datavisool-input-shell:focus-within) {
+  border-color: var(--setting-focus, rgba(59, 130, 246, 0.45));
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+}
+
+.accountFieldInput :global(.datavisool-input-native) {
+  color: var(--setting-text, #f3f7ff);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.accountFieldInput :global(.datavisool-input-native::placeholder) {
+  color: var(--setting-text-tertiary, #7c8aa5);
+}
+
+.accountFieldActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.accountSaveButton,
+.accountCancelButton {
+  min-width: 76px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.accountSaveButton {
+  border-color: transparent;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.18);
+  color: #fff;
+}
+
+.accountSaveButton:hover {
+  border-color: transparent;
+  background: #4a90ff;
+  color: #fff;
+}
+
+.accountCancelButton {
+  border: 1px solid var(--setting-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--setting-text-secondary, #aab7d1);
+}
+
+.accountCancelButton:hover {
+  border-color: var(--setting-border-strong, rgba(255, 255, 255, 0.12));
+  background: var(--setting-hover, #1a2740);
+  color: var(--setting-text, #f3f7ff);
+}
+
+.brandBlock {
+  padding: 24px;
+  border: 1px solid var(--setting-border, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: var(--setting-surface, #111a2e);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.brandHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.brandHeader .generalIcon {
+  width: 48px;
+  height: 48px;
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.26);
+  box-shadow: none;
+  color: var(--setting-primary, #3b82f6);
+}
+
+.brandHeader .generalIcon :global(.i-icon),
+.brandHeader .generalIcon :global(.i-icon svg) {
+  width: 24px;
+  height: 24px;
+}
+
+.brandGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.brandUploadCard {
+  display: flex;
+  min-width: 0;
+  min-height: 208px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  border: 1px solid var(--setting-border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: var(--setting-surface-raised, #162238);
+  color: var(--setting-text, #f3f7ff);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+}
+
+.brandUploadCard:hover {
+  border-color: var(--setting-border-strong, rgba(255, 255, 255, 0.12));
+  background: var(--setting-hover, #1a2740);
+}
+
+.brandUploadTitle {
+  color: var(--setting-text, #f3f7ff);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.brandUploadDesc {
+  margin-top: 2px;
+  color: var(--setting-text-tertiary, #7c8aa5);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.brandImageBox {
+  display: flex;
+  width: 100%;
+  min-height: 92px;
+  align-items: center;
+  justify-content: center;
+  margin: 14px 0 12px;
+  overflow: hidden;
+  border: 1px solid var(--setting-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 8px;
+  background: rgba(10, 16, 32, 0.72);
+}
+
+.brandImageBox img {
+  display: block;
+  max-width: ~"min(100%, 320px)";
+  max-height: 64px;
+  object-fit: contain;
+}
+
+.logoCard .brandImageBox img {
+  width: 64px;
+  height: 64px;
+}
+
+.brandUploadAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--setting-primary, #3b82f6);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+@media (max-width: 767px) {
+  .accountTop {
+    padding: 16px;
+  }
+
+  .accountSections {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .accountFieldGrid,
+  .brandGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .accountFieldCardWide {
+    grid-column: auto;
+  }
+
+  .brandBlock {
+    padding: 20px;
+  }
+
+  .brandHeader {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .brandUploadCard {
+    min-height: 192px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accountFieldCard,
+  .accountFieldEditButton,
+  .accountSaveButton,
+  .accountCancelButton,
+  .brandUploadCard {
+    transition: none;
+  }
+}

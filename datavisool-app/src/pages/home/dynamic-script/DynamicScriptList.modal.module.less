@@ -1,0 +1,739 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+/*
+ * Copyright (c) 2024 DataVisool.
+ * All rights reserved.
+ */
+
+.dynamicScriptModal {
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(74, 133, 224, 0.72);
+  background:
+    radial-gradient(460px 300px at 3% 100%, rgba(103, 41, 204, 0.23), transparent 70%),
+    radial-gradient(420px 260px at 100% 0%, rgba(27, 118, 218, 0.22), transparent 70%),
+    linear-gradient(133deg, rgba(18, 29, 69, 0.96) 0%, rgba(9, 18, 45, 0.98) 48%, rgba(6, 14, 35, 0.98) 100%);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.46),
+    0 0 0 1px rgba(75, 97, 161, 0.36),
+    inset 0 2px 0 rgba(122, 174, 255, 0.18),
+    inset 0 -1px 0 rgba(139, 83, 255, 0.28);
+}
+
+.dynamicScriptModalBody {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background:
+    radial-gradient(720px 260px at 24% -10%, rgba(72, 122, 255, 0.10), transparent 72%),
+    radial-gradient(520px 220px at 92% 2%, rgba(27, 120, 255, 0.12), transparent 74%);
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(96, 116, 168, 0.68);
+  }
+}
+
+.modalHeader {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 106px 30px 48px;
+  border-bottom: 1px solid rgba(65, 82, 128, 0.54);
+  box-sizing: border-box;
+}
+
+.modalHeaderIcon {
+  width: 84px;
+  height: 84px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  color: #86a7ff;
+  background: rgba(44, 86, 192, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.modalHeaderCopy {
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.modalTitle {
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 44px;
+  letter-spacing: 0;
+  text-shadow: 0 0 22px rgba(135, 168, 255, 0.18);
+}
+
+.modalSubtitle {
+  margin-top: 5px;
+  color: #858fa7;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0;
+}
+
+.modalForm {
+  padding: 30px 44px 14px;
+  box-sizing: border-box;
+}
+
+.modalField {
+  margin-bottom: 28px;
+}
+
+.modalFieldLabel {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: #f5f7ff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.modalHelpIcon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(115, 130, 166, 0.76);
+  color: rgba(150, 161, 190, 0.86);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.typeSelect,
+.urlInput {
+  width: 100%;
+}
+
+.typeSelectControl,
+.urlInputControl,
+.localUploadArea {
+  height: 60px;
+  border-radius: 12px;
+  border: 1px solid rgba(62, 80, 123, 0.92);
+  background: rgba(14, 25, 56, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  box-sizing: border-box;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.typeSelectControl {
+  border-color: transparent;
+  background:
+    linear-gradient(120deg, rgba(15, 27, 62, 0.96), rgba(13, 24, 58, 0.96)) padding-box,
+    linear-gradient(95deg, #1599ff 0%, #3d6fff 45%, #f044ff 100%) border-box;
+  box-shadow:
+    0 0 0 1px rgba(63, 111, 255, 0.28),
+    0 0 20px rgba(39, 122, 255, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  &:global(.datavisool-select-open),
+  &:focus-within {
+    box-shadow:
+      0 0 0 1px rgba(70, 145, 255, 0.60),
+      0 0 28px rgba(151, 54, 255, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.datavisool-select-trigger) {
+    height: 100%;
+    padding: 0 24px 0 22px;
+  }
+
+  :global(.datavisool-select-prefix) {
+    margin-right: 14px;
+    color: #3b49ff;
+    filter: drop-shadow(0 0 10px rgba(98, 52, 255, 0.55));
+  }
+
+  :global(.datavisool-select-value) {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0;
+  }
+
+  :global(.datavisool-select-chevron) {
+    color: #aeb7ce;
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.72;
+  }
+}
+
+.typeSelectPanel {
+  border: 1px solid rgba(74, 95, 146, 0.94) !important;
+  background: rgba(10, 20, 48, 0.98) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42), 0 0 22px rgba(51, 118, 255, 0.18) !important;
+
+  :global(.datavisool-select-option) {
+    color: #dbe6ff;
+    background: transparent;
+  }
+
+  :global(.datavisool-select-option-selected),
+  :global(.datavisool-select-option-active) {
+    color: #ffffff;
+    background: rgba(48, 92, 183, 0.42);
+  }
+}
+
+.urlInputControl {
+  padding: 0 22px;
+
+  &:hover,
+  &:focus-within {
+    border-color: rgba(63, 132, 255, 0.88);
+    box-shadow: 0 0 0 2px rgba(40, 122, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  :global(.datavisool-input-prefix) {
+    margin-right: 14px;
+    color: #8590ad;
+  }
+
+  :global(.datavisool-input-native) {
+    color: #f3f7ff;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 26px;
+    letter-spacing: 0;
+
+    &::placeholder {
+      color: rgba(128, 139, 170, 0.72);
+    }
+  }
+
+  :global(.datavisool-input-clear) {
+    color: #8b96b3;
+  }
+}
+
+.localUploadArea {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 22px;
+  color: rgba(201, 211, 235, 0.88);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 26px;
+  cursor: pointer;
+  outline: none;
+
+  svg {
+    color: #5063ff;
+    filter: drop-shadow(0 0 10px rgba(99, 65, 255, 0.50));
+  }
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &:focus {
+    border-color: rgba(63, 132, 255, 0.88);
+    box-shadow: 0 0 0 2px rgba(40, 122, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+}
+
+.fileInput {
+  display: none;
+}
+
+.selectedFileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.selectedFileItem {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(64, 89, 148, 0.72);
+  color: #dce7ff;
+  background: rgba(13, 25, 58, 0.64);
+  box-sizing: border-box;
+
+  svg {
+    flex: 0 0 auto;
+    color: #5f83ff;
+  }
+
+  button {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    color: #9eabc9;
+    background: transparent;
+    cursor: pointer;
+    transition: color 160ms ease, background 160ms ease;
+
+    &:hover {
+      color: #ffffff;
+      background: rgba(85, 108, 170, 0.34);
+    }
+  }
+}
+
+.selectedFileName {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.dynamicScriptModalFooter {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  padding: 0 44px;
+  border-top: 1px solid rgba(65, 82, 128, 0.54);
+  background: linear-gradient(180deg, rgba(8, 16, 38, 0.14), rgba(7, 15, 36, 0.32));
+  box-sizing: border-box;
+}
+
+.modalCancelButton,
+.modalSubmitButton {
+  height: 52px;
+  min-width: 120px;
+  border-radius: 10px;
+  padding: 0 30px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.modalCancelButton {
+  border: 1px solid rgba(62, 84, 137, 0.90);
+  color: #ffffff;
+  background: rgba(10, 20, 47, 0.68);
+
+  &:hover,
+  &:focus {
+    color: #ffffff !important;
+    border-color: rgba(101, 132, 200, 0.96) !important;
+    background: rgba(23, 37, 78, 0.78) !important;
+  }
+}
+
+/* Resource-management variant: scoped to the portal classes passed by DynamicScriptList. */
+.resourceDynamicScriptModal {
+  height: auto !important;
+  max-height: min(620px, calc(100vh - 160px));
+  max-height: min(620px, calc(100dvh - 160px));
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  background: var(--resource-surface, #111a2e);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+}
+
+.resourceDynamicScriptModalBody {
+  height: auto;
+  min-height: 0;
+  flex: 0 1 auto;
+  background: var(--resource-surface, #111a2e);
+  color: var(--resource-text, #f3f7ff);
+}
+
+.resourceDynamicScriptModalBody .modalHeader {
+  height: 96px;
+  gap: 16px;
+  padding: 20px 28px;
+  border-bottom-color: var(--resource-border-subtle, rgba(255, 255, 255, 0.06));
+  background: transparent;
+}
+
+.resourceDynamicScriptModalBody .modalHeaderIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  color: var(--resource-primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.14);
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  box-shadow: none;
+}
+
+.resourceDynamicScriptModalBody .modalTitle {
+  color: var(--resource-text, #f3f7ff);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 28px;
+  text-shadow: none;
+}
+
+.resourceDynamicScriptModalBody .modalSubtitle {
+  margin-top: 4px;
+  color: var(--resource-text-tertiary, #7c8aa5);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .modalForm {
+  padding: 24px 28px 12px;
+}
+
+.resourceDynamicScriptModalBody .modalField {
+  margin-bottom: 20px;
+}
+
+.resourceDynamicScriptModalBody .modalFieldLabel {
+  min-height: 22px;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--resource-text, #f3f7ff);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.resourceDynamicScriptModalBody .modalHelpIcon {
+  width: 16px;
+  height: 16px;
+  border-width: 1px;
+  border-color: rgba(124, 138, 165, 0.72);
+  color: var(--resource-text-tertiary, #7c8aa5);
+  font-size: 11px;
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl,
+.resourceDynamicScriptModalBody .urlInputControl,
+.resourceDynamicScriptModalBody .localUploadArea {
+  height: 40px;
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: var(--resource-surface-raised, #162238);
+  box-shadow: none;
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl {
+  background: var(--resource-surface-raised, #162238);
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl:global(.datavisool-select-open),
+.resourceDynamicScriptModalBody .typeSelectControl:focus-within,
+.resourceDynamicScriptModalBody .urlInputControl:focus-within,
+.resourceDynamicScriptModalBody .localUploadArea:focus {
+  border-color: var(--resource-focus, rgba(59, 130, 246, 0.45));
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl :global(.datavisool-select-trigger) {
+  height: 100%;
+  padding: 0 12px;
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl :global(.datavisool-select-prefix) {
+  margin-right: 8px;
+  color: var(--resource-text-tertiary, #7c8aa5);
+  filter: none;
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl :global(.datavisool-select-value) {
+  color: var(--resource-text, #f3f7ff);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .typeSelectControl :global(.datavisool-select-chevron) {
+  color: var(--resource-text-tertiary, #7c8aa5);
+}
+
+.resourceDynamicScriptModalBody .typeSelectPanel {
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 10px;
+  background: var(--resource-surface, #111a2e) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32) !important;
+}
+
+.resourceDynamicScriptModalBody .typeSelectPanel :global(.datavisool-select-option) {
+  color: var(--resource-text-secondary, #aab7d1);
+  background: transparent;
+}
+
+.resourceDynamicScriptModalBody .typeSelectPanel :global(.datavisool-select-option-selected),
+.resourceDynamicScriptModalBody .typeSelectPanel :global(.datavisool-select-option-active) {
+  color: var(--resource-text, #f3f7ff);
+  background: var(--resource-hover, #1a2740);
+}
+
+.resourceTypeSelectPanel {
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 10px;
+  background: var(--resource-surface, #111a2e) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32) !important;
+}
+
+.resourceTypeSelectPanel :global(.datavisool-select-option) {
+  color: var(--resource-text-secondary, #aab7d1);
+  background: transparent;
+}
+
+.resourceTypeSelectPanel :global(.datavisool-select-option-selected),
+.resourceTypeSelectPanel :global(.datavisool-select-option-active) {
+  color: var(--resource-text, #f3f7ff);
+  background: var(--resource-hover, #1a2740);
+}
+
+.resourceDynamicScriptModalBody .urlInputControl {
+  padding: 0 12px;
+}
+
+.resourceDynamicScriptModalBody .urlInputControl:hover,
+.resourceDynamicScriptModalBody .urlInputControl:focus-within,
+.resourceDynamicScriptModalBody .localUploadArea:hover {
+  border-color: var(--resource-focus, rgba(59, 130, 246, 0.45));
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.resourceDynamicScriptModalBody .urlInputControl :global(.datavisool-input-prefix) {
+  margin-right: 8px;
+  color: var(--resource-text-tertiary, #7c8aa5);
+}
+
+.resourceDynamicScriptModalBody .urlInputControl :global(.datavisool-input-native) {
+  color: var(--resource-text, #f3f7ff);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .urlInputControl :global(.datavisool-input-native)::placeholder {
+  color: var(--resource-text-tertiary, #7c8aa5);
+}
+
+.resourceDynamicScriptModalBody .localUploadArea {
+  gap: 8px;
+  padding: 0 12px;
+  color: var(--resource-text-secondary, #aab7d1);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .localUploadArea svg {
+  color: var(--resource-teal, #22c7b8);
+  filter: none;
+}
+
+.resourceDynamicScriptModalBody .selectedFileList {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.resourceDynamicScriptModalBody .selectedFileItem {
+  min-height: 36px;
+  padding: 6px 8px 6px 10px;
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  color: var(--resource-text-secondary, #aab7d1);
+  background: var(--resource-surface-raised, #162238);
+}
+
+.resourceDynamicScriptModalBody .selectedFileItem svg {
+  color: var(--resource-teal, #22c7b8);
+}
+
+.resourceDynamicScriptModalBody .selectedFileItem button:hover {
+  color: var(--resource-text, #f3f7ff);
+  background: var(--resource-hover, #1a2740);
+}
+
+.resourceDynamicScriptModalBody .selectedFileName {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .dynamicScriptModalFooter {
+  height: 72px;
+  gap: 12px;
+  padding: 0 28px;
+  border-top-color: var(--resource-border-subtle, rgba(255, 255, 255, 0.06));
+  background: var(--resource-surface, #111a2e);
+}
+
+.resourceDynamicScriptModalBody .modalCancelButton,
+.resourceDynamicScriptModalBody .modalSubmitButton {
+  height: 40px;
+  min-width: 88px;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.resourceDynamicScriptModalBody .modalCancelButton {
+  border: 1px solid var(--resource-border, rgba(255, 255, 255, 0.08));
+  color: var(--resource-text-secondary, #aab7d1);
+  background: transparent;
+}
+
+.resourceDynamicScriptModalBody .modalCancelButton:hover,
+.resourceDynamicScriptModalBody .modalCancelButton:focus {
+  border-color: var(--resource-focus, rgba(59, 130, 246, 0.45)) !important;
+  color: var(--resource-text, #f3f7ff) !important;
+  background: var(--resource-hover, #1a2740) !important;
+}
+
+.resourceDynamicScriptModalBody .modalSubmitButton {
+  border: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+}
+
+.resourceDynamicScriptModalBody .modalSubmitButton:hover,
+.resourceDynamicScriptModalBody .modalSubmitButton:focus {
+  color: #ffffff !important;
+  background: #4a90ff !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .resourceDynamicScriptModal {
+    width: min(784px, calc(100vw - 64px)) !important;
+    max-height: min(620px, calc(100vh - 64px));
+    max-height: min(620px, calc(100dvh - 64px));
+  }
+}
+
+@media (max-width: 767px) {
+  .resourceDynamicScriptModal {
+    width: calc(100vw - 32px) !important;
+    max-height: min(620px, calc(100vh - 32px));
+    max-height: min(620px, calc(100dvh - 32px));
+    border-radius: 12px;
+  }
+
+  .resourceDynamicScriptModalBody .modalHeader {
+    min-height: 88px;
+    height: auto;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .resourceDynamicScriptModalBody .modalHeaderIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .resourceDynamicScriptModalBody .modalTitle {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .resourceDynamicScriptModalBody .modalSubtitle {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .resourceDynamicScriptModalBody .modalForm {
+    padding: 20px 20px 8px;
+  }
+
+  .resourceDynamicScriptModalBody .modalField {
+    margin-bottom: 16px;
+  }
+
+  .resourceDynamicScriptModalBody .typeSelectControl,
+  .resourceDynamicScriptModalBody .urlInputControl,
+  .resourceDynamicScriptModalBody .localUploadArea {
+    height: 44px;
+  }
+
+  .resourceDynamicScriptModalBody .selectedFileItem {
+    min-height: 40px;
+  }
+
+  .resourceDynamicScriptModalBody .dynamicScriptModalFooter {
+    height: 68px;
+    gap: 8px;
+    padding: 0 20px;
+  }
+
+  .resourceDynamicScriptModalBody .modalCancelButton,
+  .resourceDynamicScriptModalBody .modalSubmitButton {
+    height: 44px;
+    min-width: 76px;
+    padding: 0 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resourceDynamicScriptModalBody .typeSelectControl,
+  .resourceDynamicScriptModalBody .urlInputControl,
+  .resourceDynamicScriptModalBody .localUploadArea,
+  .resourceDynamicScriptModalBody .selectedFileItem button,
+  .resourceDynamicScriptModalBody .modalCancelButton,
+  .resourceDynamicScriptModalBody .modalSubmitButton {
+    transition-duration: 0.01ms;
+  }
+}
+
+.modalSubmitButton {
+  min-width: 128px;
+  border: 0;
+  color: #ffffff;
+  background: linear-gradient(112deg, #219bff 0%, #345dff 53%, #a522ff 100%);
+  box-shadow: 0 13px 28px rgba(37, 104, 255, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+
+  &:hover,
+  &:focus {
+    color: #ffffff !important;
+    background: linear-gradient(112deg, #33a6ff 0%, #456aff 53%, #b632ff 100%) !important;
+    box-shadow: 0 15px 34px rgba(46, 112, 255, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  }
+}

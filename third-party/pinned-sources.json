@@ -1,0 +1,34 @@
+[
+  {
+    "package": "@ant-design/icons-svg",
+    "version": "4.4.2",
+    "source": "https://raw.githubusercontent.com/ant-design/ant-design-icons/038764e4e46499212751a452704f64231fa756ba/LICENSE",
+    "gitHead": "038764e4e46499212751a452704f64231fa756ba",
+    "file": "_ant-design_icons-svg-4.4.2.txt",
+    "sha256": "5d367fb0a07340571542eb4ee8eb1add62d37b71bad6786a57c2e9a86bf76c70"
+  },
+  {
+    "package": "@pixi/colord",
+    "version": "2.9.6",
+    "source": "https://raw.githubusercontent.com/omgovich/colord/5344fbf77b736f81cd33c21050021bc09bc9dd1d/LICENSE.md",
+    "gitHead": "5344fbf77b736f81cd33c21050021bc09bc9dd1d",
+    "file": "_pixi_colord-2.9.6.txt",
+    "sha256": "7613d4594ee8b6163926af3435dae61c9e3d5a27cd137bd76a543ba40002d8fc"
+  },
+  {
+    "package": "@react-three/fiber",
+    "version": "8.18.0",
+    "source": "https://raw.githubusercontent.com/pmndrs/react-three-fiber/f81bfe8cb29373d2687433c6130e0ce1daf7222c/LICENSE",
+    "gitHead": "f81bfe8cb29373d2687433c6130e0ce1daf7222c",
+    "file": "_react-three_fiber-8.18.0.txt",
+    "sha256": "ebd6a29bec64bdfcf8795388f2eceaf1479c14d343c0846de347ab8609d66139"
+  },
+  {
+    "package": "draco3d",
+    "version": "1.5.7",
+    "source": "https://raw.githubusercontent.com/google/draco/8786740086a9f4d83f44aa83badfbea4dce7a1b5/LICENSE",
+    "gitHead": "8786740086a9f4d83f44aa83badfbea4dce7a1b5",
+    "file": "draco3d-1.5.7.txt",
+    "sha256": "d3709b0fb4b8a94bbb1d02b8a2e484f258b0d9c5c5a01f940391f3fe662cd1a4"
+  }
+]

@@ -1,0 +1,647 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.datasource-panel {
+  --datasource-surface: #111a2e;
+  --datasource-surface-raised: #162238;
+  --datasource-hover: #1a2740;
+  --datasource-border: rgba(255, 255, 255, 0.08);
+  --datasource-border-strong: rgba(255, 255, 255, 0.12);
+  --datasource-focus: rgba(59, 130, 246, 0.45);
+  --datasource-text: #f3f7ff;
+  --datasource-text-secondary: #aab7d1;
+  --datasource-text-tertiary: #7c8aa5;
+  --datasource-primary: #3b82f6;
+  --datasource-field-icon: #38bdf8;
+
+  max-width: calc(100vw - 64px);
+  overflow: hidden;
+  border: 1px solid var(--datasource-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%),
+    var(--datasource-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  color: var(--datasource-text);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.datasource-panel-body {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+}
+
+.datasource-panel-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 32px 24px;
+  background: var(--datasource-surface);
+}
+
+.datasource-panel-content {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(170, 183, 209, 0.38) transparent;
+}
+
+.datasource-panel-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+
+  .datasource-panel-title-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(59, 130, 246, 0.14);
+    color: var(--datasource-field-icon);
+  }
+
+  h2 {
+    margin: 0;
+    color: var(--datasource-text);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--datasource-text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+  }
+}
+
+.datasource-panel-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+
+  .datavisool-button {
+    display: inline-flex;
+    height: 40px;
+    min-width: 84px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .cancel-btn {
+    border-color: var(--datasource-border);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: none;
+    color: var(--datasource-text-secondary);
+
+    &:hover {
+      border-color: var(--datasource-border-strong);
+      background: var(--datasource-hover);
+      color: var(--datasource-text);
+    }
+
+    &:focus-visible {
+      border-color: var(--datasource-primary);
+      box-shadow: 0 0 0 3px var(--datasource-focus);
+    }
+  }
+
+  .submit-btn {
+    min-width: 100px;
+    border: 0;
+    background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+    color: #ffffff;
+
+    svg {
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    &:hover {
+      background: #4a90ff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px var(--datasource-focus), 0 6px 20px rgba(59, 130, 246, 0.22);
+    }
+  }
+}
+
+.datasource-form {
+  width: 100%;
+  padding: 8px 32px 32px;
+  box-sizing: border-box;
+}
+
+.datasource-form-field {
+  min-width: 0;
+  margin: 0;
+}
+
+.datasource-form-label {
+  padding-bottom: 8px;
+  color: var(--datasource-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.datasource-form-control {
+  min-width: 0;
+}
+
+.datasource-form-error {
+  margin-top: 6px;
+  color: #f87171;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.datasource-label-with-tip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+
+  span {
+    color: var(--datasource-text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+.datasource-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 24px;
+}
+
+.datasource-field-icon {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--datasource-field-icon);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.datasource-input,
+.datasource-select,
+.datasource-textarea {
+  border-color: var(--datasource-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  color: var(--datasource-text);
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out;
+
+  &:hover:not([data-disabled="true"]) {
+    border-color: var(--datasource-border-strong);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:focus-within {
+    border-color: var(--datasource-primary);
+    box-shadow: 0 0 0 3px var(--datasource-focus);
+  }
+
+  &[data-disabled="true"],
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.datasource-input,
+.datasource-select {
+  min-height: 40px;
+  height: 40px;
+}
+
+.datasource-input {
+  &.datavisool-input-shell {
+    gap: 8px;
+    padding: 0 12px;
+
+    .datavisool-input-native {
+      color: var(--datasource-text);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+
+      &::placeholder {
+        color: var(--datasource-text-tertiary);
+      }
+    }
+  }
+
+  .datavisool-input-affix,
+  .datasource-field-icon {
+    margin-right: 0;
+  }
+
+}
+
+.datasource-number-input {
+  min-width: 0;
+  gap: 8px;
+  padding: 0 12px;
+
+  .datavisool-number-input-affix {
+    min-height: 38px;
+  }
+
+  .datasource-field-icon {
+    margin-right: 0;
+  }
+
+  .datavisool-number-input-native {
+    min-height: 38px;
+    height: 38px;
+    color: var(--datasource-text);
+    font-size: 14px;
+    font-weight: 400;
+
+    &::placeholder {
+      color: var(--datasource-text-tertiary);
+    }
+  }
+}
+
+.datasource-select {
+  width: 100%;
+  min-width: 0;
+
+  .datavisool-select-trigger {
+    min-height: 38px;
+    height: 38px;
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .datavisool-select-prefix,
+  .datasource-field-icon {
+    margin-right: 0;
+  }
+
+  .datavisool-select-placeholder,
+  .datavisool-select-value {
+    color: var(--datasource-text-tertiary);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .datavisool-select-value:not(.datavisool-select-placeholder) {
+    color: var(--datasource-text);
+  }
+
+  .datavisool-select-chevron,
+  .datavisool-select-clear {
+    color: var(--datasource-text-tertiary);
+  }
+}
+
+.datasource-select-panel {
+  border-color: var(--datasource-border-strong);
+  border-radius: 10px;
+  background: var(--datasource-surface-raised);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  .datavisool-select-option {
+    border-radius: 8px;
+    color: var(--datasource-text-secondary);
+
+    &:hover:not(:disabled),
+    &.datavisool-select-option-active:not(:disabled) {
+      background: var(--datasource-hover);
+      color: var(--datasource-text);
+    }
+
+    &.datavisool-select-option-selected {
+      background: rgba(59, 130, 246, 0.14);
+      color: #93c5fd;
+    }
+  }
+}
+
+.datasource-password-toggle {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--datasource-text-tertiary);
+  cursor: pointer;
+  transition: background-color 140ms ease-out, color 140ms ease-out;
+
+  &:hover {
+    background: var(--datasource-hover);
+    color: var(--datasource-text);
+  }
+
+  &:focus-visible {
+    outline: 0;
+    border-color: var(--datasource-primary);
+    box-shadow: 0 0 0 3px var(--datasource-focus);
+  }
+}
+
+.datasource-form-field-invalid {
+  .datasource-input,
+  .datasource-select,
+  .datasource-textarea {
+    border-color: rgba(239, 68, 68, 0.72);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  }
+}
+
+.datasource-script-block {
+  margin: 24px 0;
+}
+
+.datasource-script-card {
+  display: flex;
+  min-height: 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  border: 1px solid var(--datasource-border);
+  border-radius: 12px;
+  background: var(--datasource-surface-raised);
+}
+
+.datasource-script-copy {
+  min-width: 0;
+  flex: 1;
+
+  div {
+    color: var(--datasource-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  span {
+    margin-left: 4px;
+    color: var(--datasource-text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  p {
+    margin: 2px 0 0;
+    color: var(--datasource-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+.datasource-script-switch {
+  background: transparent;
+
+  .datavisool-switch-track {
+    width: 44px;
+    height: 24px;
+    border-color: var(--datasource-border);
+    background: rgba(124, 138, 165, 0.38);
+    box-shadow: none;
+  }
+
+  .datavisool-switch-thumb {
+    width: 18px;
+    height: 18px;
+    transform: translateX(3px);
+  }
+
+  &.datavisool-switch-checked .datavisool-switch-track {
+    border-color: rgba(59, 130, 246, 0.68);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+  }
+
+  &.datavisool-switch-checked .datavisool-switch-track::before {
+    background: #3b82f6;
+  }
+
+  &.datavisool-switch-checked .datavisool-switch-thumb {
+    transform: translateX(23px);
+  }
+}
+
+.datasource-script-switch-field {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.datasource-script-risk {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid rgba(245, 181, 68, 0.28);
+  border-radius: 10px;
+  background: rgba(245, 181, 68, 0.08);
+
+  strong {
+    display: block;
+    color: #f8cf75;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  p {
+    margin: 2px 0 0;
+    color: var(--datasource-text-secondary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+.datasource-script-risk-icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  border-radius: 6px;
+  background: rgba(245, 181, 68, 0.14);
+}
+
+.datasource-description-item {
+  position: relative;
+  margin-bottom: 0 !important;
+
+  .datasource-form-label {
+    padding-bottom: 8px;
+  }
+
+  .datasource-form-control::before {
+    content: "请输入描述信息，便于后续识别和管理（选填）";
+    display: block;
+    margin: 0 0 8px;
+    color: var(--datasource-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+.datasource-textarea {
+  display: block;
+  width: 100%;
+  min-height: 112px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  resize: none;
+  font-size: 14px;
+  line-height: 22px;
+
+  &::placeholder {
+    color: var(--datasource-text-tertiary);
+  }
+}
+
+.datasource-description-count {
+  margin: 6px 0 24px;
+  color: var(--datasource-text-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: right;
+}
+
+.datasource-tip-card {
+  display: flex;
+  min-height: 88px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  border: 1px solid var(--datasource-border);
+  border-radius: 12px;
+  background: var(--datasource-surface-raised);
+}
+
+.datasource-tip-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.datasource-tip-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--datasource-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.datasource-tip-spark {
+  color: #38bdf8;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.datasource-tip-copy p {
+  margin: 2px 0 0;
+  color: var(--datasource-text-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.datasource-tip-card img {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .datasource-panel {
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px);
+  }
+
+  .datasource-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .datasource-panel {
+    width: 100vw !important;
+    max-width: 100vw;
+    border-radius: 0;
+  }
+
+  .datasource-panel-body {
+    padding: 0;
+  }
+
+  .datasource-panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 20px 16px;
+  }
+
+  .datasource-form {
+    padding: 8px 20px 24px;
+  }
+
+  .datasource-panel-actions {
+    width: 100%;
+
+    .datavisool-button {
+      flex: 1;
+    }
+  }
+
+  .datasource-script-card {
+    align-items: flex-start;
+  }
+}

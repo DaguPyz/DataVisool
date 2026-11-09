@@ -1,0 +1,271 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.designer-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  height: 48px;
+  pointer-events: none;
+  color: var(--text-primary, #f3f7ff);
+}
+
+.designer-header > * {
+  pointer-events: auto;
+}
+
+.workspace-icon-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary, #aab7d1);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.workspace-icon-button > .i-icon,
+.workspace-publish-button > .i-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.workspace-icon-button:hover {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-hover, #1a2740);
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.workspace-icon-button:focus-visible,
+.workspace-menu-item:focus-visible,
+.workspace-save-status:focus-visible,
+.workspace-publish-button:focus-visible {
+  outline: 2px solid var(--primary-hover, #4a90ff);
+  outline-offset: 2px;
+}
+
+.workspace-icon-button.is-active {
+  color: #8db7ff;
+  background: var(--bg-active, #1d3155);
+  border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+}
+
+.workspace-popover {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.workspace-popover-panel {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  min-width: 196px;
+  max-width: ~"min(280px, calc(100vw - 24px))";
+  max-height: calc(100vh - 96px);
+  padding: 6px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: rgba(17, 26, 46, 0.98);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: workspace-menu-in 160ms ease-out both;
+}
+
+.workspace-popover-right .workspace-popover-panel {
+  right: 0;
+  left: auto;
+}
+
+.workspace-menu-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary, #aab7d1);
+  font: 13px/20px var(--datavisool-font-family, sans-serif);
+  text-align: left;
+  cursor: pointer;
+}
+
+.workspace-menu-item:hover {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-hover, #1a2740);
+}
+
+.workspace-menu-item > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-menu-separator {
+  height: 1px;
+  margin: 5px 6px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+.workspace-project-identity {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 300px;
+  height: 44px;
+  padding: 0 12px 0 10px;
+  gap: 9px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: rgba(17, 26, 46, 0.96);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  color: var(--text-primary, #f3f7ff);
+}
+
+.workspace-project-identity > img {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.workspace-project-name {
+  max-width: ~"min(170px, 19vw)";
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.workspace-project-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  pointer-events: auto;
+}
+
+.workspace-project-actions .workspace-icon-button,
+.workspace-project-actions .workspace-publish-button,
+.workspace-project-actions .workspace-save-status {
+  height: 40px;
+}
+
+.workspace-save-status {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 190px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-tertiary, #7c8aa5);
+  font: 11px/16px var(--datavisool-font-family, sans-serif);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.workspace-save-failed { color: #ff8b8b; cursor: pointer; }
+.workspace-save-saved { color: #83d7ac; }
+.workspace-save-saving { color: #9bc1ff; }
+
+.workspace-save-indicator {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.workspace-save-saving .workspace-save-indicator { animation: workspace-save-pulse 1s ease-in-out infinite; }
+
+.workspace-action-preview {
+  width: auto;
+  gap: 7px;
+  padding: 0 10px;
+}
+
+.workspace-action-preview > span:last-child,
+.workspace-publish-button > span:last-child { font-size: 12px; }
+
+.workspace-publish-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid rgba(74, 144, 255, 0.44);
+  border-radius: 9px;
+  background: linear-gradient(135deg, #4c8dff, #3b82f6);
+  color: white;
+  font: 600 12px/20px var(--datavisool-font-family, sans-serif);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.18);
+}
+
+.workspace-publish-button:hover {
+  background: linear-gradient(135deg, #5c9aff, #4a90ff);
+}
+
+.workspace-more-menu .workspace-popover-trigger {
+  border-color: var(--border-default, rgba(255, 255, 255, 0.08));
+  background: rgba(17, 26, 46, 0.96);
+}
+
+@keyframes workspace-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes workspace-save-pulse {
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 1199px) {
+  .workspace-save-status { display: none; }
+  .workspace-project-name { max-width: 120px; }
+}
+
+@media (max-width: 959px) {
+  .workspace-action-preview > span:last-child,
+  .workspace-publish-button > span:last-child { display: none; }
+  .workspace-project-actions { gap: 3px; }
+  .workspace-publish-button { width: 40px; padding: 0; }
+}
+
+@media (max-width: 700px) {
+  .workspace-project-identity { max-width: 48vw; height: 40px; }
+  .workspace-project-name { max-width: 28vw; }
+  .workspace-project-actions { height: 40px; }
+  .workspace-project-actions .workspace-icon-button,
+  .workspace-project-actions .workspace-publish-button { width: 36px; height: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-popover-panel { animation: none; }
+  .workspace-icon-button,
+  .workspace-save-saving .workspace-save-indicator { transition: none; animation: none; }
+}

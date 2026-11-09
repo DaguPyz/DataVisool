@@ -1,0 +1,178 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.templateMarket {
+  --template-bg: #0a1020;
+  --template-surface: #111a2e;
+  --template-surface-raised: #162238;
+  --template-border: rgba(255, 255, 255, 0.08);
+  --template-border-subtle: rgba(255, 255, 255, 0.06);
+  --template-text: #f3f7ff;
+  --template-text-secondary: #aab7d1;
+
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  color: var(--template-text);
+  background: var(--template-bg);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.hero {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--template-border-subtle);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #9bbdff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.title {
+  margin: 12px 0 8px;
+  color: var(--template-text);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.subtitle {
+  max-width: 760px;
+  margin: 0;
+  color: var(--template-text-secondary);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.section {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--template-border);
+  border-radius: 16px;
+  background: var(--template-surface);
+}
+
+.sectionTitle {
+  margin-bottom: 16px;
+  color: var(--template-text);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 26px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.featureCard {
+  min-width: 0;
+  min-height: 132px;
+  padding: 16px;
+  border: 1px solid var(--template-border-subtle);
+  border-radius: 12px;
+  background: var(--template-surface-raised);
+}
+
+.featureTitle {
+  margin-bottom: 8px;
+  color: var(--template-text);
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 22px;
+}
+
+.featureDescription {
+  color: var(--template-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.roadmap {
+  display: grid;
+  gap: 10px;
+}
+
+.roadmapItem {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--template-border-subtle);
+  border-radius: 12px;
+  background: var(--template-surface-raised);
+}
+
+.roadmapIndex {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 9px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #9bbdff;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.roadmapText {
+  color: var(--template-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+@media (max-width: 1120px) {
+  .panel {
+    grid-template-columns: 1fr;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .templateMarket {
+    gap: 20px;
+    padding: 20px 16px;
+  }
+
+  .hero {
+    padding-bottom: 20px;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .panel,
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 20px;
+  }
+}

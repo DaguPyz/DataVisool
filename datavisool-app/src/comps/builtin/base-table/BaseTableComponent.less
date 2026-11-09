@@ -1,0 +1,71 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+
+.base-table {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .table-container {
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    z-index: 2;
+    top: -1px;
+  }
+
+  .table-content {
+    overflow: hidden;
+    height: calc(100% - 2px);
+    display: flex;
+    flex-direction: column;
+
+    .base-table-header-table,
+    .base-table-body-table {
+      position: relative;
+      width: 100%;
+      text-align: center;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    .base-table-header-table {
+      flex: 0 0 auto;
+      z-index: 3;
+
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        transform: translateZ(0);
+      }
+
+      thead th {
+        position: relative;
+        z-index: 3;
+        background: inherit;
+      }
+    }
+
+    .base-table-body-viewport {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+
+      .base-table-body-table {
+        min-height: 100%;
+      }
+
+      .scroll-body {
+        position: relative;
+        z-index: 0;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+}

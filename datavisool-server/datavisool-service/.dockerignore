@@ -1,0 +1,7 @@
+../.idea
+.mvn
+logs
+src
+.gitignore
+LICENSE
+README.md

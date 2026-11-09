@@ -1,0 +1,119 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.bp-zoom-controls {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: 44px;
+  gap: 4px;
+  padding: 4px;
+  color: var(--text-secondary, #aab7d1);
+  background: var(--bg-surface-1, #111a2e);
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.12));
+  border-radius: 13px;
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.bp-zoom-controls button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0;
+  color: var(--text-secondary, #aab7d1);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font: inherit;
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary, #f3f7ff);
+    background: var(--bg-hover, #1a2740);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #3b82f6);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    color: var(--text-disabled, #5e6a82);
+    cursor: not-allowed;
+    opacity: 0.56;
+  }
+}
+
+.bp-zoom-icon-button {
+  width: 34px;
+}
+
+.bp-zoom-value {
+  display: block;
+  flex: 0 0 56px;
+  width: 56px;
+  text-align: center;
+}
+
+.bp-zoom-value input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 1px;
+  color: var(--text-primary, #f3f7ff);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  outline: none;
+  box-sizing: border-box;
+  font: 500 12px/20px var(--datavisool-font-family, sans-serif);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+
+  &:focus:not(:disabled) {
+    background: var(--bg-surface-2, #162238);
+    border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+  }
+
+  &:disabled {
+    color: var(--text-disabled, #5e6a82);
+  }
+}
+
+.bp-zoom-divider {
+  flex: 0 0 1px;
+  width: 1px;
+  height: 24px;
+  margin: 0 2px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+.bp-zoom-controls .bp-zoom-fit-button {
+  min-width: 70px;
+  gap: 5px;
+  padding: 0 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.bp-zoom-controls .bp-zoom-reset-button {
+  min-width: 48px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-zoom-controls button {
+    transition: none;
+  }
+}

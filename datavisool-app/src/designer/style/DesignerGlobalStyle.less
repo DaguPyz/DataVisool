@@ -1,0 +1,255 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+@import './DesignerDialogTheme.less';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #e3e3e3;
+
+  * {
+    user-select: none;
+  }
+}
+
+.designer-load-error {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #0a1020;
+  color: #f3f7ff;
+  font-family: var(--datavisool-font-family, sans-serif);
+  text-align: center;
+}
+
+.designer-load-error-content {
+  max-width: 420px;
+}
+
+.designer-load-error-content h1 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.designer-load-error-content p {
+  margin: 0;
+  color: #aab7d1;
+  font-size: 14px;
+}
+
+.designer-load-error-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.designer-load-error-actions button {
+  min-width: 96px;
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: #162238;
+  color: #f3f7ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.designer-load-error-actions .designer-load-error-primary {
+  border-color: rgba(74, 144, 255, 0.44);
+  background: #3b82f6;
+}
+
+.datavisool-designer-main-editor {
+  --datavisool-titlebar-height: 0px;
+}
+
+.datavisool-designer {
+  --bg-canvas: #0a1020;
+  --bg-sidebar: #0b1222;
+  --bg-surface-1: #111a2e;
+  --bg-surface-2: #162238;
+  --bg-hover: #1a2740;
+  --bg-active: #1d3155;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(59, 130, 246, 0.45);
+  --text-primary: #f3f7ff;
+  --text-secondary: #aab7d1;
+  --text-tertiary: #7c8aa5;
+  --text-disabled: #5e6a82;
+  --primary: #3b82f6;
+  --primary-hover: #4a90ff;
+  --teal: #22c7b8;
+  --purple: #8b5cf6;
+  --orange: #f5b544;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --datavisool-color-bg-app: var(--bg-canvas);
+  --datavisool-color-bg-panel: var(--bg-sidebar);
+  --datavisool-color-bg-card: var(--bg-surface-1);
+  --datavisool-color-bg-elevated: var(--bg-surface-2);
+  --datavisool-color-bg-muted: var(--bg-hover);
+  --datavisool-color-primary: var(--primary);
+  --datavisool-color-primary-end: var(--primary);
+  --datavisool-color-accent: var(--teal);
+  --datavisool-color-info: var(--info);
+  --datavisool-color-success: var(--success);
+  --datavisool-color-warning: var(--warning);
+  --datavisool-color-danger: var(--danger);
+  --datavisool-color-text-primary: var(--text-primary);
+  --datavisool-color-text-secondary: var(--text-secondary);
+  --datavisool-color-text-tertiary: var(--text-tertiary);
+  --datavisool-color-text-disabled: var(--text-disabled);
+  --datavisool-color-border: var(--border-default);
+  --datavisool-color-border-strong: var(--border-strong);
+  --datavisool-color-ring: var(--border-focus);
+  --datavisool-gradient-primary: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  --datavisool-gradient-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  --datavisool-gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  --datavisool-shadow-panel: 0 12px 32px rgba(0, 0, 0, 0.32);
+  --datavisool-shadow-glow-blue: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+  --datavisool-shadow-glow-purple: none;
+  --designer-panel-bg: var(--bg-sidebar);
+  --designer-panel-border: var(--border-subtle);
+  --designer-grid-line: rgba(255, 255, 255, 0.028);
+  --designer-grid-dot: rgba(255, 255, 255, 0.08);
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--datavisool-font-family);
+
+  .frame-layout,
+  .fl-body,
+  .fl-crf-box,
+  .fl-cr-box,
+  .fl-content,
+  .datavisool-frame-layout,
+  .datavisool-frame-body,
+  .datavisool-frame-main,
+  .datavisool-frame-main-body,
+  .datavisool-frame-content {
+    min-height: 0;
+  }
+
+  .fl-left,
+  .fl-right,
+  .datavisool-frame-side {
+    flex-shrink: 0;
+  }
+
+  .datavisool-frame-layout,
+  .datavisool-frame-header,
+  .datavisool-frame-footer,
+  .datavisool-frame-side {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .fl-content,
+  .datavisool-frame-content {
+    position: relative;
+    background: var(--bg-canvas);
+  }
+
+  .datavisool-event-container {
+    width: 100%;
+    height: 100%;
+    outline: none;
+  }
+
+  .designer-workspace-shell {
+    --datavisool-workspace-panel: var(--bg-surface-1);
+    --datavisool-workspace-border: var(--border-default);
+    --datavisool-workspace-text-secondary: var(--text-secondary);
+  }
+
+}
+
+.designer-ds-container {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-canvas, #0a1020);
+  position: relative;
+
+  .designer-ds-content {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 0 0 1px var(--border-default, rgba(255, 255, 255, 0.08));
+    background: var(--bg-surface-2, #162238);
+    position: absolute;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px var(--border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  }
+
+  .canvas-transparent {
+    background-image: linear-gradient(45deg, #3a3a3a 25%, transparent 0, transparent 75%, #3a3a3a 0), linear-gradient(45deg, #3a3a3a 25%, transparent 0, transparent 75%, #3a3a3a 0);
+    background-color: #4a4a4a;
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+  }
+}
+
+* {
+  scrollbar-color: rgba(113, 130, 190, 0.28) transparent;
+}
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: var(--primary, #3b82f6);
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 4px;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  box-shadow: none;
+  opacity: 1.0;
+  transform: rotate(0deg) translate(0px, 0px);
+}
+
+#nprogress .spinner {
+  display: none;
+}

@@ -1,0 +1,110 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.project-setting {
+  --project-setting-bg: #0a1020;
+  --project-setting-border-subtle: rgba(255, 255, 255, 0.06);
+  --project-setting-text: #f3f7ff;
+  --project-setting-text-secondary: #aab7d1;
+  --project-setting-primary: #3b82f6;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  overflow: hidden;
+  color: var(--project-setting-text);
+  background: var(--project-setting-bg);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+
+  .project-setting-header {
+    flex: 0 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .setting-title {
+      color: var(--project-setting-text);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 40px;
+    }
+  }
+
+  .project-setting-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .project-setting-tabs {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .project-setting-tabs .datavisool-tabs-nav {
+      flex: 0 0 auto;
+      gap: 6px;
+      border-bottom-color: var(--project-setting-border-subtle);
+    }
+
+    .project-setting-tabs .datavisool-tabs-tab {
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--project-setting-text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      transition: color 140ms ease-out;
+
+      &:hover {
+        color: var(--project-setting-text);
+      }
+
+      &:focus-visible {
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+      }
+    }
+
+    .project-setting-tabs .datavisool-tabs-tab-active {
+      color: var(--project-setting-primary);
+      font-weight: 600;
+    }
+
+    .project-setting-tabs .datavisool-tabs-tab-active::after {
+      background: var(--project-setting-primary);
+    }
+
+    .project-setting-tabs .datavisool-tabs-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding-top: 16px;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .project-setting {
+    padding: 16px;
+
+    .project-setting-header {
+      margin-bottom: 20px;
+    }
+
+    .project-setting-header .setting-title {
+      font-size: 28px;
+      line-height: 36px;
+    }
+  }
+}

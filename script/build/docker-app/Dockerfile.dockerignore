@@ -1,0 +1,9 @@
+# Only validated artifacts and the selected runtime files enter Docker.
+**
+!server.jar
+!component-docs/
+!component-docs/**
+!entrypoint.sh
+!healthcheck.sh
+!LICENSE
+!THIRD_PARTY_NOTICES.txt

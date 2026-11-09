@@ -1,0 +1,229 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.sub-project {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  background: var(--bg-surface-1);
+  font-family: var(--datavisool-font-family);
+
+  &-header {
+    flex-shrink: 0;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  &-search,
+  &-edit-input {
+    min-width: 0;
+
+    .datavisool-input-shell {
+      width: 100%;
+      background: var(--datavisool-control-bg);
+      border: 1px solid var(--border-default);
+      box-shadow: none;
+
+      &:hover {
+        border-color: var(--border-strong);
+      }
+
+      &:focus-within {
+        border-color: var(--border-focus);
+        box-shadow: var(--shadow-focus);
+      }
+    }
+  }
+
+  &-search .datavisool-input-shell {
+    height: 40px;
+    border-radius: var(--radius-md);
+  }
+
+  &-edit-input {
+    flex: 1;
+
+    .datavisool-input-shell {
+      height: 32px;
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  &-list {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-height: 0;
+    padding: var(--space-4);
+    overflow: auto;
+  }
+
+  &-item {
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    min-height: 72px;
+    padding: var(--space-3) var(--space-4);
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface-2);
+    cursor: pointer;
+    transition: border-color 140ms ease-out, background-color 140ms ease-out;
+
+    &:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-hover);
+    }
+
+    &-active,
+    &-active:hover {
+      border-color: var(--border-focus);
+      background: var(--bg-active);
+
+      .sub-project-item-indicator {
+        background: var(--primary);
+      }
+    }
+  }
+
+  &-item-indicator {
+    flex: 0 0 auto;
+    width: 2px;
+    height: 32px;
+    border-radius: 1px;
+    background: var(--border-strong);
+    transition: background-color 140ms ease-out;
+  }
+
+  &-item-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &-item-name {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-item-desc {
+    margin-top: var(--space-1);
+    overflow: hidden;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-item-delete {
+    flex: 0 0 auto;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-tertiary);
+    transition: color 140ms ease-out, background-color 140ms ease-out;
+
+    .i-icon {
+      display: flex;
+    }
+
+    &:hover {
+      color: var(--danger);
+      background: var(--bg-active);
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  &-empty {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-2);
+    text-align: center;
+  }
+
+  &-empty-title {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  &-empty-desc {
+    max-width: 224px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  &-empty-action {
+    margin-top: var(--space-2);
+    height: 40px;
+    padding: 0 var(--space-4);
+    border-color: transparent;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    box-shadow: none;
+    color: var(--primary-foreground);
+    font-size: 14px;
+    font-weight: 500;
+
+    .i-icon {
+      display: flex;
+    }
+
+    &:hover {
+      border-color: transparent;
+      background: var(--primary-hover);
+      filter: none;
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &-item,
+    &-item-indicator,
+    &-item-delete,
+    &-empty-action {
+      transition: none;
+      transform: none;
+    }
+  }
+}

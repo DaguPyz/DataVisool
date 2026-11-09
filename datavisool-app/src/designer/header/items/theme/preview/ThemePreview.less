@@ -1,0 +1,225 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.datavisool-theme-preview {
+  min-width: 0;
+
+  .theme-preview-heading {
+    margin-bottom: 8px;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+    }
+
+    p {
+      margin: 4px 0 0;
+      overflow: hidden;
+      color: var(--text-secondary, #aab7d1);
+      font-size: 12px;
+      line-height: 18px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .theme-preview-dashboard {
+    padding: 20px;
+    border: 1px solid var(--preview-background);
+    border-radius: 12px;
+    color: var(--preview-text);
+    background: var(--bg-canvas, #0a1020);
+
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 20px;
+
+      &::before {
+        width: 3px;
+        height: 14px;
+        flex: 0 0 auto;
+        border-radius: 1px;
+        background: var(--preview-main);
+        content: '';
+      }
+    }
+
+    .theme-preview-board-title {
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+
+  .theme-preview-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 20px 0;
+  }
+
+  .theme-preview-metric {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border-right: 1px solid var(--preview-background);
+
+    &:last-child {
+      border-right: none;
+    }
+
+    strong {
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 32px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    span {
+      color: var(--preview-secondary);
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  .theme-preview-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .theme-preview-trend,
+  .theme-preview-sources {
+    min-width: 0;
+  }
+
+  .theme-preview-sources {
+    padding-left: 16px;
+    border-left: 1px solid var(--preview-background);
+  }
+
+  .theme-preview-line-chart {
+    width: 100%;
+    height: 152px;
+    margin-top: 8px;
+  }
+
+  .theme-preview-source-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(104px, 1fr);
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .theme-preview-pie-chart {
+    width: 100%;
+    height: 152px;
+  }
+
+  .theme-preview-legend {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      display: grid;
+      grid-template-columns: 8px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .theme-preview-palette {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    background: var(--bg-surface-2, #162238);
+  }
+
+  .theme-preview-color {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+
+    span,
+    code {
+      overflow: hidden;
+      font-size: 11px;
+      line-height: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    code {
+      color: var(--text-secondary, #aab7d1);
+      font-family: inherit;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .theme-preview-swatch {
+    height: 32px;
+    margin-bottom: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+  }
+
+  .theme-preview-note {
+    margin: 8px 0 0;
+    color: var(--text-secondary, #aab7d1);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  @media (max-width: 640px) {
+    .theme-preview-dashboard {
+      padding: 16px;
+    }
+
+    .theme-preview-charts {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .theme-preview-sources {
+      padding: 16px 0 0;
+      border-top: 1px solid var(--preview-background);
+      border-left: none;
+    }
+
+    .theme-preview-metric strong {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .theme-preview-palette {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px 12px;
+      padding: 12px;
+    }
+  }
+}

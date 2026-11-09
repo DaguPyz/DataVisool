@@ -1,0 +1,36 @@
+# Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+name: ${DATAVISOOL_PROJECT_NAME:-datavisool-web-allinone}
+services:
+  app:
+    image: ${DATAVISOOL_IMAGE:?请在 .env 中设置 DATAVISOOL_IMAGE}
+    pull_policy: never
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 120s
+    ports:
+      - "${APP_BIND_ADDRESS:-0.0.0.0}:${APP_PORT:-8080}:8080"
+      - "${MYSQL_BIND_ADDRESS:-127.0.0.1}:${MYSQL_PORT:-3306}:3306"
+    environment:
+      DATAVISOOL_MYSQL_HOST_PORT_ENABLED: "1"
+      DB_NAME: ${DB_NAME:-}
+      DB_USER: ${DB_USER:-}
+      DB_PASSWORD: ${DB_PASSWORD:-}
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:--XX:MaxRAMPercentage=50.0 -Duser.timezone=Asia/Shanghai}
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./config/application.yml
+        target: /config/application.yml
+        read_only: true
+        bind:
+          create_host_path: false
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"

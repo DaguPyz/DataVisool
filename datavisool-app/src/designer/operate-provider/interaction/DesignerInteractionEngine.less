@@ -1,0 +1,151 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.designer-ds-content {
+  touch-action: none;
+  user-select: none;
+}
+
+.datavisool-interaction-selection-box {
+  z-index: 10000;
+  border: 1px solid rgba(40, 230, 255, 0.95);
+  background: rgba(40, 230, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(40, 230, 255, 0.18);
+  pointer-events: none;
+}
+
+.datavisool-interaction-selection-box--contain {
+  border-color: rgba(255, 190, 72, 0.98);
+  border-style: dashed;
+  background: rgba(255, 190, 72, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(255, 190, 72, 0.18);
+}
+
+.datavisool-interaction-selection-box--intersect {
+  border-style: solid;
+}
+
+.datavisool-interaction-readonly-box {
+  border: 1px dashed #ff684f;
+  background: rgba(255, 75, 41, 0.04);
+  box-shadow:
+          0 0 0 1px rgba(255, 75, 41, 0.18),
+          0 0 14px rgba(255, 75, 41, 0.16);
+}
+
+.datavisool-interaction-resize-box {
+  border: 1px solid #28e6ff;
+  box-shadow:
+          0 0 0 1px rgba(40, 230, 255, 0.20),
+          0 0 18px rgba(40, 230, 255, 0.22);
+}
+
+.datavisool-interaction-resize-handle {
+  width: 7px;
+  height: 7px;
+  border: none;
+  border-radius: 1px;
+  background: #28e6ff;
+  box-shadow: 0 0 0 1px rgba(6, 12, 28, 0.78);
+}
+
+.datavisool-interaction-resize-handle--n,
+.datavisool-interaction-resize-handle--s {
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+}
+
+.datavisool-interaction-resize-handle--e,
+.datavisool-interaction-resize-handle--w {
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: ew-resize;
+}
+
+.datavisool-interaction-resize-handle--n {
+  top: -4px;
+}
+
+.datavisool-interaction-resize-handle--s {
+  bottom: -4px;
+}
+
+.datavisool-interaction-resize-handle--e {
+  right: -4px;
+}
+
+.datavisool-interaction-resize-handle--w {
+  left: -4px;
+}
+
+.datavisool-interaction-resize-handle--ne {
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.datavisool-interaction-resize-handle--nw {
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.datavisool-interaction-resize-handle--se {
+  right: -4px;
+  bottom: -4px;
+  cursor: nwse-resize;
+}
+
+.datavisool-interaction-resize-handle--sw {
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+.datavisool-interaction-rotate-handle {
+  left: 50%;
+  top: -28px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(40, 230, 255, 0.95);
+  border-radius: 50%;
+  background: #11182d;
+  box-shadow: 0 0 0 1px rgba(6, 12, 28, 0.78);
+  transform: translateX(-50%);
+  cursor: grab;
+}
+
+.datavisool-interaction-rotate-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 9px;
+  width: 1px;
+  height: 18px;
+  background: rgba(40, 230, 255, 0.72);
+  transform: translateX(-50%);
+}
+
+.datavisool-interaction-snap-guide {
+  filter: drop-shadow(0 0 4px rgba(80, 135, 246, 0.45));
+  pointer-events: none;
+}
+
+.datavisool-interaction-snap-guide--x {
+  border-left: 1px solid #5087f6;
+}
+
+.datavisool-interaction-snap-guide--y {
+  border-top: 1px solid #5087f6;
+}
+
+.datavisool-interaction-snap-guide__label {
+  color: #dceaff;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}

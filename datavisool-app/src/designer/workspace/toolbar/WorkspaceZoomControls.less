@@ -1,0 +1,84 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.workspace-zoom-controls {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 4px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 13px;
+  background: rgba(17, 26, 46, 0.96);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  color: var(--text-secondary, #aab7d1);
+}
+
+.workspace-zoom-controls > .workspace-icon-button {
+  height: 100%;
+}
+
+.workspace-zoom-value {
+  width: 60px;
+  text-align: center;
+}
+
+.workspace-zoom-value input {
+  width: 100%;
+  padding: 4px 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-primary, #f3f7ff);
+  font: 500 12px/20px var(--datavisool-font-family, sans-serif);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.workspace-zoom-value input:focus {
+  border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+  background: var(--bg-surface-2, #162238);
+}
+
+.workspace-zoom-divider {
+  height: 24px;
+  width: 1px;
+  margin: 0 2px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+.workspace-fit-button {
+  width: auto;
+  min-width: 76px;
+  padding: 0 9px;
+  gap: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.workspace-reset-button {
+  width: auto;
+  padding: 0 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 700px) {
+  .workspace-zoom-controls {
+    left: 0;
+    transform: none;
+  }
+
+  .workspace-fit-button > span:last-child {
+    display: none;
+  }
+
+  .workspace-fit-button {
+    min-width: 38px;
+    padding: 0;
+  }
+}

@@ -1,0 +1,415 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.cover-config-modal {
+  --primary: #3b82f6;
+  --text-primary: #f3f7ff;
+  --text-secondary: #aab7d1;
+  --text-tertiary: #7c8aa5;
+  --text-disabled: #5e6a82;
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --danger: #ef4444;
+
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-family: var(--datavisool-font-family);
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+
+  .i-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+
+    svg {
+      display: block;
+    }
+  }
+
+  .datavisool-dialog-header {
+    height: auto;
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-surface-1);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .datavisool-dialog-title {
+    min-width: 0;
+    color: var(--text-primary);
+    font-family: inherit;
+    white-space: normal;
+  }
+
+  .datavisool-dialog-close {
+    width: 32px;
+    height: 32px;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    transition: background-color 140ms ease-out, color 140ms ease-out;
+
+    svg {
+      stroke-width: 1.75px;
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+      border-color: var(--border-default);
+    }
+
+    &:focus-visible {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  .datavisool-dialog-body {
+    display: flex;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--bg-surface-1);
+  }
+
+  .cover-config-title {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .cover-config-title-main {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+
+  .cover-config-title-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .cover-config-content {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .cover-upload-section {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .cover-upload {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: 0;
+    overflow: hidden;
+    background: var(--bg-canvas);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: none;
+    transition: background-color 140ms ease-out, border-color 140ms ease-out;
+
+    &:hover,
+    &.datavisool-upload-dragger-dragging {
+      background: var(--bg-hover);
+      border-color: var(--border-focus);
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      border-color: var(--border-focus);
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+
+    &.has-file {
+      border-style: solid;
+      border-color: var(--border-default);
+
+      &:hover,
+      &:focus-visible,
+      &.datavisool-upload-dragger-dragging {
+        border-color: var(--border-focus);
+      }
+    }
+
+    .datavisool-upload-input,
+    .datavisool-upload-list {
+      display: none;
+    }
+
+    .datavisool-upload-drag-container {
+      width: 100%;
+      min-height: 0;
+      gap: 0;
+      padding: 0;
+    }
+  }
+
+  .cover-drop-zone {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 288px;
+    aspect-ratio: 16 / 9;
+
+    &.has-file {
+      min-height: 0;
+    }
+  }
+
+  .cover-empty-layout {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .cover-upload-icon {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+  }
+
+  .cover-upload-title {
+    margin-top: var(--space-4);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .cover-upload-btn {
+    display: inline-flex;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-4);
+    padding: 0 var(--space-4);
+    color: var(--primary-foreground);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    background: var(--primary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    transition: background-color 140ms ease-out;
+  }
+
+  .cover-upload:hover .cover-upload-btn,
+  .cover-upload:focus-visible .cover-upload-btn {
+    background: var(--primary-hover);
+  }
+
+  .upload-meta {
+    margin-top: var(--space-3);
+    color: var(--text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .cover-preview-image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cover-preview-badge {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    display: inline-flex;
+    height: 32px;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+    color: #f3f7ff;
+    font-size: 12px;
+    line-height: 18px;
+    background: rgba(10, 16, 32, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+  }
+
+  .cover-file-bar {
+    display: flex;
+    min-height: 44px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .cover-file-info {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .cover-file-name {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cover-file-meta {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .cover-file-actions {
+    display: flex;
+    flex: 0 0 auto;
+  }
+
+  .datavisool-button {
+    height: 40px;
+    padding: 0 var(--space-4);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    transform: none;
+    transition: background-color 140ms ease-out, color 140ms ease-out;
+
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      color: var(--text-disabled);
+      background: var(--bg-surface-2);
+      border-color: var(--border-default);
+      opacity: 1;
+      cursor: not-allowed;
+    }
+  }
+
+  .cover-text-btn.danger {
+    min-width: 0;
+    padding: 0 var(--space-3);
+    color: var(--danger);
+    background: transparent;
+    border-color: transparent;
+
+    &:hover {
+      background: color-mix(in srgb, var(--danger) 8%, transparent);
+      border-color: transparent;
+    }
+  }
+
+  .cover-action-section {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .cover-cancel-btn {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border-default);
+
+    &:hover:not(:disabled) {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+  }
+
+  .cover-save-btn:not(:disabled) {
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border-color: transparent;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .datavisool-dialog-header,
+    .cover-upload-section,
+    .cover-action-section {
+      padding: var(--space-4);
+    }
+
+    .cover-empty-layout {
+      padding: var(--space-4);
+    }
+
+    .cover-action-section .datavisool-button {
+      min-width: 0;
+      flex: 1;
+    }
+  }
+
+  @media (max-height: 600px) {
+    .datavisool-dialog-header,
+    .cover-upload-section {
+      padding: var(--space-4);
+    }
+
+    .cover-action-section {
+      padding: var(--space-3) var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .datavisool-dialog-close,
+    .cover-upload,
+    .cover-upload-btn,
+    .datavisool-button {
+      transition: none;
+    }
+  }
+}

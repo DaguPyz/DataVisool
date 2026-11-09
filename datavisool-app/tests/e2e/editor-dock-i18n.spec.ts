@@ -1,0 +1,6 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+import {test,expect} from '@playwright/test';
+import {setup,login,editor} from './editor-dock/support';
+setup();
+const entries=[['资源库','source-library',1],['图层','layer-list',2],['模板库','template-lib',3],['全局变量','global-variable',4],['子项目','sub-project',5],['AI驱动','ai-driven-card',-1]] as const;
+for(const [name,selector,index] of entries)test(`${name}英文界面不应残留中文`,async({page})=>{const auth=await login(page);await page.evaluate(()=>localStorage.setItem('datavisool-i18n-locale','en-US'));await editor(page,auth);if(index===-1)await page.locator('.ai-driven-button').click();else await page.locator('.designer-left-menus-top > button').nth(index).click();const panel=page.locator(`.${selector}`).first();await expect(panel).toBeVisible();if(selector==='template-lib'){const input=panel.locator('input');await input.fill('no-matching-template-928341');await input.press('Enter');await expect(panel.locator('.template-empty')).toBeVisible();} const text=await panel.evaluate(el=>{const copy=el.cloneNode(true) as HTMLElement;copy.querySelectorAll('.image-source-item,.video-source-item,.template-item').forEach(n=>n.remove());return copy.innerText;});expect(text).not.toMatch(/[\u3400-\u9fff]/);});

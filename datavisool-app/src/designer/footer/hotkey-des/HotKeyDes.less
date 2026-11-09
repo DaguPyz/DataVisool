@@ -1,0 +1,650 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.hotkey-modal {
+  // Dialog renders outside the designer, so keep its tokens scoped to this portal.
+  --datavisool-font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+  --datavisool-color-bg-surface-1: #111a2e;
+  --datavisool-color-bg-surface-2: #162238;
+  --datavisool-color-bg-hover: #1a2740;
+  --datavisool-color-bg-active: #1d3155;
+  --datavisool-color-border-subtle: rgba(255, 255, 255, 0.06);
+  --datavisool-color-border-default: rgba(255, 255, 255, 0.08);
+  --datavisool-color-border-strong: rgba(255, 255, 255, 0.12);
+  --datavisool-color-border-focus: rgba(59, 130, 246, 0.45);
+  --datavisool-color-text-primary: #f3f7ff;
+  --datavisool-color-text-secondary: #aab7d1;
+  --datavisool-color-text-tertiary: #7c8aa5;
+  --datavisool-color-text-disabled: #5e6a82;
+  --datavisool-color-primary: #3b82f6;
+  --datavisool-color-primary-hover: #4a90ff;
+  --datavisool-color-success: #22c55e;
+  --datavisool-color-danger: #ef4444;
+  --datavisool-control-bg: rgba(255, 255, 255, 0.03);
+  --datavisool-control-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+  --datavisool-overlay-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  max-width: calc(100vw - 48px);
+  max-height: 85vh;
+  overflow: hidden;
+  color: var(--datavisool-color-text-primary);
+  font-family: var(--datavisool-font-family);
+  background: var(--datavisool-color-bg-surface-1);
+  border: 1px solid var(--datavisool-color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--datavisool-overlay-shadow);
+
+  .datavisool-dialog-header {
+    height: auto;
+    min-height: 96px;
+    margin: 0;
+    padding: var(--space-6);
+    background: transparent;
+    border-bottom: 1px solid var(--datavisool-color-border-subtle);
+  }
+
+  .datavisool-dialog-title {
+    white-space: normal;
+  }
+
+  .datavisool-dialog-body {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+    background: transparent;
+  }
+
+  .datavisool-dialog-close {
+    align-self: flex-start;
+    width: 40px;
+    height: 40px;
+    color: var(--datavisool-color-text-secondary);
+    border: 1px solid var(--datavisool-color-border-default);
+    border-radius: var(--radius-md);
+    transition: color 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
+
+    svg {
+      stroke-width: 1.75;
+    }
+
+    &:hover {
+      color: var(--datavisool-color-text-primary);
+      background: var(--datavisool-color-bg-hover);
+      border-color: var(--datavisool-color-border-strong);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--datavisool-color-border-focus);
+      box-shadow: var(--datavisool-control-focus-shadow);
+    }
+  }
+}
+
+.hotkey-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.hotkey-title-main {
+  color: var(--datavisool-color-text-primary);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+.hotkey-title-sub {
+  color: var(--datavisool-color-text-tertiary);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.datavisool-hotkey-des {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-6);
+
+  .hotkey-overview {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .hotkey-description {
+    margin: 0;
+    color: var(--datavisool-color-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .hotkey-platform {
+    color: var(--datavisool-color-text-primary);
+    font-weight: 500;
+  }
+
+  .hotkey-count {
+    flex-shrink: 0;
+    color: var(--datavisool-color-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hotkey-toolbar {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .hotkey-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    color: var(--datavisool-color-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+
+    > span {
+      flex-shrink: 0;
+    }
+
+    input {
+      width: 280px;
+      min-width: 0;
+      height: 40px;
+      padding: 0 var(--space-3);
+      color: var(--datavisool-color-text-primary);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+      background: var(--datavisool-control-bg);
+      border: 1px solid var(--datavisool-color-border-default);
+      border-radius: var(--radius-md);
+      transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+
+      &:hover {
+        border-color: var(--datavisool-color-border-strong);
+      }
+
+      &:focus {
+        border-color: var(--datavisool-color-border-focus);
+        box-shadow: var(--datavisool-control-focus-shadow);
+      }
+
+      &::placeholder {
+        color: var(--datavisool-color-text-tertiary);
+      }
+
+      &::-webkit-search-cancel-button {
+        cursor: pointer;
+        color-scheme: dark;
+      }
+    }
+  }
+
+  .hotkey-save-state {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+    color: var(--datavisool-color-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+
+    &::before {
+      width: 6px;
+      height: 6px;
+      content: '';
+      background: var(--datavisool-color-text-tertiary);
+      border-radius: 50%;
+    }
+
+    button {
+      padding: var(--space-1);
+      color: var(--datavisool-color-primary-hover);
+      font: inherit;
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-radius: var(--radius-sm);
+
+      &:hover {
+        color: var(--datavisool-color-text-primary);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--datavisool-color-border-focus);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .hotkey-save-state--pending::before,
+  .hotkey-save-state--saving::before {
+    background: var(--datavisool-color-primary);
+  }
+
+  .hotkey-save-state--saved::before {
+    background: var(--datavisool-color-success);
+  }
+
+  .hotkey-save-state[data-loading="true"]::before {
+    box-sizing: border-box;
+    width: 12px;
+    height: 12px;
+    background: transparent;
+    border: 2px solid var(--datavisool-color-border-strong);
+    border-top-color: var(--datavisool-color-primary);
+    animation: hotkey-save-spin 800ms linear infinite;
+  }
+
+  .hotkey-save-state--error {
+    color: var(--datavisool-color-danger);
+
+    &::before {
+      background: currentColor;
+    }
+  }
+
+  .hotkey-reset-all {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .hotkey-notice,
+  .hotkey-capture-tip {
+    flex-shrink: 0;
+    padding: var(--space-3) var(--space-4);
+    color: var(--datavisool-color-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+    background: var(--datavisool-color-bg-surface-2);
+    border: 1px solid var(--datavisool-color-border-default);
+    border-radius: var(--radius-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .hotkey-notice--error {
+    color: var(--datavisool-color-danger);
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .hotkey-table-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--datavisool-color-bg-surface-1);
+    border: 1px solid var(--datavisool-color-border-default);
+    border-radius: var(--radius-lg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--datavisool-color-border-strong) transparent;
+
+    &:focus-visible {
+      outline: 2px solid var(--datavisool-color-border-focus);
+      outline-offset: 2px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--datavisool-color-border-strong);
+      border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  .hotkey-des-table {
+    width: 100%;
+    min-width: 880px;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: separate;
+
+    .table-header {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      box-sizing: border-box;
+      height: 44px;
+      padding: 0 var(--space-4);
+      color: var(--datavisool-color-text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 20px;
+      text-align: left;
+      background: var(--datavisool-color-bg-surface-2);
+      border-bottom: 1px solid var(--datavisool-color-border-default);
+
+      &:first-child {
+        width: 64px;
+        text-align: center;
+      }
+
+      &:nth-child(2) {
+        width: 22%;
+      }
+
+      &:nth-child(4) {
+        width: 88px;
+      }
+
+      &:last-child {
+        width: 232px;
+        text-align: right;
+      }
+    }
+
+    .table-row {
+      transition: background-color 160ms ease-out;
+
+      &:hover {
+        background: var(--datavisool-color-bg-hover);
+      }
+
+      &:last-child .table-cell {
+        border-bottom: none;
+      }
+    }
+
+    .table-row--editing {
+      background: var(--datavisool-color-bg-active);
+
+      &:hover {
+        background: var(--datavisool-color-bg-active);
+      }
+    }
+
+    .table-row--disabled .hotkey-shortcut kbd {
+      color: var(--datavisool-color-text-disabled);
+      background: transparent;
+      border-style: dashed;
+    }
+
+    .table-cell {
+      box-sizing: border-box;
+      height: 56px;
+      padding: var(--space-2) var(--space-4);
+      color: var(--datavisool-color-text-primary);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      vertical-align: middle;
+      border: none;
+      border-bottom: 1px solid var(--datavisool-color-border-subtle);
+    }
+
+    .hotkey-index {
+      color: var(--datavisool-color-text-tertiary);
+      font-size: 12px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hotkey-command {
+      overflow-wrap: anywhere;
+    }
+
+    .hotkey-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+
+      > .hotkey-action-button {
+        padding: 0 var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+    }
+
+    .hotkey-empty {
+      height: 160px;
+      color: var(--datavisool-color-text-tertiary);
+      text-align: center;
+    }
+  }
+
+  .hotkey-action-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    color: var(--datavisool-color-text-secondary);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--datavisool-color-border-default);
+    border-radius: var(--radius-md);
+    transition: color 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
+
+    &:hover:not(:disabled) {
+      color: var(--datavisool-color-text-primary);
+      background: var(--datavisool-color-bg-hover);
+      border-color: var(--datavisool-color-border-strong);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--datavisool-color-border-focus);
+      box-shadow: var(--datavisool-control-focus-shadow);
+    }
+
+    &:disabled {
+      color: var(--datavisool-color-text-disabled);
+      cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.02);
+      border-color: var(--datavisool-color-border-subtle);
+    }
+  }
+
+  .hotkey-action-button--edit {
+    color: var(--datavisool-color-primary-hover);
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .hotkey-action-button--danger {
+    color: var(--datavisool-color-danger);
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+
+    &:hover:not(:disabled) {
+      color: var(--datavisool-color-danger);
+      background: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.32);
+    }
+  }
+
+  .hotkey-status {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 24px;
+    padding: 0 10px;
+    color: var(--datavisool-color-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 999px;
+  }
+
+  .hotkey-status--custom {
+    color: var(--datavisool-color-primary-hover);
+    background: rgba(59, 130, 246, 0.14);
+  }
+
+  .hotkey-status--disabled {
+    color: var(--datavisool-color-text-disabled);
+  }
+
+  .hotkey-readonly {
+    color: var(--datavisool-color-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .hotkey-recorder {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    outline: none;
+
+    > .hotkey-action-button {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  .hotkey-recorder-preview {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .hotkey-recorder-placeholder {
+    color: var(--datavisool-color-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .hotkey-recorder-message {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    grid-row: 2;
+    color: var(--datavisool-color-text-secondary);
+    font-size: 12px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+  }
+
+  .hotkey-capture-tip {
+    border-left: 2px solid var(--datavisool-color-primary);
+  }
+
+  .hotkey-shortcut,
+  .hotkey-key-fragment {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .hotkey-shortcut {
+    flex-wrap: wrap;
+  }
+
+  .hotkey-plus {
+    color: var(--datavisool-color-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 28px;
+    min-height: 28px;
+    padding: var(--space-1) var(--space-2);
+    color: var(--datavisool-color-text-secondary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+    background: var(--datavisool-color-bg-surface-2);
+    border: 1px solid var(--datavisool-color-border-strong);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@media (max-width: 767px) {
+  .hotkey-modal {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+
+    .datavisool-dialog-header {
+      padding: var(--space-4);
+    }
+  }
+
+  .datavisool-hotkey-des {
+    padding: var(--space-4);
+
+    .hotkey-overview {
+      align-items: flex-start;
+    }
+
+    .hotkey-search {
+      width: 100%;
+
+      input {
+        flex: 1;
+        width: 0;
+      }
+    }
+
+    .hotkey-save-state {
+      margin-left: 0;
+    }
+
+    .hotkey-reset-all {
+      margin-left: auto;
+    }
+  }
+}
+
+@keyframes hotkey-save-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotkey-modal .datavisool-dialog-close,
+  .datavisool-hotkey-des .hotkey-search input,
+  .datavisool-hotkey-des .table-row,
+  .datavisool-hotkey-des .hotkey-action-button {
+    transition: none;
+  }
+
+  .datavisool-hotkey-des .hotkey-save-state[data-loading="true"]::before {
+    animation: none;
+  }
+}
