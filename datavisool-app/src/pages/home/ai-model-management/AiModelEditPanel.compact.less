@@ -1,0 +1,325 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.datavisool-dialog.ai-model-dialog-compact {
+  width: 60vw;
+  max-width: calc(100vw - 48px);
+  height: 80vh !important;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+}
+
+.datavisool-dialog-body.ai-model-dialog-compact-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden !important;
+  padding: clamp(16px, 2vh, 24px) clamp(20px, 2vw, 24px) !important;
+}
+
+.ai-model-dialog-compact [data-ai-model-close] {
+  top: clamp(12px, 1.6vh, 16px);
+  right: clamp(12px, 1.6vw, 16px);
+  width: 40px;
+  height: 40px;
+}
+
+.ai-model-dialog-compact [data-ai-model-header] {
+  flex: 0 0 auto;
+  min-height: clamp(64px, 8vh, 72px);
+  gap: 16px;
+  padding: 0 52px 16px 0;
+}
+
+.ai-model-dialog-scroll-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 122, 201, 0.72) transparent;
+}
+
+.ai-model-dialog-scroll-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-model-dialog-scroll-content::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(91, 122, 201, 0.72);
+}
+
+.ai-model-dialog-compact [data-ai-model-header-icon] {
+  width: clamp(48px, 5.6vh, 56px);
+  height: clamp(48px, 5.6vh, 56px);
+}
+
+.ai-model-dialog-compact [data-ai-model-title] {
+  font-size: clamp(20px, 2.6vh, 24px);
+  line-height: 32px;
+}
+
+.ai-model-dialog-compact [data-ai-model-subtitle] {
+  margin-top: 4px;
+  font-size: clamp(12px, 1.6vh, 14px);
+  line-height: 20px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ai-model-dialog-compact [data-ai-model-section] {
+  margin-bottom: clamp(12px, 1.6vh, 16px);
+  padding: clamp(16px, 1.8vh, 20px);
+  border-radius: 12px;
+}
+
+.ai-model-dialog-compact [data-ai-model-base-fields] {
+  gap: clamp(16px, 1.8vh, 20px);
+}
+
+.ai-model-dialog-compact [data-ai-model-base-row],
+.ai-model-dialog-compact [data-ai-model-grid] {
+  gap: clamp(12px, 1.5vw, 16px);
+}
+
+.ai-model-dialog-compact [data-ai-model-field-label] {
+  padding-bottom: 8px;
+}
+
+.ai-model-dialog-compact [data-ai-model-label] {
+  gap: 8px;
+  font-size: clamp(13px, 1.6vh, 14px);
+  line-height: 20px;
+}
+
+.ai-model-dialog-compact [data-ai-model-label] > span:first-child,
+.ai-model-dialog-compact [data-ai-model-label] > span:nth-child(3) {
+  width: 4px;
+  height: 4px;
+}
+
+.ai-model-dialog-compact [data-ai-model-label] svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-shell,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-textarea {
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell {
+  padding: 0 12px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell .datavisool-input-affix,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell .datavisool-input-suffix {
+  margin-right: 8px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell .datavisool-input-suffix {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell .datavisool-input-affix svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-input-shell .datavisool-input-native,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input .datavisool-number-input-native {
+  min-height: 38px;
+  height: 38px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-field,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-trigger,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-value {
+  min-height: 38px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-chevron {
+  right: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-select-option {
+  min-height: 36px;
+  font-size: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input[data-controls="false"] {
+  grid-template-columns: minmax(52px, 1fr) auto;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input[data-controls="false"] .datavisool-number-input-native {
+  padding-right: 10px;
+  padding-left: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input-affix {
+  height: 38px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input-prefix {
+  margin-inline: 14px 8px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input-suffix {
+  margin-inline: 8px 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-number-input-affix svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-textarea {
+  min-height: 88px;
+  padding: 12px 14px 28px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ai-model-dialog-compact [data-ai-model-field-message],
+.ai-model-dialog-compact [data-ai-model-field-help] {
+  min-height: 18px;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.ai-model-dialog-compact [data-ai-model-input-count],
+.ai-model-dialog-compact [data-ai-model-textarea-count] {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.ai-model-dialog-compact [data-ai-model-textarea-count] {
+  right: 20px;
+  bottom: 27px;
+}
+
+.ai-model-dialog-compact [data-ai-model-description-section] {
+  padding-bottom: 36px;
+}
+
+.ai-model-dialog-compact [data-ai-model-description-section] .datavisool-textarea {
+  min-height: 88px;
+  padding-bottom: 28px;
+}
+
+.ai-model-dialog-compact [data-ai-model-notice] {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.ai-model-dialog-compact [data-ai-model-temperature-box] {
+  min-height: 40px;
+  gap: 12px;
+  padding: 0 14px;
+  border-radius: 10px;
+}
+
+.ai-model-dialog-compact [data-ai-model-temperature-value] {
+  min-width: 34px;
+  padding-right: 12px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-slider-control {
+  --datavisool-slider-track-height: 3px;
+  --datavisool-slider-thumb-size: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-status] {
+  gap: 10px;
+  margin-top: 0;
+}
+
+.ai-model-dialog-compact [data-ai-model-status-card] {
+  min-height: 88px;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.ai-model-dialog-compact [data-ai-model-status-card-body] {
+  gap: 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.ai-model-dialog-compact [data-ai-model-status-card-icon] {
+  width: 40px;
+  height: 40px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-switch,
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-switch-track {
+  width: 56px;
+  min-width: 56px;
+  height: 32px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-switch-track {
+  --datavisool-switch-thumb-off: 4px;
+  --datavisool-switch-thumb-on: 28px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-switch-thumb {
+  width: 24px;
+  height: 24px;
+}
+
+.ai-model-dialog-compact [data-ai-model-edit-form] .datavisool-switch-label {
+  font-size: 14px;
+}
+
+.ai-model-dialog-compact [data-ai-model-actions] {
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.ai-model-dialog-compact [data-ai-model-actions] .datavisool-button {
+  width: 104px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-indent: 0;
+}
+
+.ai-model-dialog-compact [data-ai-model-action="submit"] {
+  width: 112px;
+}
+
+@media (max-width: 960px) {
+  .datavisool-dialog.ai-model-dialog-compact {
+    width: 92vw !important;
+  }
+
+  .ai-model-dialog-compact [data-ai-model-section] {
+    padding: 14px;
+  }
+
+  .ai-model-dialog-compact [data-ai-model-base-row],
+  .ai-model-dialog-compact [data-ai-model-grid],
+  .ai-model-dialog-compact [data-ai-model-status] {
+    grid-template-columns: 1fr;
+  }
+}

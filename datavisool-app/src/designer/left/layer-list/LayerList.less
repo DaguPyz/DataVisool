@@ -1,0 +1,440 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+@layer-row-height: 40px;
+@layer-row-gap: 6px;
+@layer-tree-offset: 12px;
+@layer-tree-gap: 8px;
+@layer-row-center: (@layer-row-height / 2);
+
+.layer-row-shell() {
+  position: relative;
+  min-height: @layer-row-height;
+  margin: 0 0 @layer-row-gap;
+  padding: 0 10px 0 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  color: var(--datavisool-color-text-secondary, #a8b3cf);
+  border: 1px solid rgba(86, 110, 161, 0.14);
+  border-radius: 8px;
+  background: var(--bg-surface-1, rgba(9, 14, 31, 0.82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    bottom: 9px;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    background: transparent;
+    transition: background 180ms ease, box-shadow 180ms ease;
+  }
+
+  &:hover {
+    color: var(--datavisool-color-text-primary, #ffffff);
+    border-color: var(--border-default, rgba(86, 110, 161, 0.3));
+    background: var(--bg-hover, rgba(76, 112, 190, 0.12));
+    box-shadow: none;
+    transform: none;
+  }
+
+  .layer-main,
+  .group-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .layer-drag-handle {
+    width: 16px;
+    min-width: 16px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(168, 179, 207, 0.45);
+    cursor: grab;
+    user-select: none;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 1px;
+    transition: color 180ms ease, transform 180ms ease;
+
+    &:hover {
+      color: var(--datavisool-color-info, #38bdf8);
+      transform: scale(1.04);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .layer-name,
+  .group-name {
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 0;
+      color: var(--datavisool-color-text-primary, #ffffff);
+      font: inherit;
+      line-height: 20px;
+      background: transparent;
+      outline: none;
+      border: none;
+
+      &::placeholder {
+        color: var(--datavisool-color-text-tertiary, #7783a0);
+      }
+    }
+  }
+}
+
+.layer-action-strip() {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+
+  .layer-operator,
+  .group-operator {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(168, 179, 207, 0.72);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: color 160ms ease, background 160ms ease, border-color 160ms ease, transform 160ms ease;
+
+    .i-icon {
+      display: inline-flex;
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      color: #ffffff;
+      border-color: rgba(79, 184, 255, 0.28);
+      background: rgba(59, 130, 255, 0.16);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.layer-list {
+  width: 300px;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--datavisool-color-text-primary, #ffffff);
+  font-family: var(--datavisool-font-family, Inter, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+  background: var(--bg-sidebar, #0b1222);
+  border-right: 1px solid var(--border-subtle, rgba(86, 110, 161, 0.22));
+  box-shadow: none;
+
+
+  .layer-items {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 12px 10px 18px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background:
+            radial-gradient(circle at 12% 0%, rgba(59, 130, 255, 0.08), transparent 28%),
+            linear-gradient(180deg, rgba(7, 12, 27, 0.18) 0%, rgba(7, 12, 27, 0.72) 100%);
+
+    .layer-item {
+      .layer-row-shell();
+
+      .layer-operators {
+        .layer-action-strip();
+      }
+
+      &:hover .layer-operators {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .layer-group {
+      width: 100%;
+      margin-bottom: 8px;
+      color: #ffffff;
+
+      .group-header {
+        .layer-row-shell();
+        border-color: rgba(124, 58, 237, 0.18);
+        background:
+                linear-gradient(180deg, rgba(24, 30, 62, 0.8) 0%, rgba(12, 18, 39, 0.84) 100%),
+                rgba(11, 16, 36, 0.88);
+
+        .group-toggle,
+        .group-icon {
+          width: 18px;
+          height: 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          color: rgba(168, 179, 207, 0.82);
+          border-radius: 5px;
+          transition: color 160ms ease, background 160ms ease;
+        }
+
+        .group-toggle:hover,
+        .group-icon:hover {
+          color: #ffffff;
+          background: rgba(59, 130, 255, 0.16);
+        }
+
+        .group-icon {
+          color: var(--datavisool-color-info, #38bdf8);
+        }
+
+        .group-name {
+          font-weight: 650;
+          color: #d9e5ff;
+        }
+
+        .group-operators {
+          .layer-action-strip();
+        }
+
+        &:hover .group-operators {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .group-content {
+        position: relative;
+        padding: @layer-tree-gap 0 1px @layer-tree-offset;
+        margin: 0 0 0 @layer-tree-offset;
+
+        > .layer-tree-branch {
+          position: relative;
+          display: flow-root;
+
+          &::before,
+          &::after {
+            content: '';
+            position: absolute;
+            left: -@layer-tree-offset;
+            pointer-events: none;
+          }
+
+          &::before {
+            top: 0;
+            bottom: 0;
+            border-left: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+          }
+
+          &::after {
+            top: @layer-row-center;
+            width: @layer-tree-offset;
+            border-top: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+          }
+
+          &:first-child::before {
+            top: -(@layer-row-gap + @layer-tree-gap);
+          }
+
+          // Stop at the direct child's row, even when its own group is expanded.
+          &:last-child::before {
+            bottom: calc(100% - @layer-row-center);
+          }
+        }
+      }
+    }
+
+    .layer-dragging-source {
+      opacity: 0.42;
+      transform: scale(0.99);
+    }
+
+    .layer-drop-before,
+    .layer-drop-after {
+      position: relative;
+    }
+
+    .layer-drop-before::after,
+    .layer-drop-after::after {
+      content: '';
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      z-index: 5;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--primary, #3b82f6);
+      pointer-events: none;
+    }
+
+    .layer-drop-before::after {
+      top: -4px;
+    }
+
+    .layer-drop-after::after {
+      bottom: -4px;
+    }
+
+    .layer-selected {
+      color: #ffffff !important;
+      border-color: var(--border-subtle, rgba(86, 110, 161, 0.22)) !important;
+      background: var(--bg-active, rgba(76, 112, 190, 0.18)) !important;
+      box-shadow: inset 2px 0 var(--primary, #6e9fff) !important;
+
+      &::before {
+        background: var(--primary, #6e9fff) !important;
+        box-shadow: none !important;
+      }
+
+      .layer-name,
+      .group-name {
+        color: #ffffff !important;
+      }
+
+      .layer-drag-handle,
+      .group-toggle,
+      .group-icon {
+        color: rgba(255, 255, 255, 0.82) !important;
+      }
+
+      .layer-operators,
+      .group-operators {
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+
+        .layer-operator,
+        .group-operator {
+          color: #ffffff !important;
+          border-color: rgba(255, 255, 255, 0.12) !important;
+          background: rgba(255, 255, 255, 0.12) !important;
+        }
+      }
+    }
+
+    .layer-lock {
+      color: rgba(251, 113, 133, 0.92) !important;
+      border-color: rgba(251, 113, 133, 0.2) !important;
+      background:
+              linear-gradient(180deg, rgba(47, 26, 47, 0.72) 0%, rgba(31, 19, 37, 0.78) 100%),
+              rgba(28, 18, 36, 0.88) !important;
+
+      &:hover {
+        border-color: rgba(251, 113, 133, 0.4) !important;
+      }
+
+      .layer-name,
+      .group-name {
+        color: rgba(251, 113, 133, 0.94) !important;
+      }
+    }
+
+    .layer-hide {
+      color: rgba(119, 131, 160, 0.72) !important;
+      border-color: rgba(86, 110, 161, 0.1) !important;
+      background:
+              linear-gradient(180deg, rgba(12, 17, 33, 0.62) 0%, rgba(8, 13, 28, 0.7) 100%),
+              rgba(7, 12, 27, 0.82) !important;
+      opacity: 0.68 !important;
+
+      &:hover {
+        opacity: 0.86 !important;
+        border-color: rgba(119, 131, 160, 0.2) !important;
+      }
+
+      .layer-name,
+      .group-name {
+        color: rgba(119, 131, 160, 0.78) !important;
+      }
+    }
+  }
+
+  .layer-empty {
+    min-height: 220px;
+    padding: 34px 18px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--datavisool-color-text-tertiary, #7783a0);
+
+    img {
+      width: 168px;
+      height: 92px;
+      margin-bottom: 14px;
+      object-fit: cover;
+      object-position: center right;
+      border-radius: 8px;
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%);
+    }
+
+    .layer-empty-title {
+      color: var(--datavisool-color-text-secondary, #a8b3cf);
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 22px;
+    }
+
+    .layer-empty-desc {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  .layer-items::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .layer-items::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .layer-items::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(113, 130, 190, 0.28);
+    background-clip: content-box;
+
+    &:hover {
+      background: rgba(126, 148, 222, 0.46);
+      background-clip: content-box;
+    }
+  }
+}

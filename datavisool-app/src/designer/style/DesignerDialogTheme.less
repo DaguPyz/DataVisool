@@ -1,0 +1,119 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+// 主编辑器及挂载在 body 的弹框、浮层统一接入设计器主题。
+:where(body:has(.datavisool-designer-main-editor)) :where(
+  .datavisool-designer-main-editor,
+  .datavisool-dialog,
+  .datavisool-global-modal,
+  .datavisool-select-panel,
+  .datavisool-searchable-select-panel,
+  .datavisool-color-picker-panel,
+  .datavisool-code-editor-dialog,
+  .datavisool-code-editor-hints,
+  .datavisool-dropdown-popup
+) {
+  --bg-canvas: #0a1020;
+  --bg-sidebar: #0b1222;
+  --bg-surface-1: #111a2e;
+  --bg-surface-2: #162238;
+  --bg-hover: #1a2740;
+  --bg-active: #1d3155;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(59, 130, 246, 0.45);
+  --text-primary: #f3f7ff;
+  --text-secondary: #aab7d1;
+  --text-tertiary: #7c8aa5;
+  --text-disabled: #5e6a82;
+  --primary: #3b82f6;
+  --primary-hover: #4a90ff;
+  --primary-foreground: #ffffff;
+  --teal: #22c7b8;
+  --orange: #f5b544;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.32);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.14);
+  --datavisool-font-family: Inter, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif;
+  --datavisool-color-primary: var(--primary);
+  --datavisool-color-text-primary: var(--text-primary);
+  --datavisool-color-text-secondary: var(--text-secondary);
+  --datavisool-color-text-tertiary: var(--text-tertiary);
+  --datavisool-color-border: var(--border-default);
+  --datavisool-color-border-strong: var(--border-strong);
+
+  --datavisool-ui-font-family: var(--datavisool-font-family);
+  --datavisool-ui-background: var(--bg-canvas);
+  --datavisool-ui-foreground: var(--text-primary);
+  --datavisool-ui-muted-foreground: var(--text-secondary);
+  --datavisool-ui-color-text-primary: var(--text-primary);
+  --datavisool-ui-color-text-secondary: var(--text-secondary);
+  --datavisool-ui-color-primary: var(--primary);
+  --datavisool-ui-color-info: var(--info);
+  --datavisool-ui-color-success: var(--success);
+  --datavisool-ui-color-warning: var(--warning);
+  --datavisool-ui-color-border: var(--border-default);
+  --datavisool-ui-bg-canvas: var(--bg-canvas);
+  --datavisool-ui-bg-sidebar: var(--bg-sidebar);
+  --datavisool-ui-bg-surface-1: var(--bg-surface-1);
+  --datavisool-ui-bg-surface-2: var(--bg-surface-2);
+  --datavisool-ui-bg-hover: var(--bg-hover);
+  --datavisool-ui-bg-active: var(--bg-active);
+  --datavisool-ui-text-primary: var(--text-primary);
+  --datavisool-ui-text-secondary: var(--text-secondary);
+  --datavisool-ui-text-tertiary: var(--text-tertiary);
+  --datavisool-ui-border-subtle: var(--border-subtle);
+  --datavisool-ui-border-default: var(--border-default);
+  --datavisool-ui-border-strong: var(--border-strong);
+  --datavisool-ui-border-focus: var(--border-focus);
+  --datavisool-ui-primary: var(--primary);
+  --datavisool-ui-primary-hover: var(--primary-hover);
+  --datavisool-ui-primary-foreground: #ffffff;
+  --datavisool-ui-primary-gradient: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  --datavisool-ui-secondary: var(--bg-hover);
+  --datavisool-ui-secondary-foreground: var(--text-primary);
+  --datavisool-ui-popover: var(--bg-surface-1);
+  --datavisool-ui-popover-foreground: var(--text-primary);
+  --datavisool-ui-destructive: var(--danger);
+  --datavisool-ui-destructive-foreground: #ffffff;
+  --datavisool-ui-success: var(--success);
+  --datavisool-ui-warning: var(--warning);
+  --datavisool-ui-danger: var(--danger);
+  --datavisool-ui-ring: var(--border-focus);
+  --datavisool-ui-control-height: 40px;
+  --datavisool-ui-control-radius: var(--radius-md);
+  --datavisool-ui-control-bg: rgba(255, 255, 255, 0.03);
+  --datavisool-ui-control-border: var(--border-default);
+  --datavisool-ui-control-border-hover: var(--border-strong);
+  --datavisool-ui-control-shadow: none;
+  --datavisool-ui-control-focus-shadow: var(--shadow-focus);
+  --datavisool-ui-panel-bg: var(--bg-surface-1);
+  --datavisool-ui-panel-border: var(--border-default);
+  --datavisool-ui-panel-shadow: var(--shadow-float);
+  --datavisool-ui-overlay-shadow: var(--shadow-float);
+  --datavisool-ui-shadow-card: none;
+  --datavisool-ui-shadow-float: var(--shadow-float);
+  --datavisool-ui-shadow-focus: var(--shadow-focus);
+  --datavisool-ui-radius-sm: var(--radius-sm);
+  --datavisool-ui-radius-md: var(--radius-md);
+  --datavisool-ui-radius-lg: var(--radius-lg);
+  --datavisool-ui-radius-xl: var(--radius-xl);
+  --datavisool-ui-space-1: var(--space-1);
+  --datavisool-ui-space-2: var(--space-2);
+  --datavisool-ui-space-3: var(--space-3);
+  --datavisool-ui-space-4: var(--space-4);
+  --datavisool-ui-space-6: var(--space-6);
+}

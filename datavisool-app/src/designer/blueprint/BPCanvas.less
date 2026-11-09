@@ -1,0 +1,53 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.blue-print-canvas {
+  position: relative;
+  background-color: #0A1020;
+  background-image: radial-gradient(circle, rgba(130, 153, 190, 0.38) 0.7px, transparent 0.8px);
+  background-size: var(--bp-grid-size, 24px) var(--bp-grid-size, 24px);
+  // Radial dots sit at each tile's center; align that center with world zero.
+  background-position:
+    calc(var(--bp-grid-x, 0px) - var(--bp-grid-size, 24px) / 2)
+    calc(var(--bp-grid-y, 0px) - var(--bp-grid-size, 24px) / 2);
+  box-sizing: border-box;
+}
+
+#bp-node-content {
+  position: relative;
+  touch-action: none;
+  user-select: none;
+}
+
+#bp-node-container {
+  z-index: 2;
+}
+
+.bp-line-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.bp-node-container {
+  z-index: 1;
+}
+
+.blue-print-canvas .datavisool-interaction-selection-box {
+  z-index: 10000;
+  border: 1px solid rgba(79, 184, 255, 0.95);
+  background: rgba(79, 184, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(79, 184, 255, 0.18);
+  pointer-events: none;
+}
+
+.blue-print-canvas .datavisool-interaction-resize-box {
+  border: 1px solid #4FB8FF;
+  box-shadow:
+    0 0 0 1px rgba(79, 184, 255, 0.22),
+    0 0 18px rgba(79, 184, 255, 0.22);
+  pointer-events: none;
+}

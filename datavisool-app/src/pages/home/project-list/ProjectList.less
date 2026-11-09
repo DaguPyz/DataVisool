@@ -1,0 +1,373 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.project-list-container {
+  --project-bg: #0a1020;
+  --project-surface: #111a2e;
+  --project-surface-raised: #162238;
+  --project-hover: #1a2740;
+  --project-border: rgba(255, 255, 255, 0.08);
+  --project-border-subtle: rgba(255, 255, 255, 0.06);
+  --project-text: #f3f7ff;
+  --project-text-secondary: #aab7d1;
+  --project-text-tertiary: #7c8aa5;
+  --project-primary: #3b82f6;
+  --project-focus: rgba(59, 130, 246, 0.45);
+
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  padding: 24px;
+  overflow: hidden;
+  background: var(--project-bg);
+  color: var(--project-text);
+
+  .project-list-header {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .project-list-title-group {
+    min-width: 0;
+
+    h1 {
+      margin: 0;
+      color: var(--project-text);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 40px;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: var(--project-text-secondary);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+    }
+  }
+
+  .project-list-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .project-list-content {
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 0 8px 24px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: rgba(124, 138, 165, 0.56) transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(124, 138, 165, 0.56);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(170, 183, 209, 0.68);
+    }
+  }
+
+  .project-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .project-list-empty {
+    display: flex;
+    min-height: 240px;
+    grid-column: ~"1 / -1";
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--project-border);
+    border-radius: 16px;
+    background: var(--project-surface);
+    color: var(--project-text-tertiary);
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .project-list-pagination {
+    display: flex;
+    justify-content: flex-end;
+
+    .project-list-page {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      gap: 12px;
+      margin: 0;
+
+      .datavisool-pagination-pages {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .datavisool-pagination-item,
+      .datavisool-pagination-arrow {
+        display: inline-flex;
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--project-border);
+        border-radius: 10px;
+        background-color: var(--project-surface);
+        box-shadow: none;
+        color: var(--project-text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        transition: background-color 140ms ease-out, border-color 140ms ease-out, color 140ms ease-out, transform 140ms ease-out;
+
+        &:hover {
+          border-color: rgba(255, 255, 255, 0.12);
+          background-color: var(--project-hover);
+          color: var(--project-text);
+          transform: translateY(-1px);
+        }
+      }
+
+      .datavisool-pagination-item.datavisool-pagination-item-active {
+        border-color: transparent;
+        background-color: var(--project-primary);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.22);
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .datavisool-pagination-arrow {
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .datavisool-pagination-item:disabled,
+      .datavisool-pagination-arrow:disabled {
+        border-color: var(--project-border-subtle);
+        background-color: rgba(17, 26, 46, 0.56);
+        color: rgba(124, 138, 165, 0.56);
+        cursor: not-allowed;
+
+        &:hover {
+          border-color: var(--project-border-subtle);
+          background-color: rgba(17, 26, 46, 0.56);
+          color: rgba(124, 138, 165, 0.56);
+          transform: none;
+        }
+      }
+
+      .datavisool-pagination-total {
+        color: var(--project-text-tertiary);
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+      }
+    }
+  }
+
+  .project-list-search-field {
+    width: 320px;
+  }
+
+  .project-list-search.datavisool-input-shell {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--project-border);
+    border-radius: 10px;
+    background-color: var(--project-surface);
+    box-shadow: none;
+    transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background-color: var(--project-surface-raised);
+    }
+
+    &:focus,
+    &:focus-within {
+      border-color: var(--project-primary);
+      background-color: var(--project-surface-raised);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+
+    .datavisool-input-prefix {
+      margin-right: 8px;
+      color: var(--project-text-tertiary);
+
+      svg {
+        display: block;
+      }
+    }
+
+    .datavisool-input-native {
+      background: transparent;
+      color: var(--project-text);
+      font-size: 14px;
+      line-height: 20px;
+
+      &::placeholder {
+        color: var(--project-text-tertiary);
+      }
+
+      &:disabled {
+        color: rgba(124, 138, 165, 0.56);
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .project-list-create-btn.datavisool-button {
+    display: inline-flex;
+    min-width: 112px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    transition: background 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+
+    &:hover {
+      background: #4a90ff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: 0 0 0 3px var(--project-focus), 0 6px 20px rgba(59, 130, 246, 0.22);
+    }
+
+    &:disabled {
+      background: rgba(59, 130, 246, 0.48);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    > .i-icon {
+      transform: translateY(2px);
+    }
+  }
+}
+
+@media (max-width: 1279px) {
+  .project-list-container {
+    .project-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  .project-list-container {
+    .project-list-header {
+      flex-direction: column;
+    }
+
+    .project-list-actions {
+      width: 100%;
+    }
+
+    .project-list-search-field {
+      flex: 1 1 auto;
+    }
+
+    .project-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .project-list-container {
+    padding: 20px 16px;
+
+    .project-list-header {
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .project-list-title-group {
+      h1 {
+        font-size: 28px;
+        line-height: 36px;
+      }
+    }
+
+    .project-list-actions {
+      flex-wrap: wrap;
+    }
+
+    .project-list-search-field {
+      width: 100%;
+    }
+
+    .project-list {
+      grid-template-columns: 1fr;
+    }
+
+    .project-list-pagination {
+      justify-content: center;
+
+      .project-list-page {
+        align-items: center;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-list-container,
+  .project-list-container *,
+  .project-list-container *::before,
+  .project-list-container *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

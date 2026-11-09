@@ -1,0 +1,261 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.datavisool-config-code-dialog {
+  --bg-canvas: #0a1020;
+  --bg-surface-1: #111a2e;
+  --bg-surface-2: #162238;
+  --bg-hover: #1a2740;
+  --bg-active: #1d3155;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(59, 130, 246, 0.45);
+  --text-primary: #f3f7ff;
+  --text-secondary: #aab7d1;
+  --text-tertiary: #7c8aa5;
+  --primary: #3b82f6;
+  --primary-hover: #4a90ff;
+
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl, 16px);
+  color: var(--text-primary);
+  background: var(--bg-surface-1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+
+  .datavisool-dialog-header {
+    height: 64px;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-surface-1);
+  }
+
+  .datavisool-dialog-title {
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+
+  .datavisool-dialog-close,
+  .datavisool-code-editor-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 8px);
+    color: var(--text-tertiary);
+    background: transparent;
+    transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
+
+    &:hover {
+      border-color: var(--border-default);
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.75;
+    }
+  }
+
+  .datavisool-dialog-body {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    gap: 24px;
+    overflow: hidden;
+    padding: 24px;
+    background: var(--bg-surface-1);
+  }
+
+  .datavisool-code-editor-field,
+  .datavisool-field-content,
+  .datavisool-code-editor {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .datavisool-code-editor {
+    border-color: var(--border-default);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: none;
+    transition: border-color 160ms ease-out;
+
+    &:hover {
+      border-color: var(--border-strong);
+    }
+
+    &:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: none;
+    }
+  }
+
+  .datavisool-code-editor-toolbar {
+    height: 40px;
+    min-height: 40px;
+    flex-shrink: 0;
+    padding: 0 12px 0 16px;
+    border-bottom-color: var(--border-subtle);
+    background: var(--bg-surface-2);
+  }
+
+  .datavisool-code-editor-lang {
+    min-height: 24px;
+    padding: 0;
+    border: 0;
+    color: var(--text-secondary);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  .datavisool-code-editor-surface {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .CodeMirror,
+  .cm-s-datavisool-dark.CodeMirror,
+  .CodeMirror-scroll,
+  .CodeMirror-sizer {
+    color: var(--text-primary);
+    background: var(--bg-canvas);
+  }
+
+  .CodeMirror {
+    min-height: 0;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .CodeMirror-gutters {
+    border-right-color: var(--border-subtle);
+    background: var(--bg-surface-1);
+  }
+
+  .CodeMirror-linenumber,
+  .CodeMirror-guttermarker-subtle {
+    color: var(--text-tertiary);
+  }
+
+  .CodeMirror-activeline-background {
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  .CodeMirror-cursor {
+    border-left-color: var(--primary-hover);
+  }
+
+  .cm-s-datavisool-dark .cm-def,
+  .cm-s-datavisool-dark .cm-property {
+    font-weight: 400;
+  }
+
+  .datavisool-code-editor-status {
+    height: 32px;
+    min-height: 32px;
+    flex-shrink: 0;
+    padding: 0 16px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-tertiary);
+    background: var(--bg-surface-1);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .config-code-actions {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+
+    .datavisool-button {
+      height: 40px;
+      min-width: 80px;
+      padding: 0 16px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md, 10px);
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: none;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+      transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+
+      &:hover {
+        border-color: var(--border-strong);
+        color: var(--text-primary);
+        background: var(--bg-hover);
+        filter: none;
+      }
+
+      &:focus-visible {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: var(--shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+      }
+    }
+
+    .config-code-save {
+      border-color: transparent;
+      color: #ffffff;
+      background: var(--primary);
+
+      &:hover {
+        border-color: transparent;
+        color: #ffffff;
+        background: var(--primary-hover);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .datavisool-config-code-dialog {
+    .datavisool-dialog-header {
+      height: 56px;
+      padding: 0 16px;
+    }
+
+    .datavisool-dialog-title {
+      font-size: 18px;
+      line-height: 26px;
+    }
+
+    .datavisool-dialog-body {
+      gap: 16px;
+      padding: 16px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datavisool-config-code-dialog {
+    .datavisool-dialog-close,
+    .datavisool-code-editor,
+    .datavisool-code-editor-action,
+    .config-code-actions .datavisool-button {
+      transition: none;
+    }
+  }
+}

@@ -1,0 +1,89 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.datavisool-theme-editor-modal {
+  --bg-canvas: #0a1020;
+  --bg-surface-1: #111a2e;
+  --bg-surface-2: #162238;
+  --bg-hover: #1a2740;
+  --bg-active: #1d3155;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(59, 130, 246, 0.45);
+  --text-primary: #f3f7ff;
+  --text-secondary: #aab7d1;
+  --text-tertiary: #7c8aa5;
+  --primary: #3b82f6;
+  --primary-hover: #4a90ff;
+  --danger: #ef4444;
+
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-xl, 16px);
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-canvas, #0a1020);
+  box-shadow: var(--shadow-float, 0 12px 32px rgba(0, 0, 0, 0.32));
+
+  .datavisool-dialog-header {
+    height: 64px;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    background: var(--bg-surface-1, #111a2e);
+  }
+
+  .datavisool-dialog-title {
+    color: var(--text-primary, #f3f7ff);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+
+  .datavisool-dialog-body {
+    min-height: 0;
+    padding: 24px;
+    color: var(--text-primary, #f3f7ff);
+    background: var(--bg-canvas, #0a1020);
+    overscroll-behavior: contain;
+  }
+
+  .datavisool-dialog-close {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm, 8px);
+    color: var(--text-tertiary, #7c8aa5);
+
+    &:hover {
+      border-color: var(--border-default, rgba(255, 255, 255, 0.08));
+      color: var(--text-primary, #f3f7ff);
+      background: var(--bg-hover, #1a2740);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: var(--shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+
+    svg {
+      stroke-width: 1.75;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .datavisool-theme-editor-modal {
+    .datavisool-dialog-header {
+      height: 56px;
+      padding: 0 16px;
+    }
+
+    .datavisool-dialog-title {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .datavisool-dialog-body {
+      padding: 16px;
+    }
+  }
+}

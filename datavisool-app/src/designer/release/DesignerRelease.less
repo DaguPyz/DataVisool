@@ -1,0 +1,36 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+
+  .datavisool-project-release {
+    background: rgb(28, 28, 28);
+    overflow: hidden;
+    position: relative;
+  }
+
+  //大屏预览模式下，数据加载异常时样式
+  .view-error-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255, 0, 0, 0.24);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: #ff1e1e;
+    font-weight: 500;
+    border: 2px dashed red;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+  }
+}

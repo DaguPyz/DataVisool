@@ -1,0 +1,423 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+@release-surface: #111a2e;
+@release-surface-raised: #162238;
+@release-hover: #1a2740;
+@release-text: #f3f7ff;
+@release-text-secondary: #aab7d1;
+@release-text-tertiary: #7c8aa5;
+@release-border: rgba(255, 255, 255, 0.08);
+@release-border-strong: rgba(255, 255, 255, 0.12);
+@release-focus: rgba(59, 130, 246, 0.45);
+@release-primary: #3b82f6;
+
+.datavisool-header-release-config {
+  overflow: hidden;
+  border: 1px solid @release-border;
+  border-radius: 16px;
+  color: @release-text;
+  background: @release-surface;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+
+  .i-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    vertical-align: middle;
+
+    svg {
+      display: block;
+    }
+  }
+
+  .release-config-header {
+    padding: 28px 56px 24px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    p {
+      margin: 8px 0 0;
+      color: @release-text-secondary;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .release-config-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    h2 {
+      margin: 0;
+      color: @release-text;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 32px;
+    }
+  }
+
+  .release-config-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: #93baff;
+    background: rgba(59, 130, 246, 0.14);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+
+    &.ready {
+      color: #4ade80;
+      background: rgba(34, 197, 94, 0.14);
+    }
+  }
+
+  .release-config-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 28px 28px;
+  }
+
+  .release-config-field {
+    min-width: 0;
+  }
+
+  .release-config-label {
+    margin-bottom: 8px;
+    color: @release-text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .release-config-select,
+  .release-config-input,
+  .release-config-number {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    border: 1px solid @release-border;
+    border-radius: 10px;
+    color: @release-text;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+    transition: border-color 160ms ease-out, box-shadow 160ms ease-out, background-color 160ms ease-out;
+
+    &:hover:not([data-disabled="true"]) {
+      border-color: @release-border-strong;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &:focus-within,
+    &.datavisool-select-open {
+      border-color: @release-focus;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+  }
+
+  .release-config-select {
+    .datavisool-select-trigger {
+      height: 38px;
+      padding: 0 12px;
+    }
+
+    .datavisool-select-value {
+      color: @release-text;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .datavisool-select-chevron {
+      color: @release-text-tertiary;
+    }
+  }
+
+  .release-config-input {
+    .datavisool-input-native {
+      min-height: 38px;
+      height: 38px;
+      color: @release-text;
+      font-size: 14px;
+      font-weight: 400;
+
+      &::placeholder {
+        color: @release-text-tertiary;
+      }
+    }
+
+    .datavisool-input-affix {
+      color: @release-text-tertiary;
+    }
+  }
+
+  .release-config-number {
+    grid-template-columns: auto 40px minmax(72px, 1fr) 40px auto;
+
+    .datavisool-number-input-native {
+      min-height: 38px;
+      height: 38px;
+      color: @release-text;
+      font-size: 14px;
+      font-weight: 400;
+
+      &::placeholder {
+        color: @release-text-tertiary;
+      }
+    }
+
+    .datavisool-number-input-affix {
+      min-height: 38px;
+      color: @release-text-tertiary;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .datavisool-number-input-prefix {
+      padding-left: 12px;
+    }
+
+    .datavisool-number-input-suffix {
+      padding-right: 12px;
+    }
+
+    .datavisool-number-input-button {
+      min-width: 40px;
+      min-height: 38px;
+      color: @release-text-secondary;
+
+      &:hover:not(:disabled) {
+        color: @release-text;
+        background: @release-hover;
+      }
+    }
+  }
+
+  .release-config-encrypt-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 76px;
+    padding: 16px;
+    border: 1px solid @release-border;
+    border-radius: 12px;
+    background: @release-surface-raised;
+    transition: border-color 160ms ease-out, background-color 160ms ease-out;
+
+    &.enabled {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: #1d3155;
+    }
+
+    > .datavisool-field {
+      flex: 0 0 auto;
+      width: auto;
+    }
+  }
+
+  .release-config-encrypt-copy {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+
+    strong {
+      display: block;
+      color: @release-text;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+    }
+
+    p {
+      margin: 2px 0 0;
+      color: @release-text-secondary;
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  .release-config-card-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    color: #93baff;
+    background: rgba(59, 130, 246, 0.14);
+  }
+
+  .release-config-switch {
+    .datavisool-switch-track {
+      border-color: @release-border-strong;
+      background: #293953;
+      box-shadow: none;
+    }
+
+    &.datavisool-switch-checked .datavisool-switch-track {
+      border-color: @release-primary;
+      box-shadow: none;
+    }
+
+    &.datavisool-switch-checked .datavisool-switch-track::before {
+      background: @release-primary;
+    }
+
+    &:focus-visible .datavisool-switch-track {
+      border-color: @release-primary;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  }
+
+  .release-config-desc {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 10px;
+    color: @release-text-secondary;
+    background: rgba(59, 130, 246, 0.06);
+    font-size: 12px;
+    line-height: 18px;
+
+    svg {
+      flex: 0 0 auto;
+      color: @release-primary;
+      margin-top: 1px;
+    }
+  }
+
+  .release-config-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 28px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    .datavisool-button {
+      min-width: 88px;
+      height: 40px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-cancel {
+      color: @release-text-secondary;
+      border: 1px solid @release-border;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: none;
+
+      &:hover {
+        color: @release-text;
+        border-color: @release-border-strong;
+        background: @release-hover;
+      }
+    }
+
+    .btn-action {
+      color: #fff;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+
+      &:hover {
+        background: #4a90ff;
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.28);
+      }
+    }
+  }
+}
+
+.datavisool-header-release-config-dialog {
+  overflow: hidden;
+  max-height: calc(100vh - 32px);
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+
+  .datavisool-dialog-close-floating {
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    color: @release-text-tertiary;
+
+    &:hover {
+      color: @release-text;
+      border-color: @release-border;
+      background: @release-hover;
+    }
+  }
+}
+
+.datavisool-header-release-config-body {
+  overflow: auto;
+  padding: 0;
+  background: transparent;
+}
+
+.release-config-select-panel {
+  border: 1px solid @release-border-strong;
+  border-radius: 10px;
+  background: @release-surface;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  .datavisool-select-option {
+    color: @release-text;
+
+    &:hover:not(:disabled),
+    &.datavisool-select-option-active:not(:disabled) {
+      border-color: transparent;
+      background: @release-hover;
+    }
+
+    &.datavisool-select-option-selected:not(:disabled) {
+      border-color: transparent;
+      color: @release-text;
+      background: #1d3155;
+    }
+  }
+
+  .datavisool-select-option-description {
+    color: @release-text-tertiary;
+  }
+}
+
+@media (max-width: 600px) {
+  .datavisool-header-release-config {
+    .release-config-header {
+      padding: 24px 52px 20px 20px;
+    }
+
+    .release-config-panel {
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .release-config-footer {
+      padding: 16px 20px 20px;
+
+      .datavisool-button {
+        flex: 1;
+      }
+    }
+  }
+}

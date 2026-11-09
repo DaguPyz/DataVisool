@@ -1,0 +1,295 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.bp-right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-surface-1, #111a2e);
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.bp-right-resize-handle {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  bottom: 10px;
+  left: -5px;
+  width: 10px;
+  cursor: col-resize;
+}
+
+.bp-right-resize-handle::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  width: 2px;
+  content: '';
+  background: transparent;
+  border-radius: 2px;
+  transition: background-color 140ms ease;
+}
+
+.bp-right-resize-handle:hover::after {
+  background: var(--primary, #3b82f6);
+}
+
+.bp-right-header {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 12px 0 16px;
+  color: var(--text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+.bp-right-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--text-secondary, #aab7d1);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-primary, #f3f7ff);
+    background: var(--bg-hover, #1a2740);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #3b82f6);
+    outline-offset: 1px;
+  }
+}
+
+.node-config-empty-info {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 16px;
+  color: var(--text-muted, #7c8aa5);
+  font-size: 13px;
+  text-align: center;
+}
+
+.bp-node-config {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bp-node-config-header {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  background: var(--bg-surface-2, #162238);
+  border-bottom: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+.bp-node-config-name {
+  margin-bottom: 5px;
+  overflow: hidden;
+  color: var(--text-primary, #f3f7ff);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-node-config-info {
+  overflow: hidden;
+  color: var(--text-muted, #7c8aa5);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-node-config-list {
+  flex: 1;
+  min-height: 0;
+  padding: 10px 12px 14px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(170, 183, 209, 0.28) transparent;
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(170, 183, 209, 0.28);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+  }
+}
+
+.bp-ap-info-list,
+.bp-node-config-detail {
+  margin-bottom: 10px;
+}
+
+.bp-ap-info-item {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  gap: 10px;
+  margin-bottom: 5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.035);
+  }
+}
+
+.bp-ap-info-type {
+  flex: 0 0 40px;
+  padding: 3px 5px;
+  color: var(--text-secondary, #aab7d1);
+  background: var(--bg-hover, #1a2740);
+  border-radius: 5px;
+  font-size: 11px;
+  text-align: center;
+
+  &.type-input {
+    color: #75dda1;
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  &.type-output {
+    color: #75baff;
+    background: rgba(59, 130, 246, 0.14);
+  }
+}
+
+.bp-ap-info-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary, #aab7d1);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bp-node-config-list {
+  .datavisool-accordion {
+    overflow: hidden;
+    background: var(--bg-surface-2, #162238);
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    box-shadow: none;
+  }
+
+  .datavisool-accordion::before {
+    display: none;
+  }
+
+  .datavisool-accordion-trigger {
+    min-height: 40px;
+    padding: 0 12px;
+    color: var(--text-primary, #f3f7ff);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .datavisool-accordion-title {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .datavisool-accordion-indicator {
+    color: var(--text-secondary, #aab7d1);
+  }
+
+  .datavisool-accordion-content {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.08);
+    border-top: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  }
+
+  .datavisool-field {
+    margin-bottom: 10px;
+  }
+
+  .datavisool-field-label {
+    min-width: 58px;
+    margin-bottom: 6px;
+    color: var(--text-secondary, #aab7d1);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .datavisool-input-shell,
+  .datavisool-select-shell,
+  .datavisool-number-input {
+    min-height: 36px;
+    color: var(--text-primary, #f3f7ff);
+    background: var(--datavisool-control-bg, #162238);
+    border-color: var(--border-default, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+  }
+
+  .datavisool-input-native,
+  .datavisool-number-input-native {
+    color: var(--text-primary, #f3f7ff);
+  }
+
+  .datavisool-code-editor {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--border-default, rgba(255, 255, 255, 0.08));
+    border-radius: 6px;
+  }
+
+  .datavisool-code-editor-toolbar {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    z-index: 4;
+    min-height: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+  }
+
+  .datavisool-code-editor-meta {
+    display: none;
+  }
+
+  .datavisool-code-editor-action {
+    width: 28px;
+    height: 28px;
+    color: var(--text-secondary, #aab7d1);
+    background: var(--bg-surface-1, #111a2e);
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+    border-radius: 6px;
+  }
+}

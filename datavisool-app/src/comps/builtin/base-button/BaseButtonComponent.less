@@ -1,0 +1,100 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.base-button-component {
+  width: 100%;
+  height: 100%;
+
+  --color: #fff;
+  --fontSize: 16;
+  --fontWeight: 500;
+  --fontFamily: 优设标题黑;
+  --letterSpacing: 2;
+  --backgroundColor: #3d6aff;
+  --borderRadius: 3;
+  --borderWidth: 1;
+  --borderColor: #7898ff;
+  --borderStyle: solid;
+  --speed: 0.3;
+  --scannerColor: #fff;
+  --hoverShadow: #ffffff;
+  --hoverBackgroundColor: #ffffff;
+
+  button {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: calc(var(--borderWidth) * 1px) var(--borderStyle) var(--borderColor);
+    border-radius: calc(var(--borderRadius) * 1px);
+    font-size: calc(var(--fontSize) * 1px);
+    text-transform: uppercase;
+    font-weight: var(--fontWeight);
+    letter-spacing: calc(var(--letterSpacing) * 1px);
+    background: var(--backgroundColor);
+    color: var(--color);
+    font-family: var(--fontFamily);
+    overflow: hidden;
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+  }
+
+  button:hover {
+    background: var(--hoverBackgroundColor);
+    box-shadow: 0 0 30px 5px var(--hoverShadow);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+  }
+
+  button:hover::before {
+    -webkit-animation: sh02 calc(var(--speed) * 1s) 0s linear;
+    -moz-animation: sh02 calc(var(--speed) * 1s) 0s linear;
+    animation: sh02 calc(var(--speed) * 1s) 0s linear;
+  }
+
+  button::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 86%;
+    position: absolute;
+    top: 7%;
+    left: 0;
+    opacity: 0;
+    background: var(--scannerColor);
+    box-shadow: 0 0 50px 30px var(--scannerColor);
+    -webkit-transform: skewX(-20deg);
+    -moz-transform: skewX(-20deg);
+    -ms-transform: skewX(-20deg);
+    -o-transform: skewX(-20deg);
+    transform: skewX(-20deg);
+  }
+
+  @keyframes sh02 {
+    from {
+      opacity: 0;
+      left: -20%;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      left: 150%;
+    }
+  }
+
+  button:active {
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: box-shadow 1.2s ease-in;
+    -moz-transition: box-shadow 0.2s ease-in;
+    transition: box-shadow 0.2s ease-in;
+  }
+}

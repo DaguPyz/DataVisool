@@ -1,0 +1,80 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+:root {
+  --datavisool-color-bg-app: #050916;
+  --datavisool-color-bg-panel: #071022;
+  --datavisool-color-bg-card: #0f172a;
+  --datavisool-color-bg-elevated: #111a31;
+  --datavisool-color-bg-muted: #17223c;
+
+  --datavisool-color-primary: #3b82ff;
+  --datavisool-color-primary-end: #7c3aed;
+  --datavisool-color-accent: #ec4899;
+  --datavisool-color-info: #38bdf8;
+  --datavisool-color-success: #22d3a6;
+  --datavisool-color-warning: #fbbf24;
+  --datavisool-color-danger: #fb7185;
+
+  --datavisool-color-text-primary: #ffffff;
+  --datavisool-color-text-secondary: #a8b3cf;
+  --datavisool-color-text-tertiary: #7783a0;
+  --datavisool-color-text-muted: var(--datavisool-color-text-tertiary);
+  --datavisool-color-text-disabled: rgba(168, 179, 207, 0.48);
+
+  --datavisool-color-border: rgba(86, 110, 161, 0.42);
+  --datavisool-color-border-soft: rgba(86, 110, 161, 0.24);
+  --datavisool-color-border-strong: rgba(111, 139, 205, 0.58);
+  --datavisool-color-ring: rgba(89, 134, 255, 0.72);
+
+  --datavisool-gradient-primary: linear-gradient(135deg, #3b82ff 0%, #6d5efc 52%, #ec4899 100%);
+  --datavisool-gradient-panel: linear-gradient(180deg, rgba(13, 22, 43, 0.96) 0%, rgba(7, 13, 29, 0.98) 100%);
+  --datavisool-gradient-card: linear-gradient(180deg, rgba(19, 28, 51, 0.92) 0%, rgba(10, 16, 32, 0.94) 100%);
+  --datavisool-shadow-panel: 0 18px 54px rgba(0, 0, 0, 0.42);
+  --datavisool-shadow-glow-blue: 0 0 28px rgba(59, 130, 255, 0.28);
+  --datavisool-shadow-glow-purple: 0 0 28px rgba(124, 58, 237, 0.26);
+
+  --datavisool-radius-base: 8px;
+  --datavisool-radius-card: 10px;
+  --datavisool-radius-panel: 12px;
+  --datavisool-radius-control: 8px;
+  --datavisool-padding-card: 24px;
+  --datavisool-titlebar-height: 45px;
+
+  --datavisool-shadow-card: var(--datavisool-shadow-panel);
+  --datavisool-shadow-card-hover: 0 22px 58px rgba(0, 0, 0, 0.46);
+
+  --datavisool-font-family: "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+
+  // npm 组件库通过独立变量接入应用主题，浮层同样继承这些值。
+  --datavisool-ui-font-family: var(--datavisool-font-family);
+  --datavisool-ui-background: var(--datavisool-color-bg-app);
+  --datavisool-ui-foreground: var(--datavisool-color-text-primary);
+  --datavisool-ui-muted-foreground: var(--datavisool-color-text-secondary);
+  --datavisool-ui-color-text-primary: var(--datavisool-color-text-primary);
+  --datavisool-ui-color-text-secondary: var(--datavisool-color-text-secondary);
+  --datavisool-ui-color-primary: var(--datavisool-color-primary);
+  --datavisool-ui-color-info: var(--datavisool-color-info);
+  --datavisool-ui-color-success: var(--datavisool-color-success);
+  --datavisool-ui-color-warning: var(--datavisool-color-warning);
+  --datavisool-ui-color-border: var(--datavisool-color-border);
+  --datavisool-ui-primary: var(--datavisool-color-primary);
+  --datavisool-ui-primary-foreground: var(--datavisool-color-text-primary);
+  --datavisool-ui-secondary: var(--datavisool-color-bg-muted);
+  --datavisool-ui-secondary-foreground: var(--datavisool-color-text-primary);
+  --datavisool-ui-popover: var(--datavisool-color-bg-elevated);
+  --datavisool-ui-popover-foreground: var(--datavisool-color-text-primary);
+  --datavisool-ui-accent: var(--datavisool-color-accent);
+  --datavisool-ui-destructive: var(--datavisool-color-danger);
+  --datavisool-ui-destructive-foreground: var(--datavisool-color-text-primary);
+  --datavisool-ui-ring: var(--datavisool-color-ring);
+  --datavisool-ui-control-height: 48px;
+  --datavisool-ui-control-radius: 12px;
+  --datavisool-ui-control-bg: linear-gradient(135deg, rgba(17, 28, 56, 0.9), rgba(8, 15, 33, 0.86));
+  --datavisool-ui-control-border: rgba(99, 122, 177, 0.38);
+  --datavisool-ui-control-border-hover: rgba(75, 141, 255, 0.68);
+  --datavisool-ui-control-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 42px rgba(0, 0, 0, 0.18);
+  --datavisool-ui-control-focus-shadow: 0 0 0 3px rgba(59, 130, 255, 0.18), 0 0 28px rgba(88, 81, 255, 0.18);
+  --datavisool-ui-panel-bg: linear-gradient(145deg, rgba(16, 27, 56, 0.88), rgba(7, 14, 31, 0.94));
+  --datavisool-ui-panel-border: rgba(91, 112, 164, 0.42);
+  --datavisool-ui-panel-shadow: 0 28px 80px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --datavisool-ui-primary-gradient: linear-gradient(135deg, #2ea7ff 0%, #315cff 48%, #b53cff 100%);
+}

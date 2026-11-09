@@ -1,0 +1,73 @@
+# Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      # 首次启动会询问数据库名、用户名和密码；已有填写值会保留。
+      url: jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+      username:
+      password:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+mybatis-plus:
+  type-aliases-package: com.zsq.datavisoolservice.model
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  config: classpath:log4j2-spring.xml
+  level:
+    cn.jay.repository: info
+
+datavisool:
+  # 以下路径均可选；未配置时，常规部署以 Java 进程工作目录（user.dir）为基准。
+  # AI 两类 workspace 可共用此存储根，但各自使用不同的默认子目录，详见部署说明。
+  # ai:
+  #   storage-path: /usr/app/resource/ai-driven
+  # resource-path.root 未配置时默认为 user.dir；其余子项是 root 下的目录映射。
+  # resource-path:
+  #   root: /usr/app/resource
+  #   image: /static/images
+  #   cover: /static/covers
+  #   avatar: /static/avatar
+  #   remote-component: /static/components
+  #   font: /static/font
+  #   dynamic-script: /static/lib
+  #   logo: /static/logo
+  #   template-cover: /static/templateCover
+  #   video: /static/videos
+  #   model: /static/models
+  file:
+    image-max-size: 50MB
+    avatar-max-size: 1MB
+    max-size: 20MB
+    video-max-size: 500MB
+    model-max-size: 500MB
+  migration:
+    enable: true
+  db:
+    test-database-max-timeout: 10
+  mode: PROD
+  security:
+    cors:
+      allowed-origin-patterns:
+        - http://127.0.0.1:5173
+        - http://localhost:5173

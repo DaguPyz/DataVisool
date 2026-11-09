@@ -1,0 +1,80 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.datavisool-designer-footer {
+  position: absolute;
+  inset: auto 0 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  color: var(--text-tertiary, #7c8aa5);
+  font: 11px/18px var(--datavisool-font-family, sans-serif);
+}
+
+.workspace-footer-actions,
+.workspace-footer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.workspace-footer-button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  background: rgba(17, 26, 46, 0.96);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.workspace-footer-actions .workspace-footer-button.is-active {
+  color: var(--primary-hover, #4a90ff);
+  border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+  background: var(--bg-active, #1d3155);
+}
+
+.workspace-footer-status {
+  min-width: 0;
+  max-width: 38vw;
+  gap: 9px;
+  padding: 0 11px;
+  height: 34px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 9px;
+  background: rgba(17, 26, 46, 0.9);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+.workspace-footer-project {
+  max-width: 16vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary, #aab7d1);
+}
+
+.workspace-footer-separator {
+  width: 1px;
+  height: 14px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+@media (max-width: 960px) {
+  .workspace-footer-status {
+    position: absolute;
+    right: 0;
+    bottom: 52px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .workspace-footer-project { max-width: 38vw; }
+}
+
+@media (max-width: 700px) {
+  .datavisool-designer-footer { justify-content: flex-end; }
+}
+
+@media (max-width: 520px) {
+  .datavisool-designer-footer { bottom: 52px; }
+}

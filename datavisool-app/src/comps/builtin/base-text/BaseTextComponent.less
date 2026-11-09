@@ -1,0 +1,52 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.base-text-component {
+  --strokeColor: #fbfbfb;
+  --strokeWidth: 0;
+  --color: #ffffff;
+  --fontSize: 16px;
+  --fontFamily: 'Arial';
+  --fontWeight: 500;
+  --alignItems: center;
+  --justifyContent: center;
+  --letterSpacing: 0;
+  --lineHeight: 1;
+  --textAlign: left;
+  --backgroundImage: initial;
+  --backgroundClip: initial;
+  --WebkitBackgroundClip: initial;
+  --WebkitTextFillColor: initial;
+  --cursor: initial;
+
+  height: 100%;
+  display: flex;
+  -webkit-text-stroke-color: var(--strokeColor);
+  -webkit-text-stroke-width: calc(var(--strokeWidth) * 1px);
+  stroke-width: calc(var(--strokeWidth) * 1px);
+  color: var(--color);
+  font-size: calc(var(--fontSize) * 1px);
+  font-family: var(--fontFamily);
+  font-weight: var(--fontWeight);
+  align-items: var(--alignItems);
+  justify-content: var(--justifyContent);
+  letter-spacing: calc(var(--letterSpacing) * 1px);
+  line-height: var(--lineHeight);
+  text-align: var(--textAlign);
+  background-image: var(--backgroundImage);
+  background-clip: var(--backgroundClip);
+  -webkit-background-clip: var(--WebkitBackgroundClip);
+  -webkit-text-fill-color: var(--WebkitTextFillColor);
+  cursor: var(--cursor);
+
+  input {
+    outline: none;
+    width: 100%;
+    background-color: rgba(255, 222, 173, 0);
+    text-align: center;
+    border: none;
+  }
+}

@@ -1,0 +1,122 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+import aMapImage from './a-map.webp';
+import {AMapController} from "./AMapController.ts";
+import {AMapComponentProps} from "./AMapComponent.tsx";
+import {MenuInfo} from "../../designer/right/MenuType.ts";
+import React, {lazy} from "react";
+import AbstractDesignerDefinition from "../../framework/core/AbstractDesignerDefinition.ts";
+import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
+import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
+import {ClazzTemplate} from "@datavisool/sdk/types";
+import {EventInfo} from "@datavisool/sdk/types";
+
+const BaseInfo = React.lazy(() => import("../common-component/base-info/BaseInfo"));
+const ThemeConfig = React.lazy(() => import("../common-component/theme-config/ThemeConfig.tsx"));
+const AnimationConfig = React.lazy(() => import("../common-component/animation-config/AnimationConfig.tsx"));
+const FilterConfig = React.lazy(() => import("../common-component/filter-config/FilterConfig.tsx"));
+const AMapConfig = lazy(() => import("./AMapConfig.tsx").then((module) => ({default: module.AMapConfig})));
+
+export default class AMapDefinition extends AbstractDesignerDefinition<AMapController, AMapComponentProps> {
+    getBaseInfo(): BaseInfoType {
+        return {
+            compName: "自定义高德地图",
+            compKey: "AMap",
+            categorize: "map",
+        };
+    }
+
+    getAiFeatureInfo(): ComponentAiFeatureInfo {
+        return {
+            compKey: "AMap",
+            compName: "自定义高德地图",
+            summary: "自定义高德地图，用于地图定位、地理分布和空间数据展示。",
+            featureTags: ["自定义高德地图", "地图", "地理信息", "空间可视化", "地图组件"],
+            applicableScenes: ["地理位置展示", "区域分布分析", "轨迹/点位展示", "地图看板"],
+            capabilities: ["支持地图底图", "支持坐标点位", "支持空间数据展示"],
+            constraints: [],
+            aliases: ["AMap", "Map"],
+            categorize: "map",
+        };
+    }
+
+    getAiStylePromptTs(): string {
+        return `export interface ComponentStyle {
+    key?: string;
+    securityJsCode?: string;
+    customCode?: string;
+}`.trim();
+    }
+
+    getChartImg(): string | null {
+        return aMapImage;
+    }
+
+    getController(): ClazzTemplate<AMapController> | null {
+        return AMapController;
+    }
+
+    getInitConfig(): AMapComponentProps {
+        return {
+            base: {
+                id: "",
+                name: '自定义高德地图',
+                type: 'AMap',
+            },
+            style: {
+                key: "",
+                securityJsCode: "",
+                customCode: "function(container, AMap, bpTriggers) {\n" +
+                    "    let map = new AMap.Map(container, {\n" +
+                    "        zoom: 11.43,\n" +
+                    "        center: [120.2446746826172, 30.199146446037616],\n" +
+                    "        pitch: 55,\n" +
+                    "        rotation: 20,\n" +
+                    "        showLabel: true,\n" +
+                    "        viewMode: '3D',\n" +
+                    "        mapStyle: 'amap://styles/dark',\n" +
+                    "    });\n" +
+                    "    return map;\n" +
+                    "}"
+            },
+            filter: {
+                enable: false,
+                blur: 0,
+                brightness: 1,
+                contrast: 1,
+                opacity: 1,
+                saturate: 1,
+                hueRotate: 0
+            },
+        };
+    }
+
+    getMenuList(): Array<MenuInfo> {
+        return super.getMenuList().filter((item: MenuInfo) => (item.key !== 'theme' && item.key !== 'data'));
+    }
+
+    getMenuToConfigContentMap(): MenuToConfigMappingType {
+        return {
+            base: BaseInfo,
+            style: AMapConfig,
+            animation: AnimationConfig,
+            theme: ThemeConfig,
+            filter: FilterConfig
+        };
+    }
+
+
+    getEventList(): EventInfo[] {
+        const events = super.getEventList();
+        return events.concat([
+            {
+                id: "click",
+                name: "点击时",
+            }
+        ]);
+    }
+}

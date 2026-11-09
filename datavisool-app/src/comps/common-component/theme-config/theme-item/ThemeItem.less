@@ -1,0 +1,86 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.datavisool-theme-item {
+  padding: 16px;
+  background-color: #2C2C3E;
+  border-radius: 8px;
+  border: 1px solid #3A3A4E;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #4fb8ff;
+    outline-offset: 2px;
+  }
+
+  .datavisool-theme-item-header {
+    padding: 0;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #A0A0B2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .datavisool-theme-item-title {
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+
+    .datavisool-theme-item-operators {
+      display: flex;
+
+      .operator-item {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        margin-left: 8px;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background-color: rgba(255, 110, 110, 0.2);
+          color: #FF6E6E;
+        }
+      }
+    }
+  }
+
+  .datavisool-theme-item-body {
+    pointer-events: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.datavisool-theme-item:hover {
+  background-color: #343448;
+  border-color: #4A4A5E;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.datavisool-theme-item-active {
+  border: 1px solid #4FB8FF;
+  background-color: #2C2C3E;
+  box-shadow: 0 2px 12px rgba(79, 184, 255, 0.3);
+}
+
+.datavisool-theme-item-active:hover {
+  border-color: #4FB8FF;
+  background-color: #343448;
+  box-shadow: 0 4px 16px rgba(79, 184, 255, 0.4);
+}

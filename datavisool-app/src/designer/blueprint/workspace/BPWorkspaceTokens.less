@@ -1,0 +1,94 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.bp-workspace-theme-tokens() {
+  --bp-bg-canvas: #0a1020;
+  --bp-bg-surface-1: #111a2e;
+  --bp-bg-surface-2: #162238;
+  --bp-bg-hover: #1a2740;
+  --bp-bg-active: #1d3155;
+  --bp-text-primary: #f3f7ff;
+  --bp-text-secondary: #aab7d1;
+  --bp-text-muted: #7c8aa5;
+  --bp-primary: #3b82f6;
+  --bp-border: rgba(255, 255, 255, 0.08);
+  --bp-border-strong: rgba(255, 255, 255, 0.12);
+  --bp-shadow-panel: 0 12px 32px rgba(0, 0, 0, 0.32);
+  --bp-radius-panel: 14px;
+  --bp-radius-control: 8px;
+
+  --bg-canvas: var(--bp-bg-canvas);
+  --bg-sidebar: #0b1222;
+  --bg-surface-1: var(--bp-bg-surface-1);
+  --bg-surface-2: var(--bp-bg-surface-2);
+  --bg-hover: var(--bp-bg-hover);
+  --bg-active: var(--bp-bg-active);
+  --text-primary: var(--bp-text-primary);
+  --text-secondary: var(--bp-text-secondary);
+  --text-tertiary: var(--bp-text-muted);
+  --text-disabled: #5e6a82;
+  --primary: var(--bp-primary);
+  --primary-hover: #4a90ff;
+  --primary-foreground: #ffffff;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: var(--bp-border);
+  --border-strong: var(--bp-border-strong);
+  --border-focus: rgba(59, 130, 246, 0.45);
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --background: var(--bg-canvas);
+  --foreground: var(--text-primary);
+  --card: var(--bg-surface-1);
+  --popover: var(--bg-surface-1);
+  --muted-foreground: var(--text-secondary);
+  --datavisool-color-bg-app: var(--bg-canvas);
+  --datavisool-color-bg-panel: var(--bg-sidebar);
+  --datavisool-color-bg-card: var(--bg-surface-1);
+  --datavisool-color-bg-elevated: var(--bg-surface-2);
+  --datavisool-color-bg-muted: var(--bg-hover);
+  --datavisool-color-primary: var(--primary);
+  --datavisool-color-primary-end: var(--primary);
+  --datavisool-color-accent: #22c7b8;
+  --datavisool-color-info: #38bdf8;
+  --datavisool-color-success: #22c55e;
+  --datavisool-color-warning: #f59e0b;
+  --datavisool-color-danger: #ef4444;
+  --datavisool-color-text-primary: var(--text-primary);
+  --datavisool-color-text-secondary: var(--text-secondary);
+  --datavisool-color-text-tertiary: var(--text-tertiary);
+  --datavisool-color-text-disabled: var(--text-disabled);
+  --datavisool-color-border: var(--border-default);
+  --datavisool-color-border-strong: var(--border-strong);
+  --datavisool-color-ring: var(--border-focus);
+  --datavisool-control-bg: var(--bg-surface-2);
+  --datavisool-control-bg-hover: var(--bg-hover);
+  --datavisool-control-border: var(--border-default);
+  --datavisool-control-border-focus: var(--border-focus);
+  --datavisool-control-text: var(--text-primary);
+  --datavisool-control-placeholder: var(--text-tertiary);
+  --datavisool-shadow-panel: var(--bp-shadow-panel);
+  --datavisool-shadow-glow-purple: none;
+}
+
+.blueprint-workspace-root,
+.bp-workspace-popup {
+  .bp-workspace-theme-tokens();
+}
+
+.bp-workspace-popup {
+  background: var(--bg-surface-1, #111a2e);
+  color: var(--bp-text-primary, #f3f7ff);
+  border: 1px solid var(--bp-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--bp-radius-control, 8px);
+  box-shadow: var(--bp-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+}
+
+.bp-workspace-popup[hidden] {
+  display: none !important;
+}

@@ -1,0 +1,60 @@
+# Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      url: jdbc:mysql://替换为ip地址:3306/datavisool_server?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+      username: 替换为你的数据库用户名
+      password: 替换为你的数据库密码
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 1GB
+
+# mybatis-plus配置
+mybatis-plus:
+  type-aliases-package: com.zsq.datavisoolservice.model
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  config: classpath:log4j2-spring.xml
+  level:
+    cn.jay.repository: info
+
+datavisool:
+  ai:
+    storage-path: D:/path/to/datavisool-server/ai-driven
+  resource-path:
+    root: D:/path/to/datavisool-server
+    image: /static/images
+    cover: /static/covers
+    avatar: /static/avatar
+    remote-component: /static/components
+  file:
+    image-max-size: 50MB
+  migration: # 是否自动跑sql脚本
+    enable: true
+  security:
+    cors:
+      # 同源部署默认不需要配置跨域。
+      # 仅在明确需要跨域访问 /api/** 或 /static/** 时，才按需配置允许来源。
+      # allowed-origin-patterns: http://127.0.0.1:5173,http://localhost:5173
+  web-update:
+    # 配置可用的版本接口并将 enabled 设为 true 后启用更新检测。
+    enabled: false
+    # 支持 {currentVersion} 占位符。
+    official-api-url: ''
+    official-api-method: GET
+    # 官方接口返回 {"code":200,"msg":"success","data":{"version":"2026.08.22","description":"版本说明","createTime":"2026-08-22 10:00:00"}} 时使用 data.version。
+    # 若直接返回版本文本，留空即可。
+    version-json-path: data.version
+    timeout-seconds: 10
+    # 可选。未配置时使用系统内置的售后二维码。
+    support-qr-code-url:

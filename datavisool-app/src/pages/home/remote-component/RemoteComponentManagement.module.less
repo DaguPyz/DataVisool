@@ -1,0 +1,749 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.remoteComponentPage {
+  --remote-bg-canvas: #0a1020;
+  --remote-surface-1: #111a2e;
+  --remote-surface-2: #162238;
+  --remote-bg-hover: #1a2740;
+  --remote-border-subtle: rgba(255, 255, 255, 0.06);
+  --remote-border-default: rgba(255, 255, 255, 0.08);
+  --remote-border-strong: rgba(255, 255, 255, 0.12);
+  --remote-border-focus: rgba(59, 130, 246, 0.45);
+  --remote-text-primary: #f3f7ff;
+  --remote-text-secondary: #aab7d1;
+  --remote-text-tertiary: #7c8aa5;
+  --remote-text-disabled: #5e6a82;
+  --remote-primary: #3b82f6;
+  --remote-primary-hover: #4a90ff;
+  --remote-danger: #ef4444;
+  --remote-radius-sm: 8px;
+  --remote-radius-md: 10px;
+  --remote-radius-lg: 12px;
+  --remote-radius-xl: 16px;
+
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--remote-bg-canvas);
+  color: var(--remote-text-primary);
+  font-family: var(--datavisool-font-family);
+}
+
+/* Kept in the DOM for compatibility; the console page uses a quiet canvas without an illustration. */
+.sceneBackground {
+  display: none;
+}
+
+.pageHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.headerTitleArea {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.titleIcon {
+  display: none;
+}
+
+.titleText {
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--remote-text-primary);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 8px 0 0;
+    overflow: hidden;
+    color: var(--remote-text-secondary);
+    font-size: 14px;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.headerTools {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.searchInputField {
+  width: 330px;
+  min-width: 0;
+
+  :global(.datavisool-field-content) {
+    width: 100%;
+  }
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--remote-border-default);
+  border-radius: var(--remote-radius-md);
+  background: var(--remote-surface-1);
+  color: var(--remote-text-primary);
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    border-color: var(--remote-border-focus);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.14);
+  }
+
+  :global(.datavisool-input-prefix) {
+    margin-right: 8px;
+    color: var(--remote-text-tertiary);
+  }
+
+  :global(.datavisool-input-native) {
+    color: var(--remote-text-primary);
+    background: transparent;
+    font-size: 14px;
+    line-height: 22px;
+
+    &::placeholder {
+      color: var(--remote-text-tertiary);
+    }
+  }
+}
+
+.uploadButton,
+.batchDeleteButton {
+  display: inline-flex !important;
+  height: 40px !important;
+  min-height: 40px;
+  align-items: center !important;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px !important;
+  box-sizing: border-box;
+  border-radius: var(--remote-radius-md) !important;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px !important;
+  white-space: nowrap;
+  transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+}
+
+.uploadButton {
+  min-width: 96px;
+  border: 0 !important;
+  background: var(--remote-primary) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+  color: #ffffff !important;
+
+  &:hover,
+  &:focus {
+    background: var(--remote-primary-hover) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+    color: #ffffff !important;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--remote-border-focus), 0 6px 20px rgba(59, 130, 246, 0.22);
+  }
+}
+
+.batchDeleteButton {
+  min-width: 96px;
+  border: 1px solid var(--remote-border-default) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--remote-text-secondary) !important;
+
+  &:hover,
+  &:focus {
+    border-color: var(--remote-border-strong) !important;
+    background: var(--remote-bg-hover) !important;
+    color: var(--remote-text-primary) !important;
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--remote-border-focus);
+  }
+}
+
+.pageBody {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 138, 165, 0.45) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 165, 0.45);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(170, 183, 209, 0.58);
+  }
+}
+
+.componentListPane {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.componentGrid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.componentCard {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 196px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--remote-border-default);
+  border-radius: var(--remote-radius-lg);
+  background: var(--remote-surface-1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+
+  &:hover {
+    border-color: var(--remote-border-strong);
+    background: var(--remote-surface-2);
+    transform: translateY(-1px);
+  }
+}
+
+/* Kept as named variants for the existing TSX; cards intentionally share one neutral surface. */
+.purpleCard,
+.blueCard {
+  border-color: var(--remote-border-default);
+  background: var(--remote-surface-1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.selectedCard {
+  border-color: var(--remote-primary) !important;
+  background: var(--remote-surface-2);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22), 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.cardTop,
+.cardDivider,
+.cardActions {
+  position: relative;
+  z-index: 1;
+}
+
+.cardTop {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 16px;
+}
+
+.cardCheckbox {
+  position: absolute;
+  z-index: 2;
+  top: 20px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--remote-border-strong);
+  border-radius: var(--remote-radius-sm);
+  background: var(--remote-surface-2);
+  cursor: pointer;
+  transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--remote-primary);
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18);
+  }
+}
+
+.cardCheckboxChecked {
+  border-color: var(--remote-primary);
+  background: var(--remote-primary);
+
+  &::after {
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    content: "";
+    transform: rotate(45deg);
+  }
+}
+
+.cardIcon {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.cardTitleBlock {
+  min-width: 0;
+  flex: 1;
+  padding-right: 32px;
+
+  h2 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--remote-text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 4px 0 8px;
+    overflow: hidden;
+    color: var(--remote-text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    display: inline-flex;
+    height: 24px;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: var(--remote-radius-sm);
+    background: rgba(59, 130, 246, 0.14);
+    color: var(--remote-primary);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+}
+
+.cardDivider {
+  height: 1px;
+  margin: 16px 0 12px;
+  background: var(--remote-border-subtle);
+}
+
+.cardActions {
+  display: flex;
+  height: 28px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+
+  i {
+    display: none;
+  }
+
+  button {
+    display: inline-flex;
+    min-width: 0;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--remote-text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    transition: color 140ms ease-out, background-color 140ms ease-out;
+
+    :global(.i-icon) {
+      display: inline-flex;
+      flex: 0 0 auto;
+    }
+
+    :global(svg) {
+      display: block;
+      width: 12px;
+      height: 12px;
+      flex: 0 0 12px;
+      align-self: center;
+    }
+
+    &:hover {
+      color: var(--remote-text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: 0 0 0 3px var(--remote-border-focus);
+    }
+  }
+}
+
+.deleteAction {
+  color: var(--remote-text-secondary) !important;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.10) !important;
+    color: #f87171 !important;
+  }
+
+  &:focus-visible {
+    color: #f87171 !important;
+  }
+}
+
+.emptyWrap {
+  display: flex;
+  min-height: 320px;
+  align-items: center;
+  justify-content: center;
+
+  :global(.datavisool-empty-description) {
+    color: var(--remote-text-tertiary);
+  }
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  :global(.datavisool-pagination-total) {
+    order: 0;
+    width: auto;
+    color: var(--remote-text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  :global(.datavisool-pagination-pages) {
+    gap: 8px;
+  }
+
+  :global(.datavisool-pagination-item),
+  :global(.datavisool-pagination-arrow) {
+    display: inline-flex;
+    min-width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid var(--remote-border-default);
+    border-radius: var(--remote-radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--remote-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    transition: background-color 140ms ease-out, border-color 140ms ease-out, color 140ms ease-out;
+
+    &:hover {
+      border-color: var(--remote-border-strong);
+      background: var(--remote-bg-hover);
+      color: var(--remote-text-primary);
+    }
+  }
+
+  :global(.datavisool-pagination-item-active) {
+    border-color: var(--remote-primary);
+    background: var(--remote-primary);
+    color: #ffffff;
+  }
+
+  :global(.datavisool-pagination-item:disabled),
+  &:global(.datavisool-pagination-disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.uploadModal {
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  border: 1px solid var(--remote-border-default);
+  border-radius: var(--remote-radius-xl);
+  background: var(--remote-surface-1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  :global(.datavisool-dialog-header) {
+    border-bottom: 1px solid var(--remote-border-subtle);
+    background: transparent;
+
+    :global(.datavisool-dialog-title) {
+      color: var(--remote-text-primary);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+    }
+  }
+
+  :global(.datavisool-dialog-body) {
+    padding: 24px;
+  }
+}
+
+.uploadDragger {
+  border: 1px dashed var(--remote-border-strong);
+  border-radius: var(--remote-radius-lg);
+  background: var(--remote-surface-2);
+
+  :global(.datavisool-upload-drag-container) {
+    padding: 24px;
+  }
+
+  &:hover {
+    border-color: var(--remote-primary);
+  }
+}
+
+.uploadText {
+  margin: 8px 0 0;
+  color: var(--remote-text-tertiary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.progressWrap {
+  margin-top: 16px;
+}
+
+.uploadModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--remote-border-subtle);
+}
+
+.modalUploadButton,
+.modalCancelButton {
+  height: 40px !important;
+  min-height: 40px;
+  padding: 0 16px !important;
+  border-radius: var(--remote-radius-md) !important;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px !important;
+}
+
+.modalUploadButton {
+  border: 0 !important;
+  background: var(--remote-primary) !important;
+  color: #ffffff !important;
+
+  &:hover,
+  &:focus {
+    background: var(--remote-primary-hover) !important;
+    color: #ffffff !important;
+  }
+}
+
+.modalCancelButton {
+  border: 1px solid var(--remote-border-default) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--remote-text-secondary) !important;
+
+  &:hover,
+  &:focus {
+    border-color: var(--remote-border-strong) !important;
+    background: var(--remote-bg-hover) !important;
+    color: var(--remote-text-primary) !important;
+  }
+}
+
+.editModalContent {
+  padding: 8px 0;
+}
+
+@media (max-width: 1279px) {
+  .componentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .pageHeader {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .headerTools {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .searchInputField {
+    flex: 1;
+    width: auto;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 767px) {
+  .pageHeader {
+    padding: 20px 16px;
+  }
+
+  .titleText {
+    h1 {
+      font-size: 28px;
+      line-height: 36px;
+    }
+
+    p {
+      white-space: normal;
+    }
+  }
+
+  .headerTools {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .searchInputField {
+    width: 100%;
+    flex: 1 0 100%;
+    min-width: 0;
+  }
+
+  .uploadButton,
+  .batchDeleteButton {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pageBody {
+    padding: 0 16px 20px;
+  }
+
+  .componentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .componentCard {
+    min-height: 0;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+
+    :global(.datavisool-pagination-total) {
+      order: 10;
+      width: 100%;
+      text-align: right;
+    }
+  }
+}
+
+@media (max-width: 479px) {
+  .titleText p {
+    display: none;
+  }
+
+  .uploadModal {
+    :global(.datavisool-dialog-body) {
+      padding: 20px;
+    }
+  }
+
+  .uploadModalFooter {
+    .modalUploadButton,
+    .modalCancelButton {
+      flex: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uploadButton,
+  .batchDeleteButton,
+  .componentCard,
+  .cardCheckbox,
+  .cardActions button,
+  .pagination :global(.datavisool-pagination-item),
+  .pagination :global(.datavisool-pagination-arrow) {
+    transition: none;
+  }
+}

@@ -1,0 +1,624 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.databasePage {
+  --datasource-bg: #0a1020;
+  --datasource-surface: #111a2e;
+  --datasource-surface-raised: #162238;
+  --datasource-hover: #1a2740;
+  --datasource-border-subtle: rgba(255, 255, 255, 0.06);
+  --datasource-border: rgba(255, 255, 255, 0.08);
+  --datasource-border-strong: rgba(255, 255, 255, 0.12);
+  --datasource-focus: rgba(59, 130, 246, 0.45);
+  --datasource-text: #f3f7ff;
+  --datasource-text-secondary: #aab7d1;
+  --datasource-text-tertiary: #7c8aa5;
+  --datasource-primary: #3b82f6;
+  --datasource-primary-hover: #4a90ff;
+  --datasource-teal: #22c7b8;
+  --datasource-purple: #8b5cf6;
+  --datasource-orange: #f5b544;
+  --datasource-danger: #ef4444;
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px;
+  background: var(--datasource-bg);
+  color: var(--datasource-text);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.waveOrnament {
+  display: none;
+}
+
+.pageHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.headerTitleArea {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleIcon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--datasource-primary);
+  line-height: 0;
+
+  :global(svg) {
+    width: 24px;
+    height: 24px;
+    fill: currentColor !important;
+  }
+}
+
+.titleText {
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+    color: var(--datasource-text);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: var(--datasource-text-secondary);
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+.headerTools {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.searchInputField {
+  width: 320px;
+}
+
+.searchInput {
+  box-sizing: border-box;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--datasource-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out;
+
+  &:hover {
+    border-color: var(--datasource-border-strong);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:focus,
+  &:focus-within {
+    border-color: var(--datasource-primary);
+    box-shadow: 0 0 0 3px var(--datasource-focus);
+  }
+
+  :global(.datavisool-input-prefix) {
+    display: inline-flex;
+    margin-right: 8px;
+    color: var(--datasource-text-tertiary);
+  }
+
+  :global(.datavisool-input-native) {
+    min-width: 0;
+    color: var(--datasource-text);
+    background: transparent;
+    font-size: 14px;
+    line-height: 20px;
+
+    &::placeholder {
+      color: var(--datasource-text-tertiary);
+    }
+  }
+}
+
+.createButton,
+.batchDeleteButton {
+  display: inline-flex;
+  height: 40px;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+}
+
+.createButton {
+  border: 0;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+  color: #fff;
+
+  &:hover,
+  &:focus {
+    background: var(--datasource-primary-hover) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+}
+
+.batchDeleteButton {
+  border: 1px solid var(--datasource-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--datasource-text-secondary);
+
+  &:hover,
+  &:focus {
+    border-color: var(--datasource-border-strong) !important;
+    background: var(--datasource-hover) !important;
+    color: var(--datasource-text) !important;
+  }
+}
+
+.createButton:focus-visible,
+.batchDeleteButton:focus-visible,
+.cardActions button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--datasource-focus);
+}
+
+.pageBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-color: rgba(124, 138, 165, 0.56) transparent;
+  scrollbar-width: thin;
+  padding: 1px 1px 24px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 165, 0.56);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(170, 183, 209, 0.68);
+  }
+}
+
+.cardGrid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.dataSourceCard {
+  --datasource-type-color: var(--datasource-primary);
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  min-width: 0;
+  min-height: 218px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid var(--datasource-border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%), var(--datasource-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+
+  &:hover {
+    border-color: var(--datasource-border-strong);
+    background-color: var(--datasource-surface-raised);
+    transform: translateY(-1px);
+  }
+}
+
+.dataSourceCard.oracle { --datasource-type-color: var(--datasource-purple); }
+.dataSourceCard.postgresql { --datasource-type-color: #38bdf8; }
+.dataSourceCard.mysql { --datasource-type-color: var(--datasource-teal); }
+.dataSourceCard.sqlserver { --datasource-type-color: #f472b6; }
+.dataSourceCard.default { --datasource-type-color: var(--datasource-primary); }
+
+.selected {
+  &.dataSourceCard {
+    border-color: var(--datasource-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16), 0 8px 24px rgba(0, 0, 0, 0.24);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardCheckbox {
+  flex: 0 0 auto;
+
+  :global(.datavisool-field-content) {
+    display: block;
+  }
+
+  :global(.datavisool-checkbox-field) {
+    line-height: 0;
+  }
+
+  :global(.datavisool-checkbox) {
+    min-height: 0;
+  }
+
+  :global(.datavisool-checkbox-control) {
+    width: 18px;
+    height: 18px;
+    border-color: rgba(170, 183, 209, 0.72);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+  }
+
+  :global(.datavisool-checkbox-control::after) {
+    width: 5px;
+    height: 9px;
+  }
+
+  :global(.datavisool-checkbox-checked .datavisool-checkbox-control) {
+    border-color: var(--datasource-primary);
+    background: var(--datasource-primary);
+    box-shadow: none;
+  }
+}
+
+.tags {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.typeTag,
+.scriptTag {
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.typeTag {
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--datasource-type-color);
+}
+
+.typeTag.oracle { background: rgba(139, 92, 246, 0.14); }
+.typeTag.postgresql { background: rgba(56, 189, 248, 0.14); }
+.typeTag.mysql { background: rgba(34, 199, 184, 0.14); }
+.typeTag.sqlserver { background: rgba(244, 114, 182, 0.14); }
+
+.scriptTag {
+  background: rgba(245, 181, 68, 0.14);
+  color: #f8cf75;
+}
+
+.cardMain {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.vendorLogo {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.cardText {
+  min-width: 0;
+  flex: 1;
+
+  h2 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--datasource-text);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 4px 0 0;
+    overflow: hidden;
+    color: var(--datasource-text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.cardDivider {
+  height: 1px;
+  margin: 20px 0 12px;
+  background: var(--datasource-border-subtle);
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+
+  button {
+    display: inline-flex;
+    min-width: 0;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--datasource-text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    line-height: 18px;
+    transition: background-color 140ms ease-out, color 140ms ease-out;
+
+    :global(.i-icon) {
+      display: inline-flex;
+      flex: 0 0 auto;
+    }
+
+    :global(svg) {
+      display: block;
+      width: 12px;
+      height: 12px;
+      flex: 0 0 12px;
+      align-self: center;
+    }
+
+    &:hover {
+      background: var(--datasource-hover);
+      color: var(--datasource-text);
+    }
+
+    &:last-child:hover {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.10);
+    }
+  }
+}
+
+.emptyWrap {
+  display: flex;
+  min-height: 320px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--datasource-text-tertiary);
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
+  color: var(--datasource-text-secondary);
+
+  :global(.datavisool-pagination-pages) {
+    gap: 8px;
+  }
+
+  :global(.datavisool-pagination-item),
+  :global(.datavisool-pagination-arrow) {
+    display: inline-flex;
+    box-sizing: border-box;
+    min-width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 1px solid var(--datasource-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+    color: var(--datasource-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+  }
+
+  :global(.datavisool-pagination-item:hover:not(:disabled)),
+  :global(.datavisool-pagination-arrow:hover:not(:disabled)) {
+    border-color: var(--datasource-border-strong);
+    background: var(--datasource-hover);
+    color: var(--datasource-text);
+  }
+
+  :global(.datavisool-pagination-item-active) {
+    border-color: transparent;
+    background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.22);
+    color: #fff;
+  }
+
+  :global(.datavisool-pagination-item:focus-visible),
+  :global(.datavisool-pagination-arrow:focus-visible) {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--datasource-focus);
+  }
+
+  :global(.datavisool-pagination-item:disabled),
+  :global(.datavisool-pagination-arrow:disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  :global(.datavisool-pagination-total) {
+    color: var(--datasource-text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 1280px) {
+  .cardGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1279px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .headerTools {
+    width: 100%;
+  }
+
+  .searchInputField {
+    min-width: 240px;
+    flex: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .databasePage {
+    min-height: 100%;
+    padding: 20px 16px;
+  }
+
+  .pageHeader {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .headerTitleArea {
+    align-items: flex-start;
+  }
+
+  .titleText {
+    h1 {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    p {
+      margin-top: 4px;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .headerTools {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .searchInputField {
+    width: 100%;
+    min-width: 0;
+    flex: 1 0 100%;
+  }
+
+  .createButton,
+  .batchDeleteButton {
+    flex: 1;
+  }
+
+  .cardGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dataSourceCard {
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .paginationContainer {
+    justify-content: center;
+    overflow-x: auto;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,946 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.userPage {
+  --user-bg: var(--home-bg-canvas, #0a1020);
+  --user-surface: var(--home-bg-surface-1, #111a2e);
+  --user-surface-raised: var(--home-bg-surface-2, #162238);
+  --user-hover: var(--home-bg-hover, #1a2740);
+  --user-active: var(--home-bg-active, #1d3155);
+  --user-border: var(--home-border-default, rgba(255, 255, 255, 0.08));
+  --user-border-subtle: var(--home-border-subtle, rgba(255, 255, 255, 0.06));
+  --user-focus: var(--home-border-focus, rgba(59, 130, 246, 0.45));
+  --user-text: var(--home-text-primary, #f3f7ff);
+  --user-text-secondary: var(--home-text-secondary, #aab7d1);
+  --user-text-tertiary: var(--home-text-tertiary, #7c8aa5);
+  --user-primary: var(--home-primary, #3b82f6);
+
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  overflow: hidden;
+  background: var(--user-bg);
+  color: var(--user-text);
+}
+
+.pageHeader {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.headerTitleArea {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleIcon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--user-primary);
+}
+
+.titleText {
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+    color: var(--user-text);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: var(--user-text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+  }
+}
+
+.headerTools {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.searchInputField {
+  width: 320px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--user-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+  transition: border-color 140ms ease-out, box-shadow 140ms ease-out, background-color 140ms ease-out;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:focus,
+  &:focus-within {
+    border-color: var(--user-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+  }
+
+  :global(.datavisool-input-prefix) {
+    margin-right: 8px;
+    color: var(--user-text-tertiary);
+  }
+
+  :global(.datavisool-input-native) {
+    color: var(--user-text);
+    background: transparent;
+    font-size: 14px;
+    line-height: 20px;
+
+    &::placeholder {
+      color: var(--user-text-tertiary);
+    }
+  }
+}
+
+.createButton,
+.batchDeleteButton {
+  display: inline-flex;
+  height: 40px;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out, transform 140ms ease-out;
+}
+
+.createButton {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+
+  &:hover,
+  &:focus {
+    color: #fff !important;
+    background: #4a90ff !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+    transform: translateY(-1px);
+  }
+}
+
+.batchDeleteButton {
+  border: 1px solid var(--user-border);
+  color: var(--user-text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+
+  &:hover,
+  &:focus {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: var(--user-text) !important;
+    background: var(--user-hover) !important;
+  }
+}
+
+.summaryBar {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryItem {
+  display: flex;
+  min-width: 0;
+  min-height: 72px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--user-border);
+  border-radius: 12px;
+  background: var(--user-surface);
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+
+  strong {
+    display: block;
+    color: var(--user-text);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 28px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  small {
+    display: block;
+    margin-top: 2px;
+    color: var(--user-text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+}
+
+.summaryActive {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: var(--user-surface-raised);
+}
+
+.summaryIcon {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--user-border-subtle);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--user-text-secondary);
+
+  :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.summaryActive .summaryIcon {
+  border-color: rgba(59, 130, 246, 0.24);
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--user-primary);
+}
+
+.pageBody {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 8px 24px 0;
+  box-sizing: border-box;
+  scrollbar-color: rgba(124, 138, 165, 0.5) transparent;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 165, 0.5);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(170, 183, 209, 0.66);
+  }
+}
+
+.tableShell {
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--user-border);
+  border-radius: 16px;
+  background: var(--user-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  scrollbar-color: rgba(124, 138, 165, 0.5) transparent;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 165, 0.5);
+  }
+}
+
+.tableRow {
+  display: grid;
+  min-width: 940px;
+  grid-template-columns: 32px minmax(200px, 1.25fr) minmax(140px, 0.8fr) minmax(130px, 0.75fr) minmax(190px, 1fr) 144px;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--user-border-subtle);
+  color: var(--user-text-secondary);
+  transition: background-color 120ms ease-out;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:not(.tableHead):hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+}
+
+.tableHead {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  min-height: 44px;
+  background: var(--user-surface-raised);
+  color: var(--user-text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.checkbox {
+  position: relative;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+  }
+}
+
+.checkboxChecked {
+  border-color: var(--user-primary);
+  background: var(--user-primary);
+
+  &::after {
+    width: 4px;
+    height: 7px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    content: '';
+    transform: translateY(-1px) rotate(45deg);
+  }
+}
+
+.userCell {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #a9c8ff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.userMeta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    overflow: hidden;
+    color: var(--user-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    overflow: hidden;
+    color: var(--user-text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.textCell,
+.contactCell {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--user-text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contactCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--user-text-tertiary);
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--user-text-secondary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.actionGroup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.actionButton {
+  display: inline-flex;
+  min-width: 0;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--user-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--user-border);
+    background: var(--user-hover);
+    color: var(--user-text);
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.16);
+  }
+}
+
+.dangerAction {
+  color: #f28b95;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(239, 68, 68, 0.18);
+    background: rgba(239, 68, 68, 0.1);
+    color: #ff9da5;
+  }
+}
+
+.emptyState {
+  display: flex;
+  min-width: 280px;
+  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  :global(.datavisool-empty) {
+    gap: 10px;
+    padding: 20px;
+  }
+
+  :global(.datavisool-empty-default-visual) {
+    opacity: 0.72;
+  }
+
+  :global(.datavisool-empty-description) {
+    color: var(--user-text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+  }
+}
+
+.paginationBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.pagination {
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--user-text-tertiary);
+
+  :global(.datavisool-pagination-item),
+  :global(.datavisool-pagination-arrow) {
+    border-color: var(--user-border);
+    border-radius: 8px;
+    background: var(--user-surface);
+    box-shadow: none;
+    color: var(--user-text-secondary);
+  }
+
+  :global(.datavisool-pagination-item:hover:not(:disabled)),
+  :global(.datavisool-pagination-arrow:hover:not(:disabled)) {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: var(--user-hover);
+    color: var(--user-text);
+  }
+
+  :global(.datavisool-pagination-item-active) {
+    border-color: transparent;
+    background: var(--user-primary);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.22);
+    color: #fff;
+  }
+
+  :global(.datavisool-pagination-total) {
+    color: var(--user-text-tertiary);
+    font-size: 12px;
+  }
+}
+
+.userDialog {
+  border: 1px solid var(--user-border);
+  border-radius: 16px;
+  background: var(--user-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  color: var(--user-text-secondary);
+
+  :global(.datavisool-dialog-header) {
+    height: 56px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--user-border-subtle);
+    background: var(--user-surface-raised);
+  }
+
+  :global(.datavisool-dialog-title) {
+    color: var(--user-text);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  :global(.datavisool-dialog-body) {
+    background: var(--user-surface);
+    color: var(--user-text-secondary);
+  }
+}
+
+.userDialogBody {
+  padding: 24px;
+}
+
+.panelIntro {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--user-border);
+  border-radius: 12px;
+  background: var(--user-surface-raised);
+}
+
+.panelIcon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--user-primary);
+}
+
+.panelTitle {
+  color: var(--user-text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.panelDesc {
+  margin-top: 4px;
+  color: var(--user-text-tertiary);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.formField {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+
+  > span {
+    color: var(--user-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+}
+
+.formInput {
+  height: 40px;
+  border: 1px solid var(--user-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--user-text);
+  box-shadow: none;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:focus,
+  &:focus-within {
+    border-color: var(--user-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+  }
+
+  :global(.datavisool-input-prefix) {
+    color: var(--user-text-tertiary);
+  }
+
+  :global(.datavisool-input-native) {
+    color: var(--user-text);
+    background: transparent;
+    font-size: 14px;
+    line-height: 20px;
+
+    &::placeholder {
+      color: var(--user-text-tertiary);
+    }
+  }
+}
+
+.roleSection {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--user-border);
+  border-radius: 12px;
+  background: var(--user-surface-raised);
+}
+
+.roleHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--user-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.roleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.roleChip,
+.roleEmpty {
+  border: 1px solid var(--user-border);
+  border-radius: 10px;
+  background: var(--user-surface);
+  color: var(--user-text-secondary);
+}
+
+.roleChip {
+  display: flex;
+  min-width: 120px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 9px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+
+  span {
+    color: var(--user-text);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  small {
+    color: var(--user-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: var(--user-hover);
+  }
+
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.16);
+  }
+}
+
+.roleChipSelected {
+  border-color: rgba(59, 130, 246, 0.48);
+  background: rgba(59, 130, 246, 0.12);
+
+  small {
+    color: #a9c8ff;
+  }
+}
+
+.roleEmpty {
+  padding: 10px 12px;
+  color: var(--user-text-tertiary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.panelFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--user-border-subtle);
+}
+
+.panelCancelButton,
+.panelSubmitButton {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.panelCancelButton {
+  border: 1px solid var(--user-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--user-text-secondary);
+
+  &:hover,
+  &:focus {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background: var(--user-hover) !important;
+    color: var(--user-text) !important;
+  }
+}
+
+.panelSubmitButton {
+  min-width: 96px;
+  border: 0;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+}
+
+@media (max-width: 1180px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .headerTools {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .searchInputField {
+    width: ~"min(100%, 520px)";
+  }
+
+  .summaryBar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .userPage {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .titleIcon {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .titleText h1 {
+    font-size: 26px;
+    line-height: 34px;
+  }
+
+  .titleText p {
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .headerTools {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .searchInputField {
+    width: 100%;
+    min-width: 0;
+    grid-column: ~"1 / -1";
+  }
+
+  .createButton,
+  .batchDeleteButton {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .summaryItem {
+    min-height: 64px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .summaryIcon {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .summaryItem strong {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .pageBody {
+    padding: 0 0 16px;
+  }
+
+  .paginationBar {
+    justify-content: center;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
+
+  .userDialogBody {
+    padding: 16px;
+  }
+
+  .panelIntro {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .panelIcon {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .roleSection {
+    margin-top: 16px;
+    padding: 12px;
+  }
+
+  .roleChip {
+    min-width: 0;
+    flex: 1 1 128px;
+  }
+
+  .panelFooter {
+    margin-top: 16px;
+  }
+
+  .panelCancelButton,
+  .panelSubmitButton {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchInput,
+  .createButton,
+  .batchDeleteButton,
+  .summaryItem,
+  .tableRow,
+  .actionButton,
+  .roleChip {
+    transition: none;
+  }
+}

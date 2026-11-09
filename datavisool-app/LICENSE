@@ -1,0 +1,64 @@
+# DataVisool License
+
+Version: 1.0
+
+Copyright © 2023–2026 xiaopujun. All rights reserved.
+
+This license is granted by the copyright holder of DataVisool (the “Licensor”) and applies to the portions of the DataVisool source code, executables, and related documentation accompanying this license that the Licensor has the right to license (collectively, the “Software”).
+
+The Software is source-available. Because this license restricts certain uses and redistribution, it is not an open-source license as defined by the Open Source Initiative (OSI).
+
+## 1. License Grant
+
+Subject to the terms and conditions of this license, the Licensor grants you a free, non-exclusive license to download, install, run, read, study, copy, modify, and build the Software and modified versions of the Software for the following purposes:
+
+- Personal use by individuals;
+- Teaching, learning, or research by educational institutions;
+- A nonprofit organization's own nonprofit activities; and
+- An organization's own internal business purposes, including use in an internal production environment.
+
+The permission for internal business purposes is not limited to a trial period. You may make copies reasonably necessary for permitted use within your own organization. This license does not grant permission to use the Software for the restricted purposes in Section 2.
+
+## 2. Restrictions
+
+Unless the Licensor has granted prior written authorization, you may not:
+
+1. Provide, make available, or distribute the Software or a modified version to any third party, whether for payment or free of charge;
+2. Use the Software or a modified version to create or deliver projects for clients or to provide commercial services to third parties; or
+3. Sell the Software or a modified version, or integrate either into a product offered for sale to third parties.
+
+Copying the Software within your own organization as reasonably necessary for a permitted internal use is not a provision or distribution to a third party under this section.
+
+This section does not limit rights separately granted by the Licensor under the applicable terms of a hosting service, including the right to view and fork a public repository on GitHub through that service, or rights under applicable law or third-party licenses. It does not grant additional rights to distribute or use the Software outside those rights.
+
+## 3. Brand and Notices
+
+When an enterprise or other organization uses the Software or a modified version for its own internal purposes, it may not remove, conceal, or modify the DataVisool name, logo, or other branding displayed by or included with the Software.
+
+You must preserve the Licensor's copyright and license notices and applicable third-party notices. This license does not grant rights to use the DataVisool name, logo, or other marks for product advertising, promotion, or to imply official endorsement, except for references necessary to identify the Software's origin.
+
+## 4. Separate Authorization
+
+The Licensor may grant separate written authorization for uses or distribution not permitted by this license. The scope, duration, fees, and other terms of any such authorization are governed by the applicable written agreement. For authorization inquiries, contact the Licensor through the official contact information published by the DataVisool project.
+
+## 5. User-Created Content
+
+Rights in projects, data, and other content created by users with the Software do not automatically transfer to the Licensor through use of the Software, and such content does not automatically become subject to this license solely because the Software was used.
+
+If created or exported content includes code from the Software or third-party code, that code remains subject to its applicable license. This section does not authorize a use of the Software restricted by Section 2.
+
+## 6. Third-Party Materials
+
+The Software may include or use third-party code, libraries, icons, fonts, services, and other materials. Third-party materials are subject to their own licenses and terms of service. This license does not alter rights granted by third-party rights holders or relieve you of obligations under third-party terms.
+
+## 7. Termination
+
+If you violate this license, the Licensor may require you to stop the violation and, to the extent permitted by applicable law, terminate your authorization under this license. After termination, you must stop the relevant use. Rights held under third-party licenses or applicable law do not automatically terminate as a result.
+
+## 8. Disclaimer
+
+The Software is provided “as is.” To the maximum extent permitted by applicable law, the Licensor makes no warranties concerning the Software's suitability, availability, or results of operation, and is not liable for losses arising from use of or inability to use the Software, unless the parties have agreed otherwise in writing.
+
+## 9. Other Rights
+
+Rights not expressly granted by this license are reserved by their respective rights holders. This license does not restrict rights you have under applicable law or third-party licenses, and does not automatically revoke authorizations previously obtained under a prior license or separate agreement.

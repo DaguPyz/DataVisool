@@ -1,0 +1,96 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.ai-layer-draft-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+}
+
+.ai-layer-draft-batch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ai-layer-draft-canvas .datavisool-comp-item-ai-draft {
+  pointer-events: none;
+  outline: 1px dashed rgba(46, 204, 113, 0.88);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.14);
+}
+
+.ai-layer-draft-batch-hit-area {
+  position: absolute;
+  z-index: 100000;
+  min-width: 1px;
+  min-height: 1px;
+  border: 1px solid transparent;
+  pointer-events: auto;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.ai-layer-draft-batch-hit-area:hover {
+  border-color: rgba(46, 204, 113, 0.92);
+  background: rgba(46, 204, 113, 0.06);
+}
+
+.ai-layer-draft-batch-actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: rgba(23, 26, 31, 0.94);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.82);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+
+.ai-layer-draft-batch-hit-area:hover .ai-layer-draft-batch-actions,
+.ai-layer-draft-batch-actions:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ai-layer-draft-batch-label {
+  padding: 0 3px;
+  font-size: 12px;
+}
+
+.ai-layer-draft-batch-button {
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ai-layer-draft-batch-button.is-accept {
+  background: #1f9d68;
+}
+
+.ai-layer-draft-batch-button.is-accept:hover {
+  background: #25b477;
+}
+
+.ai-layer-draft-batch-button.is-discard {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ai-layer-draft-batch-button.is-discard:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

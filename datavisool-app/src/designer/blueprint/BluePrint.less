@@ -1,0 +1,45 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.blueprint-editor-shell {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(44, 117, 255, 0.12), transparent 36%),
+    linear-gradient(180deg, #030816 0%, #050716 100%);
+  color: #f7fbff;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  .bp-frame {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(67, 86, 148, 0.42);
+    border-radius: 8px;
+    background: #06091a;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 18px 54px rgba(0, 0, 0, 0.42);
+  }
+
+  .datavisool-frame-header,
+  .datavisool-frame-footer,
+  .datavisool-frame-side,
+  .datavisool-frame-content {
+    min-width: 0;
+    min-height: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .datavisool-frame-body,
+  .datavisool-frame-main,
+  .datavisool-frame-main-body,
+  .datavisool-frame-content {
+    min-height: 0;
+  }
+}

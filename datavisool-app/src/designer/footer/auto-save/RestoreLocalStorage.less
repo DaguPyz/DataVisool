@@ -1,0 +1,509 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.restore-local-storage-modal {
+  --primary: #3b82f6;
+
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  color: var(--text-primary);
+  font-family: var(--datavisool-font-family);
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+
+  .i-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+
+    svg {
+      display: block;
+    }
+  }
+
+  .datavisool-dialog-header {
+    height: auto;
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-surface-1);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .datavisool-dialog-title {
+    min-width: 0;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .datavisool-dialog-body {
+    display: flex;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--bg-surface-1);
+  }
+
+  .datavisool-dialog-close {
+    width: 32px;
+    height: 32px;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: background-color 140ms ease-out, color 140ms ease-out;
+
+    svg {
+      stroke-width: 1.75px;
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+      border-color: var(--border-default);
+    }
+
+    &:focus-visible {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  .restore-title {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .restore-title-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+  }
+
+  .restore-title-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .restore-title-main {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+
+  .restore-title-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    white-space: normal;
+  }
+
+  .restore-modal-content {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .restore-modal-main {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+  }
+
+  .restore-notice {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: var(--warning);
+    background: color-mix(in srgb, var(--warning) 8%, var(--bg-surface-1));
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+
+    > .i-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+
+  .restore-notice-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .restore-notice-title {
+    color: var(--warning);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .restore-section {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .restore-section-heading {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .restore-section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+
+    > .i-icon {
+      color: var(--text-secondary);
+    }
+  }
+
+  .restore-latest-save {
+    color: var(--text-tertiary);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  .restore-list-container {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  .restore-list-item {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 72px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: background-color 140ms ease-out;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: -2px;
+    }
+  }
+
+  .restore-list-item-selected {
+    background: var(--bg-active);
+    box-shadow: inset 2px 0 var(--primary);
+
+    &:hover {
+      background: var(--bg-active);
+    }
+
+    .restore-item-select {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+  }
+
+  .restore-item-select {
+    display: inline-flex;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--text-tertiary);
+    border-radius: 50%;
+  }
+
+  .restore-item-main {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .restore-item-line {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .restore-item-name {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .restore-item-time {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    line-height: 20px;
+  }
+
+  .restore-item-time-warning {
+    color: var(--orange);
+  }
+
+  .restore-item-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+    color: var(--text-tertiary);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    line-height: 18px;
+    flex-wrap: wrap;
+
+    > span {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+  }
+
+  .restore-empty-state {
+    display: flex;
+    min-height: 160px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-8);
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  .restore-empty-title {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .restore-modal-footer {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .restore-selection {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .restore-selection-label {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .restore-selection-value {
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .restore-footer-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: var(--space-2);
+
+    .datavisool-button {
+      height: 40px;
+      min-width: 80px;
+      padding: 0 var(--space-4);
+      border-radius: var(--radius-md);
+      box-shadow: none;
+      font-size: 14px;
+      font-weight: 500;
+      transform: none;
+      transition: background-color 140ms ease-out, color 140ms ease-out;
+
+      &:disabled {
+        color: var(--text-disabled);
+        background: var(--bg-surface-2);
+        border-color: var(--border-default);
+        opacity: 1;
+        cursor: not-allowed;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--border-focus);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .restore-cancel-btn {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border-default);
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+  }
+
+  .restore-confirm-btn:not(:disabled) {
+    color: var(--primary-foreground);
+    background: var(--primary);
+    border-color: transparent;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .datavisool-dialog-header,
+    .restore-modal-main,
+    .restore-modal-footer {
+      padding: var(--space-4);
+    }
+
+    .restore-title-icon {
+      display: none;
+    }
+
+    .restore-section-heading {
+      gap: var(--space-2);
+    }
+
+    .restore-item-line,
+    .restore-item-meta {
+      gap: var(--space-2);
+    }
+
+    .restore-modal-footer {
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .restore-selection {
+      flex-basis: 100%;
+    }
+
+    .restore-footer-actions {
+      width: 100%;
+
+      .datavisool-button {
+        flex: 1;
+      }
+    }
+  }
+
+  @media (max-height: 600px) {
+    .datavisool-dialog-header,
+    .restore-modal-main {
+      padding: var(--space-4);
+    }
+
+    .restore-modal-footer {
+      padding: var(--space-3) var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    .datavisool-dialog-close,
+    .restore-list-item,
+    .datavisool-button {
+      transition: none;
+    }
+  }
+}

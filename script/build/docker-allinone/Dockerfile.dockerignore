@@ -1,0 +1,10 @@
+# Only validated artifacts and the selected runtime files enter Docker.
+**
+!server.jar
+!component-docs/
+!component-docs/**
+!runtime.py
+!patch-mysql-entrypoint.py
+!application.yml
+!LICENSE
+!THIRD_PARTY_NOTICES.txt

@@ -1,0 +1,1174 @@
+<!doctype html>
+<!-- Licensed under the DataVisool License. See the LICENSE file distributed with this software. -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataVisool Web Agent 调试轨迹</title>
+<style>
+:root { color-scheme:dark; --accent:#65cb98; --surface:#111416; --chat:#181c1f; --ink:#e7ecef; --muted:#9aa5ad; --line:#2c3338; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+* { box-sizing:border-box; }
+html,body { height:100%; }
+body { margin:0; min-width:320px; height:100dvh; overflow:hidden; color:var(--ink); background:var(--surface); }
+button,input,textarea { font:inherit; }
+button { border:0; color:inherit; cursor:pointer; }
+button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+button,summary { transition:background .15s,color .15s; }
+.app { display:grid; grid-template-columns:270px minmax(0,1fr); height:100%; }
+.sidebar { display:flex; flex-direction:column; min-width:0; border-right:1px solid var(--line); background:var(--surface); }
+.brand { height:76px; display:flex; align-items:center; gap:11px; padding:0 20px; border-bottom:1px solid var(--line); }
+.brand-mark,.session-avatar,.empty-mark { display:grid; place-items:center; color:var(--ink); background:#272e32; font-weight:750; }
+.brand-mark { width:34px; height:34px; border-radius:9px; }
+.brand-copy strong { display:block; font-size:14px; }
+.brand-copy span { display:block; margin-top:4px; color:var(--muted); font-size:11px; }
+.import-button { margin:18px 16px 10px; height:42px; border-radius:7px; color:#10281c; background:var(--accent); font-weight:650; }
+.import-button:hover,.primary:hover { background:#8ddfb1; }
+.session-label { padding:12px 18px 8px; color:var(--muted); font-size:11px; }
+.session-list { flex:1; overflow:auto; padding:0 8px 16px; }
+.session-item { width:100%; display:flex; gap:10px; padding:13px 10px; text-align:left; border-radius:6px; background:transparent; }
+.session-item:hover { background:#1b2125; }
+.session-item.active { background:#262e33; }
+.session-avatar { flex:none; width:32px; height:32px; border-radius:6px; font-size:10px; }
+.session-main { min-width:0; }
+.session-title,.session-meta { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.session-title { font-size:12px; font-weight:600; }
+.session-meta { margin-top:6px; color:var(--muted); font-size:10px; }
+.sidebar-foot { padding:15px 18px; color:var(--muted); border-top:1px solid var(--line); font-size:10px; line-height:1.7; }
+.workspace,#historyView { min-width:0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+.workspace { background:var(--chat); }
+#historyView { flex:1; }
+.toolbar { min-height:76px; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:20px; padding:14px 28px; border-bottom:1px solid var(--line); background:var(--surface); }
+.task-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:15px; font-weight:650; }
+.task-meta { margin-top:6px; color:var(--muted); font-size:11px; }
+.toolbar-actions { display:flex; align-items:center; gap:6px; }
+.search { width:min(24vw,240px); height:34px; padding:0 11px; border:1px solid var(--line); border-radius:6px; color:var(--ink); background:#22292d; }
+.ghost-button { height:34px; padding:0 11px; border-radius:6px; color:#bec8ce; background:transparent; font-size:12px; }
+.ghost-button:hover { background:#252e33; }
+.view-tabs { display:flex; gap:14px; padding:0 28px; border-bottom:1px solid var(--line); background:var(--surface); }
+.view-tab { padding:15px 0 12px; border-bottom:2px solid transparent; color:var(--muted); background:none; font-size:13px; }
+.view-tab.active { color:var(--accent); border-color:var(--accent); }
+.filter-bar { display:flex; align-items:center; gap:6px; padding:10px 28px; border-bottom:1px solid var(--line); overflow-x:auto; }
+.filter { flex:none; padding:5px 9px; border-radius:4px; color:var(--muted); background:none; font-size:11px; }
+.filter:hover { color:var(--ink); background:#252c31; }
+.filter.active { color:var(--accent); background:#213b30; }
+.stats { margin-left:auto; color:var(--muted); font-size:11px; white-space:nowrap; }
+.notice { padding:9px 28px; color:#e7cc79; background:#322e21; font-size:12px; line-height:1.6; max-height:100px; overflow:auto; }
+.process-guide { padding:12px 28px; color:#b7cbd9; background:#1a252d; border-bottom:1px solid var(--line); font-size:12px; line-height:1.8; white-space:pre-wrap; }
+.conversation { min-width:0; min-height:0; flex:1; overflow:auto; padding:28px clamp(20px,4vw,64px) 70px; scrollbar-color:#48535b var(--chat); scrollbar-width:thin; }
+.trace-entry { position:relative; max-width:980px; margin:0 auto; padding:0 0 24px 42px; }
+.trace-entry::before { content:''; position:absolute; left:13px; top:29px; bottom:0; border-left:1px solid #38434a; }
+.trace-entry:last-child::before { display:none; }
+.entry-step { position:absolute; top:4px; left:0; width:27px; height:27px; display:grid; place-items:center; border:1px solid #46545e; border-radius:50%; color:#b0bec7; background:var(--chat); font-size:11px; font-variant-numeric:tabular-nums; }
+.trace-user .entry-step { color:var(--accent); border-color:#477c61; }
+.trace-system .entry-step { color:#d0dbe2; border-color:#60727e; }
+.system-prompt .json { max-height:420px; }
+.trace-entry header,.trace-entry .entry-summary { min-height:35px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; }
+.trace-entry header strong,.entry-summary strong { font-weight:650; overflow-wrap:anywhere; }
+.entry-role { color:var(--muted); font-size:11px; }
+.entry-time { margin-left:auto; color:var(--muted); font-size:10px; font-variant-numeric:tabular-nums; }
+.trace-text { margin:8px 0 0; padding:0; white-space:pre-wrap; overflow-wrap:anywhere; font-size:14px; line-height:1.8; }
+.trace-user .trace-text { padding:13px 16px; border-radius:6px; background:#23372d; }
+.entry-kind { padding:3px 7px; border-radius:4px; color:var(--muted); background:#2b343a; font-size:10px; }
+.entry-kind.success { color:#97ddb6; background:#244130; }
+.entry-kind.error { color:#ffbbb6; background:#452e2c; }
+.entry-kind.waiting { color:#e7cc79; background:#3b3525; }
+.entry-kind.skipped { color:#a5b0b8; background:#293136; }
+.trace-repair .entry-step { color:#9cc9eb; border-color:#537b97; }
+.phase-meta { margin:8px 0; color:#8ea5b5; font-size:11px; line-height:1.6; }
+.phase-flow { margin:0 0 18px; color:#b7cbd9; font-size:12px; line-height:1.8; }
+.repair-step { position:relative; padding-left:35px; }
+.repair-step::before { content:''; position:absolute; left:10px; top:38px; bottom:-1px; border-left:1px solid #38434a; }
+.repair-step:last-child::before { display:none; }
+.phase-number { position:absolute; top:16px; left:0; width:22px; height:22px; display:grid; place-items:center; border:1px solid #537b97; border-radius:50%; color:#9cc9eb; background:var(--chat); font-size:10px; }
+.trace-tool { padding-bottom:25px; }
+.trace-tool .entry-summary strong { font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.trace-entry details { margin-top:9px; border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+.trace-entry summary { padding:9px 12px; color:#b1bdc6; cursor:pointer; list-style:none; font-size:11px; }
+.trace-entry summary::-webkit-details-marker { display:none; }
+.trace-entry summary::before { content:'›'; display:inline-block; margin-right:8px; transition:transform .15s; }
+.trace-entry details[open]>summary::before { transform:rotate(90deg); }
+.trace-entry details[open]>summary { border-bottom:1px solid var(--line); background:#222a2f; }
+.trace-entry>.entry-record { margin-top:0; border:0; border-radius:0; overflow:visible; }
+.trace-entry .entry-summary { padding:0; color:inherit; }
+.trace-entry .entry-summary::before { margin-right:0; }
+.trace-entry>.entry-record[open]>.entry-summary { border-bottom:0; background:none; }
+.json { margin:0; max-height:260px; overflow:auto; padding:13px 16px; color:#dae3e9; background:#13181b; font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:2; }
+.tool-arguments .json { max-height:150px; }
+.debug-details,.reasoning-details { opacity:.85; }
+.debug-details .json { max-height:420px; }
+.detail-text { margin:0; padding:12px 16px; background:#151b1e; color:#c6d0d7; font-size:13px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
+.repair-path { margin:5px 0 14px; color:var(--muted); font:11px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; overflow-wrap:anywhere; }
+.repair-step { padding:16px 0 16px 35px; border-top:1px solid var(--line); }
+.repair-step header { font-size:12px; }
+.repair-step .entry-role { color:var(--accent); }
+.repair-note { margin:8px 0; color:#bac6ce; font-size:12px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
+.repair-error { color:#ffbbb6; }
+.patch-edit { margin-top:10px; border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+.patch-edit-label { padding:8px 12px; color:var(--muted); background:#222a2f; font-size:11px; }
+.patch-diff { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+.patch-diff>div { min-width:0; }
+.patch-diff>div+div { border-left:1px solid var(--line); }
+.patch-label { padding:7px 12px; font-size:11px; }
+.patch-before { background:#2b2022; color:#ffb7ae; }
+.patch-after { background:#182c24; color:#a3dfba; }
+.patch-diff .json { min-height:56px; max-height:320px; padding:10px 12px; }
+.patch-diff .json mark { padding:1px 2px; color:inherit; background:#78423b; border-radius:2px; }
+.patch-after .json mark { background:#32634a; }
+.repair-context .json mark { color:#18231d; background:var(--accent); }
+.repair-artifact .json { max-height:360px; }
+.trace-event { padding-left:0; border-bottom:1px solid var(--line); padding-top:15px; }
+.trace-event::before { display:none; }
+.trace-event .json { max-height:520px; }
+.empty-result { padding:60px 20px; text-align:center; color:var(--muted); font-size:13px; }
+.empty { flex:1; display:grid; place-items:center; padding:32px; }
+.drop-zone { width:min(620px,100%); padding:58px 30px; text-align:center; border:1px dashed #44535d; border-radius:10px; transition:background .15s,border-color .15s; }
+.drop-zone.dragging { border-color:var(--accent); background:#22362c; }
+.empty-mark { width:56px; height:56px; margin:0 auto 20px; border-radius:12px; font-size:18px; }
+.drop-zone h1 { margin:0; font-size:26px; }
+.drop-zone p { margin:14px auto 24px; max-width:430px; color:var(--muted); font-size:13px; line-height:1.7; }
+dialog { width:min(760px,calc(100% - 32px)); padding:0; color:var(--ink); background:#1b2226; border:1px solid #42505a; border-radius:10px; }
+dialog::backdrop { background:rgba(0,0,0,.7); }
+.dialog-head { display:flex; align-items:center; padding:17px 19px; border-bottom:1px solid var(--line); }
+.dialog-head strong { flex:1; font-size:15px; }
+.close { width:30px; height:30px; border-radius:5px; color:var(--muted); background:#2b353d; }
+.dialog-body { padding:18px; }
+textarea { width:100%; height:330px; resize:vertical; padding:13px; color:var(--ink); background:#11181c; border:1px solid #42505a; border-radius:6px; font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.dialog-note { margin-top:9px; color:var(--muted); font-size:11px; }
+.dialog-actions { display:flex; align-items:center; gap:9px; margin-top:16px; }
+.spacer { flex:1; }
+.secondary,.primary { height:36px; padding:0 15px; border-radius:6px; font-size:12px; }
+.secondary { background:#2b353d; }
+.primary { color:#10281c; background:var(--accent); font-weight:650; }
+.toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,10px); padding:10px 16px; border-radius:6px; opacity:0; color:var(--ink); background:#293a44; font-size:12px; pointer-events:none; transition:opacity .15s,transform .15s; }
+.toast.show { opacity:1; transform:translate(-50%,0); }
+.hidden { display:none !important; }
+@media(max-width:1000px) { .app { grid-template-columns:220px minmax(0,1fr); } .toolbar { grid-template-columns:1fr; gap:10px; } .toolbar-actions { width:100%; } .search { flex:1; width:auto; } }
+@media(max-width:650px) { .app { grid-template-columns:1fr; } .sidebar { max-height:165px; border-bottom:1px solid var(--line); } .brand { height:56px; padding:0 14px; } .brand-copy span,.sidebar-foot,.session-label { display:none; } .import-button { position:absolute; right:12px; top:10px; height:34px; width:95px; margin:0; font-size:12px; } .session-list { display:flex; flex:none; padding:7px; overflow:auto; } .session-item { flex:0 0 220px; } .toolbar { padding:12px 16px; } .view-tabs { padding:0 16px; } .filter-bar,.notice { padding:8px 16px; } .conversation { padding:20px 14px 50px; } .trace-entry { padding-left:36px; } .entry-time { font-size:9px; } .toolbar-actions { flex-wrap:wrap; } .ghost-button { padding:0 7px; } .drop-zone { padding:40px 20px; } .app { display:flex; flex-direction:column; } .workspace { flex:1; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; } }
+@media(max-width:650px) { .patch-diff { grid-template-columns:1fr; } .patch-diff>div+div { border-left:0; border-top:1px solid var(--line); } }
+</style>
+</head>
+<body>
+<main class="app">
+ <aside class="sidebar">
+  <div class="brand"><div class="brand-mark">DV</div><div class="brand-copy"><strong>DataVisool Agent 调试轨迹</strong><span>系统提示词 · 对话 · 工具结果</span></div></div>
+  <button class="import-button" id="openImport">＋ 导入日志</button>
+  <div class="session-label">任务记录</div><div class="session-list" id="sessionList"></div>
+  <div class="sidebar-foot">本地处理，不上传数据。<br>支持 Web 轨迹、桌面完整历史和 JSON。</div>
+ </aside>
+ <section class="workspace">
+  <div class="empty" id="emptyState"><div class="drop-zone" id="dropZone">
+   <div class="empty-mark">DV</div><h1>Agent 运行记录</h1>
+   <p>拖入 ai-agent-debug.log，或粘贴结构化轨迹。按顺序查看系统提示词、用户需求、Agent 回复和工具执行结果。</p>
+   <button class="primary" id="emptyImport">导入记录</button>
+  </div></div>
+  <div class="hidden" id="historyView">
+   <header class="toolbar"><div><div class="task-title" id="taskTitle"></div><div class="task-meta" id="taskMeta"></div></div>
+    <div class="toolbar-actions"><input class="search" id="search" type="search" aria-label="搜索记录" placeholder="搜索内容 / 工具 / ID"><button class="ghost-button" id="copyJson">复制 JSON</button><button class="ghost-button" id="exportJson">导出 JSON</button></div>
+   </header>
+   <div class="view-tabs" role="tablist" aria-label="轨迹视图">
+    <button class="view-tab active" data-view="timeline" role="tab" aria-selected="true">对话过程</button>
+    <button class="view-tab" data-view="repairs" role="tab" aria-selected="false">产物处理</button>
+    <button class="view-tab" data-view="requests" role="tab" aria-selected="false">模型请求</button>
+    <button class="view-tab" data-view="raw" role="tab" aria-selected="false">原始记录</button>
+   </div>
+   <div class="notice hidden" id="notice" role="status"></div>
+   <nav class="filter-bar" id="filterBar" aria-label="记录类型">
+    <button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="system">系统提示词</button><button class="filter" data-filter="user">用户</button><button class="filter" data-filter="assistant">Agent</button><button class="filter" data-filter="tool">工具</button><button class="filter" data-filter="repair">产物处理</button><span class="stats" id="stats"></span>
+   </nav>
+   <div class="conversation" id="conversation" role="tabpanel"></div>
+  </div>
+ </section>
+</main>
+<dialog id="importDialog"><div class="dialog-head"><strong>导入运行记录</strong><button class="close" id="closeDialog" aria-label="关闭">×</button></div>
+ <div class="dialog-body"><textarea id="logInput" spellcheck="false" aria-label="日志或 JSON" placeholder="粘贴 Web 结构化日志、桌面完整历史或 JSON…"></textarea>
+  <div class="dialog-note">可同时导入多份轮转日志；重复记录会自动跳过，残缺记录会显示提示。</div>
+  <div class="dialog-actions"><button class="secondary" id="chooseFile">选择文件</button><input class="hidden" id="fileInput" type="file" multiple accept=".log,.txt,.json,.jsonl,application/json,text/plain"><span class="spacer"></span><button class="secondary" id="clearInput">清空</button><button class="primary" id="parseInput">查看记录</button></div>
+ </div>
+</dialog><div class="toast" id="toast" role="status"></div>
+<script id="trace-core">
+/* 解析与关联逻辑不依赖 DOM，HTML 可直接打开，也可独立验证。 */
+const AgentTraceViewer = (() => {
+  const TRACE = 'datavisool-agent-trace/v1';
+  /** @deprecated TODO(legacy-compat): 在不再需要查看旧轨迹时移除旧标记。 */
+  const LEGACY_TRACE = 'lcp-agent-trace/v1';
+  const PREFIXES = ['==================Agent轨迹=================', '==================完整历史================='];
+  const text = value => typeof value === 'string' ? value : value == null ? '' : JSON.stringify(value, null, 2);
+  const json = value => { try { return typeof value === 'string' ? JSON.parse(value) : value; } catch { return value; } };
+  const list = value => Array.isArray(value) ? value : value == null ? [] : [value];
+  function balanced(source, start) {
+    let depth = 0, quoted = false, escaped = false;
+    for (let i = start; i < source.length; i++) {
+      const ch = source[i];
+      if (quoted) { if (escaped) escaped = false; else if (ch === '\\') escaped = true; else if (ch === '"') quoted = false; }
+      else if (ch === '"') quoted = true;
+      else if (ch === '{') depth++;
+      else if (ch === '}' && --depth === 0) return { source: source.slice(start, i + 1), end: i + 1 };
+    }
+    return null;
+  }
+  function normalize(value) {
+    if (typeof value === 'string') return normalize(JSON.parse(value));
+    if (Array.isArray(value)) return value.flatMap(normalize);
+    if (!value || typeof value !== 'object') throw new Error('记录不是 JSON 对象');
+    if (Array.isArray(value.records)) return value.records.flatMap(normalize);
+    if (typeof value.history === 'string') return normalize(value.history);
+    if (value.schemaVersion === TRACE || value.schemaVersion === LEGACY_TRACE) {
+      if (!value.recordId || !value.type || !value.runId || !value.payload || typeof value.payload !== 'object') throw new Error('Web 轨迹缺少 recordId、type、runId 或 payload');
+      return [value];
+    }
+    if (Array.isArray(value.messages)) return [{ schemaVersion: 'legacy', recordId: `legacy:${JSON.stringify(value)}`, type: 'legacy.history',
+      projectId: value.projectId, threadId: value.threadId, turnId: value.turnId || value.taskId, runId: value.runId,
+      recordedAt: value.endedAt, payload: value }];
+    throw new Error('不支持的格式；需要 Web 结构化轨迹或桌面完整历史');
+  }
+  function parse(source) {
+    source = source.replace(/^\uFEFF/, '');
+    const records = [], warnings = [];
+    const acceptValue = value => {
+      if (Array.isArray(value)) { value.forEach(acceptValue); return; }
+      if (value && Array.isArray(value.records)) { value.records.forEach(acceptValue); return; }
+      try { records.push(...normalize(value)); } catch (error) { warnings.push(error.message); }
+    };
+    const accept = candidate => { try { acceptValue(JSON.parse(candidate)); } catch (error) { warnings.push(error.message); } };
+    let cursor = 0, prefixed = false;
+    while (cursor < source.length) {
+      const matches = PREFIXES.map(prefix => ({ prefix, pos: source.indexOf(prefix, cursor) })).filter(m => m.pos >= 0).sort((a,b) => a.pos - b.pos);
+      if (!matches.length) break;
+      prefixed = true;
+      const match = matches[0], start = source.indexOf('{', match.pos + match.prefix.length);
+      const next = PREFIXES.map(prefix => source.indexOf(prefix, match.pos + match.prefix.length)).filter(pos => pos >= 0).sort((a,b) => a-b)[0] ?? source.length;
+      if (start < 0 || start >= next) { warnings.push('前缀后缺少 JSON'); cursor = next; continue; }
+      const found = balanced(source, start);
+      if (!found) { warnings.push('跳过一条不完整记录'); cursor = next; continue; }
+      try { acceptValue(JSON.parse(found.source)); cursor = found.end; }
+      catch (error) { warnings.push(`跳过无效记录：${error.message}`); cursor = next; }
+    }
+    if (!prefixed && source.trim()) {
+      try { acceptValue(JSON.parse(source)); }
+      catch { source.split(/\r?\n/).filter(line => line.trim()).forEach(accept); }
+    }
+    if (!records.length && !warnings.length) warnings.push('没有找到可导入的记录');
+    return { records, warnings };
+  }
+  function merge(existing, incoming) {
+    const known = new Map(existing.map(r => [r.recordId, r]));
+    let added = 0;
+    for (const record of incoming) if (!known.has(record.recordId)) { known.set(record.recordId, record); added++; }
+    return { records: [...known.values()], added };
+  }
+  const time = record => Date.parse(record.recordedAt) || 0;
+  /* 先遵守片段序号、同进程顺序、数据库事件序号和调用依赖；时间仅用于无依赖节点。 */
+  function order(records) {
+    const nodes = records.map((record, index) => ({ record, index, edges: new Set(), incoming: 0 }));
+    const lanes = new Map();
+    function lane(key, node, ordinal) { if (!lanes.has(key)) lanes.set(key, []); lanes.get(key).push({ node, ordinal }); }
+    function edge(a, b) { if (a && b && a !== b && !a.edges.has(b)) { a.edges.add(b); b.incoming++; } }
+    for (const node of nodes) {
+      const r = node.record;
+      if (r.processId && Number.isFinite(r.processOrder)) lane(`process:${r.processId}`, node, r.processOrder);
+      if (r.segmentId && Number.isFinite(r.sequence)) lane(`segment:${r.segmentId}`, node, r.sequence);
+      if (Number.isFinite(r.eventSequence)) lane(`events:${r.threadId}`, node, r.eventSequence);
+    }
+    for (const entries of lanes.values()) { entries.sort((a,b) => a.ordinal-b.ordinal); for (let i=1;i<entries.length;i++) edge(entries[i-1].node, entries[i].node); }
+    const requests = new Map(), tools = new Map(), operations = new Map(), modelTools = new Map(), operationTools = new Map(), segments = new Map();
+    const key = (r, id) => `${r.runId}:${id}`;
+    for (const node of nodes) {
+      const r = node.record, p = r.payload;
+      if (r.type === 'model.request') requests.set(key(r, p.callId), node);
+      if (r.type === 'tool.requested') tools.set(key(r, p.requestId), node);
+      if (r.type === 'frontend.effect.requested') operations.set(key(r, p.operationId), node);
+      if (r.type === 'model.response') for (const block of blocks(p.messages)) if (block.kind==='call' && block.id) modelTools.set(key(r,block.id),node);
+      if (['tool.returned','tool.completed'].includes(r.type) && p.result?.operationId) operationTools.set(key(r,p.result.operationId),node);
+      if (r.type === 'segment.started') { if (!segments.has(r.runId)) segments.set(r.runId, []); segments.get(r.runId).push(node); }
+    }
+    for (const node of nodes) {
+      const r = node.record, p = r.payload;
+      if (['model.response','model.failed'].includes(r.type)) edge(requests.get(key(r,p.callId)),node);
+      if (['tool.requested','tool.deferred'].includes(r.type)) edge(modelTools.get(key(r,p.requestId)),node);
+      if (['tool.returned','tool.completed'].includes(r.type)) edge(tools.get(key(r,p.requestId)),node);
+      if (r.type === 'frontend.effect.requested') edge(tools.get(key(r,p.request?.toolCallId || p.toolCallId)),node);
+      if (r.type === 'frontend.effect.completed') {
+        edge(operations.get(key(r,p.operationId)),node);
+        edge(operationTools.get(key(r,p.operationId)),node);
+        if (p.toolCallId) edge(tools.get(key(r,p.toolCallId)),node);
+      }
+    }
+    const lastBySegment = new Map();
+    for (const node of nodes) if (node.record.segmentId && (!lastBySegment.has(node.record.segmentId) || lastBySegment.get(node.record.segmentId).record.sequence < node.record.sequence)) lastBySegment.set(node.record.segmentId,node);
+    const lastInSegment = start => lastBySegment.get(start.record.segmentId);
+    // 浏览器回执可能在旧片段写完尾部日志之前启动下一片段；同进程以实际顺序为准。
+    const connectSegments = (previous, next) => {
+      const last = lastInSegment(previous);
+      if (last?.record.processId && last.record.processId === next.record.processId && last.record.processOrder > next.record.processOrder) return;
+      edge(last,next);
+    };
+    for (const starts of segments.values()) starts.sort((a,b) => Number(a.record.payload.checkpointVersion || 0)-Number(b.record.payload.checkpointVersion || 0) || time(a.record)-time(b.record));
+    for (const starts of segments.values()) {
+      for (let i=1;i<starts.length;i++) connectSegments(starts[i-1],starts[i]);
+      for (const start of starts) {
+        const previous = segments.get(start.record.payload.previousRunId);
+        if (previous?.length) connectSegments(previous.at(-1),start);
+      }
+    }
+    const compare = (a,b) => time(a.record)-time(b.record) || a.index-b.index;
+    const ready = nodes.filter(n => !n.incoming), ordered = [];
+    while (ready.length) {
+      ready.sort(compare);
+      const node = ready.shift(); ordered.push(node.record);
+      for (const next of node.edges) if (--next.incoming === 0) ready.push(next);
+    }
+    if (ordered.length < nodes.length) {
+      ordered.orderingConflict = true;
+      const emitted = new Set(ordered);
+      ordered.push(...nodes.filter(n => !emitted.has(n.record)).sort(compare).map(n=>n.record));
+    }
+    return ordered;
+  }
+  function groups(records) {
+    const result = new Map();
+    for (const record of records) {
+      // 服务事件自身没有 projectId；全局唯一的会话 ID 已足以确定归属。
+      const scope = record.threadId ? `thread:${record.threadId}` : `project:${record.projectId || ''}`;
+      const key = `${scope}:turn:${record.turnId || record.runId || record.recordId}`;
+      if (!result.has(key)) result.set(key,{ key, turnId: record.turnId, threadId: record.threadId, records: [] });
+      result.get(key).records.push(record);
+    }
+    return [...result.values()].map(group => ({ ...group, records: order(group.records) }));
+  }
+  function blocks(messages) {
+    const rows = [];
+    for (const message of list(messages)) for (const part of list(message.content)) {
+      const kind = String(part?.type || part?.kind || 'text').replace(/[^a-z]/gi,'').toLowerCase();
+      if (kind === 'toolcall' || part?.function?.name) rows.push({ kind: 'call', id: part.id || part.call_id || part.callId, name: part.name || part.function?.name, arguments: json(part.arguments ?? part.function?.arguments ?? {}) });
+      else if (kind === 'toolresult' || message.role === 'tool') rows.push({ kind:'result', id: part.id || message.toolCallId || message.id, name:part.name || message.name, result: json(part.result ?? (part.content == null ? part.text ?? part : list(part.content).map(p=>p?.text ?? text(p)).join('\n'))) });
+      else if (kind === 'reasoning') rows.push({ kind:'reasoning', text: part.text ?? list(part.content?.content ?? part.content).map(p => p?.text ?? p?.content?.text ?? text(p)).join('\n') });
+      else rows.push({ kind: message.role === 'assistant' ? 'assistant' : message.role === 'system' ? 'system' : 'user', text: typeof part === 'string' ? part : part?.text ?? text(part) });
+    }
+    return rows;
+  }
+  const statusLabel = status => ({applied:'已完成',completed:'已完成',success:'已完成',succeeded:'已完成',failed:'失败',error:'失败',rejected:'已拒绝',denied:'已拒绝',cancelled:'已取消',aborted:'已中止',pending:'等待执行结果',prepared:'等待执行结果',applying:'等待执行结果',repair_required:'需要修复',waiting_input:'等待用户回答',deferred:'未执行'}[status] || status || '未记录结果');
+  const statusTone = status => ['applied','completed','success','succeeded'].includes(status) ? 'success' : ['failed','error','rejected','denied'].includes(status) ? 'error' : 'waiting';
+  const withoutGuard = value => {
+    const parsed = json(value);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return parsed;
+    const {guard, ...result} = parsed; return result;
+  };
+  // 主视图还原系统提示词、对话和调用；同一次调用的登记、检查与浏览器回执合成一项。
+  function timeline(records) {
+    const rows = [], requested = new Set(), deferred = new Map(), results = new Map(), returned = new Map(), effects = new Map(), receipts = new Map(), receiptCalls = new Map(), calls = new Map(), emitted = new Set(), steers = new Set();
+    const key = (r, id) => `${r.runId}:${id}`;
+    for (const r of records) {
+      const p = r.payload;
+      if (r.type === 'tool.requested') requested.add(key(r,p.requestId));
+      if (r.type === 'tool.deferred') deferred.set(key(r,p.requestId),r);
+      if (r.type === 'tool.completed') results.set(key(r,p.requestId),r);
+      if (r.type === 'tool.returned') returned.set(key(r,p.requestId),r);
+      if (r.type === 'frontend.effect.requested' && (p.toolCallId || p.request?.toolCallId)) effects.set(key(r,p.toolCallId || p.request.toolCallId),p);
+      if (r.type === 'frontend.effect.completed') {
+        receipts.set(key(r,p.operationId),r);
+        if (p.toolCallId) receiptCalls.set(key(r,p.toolCallId),r);
+      }
+      if (r.type === 'model.request') calls.set(key(r,p.callId),p);
+    }
+    const add = (r, kind, title, body) => rows.push({ record:r, kind, title, ...body });
+    const activePrompts = new Map();
+    const addSystemPrompt = (r, purpose = 'main') => {
+      const messages = list(r.payload.messages).filter(message=>message.role==='system');
+      const parts = messages.map(message=>blocks([message]).filter(block=>block.kind==='system').map(block=>block.text).join('\n\n')).filter(Boolean);
+      if (r.type==='legacy.history' && r.payload.systemPreamble && !parts.includes(r.payload.systemPreamble)) parts.unshift(r.payload.systemPreamble);
+      if (!parts.length) return;
+      const signature = JSON.stringify(parts), previous = activePrompts.get(purpose);
+      if (previous===signature) return;
+      activePrompts.set(purpose,signature);
+      const title = purpose==='summary' ? '摘要模型系统提示词' : '系统提示词';
+      add(r,'system',previous ? `${title}已更新` : title,{text:parts.join('\n\n'),debug:{runId:r.runId,callId:r.payload.callId,purpose,source:r.type,messages,systemPreamble:r.payload.systemPreamble}});
+    };
+    let pendingReasoning = '';
+    const takeReasoning = () => { const value=pendingReasoning; pendingReasoning=''; return value; };
+    const addTool = (r, id, name, args, extra = {}) => {
+      const callKey = key(r,id);
+      if (id && emitted.has(callKey)) return;
+      if (id) emitted.add(callKey);
+      const raw = returned.get(callKey), result = results.get(callKey) || raw, effect = effects.get(callKey), skipped = deferred.get(callKey);
+      const operationId = result?.payload.result?.operationId || effect?.operationId;
+      const receipt = (operationId && receipts.get(key(r,operationId))) || receiptCalls.get(callKey);
+      const final = receipt || result;
+      const status = final?.payload.status || (skipped ? 'deferred' : '');
+      const pending = !receipt && (status === 'pending' || (!status && result?.payload.requiresFrontendEffect) || (effect && !result));
+      const output = pending ? undefined : receipt ? receipt.payload.result : result ? withoutGuard(result.payload.result) : undefined;
+      const message = skipped ? '该调用本轮未执行。' : pending ? '等待浏览器执行并返回结果。' : !final ? '日志中未记录执行结果。' : undefined;
+      add(r,'tool',name || result?.payload.name || effect?.operationType || '工具调用',{
+        status: pending ? '等待执行结果' : statusLabel(status), tone: statusTone(status), callId:id, reasoning:takeReasoning(),
+        details:[['调用参数',args == null ? '未记录调用参数' : json(args)],['执行结果',output],['说明',message],
+          ['原始工具回执',result?.payload],['原始浏览器回执',receipt?.payload],...(extra.details || [])],
+        debug:{callId:id,runId:r.runId,operationId,requestedAt:r.recordedAt,completedAt:final?.recordedAt,
+          initialReturn:raw?.payload,checkedReturn:results.get(callKey)?.payload,browserReceipt:receipt?.payload,deferred:skipped?.payload,...extra.debug}
+      });
+    };
+    const addMessage = (r, messages, response) => {
+      const parts = blocks(messages);
+      const content = parts.filter(b=>b.kind==='assistant').map(b=>b.text).filter(Boolean).join('\n\n');
+      const reasoning = parts.filter(b=>b.kind==='reasoning').map(b=>b.text).filter(Boolean).join('\n\n');
+      const toolCalls = parts.filter(b=>b.kind==='call').map(({id,name,arguments:args})=>({id,name,arguments:args}));
+      add(r,'assistant',content ? 'Agent 回复' : toolCalls.length ? 'Agent 返回（方法调用）' : 'Agent 返回',{
+        text:content,reasoning,
+        details:[...(toolCalls.length ? [[`模型要求的方法调用（${toolCalls.map(call=>call.name || '未记录名称').join('、')}）`,toolCalls]] : []),
+          ['模型返回原始结构（日志记录）',response ?? messages]]
+      });
+      if (!content && reasoning) pendingReasoning = reasoning;
+    };
+    let initialUserShown = false;
+    const initialUser = r => {
+      if (initialUserShown) return;
+      const message = list(r.payload.messages).filter(m=>m.role==='user').filter(m=>!/^\[Agent (?:runtime|operation)/.test(blocks([m]).map(b=>b.text || '').join('\n'))).at(-1);
+      if (!message) return;
+      const content = blocks([message]).filter(b=>b.kind==='user').map(b=>b.text).join('\n\n');
+      if (content) { add(r,'user','用户需求',{text:content}); initialUserShown = true; }
+    };
+    for (const r of records) {
+      const p = r.payload;
+      if (r.type === 'legacy.history') {
+        addSystemPrompt(r);
+        const executions = list(p.toolExecutions), matched = new Set();
+        const transcript = blocks(p.messages), legacyResults = new Map(transcript.filter(b=>b.kind==='result' && b.id).map(b=>[b.id,b]));
+        const legacyCalls = new Set(transcript.filter(b=>b.kind==='call').map(b=>b.id));
+        const legacyTool = (block, execution) => {
+          if (execution) matched.add(execution);
+          const final = execution?.result ?? legacyResults.get(block.id)?.result;
+          const status = execution?.outcome || (final != null ? json(final)?.status || '已返回结果' : '');
+          add(r,'tool',execution?.toolName || block.name || '工具调用',{callId:block.id,status:statusLabel(status),tone:statusTone(status),reasoning:takeReasoning(),
+            details:[['调用参数',json(execution?.arguments ?? block.arguments)],['执行结果',final == null ? undefined : withoutGuard(final)],['原始工具回执',final],['说明',final == null ? '日志中未记录执行结果。' : undefined],['错误',execution?.failure]],
+            debug:{callId:block.id,runId:r.runId,execution}});
+        };
+        for (const message of list(p.messages)) {
+          if (message.role==='assistant') addMessage(r,message);
+          const parts = blocks([message]);
+          if (message.role==='user') {
+            const content = parts.filter(b=>b.kind==='user').map(b=>b.text).filter(Boolean).join('\n\n');
+            if (content) { add(r,'user','用户需求',{text:content}); initialUserShown = true; }
+          }
+          for (const block of parts) if (block.kind==='call') legacyTool(block,executions.find(e=>block.id && [e.toolCallId,e.internalCallId].includes(block.id)));
+          else if (block.kind==='result' && !legacyCalls.has(block.id)) {
+            const execution = executions.find(e=>block.id && [e.toolCallId,e.internalCallId].includes(block.id));
+            if (execution) { if (!matched.has(execution)) legacyTool(block,execution); }
+            else add(r,'tool',block.name || '工具结果',{status:'缺少调用记录',details:[['执行结果',json(block.result)]],debug:{callId:block.id,runId:r.runId}});
+          }
+        }
+        for (const e of executions) if (!matched.has(e)) legacyTool({id:e.toolCallId || e.internalCallId},e);
+      } else if (r.type === 'context.initialized') {
+        addSystemPrompt(r);
+        initialUser(r);
+      } else if (r.type === 'context.appended' && p.reason === 'steer') {
+        const steerKey = key(r,p.steerVersion ?? r.recordId);
+        if (steers.has(steerKey)) continue;
+        steers.add(steerKey);
+        for (const message of list(p.messages)) if (message.role==='user') {
+          const content = blocks([message]).filter(b=>b.kind==='user').map(b=>b.text).join('\n\n').replace(/^用户在运行中追加要求：/,'');
+          if (content) add(r,'user','用户追加要求',{text:content});
+        }
+      } else if (r.type === 'model.request') {
+        addSystemPrompt(r,p.purpose==='summary' ? 'summary' : 'main');
+        if (p.purpose !== 'summary') initialUser(r);
+      } else if (r.type === 'model.response') {
+        const request = calls.get(key(r,p.callId));
+        if (request?.purpose === 'summary') continue;
+        pendingReasoning = '';
+        addMessage(r,list(p.messages).filter(message=>message.role==='assistant'),p);
+        for (const message of list(p.messages)) {
+          for (const b of blocks([message])) if (b.kind==='call' && !requested.has(key(r,b.id)) && !deferred.has(key(r,b.id))) addTool(r,b.id,b.name,b.arguments);
+        }
+      } else if (r.type === 'model.failed' && p.partialText && calls.get(key(r,p.callId))?.purpose !== 'summary') {
+        add(r,'assistant','Agent 回复',{text:p.partialText,status:'回复中断',tone:'error',details:[['错误',p.message]],debug:{callId:p.callId,runId:r.runId}});
+      } else if (r.type === 'tool.requested') {
+        addTool(r,p.requestId,p.name,p.arguments,{debug:{cached:p.cached}});
+      } else if (['tool.returned','tool.completed'].includes(r.type)) {
+        if (!requested.has(key(r,p.requestId))) addTool(r,p.requestId,p.name,undefined,{details:[['说明','缺少对应调用记录，无法确定调用参数。']]});
+      } else if (r.type === 'tool.deferred') addTool(r,p.requestId,p.name,p.arguments);
+      else if (r.type === 'frontend.effect.completed' && (!p.toolCallId || !emitted.has(key(r,p.toolCallId)))) {
+        // 缺失调用和初始返回时，仍保留真实结果，不按工具名称猜测配对。
+        const owner = rows.find(row=>row.kind==='tool' && row.debug?.operationId===p.operationId && row.record.runId===r.runId);
+        if (!owner) add(r,'tool',p.operationType || '工具结果',{status:statusLabel(p.status),tone:statusTone(p.status),details:[['执行结果',p.result],['说明','缺少对应调用记录。']],debug:{runId:r.runId,browserReceipt:p}});
+      }
+    }
+    return rows.map((row,index)=>({...row,step:index+1}));
+  }
+  function summary(records, rows = timeline(records)) {
+    const latestRun = records.at(-1)?.runId;
+    const end = records.filter(r=>r.runId===latestRun && ['run.completed','run.failed','run.cancelled','run.interrupted','run.budget_exhausted'].includes(r.type)).at(-1);
+    const status = ({'run.completed':'已完成','run.failed':'失败','run.cancelled':'已取消','run.interrupted':'已中断','run.budget_exhausted':'预算耗尽'})[end?.type] || '未记录任务结束';
+    return {title:rows.find(r=>r.kind==='user')?.text || '未记录用户需求',status,error:end?.payload.errorMessage || end?.payload.message,
+      users:rows.filter(r=>r.kind==='user').length,replies:rows.filter(r=>r.kind==='assistant' && r.text).length,tools:rows.filter(r=>r.kind==='tool').length};
+  }
+  // 新日志逐步记录实际文件处理；旧日志仍仅根据真实调用和回执还原。
+  function artifactRows(records) {
+    const groups=new Map(), calls=new Map(), patches=new Map(), writes=new Map(), artifactsByRequest=new Map(), artifactsByOperation=new Map();
+    let patchNumber=0;
+    const key=(r,path)=>`${r.runId}:${path}`;
+    const callKey=(r,id)=>`${r.runId}:${id}`;
+    const add=(group,r,stage,title,status,tone,description,extra={})=> {
+      const p=r.payload;
+      group.repair.phases.push({kind:'repair',stage,actor:stage==='generate' || stage==='patch' || stage==='write' ? 'Agent' : '系统',
+        artifactId:group.repair.artifactId,path:group.repair.path,ownerKey:callKey(r,p.requestId || group.lastCall),
+        record:r,title,status,tone,description,revision:p.workspaceRevision,details:[],
+        debug:{sourceRecordId:r.recordId,evidence:'实际处理日志',type:r.type,requestId:p.requestId,tool:p.tool,
+          operationId:p.operationId,projectId:r.projectId,threadId:r.threadId,turnId:r.turnId,runId:r.runId,
+          segmentId:r.segmentId,sequence:r.sequence},...extra});
+    };
+    for(const r of records) if(r.type==='artifact.received')calls.set(callKey(r,r.payload.requestId),r);
+    for(const r of records) {
+      const p=r.payload;
+      if(!r.type.startsWith('artifact.'))continue;
+      let group;
+      if(typeof p.path==='string') {
+        const identity=key(r,p.path);
+        if(!groups.has(identity))groups.set(identity,{record:r,kind:'repair',repair:{path:p.path,runId:r.runId,
+          artifactId:`R${groups.size+1}`,phases:[],attempts:0,explicit:true},content:undefined});
+        group=groups.get(identity);
+      } else if(r.type==='artifact.processing.ended') {
+        group=artifactsByRequest.get(callKey(r,p.requestId)) || artifactsByOperation.get(`${r.runId}:${p.operationId}`);
+        if(!group)continue;
+      } else continue;
+      const repair=group.repair, id=repair.artifactId;
+      if(p.requestId)artifactsByRequest.set(callKey(r,p.requestId),group);
+      if(p.operationId)artifactsByOperation.set(`${r.runId}:${p.operationId}`,group);
+      group.lastCall=p.requestId; group.operationId=p.operationId || group.operationId;
+      repair.originalTool=p.tool || repair.originalTool;
+      const patchKey=callKey(r,p.requestId), patchId=patches.get(patchKey);
+      if(r.type==='artifact.stored') {
+        if(p.mode==='staged') {
+          repair.mode='staged';group.content=typeof p.content==='string' ? p.content : '';
+          add(group,r,'begin',`创建空临时产物 ${id}`,'已创建','success','先创建带受保护元数据的临时文件，组件 JSON 由后续分块写入。',
+            {after:group.content,afterLabel:p.contentRedacted ? '初始化文件内容（敏感字段已脱敏）' : '初始化文件内容',revision:p.workspaceRevision,
+              details:[['文件路径',p.path],['模式',p.mode],['元数据',p.metadata]]});
+          group.staged=true;
+          if(Number.isFinite(p.workspaceRevision))group.revision=p.workspaceRevision;
+          continue;
+        }
+        const received=calls.get(patchKey);
+        if(received)add(group,received,'generate',`Agent 输出产物 ${id}`,'已输出','success','完整工具参数将原样存入临时文件。',
+          {after:p.content,afterLabel:'Agent 输出原文',ownerKey:patchKey});
+        add(group,r,'store',`保存产物 ${id} 到临时文件`,'已保存','success','原文已保存；后续解析、校验和补丁均使用这个文件。',
+          {after:p.content,afterLabel:p.contentRedacted ? '临时文件内容（敏感字段已脱敏）' : '临时文件完整内容',details:[['文件路径',p.path]]});
+        group.content=p.content;
+      } else if(r.type==='artifact.read') {
+        group.content=p.content;
+        add(group,r,'read',`读取 ${id} 的临时文件`,'已读取','success','后端从文件中取得本次要解析和校验的内容。',
+          {after:p.content,afterLabel:p.contentRedacted ? '本次读取内容（敏感字段已脱敏）' : '本次读取的完整内容'});
+      } else if(r.type==='artifact.write.received') {
+        repair.mode='staged';
+        const writeKey=callKey(r,p.requestId);
+        if(!writes.has(writeKey)) {
+          repair.writeCount=(repair.writeCount || 0)+1;
+          writes.set(writeKey,repair.writeCount);
+        }
+        add(group,r,'write',`Agent 分块写入 ${id}（第 ${repair.writeCount} 次）`,'待写入','waiting','这是提交给 Workspace 的写入文本；只有对应的 applied 记录出现后才算文件快照。',
+          {expectedRevision:p.expectedRevision,details:[['写入文本',p.content],['内容 SHA-256',p.contentSha256]]});
+      } else if(r.type==='artifact.write.applied') {
+        repair.mode='staged';
+        const writeKey=callKey(r,p.requestId);
+        if(!writes.has(writeKey)) {
+          repair.writeCount=(repair.writeCount || 0)+1;
+          writes.set(writeKey,repair.writeCount);
+        }
+        const writeNumber=writes.get(writeKey);
+        group.content=p.afterContent;
+        add(group,r,'write-applied',`保存 ${id} 的第 ${writeNumber} 个写入块`,'已保存','success','写入成功；下面展示日志记录的写入前后完整文件快照。',
+          {actor:'Workspace',before:p.beforeContent,after:p.afterContent,
+            afterLabel:p.afterContentRedacted ? '写入后的文件快照（敏感字段已脱敏）' : '写入后的完整文件快照',
+            previousRevision:p.previousRevision,revision:p.workspaceRevision,contentSha256:p.contentSha256,
+            details:[['内容 SHA-256',p.contentSha256]]});
+      } else if(r.type==='artifact.write.rejected') {
+        repair.mode='staged';
+        const error=p.error || p;
+        add(group,r,'write-rejected',`写入 ${id} 失败`,'写入失败','error','本次写入未应用，文件仍保持上一个已确认快照。',
+          {error,expectedRevision:p.expectedRevision,details:[['本次写入文本',p.content],['写入回执',error]]});
+        if(error.code==='workspace.revision_conflict') {
+          group.content=undefined;group.revision=error.actualRevision ?? p.workspaceRevision;
+        }
+      } else if(r.type==='artifact.validation.received') {
+        repair.mode='staged';
+        add(group,r,'validate-received',`收到 ${id} 的显式校验请求`,'开始校验','waiting',
+          '后端已收到校验工具调用，下面的 validation.started / passed / failed 记录会展示实际检查阶段。',
+          {expectedRevision:p.expectedRevision,details:[['校验工具',p.tool]]});
+      } else if(r.type.startsWith('artifact.validation.')) {
+        const name=({syntax:'JSON 语法',structure:'参数结构',content:'结构与组件配置',prerequisite:'读取与授权前提'})[p.stage] || p.stage;
+        const started=r.type.endsWith('.started'), passed=r.type.endsWith('.passed');
+        add(group,r,started ? 'validate-start' : passed ? 'validate' : 'validation-failed',`${started ? '开始校验' : '校验'} ${id}：${name}`,
+          started ? '开始' : passed ? '校验通过' : '校验失败',started ? 'waiting' : passed ? 'success' : 'error',
+          started ? '使用刚从临时文件读取的内容进行校验。' : passed ? '该项校验已通过。' : '校验发现错误，尚未提交前端。',
+          {patchId,error:p.error});
+      } else if(r.type==='artifact.validated') {
+        repair.mode='staged';repair.validatedRevision=p.workspaceRevision;repair.validatedSha256=p.contentSha256;
+        add(group,r,'validated',`产物 ${id} 已校验，等待提交`,'已校验，待提交','success',
+          '当前文件快照已通过校验；此记录只确认该修订号和内容摘要有效，尚未提交给前端创建组件。',
+          {revision:p.workspaceRevision,contentSha256:p.contentSha256,
+            details:[['校验阶段',p.stage],['内容 SHA-256',p.contentSha256]]});
+      } else if(r.type==='artifact.submit.received') {
+        repair.mode='staged';
+        add(group,r,'submit',`收到 ${id} 的路径提交请求`,'核对待提交快照','waiting',
+          '后端正在核对 expectedRevision 与最近一次通过校验的文件快照；此时尚未调用前端。',
+          {expectedRevision:p.expectedRevision,details:[['提交工具',p.tool],['路径',p.path]]});
+      } else if(r.type==='artifact.submit.rejected') {
+        const error=p.error || p;
+        add(group,r,'submit-rejected',`拒绝提交产物 ${id}`,'提交被拒绝','error','文件内容或修订号未满足提交条件，因此没有发送给前端。',
+          {expectedRevision:p.expectedRevision,error,details:[['拒绝原因',error]]});
+      } else if(r.type==='artifact.repair.required') {
+        add(group,r,'feedback',`把 ${id} 的错误返回给 Agent`,'需要修补','error','返回错误原因、文件路径及最新修订号，Agent 可以继续局部修补同一文件。',
+          {patchId,error:p.error,details:[['修补回执',p.error]]});
+      } else if(r.type==='artifact.patch.received') {
+        const b=`B${++patchNumber}`;patches.set(patchKey,b);repair.attempts++;
+        add(group,r,'patch',`Agent 提交补丁 ${b}，修复 ${id}`,'已提交','success','补丁将应用到已有文件，校验失败后继续使用这个文件。',
+          {patchId:b,expectedRevision:p.expectedRevision,edits:applyRepairEdits(group.content,p.edits).edits});
+      } else if(r.type==='artifact.patch.applied') {
+        group.content=p.afterContent;
+        add(group,r,'apply',`应用补丁 ${patchId || ''} 到 ${id}`,'应用成功','success',repair.mode==='staged' ? '补丁已写入临时文件；系统会重新校验，校验通过后仍需单独提交。' : '补丁已写入临时文件，接下来重新读取并完成全部校验。',
+          {patchId,before:p.beforeContent,after:p.afterContent,afterLabel:p.afterContentRedacted ? '补丁写入后的内容（敏感字段已脱敏）' : '补丁写入后的实际文件内容',previousRevision:p.previousRevision});
+      } else if(r.type==='artifact.patch.rejected') {
+        const error=p.error || p;
+        add(group,r,'apply',`应用补丁 ${patchId || ''} 到 ${id}`,'应用失败','error','补丁没有写入，不进入本次重新校验。',
+          {patchId,error});
+        if(error.code==='workspace.revision_conflict'){group.content=undefined;group.revision=error.actualRevision;}
+      } else if(r.type==='artifact.frontend.requested') {
+        add(group,r,'dispatch',`准备把 ${id} 交给前端`,'校验通过','success','后端全部校验已通过，准备提交原操作。',{details:[['前端输入',p.payload]]});
+      } else if(r.type==='artifact.frontend.submitted' || r.type==='artifact.frontend.reused') {
+        const reused=r.type.endsWith('.reused');
+        add(group,r,'continue',reused ? `返回 ${id} 已有的前端操作` : `把 ${id} 交给前端`,statusLabel(p.status),statusTone(p.status),
+          reused ? '此文件已经提交，重复修补调用仅返回已有操作，不会重复创建。' : '前端操作已提交；实际使用结果以浏览器回执为准。',
+          {details:[['前端操作回执',p.result]]});
+      } else if(r.type==='artifact.failed' || r.type==='artifact.blocked') {
+        add(group,r,'failed',`处理 ${id} 失败`,'失败','error','文件处理遇到执行错误。',{error:p});
+      } else if(r.type==='artifact.processing.ended') {
+        add(group,r,'processing-ended',`结束 ${id} 的产物处理阶段`,'处理阶段结束','waiting',
+          '这条记录表示后端产物处理阶段结束；组件是否创建仍以提交前端后的浏览器回执为准。',
+          {details:[['阶段结果',p.status],['结束信息',p.result || p.message]]});
+      }
+      if(Number.isFinite(p.workspaceRevision)) {
+        if(group.revision!==p.workspaceRevision)group.contentSha256=undefined;
+        group.revision=p.workspaceRevision;
+        if(p.contentSha256)group.contentSha256=p.contentSha256;
+      }
+    }
+    for(const group of groups.values()) {
+      const repair=group.repair;
+      for(const r of records.filter(r=>r.runId===repair.runId && r.type==='frontend.effect.completed' && r.payload.operationId===group.operationId)) {
+        const p=r.payload;
+        add(group,r,'frontend-result',`前端使用 ${repair.artifactId} 的结果`,statusLabel(p.status),statusTone(p.status),
+          '浏览器返回的实际操作结果。',{ownerKey:callKey(r,p.toolCallId || group.lastCall),details:[['浏览器真实回执',p.result]]});
+      }
+      const positions=new Map(records.map((r,index)=>[r.recordId,index]));
+      repair.phases.sort((a,b)=>positions.get(a.record.recordId)-positions.get(b.record.recordId));
+      repair.phases=repair.phases.map((phase,index)=>({...phase,step:index+1}));
+      repair.finalContent=group.content;repair.finalRevision=group.revision;repair.finalSha256=group.contentSha256;
+      repair.end=records.filter(r=>r.runId===repair.runId && ['run.completed','run.failed','run.cancelled','run.interrupted','run.budget_exhausted'].includes(r.type)).at(-1);
+      const last=repair.phases.at(-1);group.status=last?.status;group.tone=last?.tone;
+      group.title=`产物 ${repair.artifactId} · ${repair.writeCount || repair.attempts} 次${repair.mode==='staged' ? '分块写入' : '补丁修复'}`;
+      delete group.content;delete group.revision;delete group.contentSha256;
+    }
+    return [...groups.values()];
+  }
+  function repairRows(records, rows = timeline(records)) {
+    const explicit=artifactRows(records), explicitPaths=new Set(explicit.map(group=>`${group.repair.runId}:${group.repair.path}`));
+    rows=rows.filter(row=>{
+      const args=json(row.details?.find(([label])=>label==='调用参数')?.[1]);
+      const result=json(row.details?.find(([label])=>label==='执行结果')?.[1]);
+      const path=args?.path || result?.path || result?.result?.path;
+      return !explicitPaths.has(`${row.record.runId}:${path}`);
+    });
+    const groups = new Map();
+    const rawResultOf = row => json(row.details?.find(([label])=>label==='执行结果')?.[1]);
+    const resultOf = row => { const raw=rawResultOf(row); return raw && typeof raw.status==='string' && raw.result && typeof raw.result==='object' ? raw.result : raw; };
+    const argumentsOf = row => {const value=row.details?.find(([label])=>label==='调用参数')?.[1];return value==='未记录调用参数' ? undefined : json(value);};
+    const getGroup = (row, path) => {
+      const key = `${row.record.runId}:${path}`;
+      if (!groups.has(key)) groups.set(key,{record:row.record,kind:'repair',title:`产物 ${groups.size+1}`,repair:{path,runId:row.record.runId,steps:[],attempts:0},content:undefined,revision:undefined});
+      return groups.get(key);
+    };
+    // 先收集身份，允许只有读取记录或缺少首次提交的日志。
+    for (const row of rows.filter(row=>row.kind==='tool')) {
+      const args = argumentsOf(row), result = resultOf(row);
+      const path = row.title==='repair_artifact' ? args?.path : result?.repairTool==='repair_artifact' || result?.code==='artifact_json_invalid' ? result.path : undefined;
+      if (typeof path==='string' && path) getGroup(row,path);
+    }
+    for (const row of rows.filter(row=>row.kind==='tool')) {
+      const args = argumentsOf(row), result = resultOf(row);
+      const path = row.title==='repair_artifact' ? args?.path : result?.repairTool==='repair_artifact' || result?.code==='artifact_json_invalid' ? result.path : row.title==='read_workspace_file' ? args?.path || result?.excerpt?.path : undefined;
+      const group = typeof path==='string' && groups.get(`${row.record.runId}:${path}`);
+      if (!group) continue;
+      const repair = group.repair;
+      const checked = row.debug?.checkedReturn || row.debug?.initialReturn;
+      const status = row.debug?.browserReceipt?.status || checked?.status || rawResultOf(row)?.status;
+      const step = {record:row.record,callId:row.callId,tool:row.title,status:row.status,statusCode:status,tone:row.tone,result,reasoning:row.reasoning,arguments:args,debug:row.debug,details:[]};
+      if (row.title==='read_workspace_file') {
+        step.title = '读取产物';
+        const excerpt = result?.excerpt;
+        const complete = typeof excerpt?.content==='string' && excerpt.startLine===1 && Number.isFinite(excerpt.totalLines) && excerpt.endLine>=excerpt.totalLines;
+        if (complete) { group.content=excerpt.content; group.revision=excerpt.workspaceRevision; }
+        else if (excerpt && excerpt.workspaceRevision!==group.revision) { group.content=undefined; group.revision=excerpt.workspaceRevision; }
+        step.note = excerpt ? `读取第 ${excerpt.startLine}–${excerpt.endLine} 行，共 ${excerpt.totalLines} 行${complete ? '，已取得完整原文' : '；当前只有文件片段'}` : '未取得文件内容。';
+        step.revision = excerpt?.workspaceRevision;
+        if (excerpt) step.details.push([complete ? '完整产物原文' : '读取的原文片段',excerpt.content]);
+      } else if (row.title==='repair_artifact') {
+        step.title = `第 ${++repair.attempts} 次局部补丁`;
+        step.expectedRevision = args?.expectedRevision;
+        step.previousRevision = group.revision;
+        step.revision = result?.workspaceRevision;
+        step.before = group.content;
+        const patched = applyRepairEdits(group.content,args?.edits);
+        step.edits = patched.edits;
+        const localFailure = patched.error;
+        const workspaceFailure = /^workspace\./.test(result?.code || '') || result?.code==='invalid_payload' && !result?.path;
+        const saved = !workspaceFailure && (Number.isFinite(result?.workspaceRevision) && result.path===path
+          || ['pending','prepared','applying','applied','completed','success','succeeded'].includes(status));
+        if (saved) {
+          step.note = status==='repair_required' ? '补丁已保存，语法仍有错误，继续修复同一产物。'
+            : ['rejected','failed','error','denied'].includes(status) ? '补丁已保存；原操作继续执行时被校验拦截。'
+            : ['pending','prepared','applying'].includes(status) ? '补丁已保存，语法解析通过；等待原操作的执行结果。'
+            : '补丁已保存，语法解析通过，原操作已继续执行。';
+          step.patchStatus='已保存';
+          step.patchTone='success';
+          if (patched.content!==undefined && !localFailure) { group.content=patched.content; step.after=patched.content; step.afterLabel='修复后产物（根据补丁还原）'; }
+          else { group.content=undefined; step.note+=' 缺少可匹配的完整原文，无法还原修复后内容。'; }
+          group.revision=result?.workspaceRevision;
+        } else if (workspaceFailure || status==='deferred' || row.status==='未执行') {
+          step.patchStatus='未生效'; step.patchTone='error';
+          step.note='补丁未写入，产物保持原样。';
+          if (result?.code==='workspace.revision_conflict') {
+            step.note='补丁未写入；产物修订号已变化，需重新读取，旧快照不能代表当前文件。';
+            group.content=undefined; group.revision=result.actualRevision; step.revision=result.actualRevision;
+          } else { step.after=group.content; step.afterLabel='补丁失败后的产物（未修改）'; }
+        } else {
+          step.patchStatus='未确认保存'; step.patchTone='waiting';
+          step.note='日志未包含明确的保存结果，无法确认补丁是否生效。';
+          // 未知结果后，旧快照不能再作为下一次补丁的可靠原文。
+          group.content=undefined; group.revision=undefined;
+        }
+        if (localFailure) step.matchError=localFailure;
+        if (step.before===undefined) step.details.push(['原文缺失','未记录完整产物；仅展示实际提交的替换内容，不推测文件内容。']);
+      } else {
+        step.title='首次提交产物';
+        const original = typeof args==='string' ? args : typeof args?.components==='string' ? args.components : undefined;
+        if (original!==undefined) { group.content=original; group.revision=result?.workspaceRevision; step.after=original; step.afterLabel='首次提交的完整产物'; }
+        else step.details.push(['原文缺失','日志未记录首次提交的完整文本，可根据后续文件读取查看原文。']);
+        step.revision=result?.workspaceRevision;
+        step.note='产物已保存到临时文件，尚未通过语法解析。';
+        repair.originalTool=row.title;
+      }
+      repair.steps.push(step);
+    }
+    for (const group of groups.values()) {
+      const repair = group.repair, last=repair.steps.filter(step=>step.tool!=='read_workspace_file').at(-1) || repair.steps.at(-1);
+      const end=records.filter(r=>r.runId===repair.runId && ['run.completed','run.failed','run.cancelled','run.interrupted','run.budget_exhausted'].includes(r.type)).at(-1);
+      group.status=last?.status; group.tone=last?.tone;
+      repair.finalContent=group.content; repair.finalRevision=group.revision;
+      repair.end=end;
+      repair.artifactId=`R${[...groups.values()].indexOf(group)+1}`;
+      group.title=`产物 ${repair.artifactId} · ${repair.attempts} 次补丁修复`;
+      delete group.content; delete group.revision;
+    }
+    const result=[...groups.values()];
+    const declarations=new Map();
+    for (const r of records.filter(r=>r.type==='model.response')) for (const block of blocks(r.payload.messages))
+      if (block.kind==='call' && block.id) declarations.set(`${r.runId}:${block.id}`,r);
+    let patchNumber=0;
+    for (const group of result) {
+      const repair=group.repair, phases=[];
+      const add=(step,stage,title,status,tone,description,extra={})=>{
+        const generated=stage==='generate' || stage==='patch';
+        const response=declarations.get(`${repair.runId}:${step.callId}`);
+        const completed=records.find(r=>r.runId===repair.runId && r.type==='tool.completed' && r.payload.requestId===step.callId)
+          || records.find(r=>r.runId===repair.runId && r.type==='tool.returned' && r.payload.requestId===step.callId);
+        phases.push({kind:'repair',stage,actor:generated ? 'Agent' : stage==='read' ? 'Agent / Workspace' : '系统',
+          artifactId:repair.artifactId,path:repair.path,ownerKey:`${repair.runId}:${step.callId}`,
+          record:generated ? response || step.record : completed || step.record,title,status,tone,description,
+          details:[],reasoning:generated ? step.reasoning : undefined,
+          debug:{tool:step.tool,callId:step.callId,runId:repair.runId,sourceRecordId:(generated ? response : completed)?.recordId,
+            evidence:generated ? response ? '模型响应' : '调用参数；未单独记录生成事件' : '工具回执；内部步骤未分别记录时间',receipt:step.debug},...extra});
+      };
+      for (const step of repair.steps) {
+        const r=repair.artifactId, output=step.result;
+        if (step.tool==='read_workspace_file') {
+          add(step,'read',`Agent 读取产物 ${r}`,step.status,step.tone,step.note,{details:step.details,revision:step.revision});
+        } else if (step.tool==='repair_artifact') {
+          const b=`B${++patchNumber}`;
+          add(step,'patch',`Agent 生成补丁 ${b}，用于修复 ${r}`,step.edits?.length ? '已生成' : '未记录','success',
+            `目标是产物 ${r}，补丁包含 ${step.edits?.length || 0} 项文本替换。`,{patchId:b,edits:step.edits,expectedRevision:step.expectedRevision,details:[['完整补丁参数',step.arguments]]});
+          const deferred=step.statusCode==='deferred' || step.status==='未执行';
+          add(step,'apply',`应用补丁 ${b} 到 ${r}`,deferred ? '未执行' : step.patchStatus==='已保存' ? '应用成功' : step.patchStatus==='未生效' ? '应用失败' : '结果未确认',deferred ? 'skipped' : step.patchTone,
+            deferred ? '本轮未执行该工具调用，因此没有应用补丁。' : step.patchStatus==='已保存' ? `补丁已写入 Workspace，${r} 已更新。` : step.note,
+            {patchId:b,before:step.before,after:step.after,afterLabel:step.afterLabel,previousRevision:step.previousRevision,revision:step.revision,
+              matchError:step.matchError,error:step.patchStatus==='未生效' ? output : undefined,details:[['应用回执',output]]});
+          if (step.patchStatus==='未生效') {
+            add(step,'revalidate',`再次校验 ${r} 的 JSON`,'未执行','skipped',`补丁 ${b} 未写入，因此没有进入再次校验。`,{patchId:b});
+          } else if (step.patchStatus!=='已保存') {
+            add(step,'revalidate',`再次校验 ${r} 的 JSON`,'未记录','skipped','没有明确的应用或校验回执，无法确认是否执行。',{patchId:b});
+          } else {
+            const syntaxFailed=output?.code==='artifact_json_invalid' || output?.validationStage==='syntax';
+            add(step,'revalidate',`再次校验 ${r} 的 JSON`,syntaxFailed ? '校验失败' : '校验通过',syntaxFailed ? 'error' : 'success',
+              syntaxFailed ? `${r} 仍有语法错误，需要再生成一个补丁。` : `${r} 已通过 JSON 解析，系统继续执行原创建操作。`,{patchId:b,revision:step.revision,error:syntaxFailed ? output : undefined});
+            if (!syntaxFailed) {
+              const blocked=['repair_required','rejected','failed','error','denied'].includes(step.statusCode);
+              const waiting=['pending','prepared','applying'].includes(step.statusCode);
+              add(step,'continue',`继续原操作：${repair.originalTool==='patch_canvas_components' ? '修改' : repair.originalTool==='render_draft' ? '预览' : '创建'}组件`,
+                blocked ? '被拦截' : waiting ? '等待执行结果' : '执行完成',blocked ? 'error' : waiting ? 'waiting' : 'success',
+                blocked ? 'JSON 语法已修好，但原操作的后续校验未通过。' : waiting ? '语法校验已通过，等待浏览器返回真实执行结果。' : '修复后的产物已继续执行原操作。',
+                {patchId:b,error:blocked ? output : undefined,details:[['原操作执行结果',output]]});
+            }
+          }
+        } else {
+          add(step,'generate',`Agent 生成${phases.length || r!=='R1' ? '新' : ''}产物 ${r}`,step.after===undefined ? '内容未记录' : '已生成',step.after===undefined ? 'skipped' : 'success',
+            r==='R1' ? 'Agent 提交了完整产物，系统接下来校验其 JSON。' : `这是新生成的产物 ${r}，使用独立文件保存。已有产物的补丁修复记录不会合并到这里。`,
+            {after:step.after,afterLabel:`Agent 生成的完整产物 ${r}`,details:step.details});
+          add(step,'validate',`校验产物 ${r} 的 JSON`,'校验失败','error','系统解析 JSON 时发现语法错误，组件尚未创建。',{error:output});
+          add(step,'store',`将产物 ${r} 保存到 Workspace`,'已保存','success',`原始内容已保存，后续补丁将修改这个文件。`,
+            {revision:step.revision,details:[['文件路径',repair.path],['存储回执',output]]});
+        }
+      }
+      if (!repair.attempts && repair.steps.length) {
+        add(repair.steps.at(-1),'missing',`${repair.artifactId} 没有后续补丁记录`,'未记录修复','skipped',
+          '记录止于保存产物；未记录生成补丁、应用补丁或再次校验。后续生成新产物不等于修复此产物。',{hideTime:true});
+      }
+      repair.phases=phases.map((phase,index)=>({...phase,step:index+1}));
+      const last=repair.phases.filter(phase=>phase.stage!=='read' && !(phase.stage==='revalidate' && ['未执行','未记录'].includes(phase.status))).at(-1);
+      group.status=last?.status;group.tone=last?.tone;
+    }
+    const positions=new Map(records.map((record,index)=>[record.recordId,index]));
+    const combined=[...explicit,...result].sort((a,b)=>positions.get(a.record.recordId)-positions.get(b.record.recordId));
+    const patchIds=new Map();
+    for(const [index,group] of combined.entries()) {
+      const repair=group.repair, previous=repair.artifactId, current=`R${index+1}`;
+      repair.artifactId=current;group.title=`产物 ${current} · ${repair.mode==='staged' ? repair.writeCount || 0 : repair.attempts} 次${repair.mode==='staged' ? '分块写入' : '补丁修复'}`;
+      for(const phase of repair.phases) {
+        phase.artifactId=current;
+        for(const field of ['title','description','afterLabel'])if(typeof phase[field]==='string')
+          phase[field]=phase[field].replaceAll(previous,current);
+        if(phase.patchId) {
+          if(!patchIds.has(phase.ownerKey))patchIds.set(phase.ownerKey,`B${patchIds.size+1}`);
+          const old=phase.patchId,next=patchIds.get(phase.ownerKey);phase.patchId=next;
+          for(const field of ['title','description'])if(typeof phase[field]==='string')phase[field]=phase[field].replaceAll(old,next);
+        }
+      }
+    }
+    return combined;
+  }
+  function artifactView(records, rows=timeline(records), repairs=repairRows(records,rows)) {
+    const rawOutputs=new Map();
+    for(const row of rows.filter(row=>row.kind==='assistant')) {
+      const response=row.details?.find(([label])=>label==='模型返回原始结构（日志记录）')?.[1];
+      const calls=row.details?.find(([label])=>label.startsWith('模型要求的方法调用'))?.[1] || [];
+      for(const call of calls)if(call.id)rawOutputs.set(`${row.record.runId}:${call.id}`,response);
+    }
+    return repairs.map(group=>{
+      const repair=group.repair, phases=repair.phases, visible=[], handled=new Set();
+      const receipt=phase=>records.filter(r=>`${r.runId}:${r.payload.requestId}`===phase.ownerKey
+        && ['tool.returned','tool.completed'].includes(r.type)).at(-1);
+      const returnedError=phase=>{
+        const result=receipt(phase)?.payload.result;
+        return result && typeof result==='object' ? result : phase.error;
+      };
+      const add=(phase,stage,title,status,tone,extra={})=>visible.push({kind:'repair',record:phase.record,
+        ownerKey:phase.ownerKey,artifactId:repair.artifactId,path:repair.path,stage,title,status,tone,
+        ...(['write','patch'].includes(stage) ? {rawOutput:rawOutputs.get(phase.ownerKey)} : {}),...extra});
+      const feedback=(phase,confirmed=true)=>add(phase,'feedback',`${repair.artifactId} · ${confirmed ? '返回给 Agent 的错误' : '校验错误（未记录返回）'}`,
+        '校验失败','error',{error:returnedError(phase)});
+      for(const phase of phases) {
+        const peers=phases.filter(other=>other.ownerKey===phase.ownerKey);
+        if(phase.stage==='store' && repair.mode!=='staged') {
+          const source=phase.after ?? peers.find(other=>other.stage==='generate')?.after;
+          add(phase,'write',`${repair.artifactId} · Agent 写入文件`,'已写入','success',{content:source});
+        } else if(['write','write-applied'].includes(phase.stage) && !handled.has(`write:${phase.ownerKey}`)) {
+          handled.add(`write:${phase.ownerKey}`);
+          const requested=peers.find(other=>other.stage==='write'), applied=peers.find(other=>other.stage==='write-applied'), rejected=peers.find(other=>other.stage==='write-rejected');
+          const result=applied || rejected || requested || phase;
+          const content=requested?.details.find(([label])=>label==='写入文本')?.[1];
+          add(result,'write',`${repair.artifactId} · Agent 写入文件`,applied ? '已写入' : rejected ? '未写入' : '写入未确认',
+            applied ? 'success' : rejected ? 'error' : 'waiting',
+            {content,after:applied?.after,afterLabel:'写入后的文件内容'});
+        } else if(phase.stage==='patch') {
+          const applied=peers.find(other=>other.stage==='apply');
+          const saved=applied?.status==='应用成功', rejected=['应用失败','未执行'].includes(applied?.status);
+          add(phase,'patch',`${repair.artifactId} · Agent 修复补丁 ${phase.patchId}`,saved ? '已写入' : rejected ? '未写入' : '写入未确认',
+            saved ? 'success' : rejected ? 'error' : 'waiting',{edits:phase.edits,error:rejected ? returnedError(applied) : undefined});
+        } else if(phase.stage==='feedback') feedback(phase);
+        else if(['validation-failed','validate','revalidate'].includes(phase.stage) && phase.error
+          && !peers.some(other=>other.stage==='feedback')) feedback(phase,!repair.explicit || !!receipt(phase));
+        else if(phase.stage==='continue' && phase.error) feedback(phase);
+        else if(phase.stage==='write-rejected') add(phase,'feedback',`${repair.artifactId} · 返回给 Agent 的写入错误`,'写入失败','error',{error:returnedError(phase)});
+      }
+      // 未收到写入/补丁回执时，旧快照不能代表文件最终内容。
+      const pending=phases.some(phase=>['write','patch'].includes(phase.stage)
+        && !phases.some(other=>other.ownerKey===phase.ownerKey && ['write-applied','write-rejected','apply'].includes(other.stage)
+          && !['结果未确认','未记录'].includes(other.status)));
+      let content=pending ? undefined : repair.finalContent;
+      const latestChange=phases.findLastIndex(phase=>['store','begin','write-applied','read'].includes(phase.stage)
+        || phase.stage==='apply' && phase.status==='应用成功'
+        || phase.error?.code==='workspace.revision_conflict');
+      const latestMutation=phases.findLastIndex(phase=>['store','begin','write-applied'].includes(phase.stage)
+        || phase.stage==='apply' && phase.status==='应用成功'
+        || phase.error?.code==='workspace.revision_conflict');
+      const snapshot=phases[latestChange]?.record.payload;
+      // 提交回执会更新 Workspace 修订号；内容摘要相同则仍是同一份文件。
+      const sameContent=!!snapshot?.contentSha256 && snapshot.contentSha256===repair.finalSha256;
+      const stale=repair.explicit && Number.isFinite(snapshot?.workspaceRevision)
+        && Number.isFinite(repair.finalRevision) && snapshot.workspaceRevision!==repair.finalRevision && !sameContent;
+      if(stale)content=undefined;
+      const validation=phases.slice(latestMutation+1).filter(phase=>
+        (phase.record.payload.stage==='syntax' && ['validate','validation-failed'].includes(phase.stage)
+          || phase.stage==='revalidate' && ['校验通过','校验失败'].includes(phase.status))
+        && (repair.finalRevision===undefined || phase.revision===repair.finalRevision
+          || sameContent && phase.record.payload.contentSha256===repair.finalSha256)).at(-1);
+      const redacted=snapshot?.contentRedacted || snapshot?.afterContentRedacted;
+      let valid;
+      if(typeof content==='string' && !redacted) {try {JSON.parse(content);valid=true;}catch {valid=false;}}
+      else if(!pending && !stale && validation && (!snapshot?.contentSha256 || !validation.record.payload.contentSha256
+        || snapshot.contentSha256===validation.record.payload.contentSha256))valid=validation.status==='校验通过';
+      const syntaxFailure=phases.findIndex(phase=>phase.error?.code==='artifact_json_invalid' || phase.error?.validationStage==='syntax'
+        || phase.record.payload.stage==='syntax' && phase.status==='校验失败');
+      const fixed=syntaxFailure>=0 && phases.slice(syntaxFailure+1).some(phase=>phase.stage==='apply' && phase.status==='应用成功');
+      const status=valid===true ? fixed ? 'JSON 已修复' : 'JSON 有效' : valid===false ? 'JSON 仍有错误' : 'JSON 未确认';
+      const last=phases.at(-1) || {record:group.record};
+      add(last,'final',`${repair.artifactId} · 最终 JSON`,status,valid===true ? 'success' : valid===false ? 'error' : 'waiting',
+        {after:content,afterLabel:redacted ? '最终文件内容（已脱敏）' : '最终文件内容',
+          description:valid===undefined ? '缺少最终文件内容或明确的写入、校验回执，无法确认。' : undefined});
+      const positions=new Map(records.map((record,index)=>[record.recordId,index]));
+      const priority={write:0,patch:1,feedback:2,final:3};
+      visible.sort((a,b)=>positions.get(a.record.recordId)-positions.get(b.record.recordId) || priority[a.stage]-priority[b.stage]);
+      return {...group,title:`产物 ${repair.artifactId}`,status,tone:visible.at(-1).tone,
+        repair:{...repair,phases:visible.map((phase,index)=>({...phase,step:index+1}))}};
+    });
+  }
+  function processTimeline(records, rows=timeline(records), repairs=repairRows(records,rows)) {
+    const artifactCalls=new Set(repairs.flatMap(group=>group.repair.phases.map(phase=>phase.ownerKey)));
+    const paths=new Set(repairs.map(group=>`${group.repair.runId}:${group.repair.path}`));
+    for(const row of rows.filter(row=>row.kind==='tool')) {
+      const args=json(row.details?.find(([label])=>label==='调用参数')?.[1]);
+      if(['begin_canvas_artifact','write_canvas_artifact','validate_canvas_artifact','repair_artifact','read_workspace_file',
+        'create_canvas_components','patch_canvas_components','render_draft'].includes(row.title)
+        && paths.has(`${row.record.runId}:${args?.path}`))artifactCalls.add(`${row.record.runId}:${row.callId}`);
+    }
+    const ordinary=rows.filter(row=>{
+      if(row.kind==='tool')return !artifactCalls.has(`${row.record.runId}:${row.callId}`);
+      if(row.kind==='assistant' && !row.text) {
+        const calls=row.details?.find(([label])=>label.startsWith('模型要求的方法调用'))?.[1] || [];
+        if(calls.length && calls.every(call=>artifactCalls.has(`${row.record.runId}:${call.id}`)))return false;
+      }
+      return true;
+    });
+    const expanded=[...ordinary,...artifactView(records,rows,repairs).flatMap(group=>group.repair.phases)];
+    const positions=new Map(records.map((record,index)=>[record.recordId,index]));
+    expanded.sort((a,b)=>positions.get(a.record.recordId)-positions.get(b.record.recordId));
+    return expanded.map((row,index)=>({...row,step:index+1}));
+  }
+  function applyRepairEdits(original, replacements) {
+    let content=original, error='';
+    const edits=[];
+    for (const edit of list(replacements)) {
+      const valid=typeof edit?.oldText==='string' && edit.oldText.length>0 && typeof edit?.newText==='string';
+      let matches;
+      if (valid && content!==undefined && !error) {
+        matches=0;
+        for (let offset=content.indexOf(edit.oldText);offset>=0;offset=content.indexOf(edit.oldText,offset+1)) matches++;
+      }
+      const issue=!valid ? '缺少有效的 oldText / newText' : error ? '前一项无法应用，此项未尝试'
+        : matches===0 ? '原文未找到此片段' : matches>1 ? '原文有多个匹配，无法唯一定位'
+        : edit.oldText===edit.newText ? '替换前后相同，未修改内容' : matches===undefined ? '缺少完整原文，无法核对匹配' : '';
+      edits.push({oldText:edit?.oldText,newText:edit?.newText,matches,issue});
+      if (!valid || matches===0 || matches>1 || edit.oldText===edit.newText) error=error || issue;
+      if (valid && matches===1 && !error) content=content.replace(edit.oldText,()=>edit.newText);
+    }
+    if (!edits.length) error='未记录有效的替换项';
+    // 后端按事务应用，任何一项失败都不能展示成部分写入成功。
+    return {content:error ? original : content,edits,error};
+  }
+  function requestRows(records) {
+    const rows = [];
+    for (const r of records.filter(r=>r.type==='model.request')) {
+      const p = r.payload, related = records.filter(x=>x.runId===r.runId && x.payload.callId===p.callId && ['model.response','model.failed'].includes(x.type));
+      rows.push({record:r,kind:'event',title:`第 ${p.round} 轮 · ${p.purpose === 'summary' ? '上下文摘要' : '主模型'} · ${p.mode}`,details:[['调用 ID',p.callId],['模型配置',p.model],['请求参数',p.parameters],['实际发送的消息',p.messages],['工具定义',p.tools],...related.map(x=>[x.type==='model.failed' ? '调用错误' : '模型响应',x.payload]),...(!related.length ? [['提示','未记录响应；日志可能不完整或调用尚未结束']] : [])]});
+    }
+    return rows;
+  }
+  function warnings(records) {
+    const result = [], segments = new Map();
+    if (records.orderingConflict) result.push('部分记录的序号与关联关系冲突，请核对原始记录。');
+    for (const r of records) if (r.segmentId) { if (!segments.has(r.segmentId)) segments.set(r.segmentId,[]); segments.get(r.segmentId).push(r); }
+    for (const items of segments.values()) {
+      items.sort((a,b)=>a.sequence-b.sequence);
+      if (items[0].sequence > 1 || items.some((r,i)=>i && r.sequence > items[i-1].sequence + 1)) result.push('日志缺少部分记录，请补充前后的轮转日志。');
+      if (!items.some(r=>r.type==='segment.ended' || r.type==='artifact.processing.ended')) result.push('日志尚未记录完整，或缺少结尾。');
+    }
+    const runIds = new Set(records.map(r=>r.runId));
+    if (records.some(r=>r.type==='segment.started' && r.payload.previousRunId && !runIds.has(r.payload.previousRunId))) result.push('恢复前的运行记录未导入。');
+    return [...new Set(result)];
+  }
+  return { TRACE, parse, merge, order, groups, blocks, timeline, processTimeline, summary, repairRows, artifactView, applyRepairEdits, requestRows, warnings, text };
+})();
+</script>
+<script>
+(() => {
+  const core = AgentTraceViewer, $ = id => document.getElementById(id);
+  const state = { records:[], groups:[], selected:null, view:'timeline', filter:'all', query:'', warnings:[] };
+  let toastTimer;
+  function toast(message) { $('toast').textContent=message; $('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2400); }
+  function node(tag, className, content) { const el=document.createElement(tag); if(className)el.className=className; if(content!=null)el.textContent=String(content); return el; }
+  const short = value => String(value || '未提供').length > 24 ? String(value).slice(0,24)+'…' : String(value || '未提供');
+  const timestamp = value => { const date=new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('zh-CN',{hour12:false}); };
+  const selected = () => state.groups.find(g=>g.key===state.selected);
+  function detail(label,value,open=false,className='') {
+    const el=node('details',className); el.open=open;
+    el.append(node('summary','',label),node('pre','json',core.text(value))); return el;
+  }
+  function markedText(pre,content,start,end) {
+    pre.append(document.createTextNode(content.slice(0,start)),node('mark','',content.slice(start,end) || '← 文本末尾'),document.createTextNode(content.slice(end)));
+  }
+  function patchEdit(edit,index) {
+    const box=node('div','patch-edit');
+    box.append(node('div','patch-edit-label',`替换 ${index+1} · ${edit.matches===undefined ? '匹配次数未知' : `原文匹配 ${edit.matches} 次`}${edit.issue ? ` · ${edit.issue}` : ''}`));
+    const grid=node('div','patch-diff');
+    const before=typeof edit.oldText==='string' ? edit.oldText : '', after=typeof edit.newText==='string' ? edit.newText : '';
+    let start=0,endBefore=before.length,endAfter=after.length;
+    while(start<endBefore && start<endAfter && before[start]===after[start])start++;
+    while(endBefore>start && endAfter>start && before[endBefore-1]===after[endAfter-1]) {endBefore--;endAfter--;}
+    for(const [label,value,side,end] of [['替换前 · oldText',edit.oldText,'before',endBefore],['替换后 · newText',edit.newText,'after',endAfter]]) {
+      const column=node('div',`patch-${side}`), pre=node('pre','json');
+      column.append(node('div','patch-label',label));
+      if(typeof value!=='string')pre.textContent='未记录';
+      else if(!value)pre.textContent='（空文本，删除匹配片段）';
+      else if(end>start)markedText(pre,value,start,end);
+      else pre.textContent=value;
+      column.append(pre);grid.append(column);
+    }
+    box.append(grid);return box;
+  }
+  function phaseBody(phase) {
+    const body=node('div','phase-body');
+    if(phase.content!==undefined)body.append(node('pre','json',phase.content));
+    else if(phase.stage==='write')body.append(node('p','repair-note','日志未记录本次写入文本。'));
+    if(phase.description)body.append(node('p','repair-note',phase.description));
+    if(phase.error) {
+      const error=phase.error;
+      body.append(node('p','repair-note repair-error',error.error || error.message || error.code || core.text(error)));
+      body.append(detail('返回给 Agent 的原始反馈',error,false,'repair-context'));
+    }
+    for(const [index,edit] of (phase.edits || []).entries())body.append(patchEdit(edit,index));
+    if(phase.after!==undefined)body.append(detail(phase.afterLabel,phase.after,false,'repair-artifact'));
+    if(['write','patch'].includes(phase.stage))body.append(detail('AI 原始输出',
+      phase.rawOutput ?? '日志未记录本次调用对应的 AI 原始输出。',false,'model-output'));
+    return body;
+  }
+  function repairProcess(repair) {
+    const container=node('div','repair-process');
+    container.append(node('p','repair-path',repair.path));
+    for(const phase of repair.phases) {
+      const section=node('section','repair-step'), header=node('header');
+      section.append(node('span','phase-number',phase.step));
+      header.append(node('strong','',phase.title),node('small',`entry-kind ${phase.tone}`,phase.status));
+      if(!phase.hideTime)header.append(node('time','entry-time',timestamp(phase.record.recordedAt)));
+      section.append(header,phaseBody(phase));container.append(section);
+    }
+    return container;
+  }
+  function entry(row) {
+    const r=row.record, article=node('article',`trace-entry trace-${row.kind}`);
+    if(row.step)article.append(node('span','entry-step',row.step));
+    const record=node('details','entry-record'), header=node('summary','entry-summary'), body=node('div','entry-body');
+    record.open=row.kind==='repair';
+    if(row.kind==='tool')header.append(node('span','entry-role','工具调用'));
+    header.append(node('strong','',row.title || '记录'));
+    if(row.status)header.append(node('small',`entry-kind ${row.tone || ''}`,row.status));
+    if(!row.hideTime)header.append(node('time','entry-time',timestamp(r.recordedAt)));
+    record.append(header,body);article.append(record);
+    if(row.repair)body.append(repairProcess(row.repair));
+    if(row.stage) {
+      body.append(phaseBody(row));
+      return article;
+    }
+    if(row.text)body.append(row.kind==='system' ? detail('完整提示词',row.text,false,'system-prompt') : node('p','trace-text',row.text));
+    if(row.reasoning) {
+      const analysis=node('details','reasoning-details');
+      analysis.append(node('summary','','查看分析'),node('p','detail-text',row.reasoning));body.append(analysis);
+    }
+    for(const [label,value] of row.details || []) if(value!==undefined && value!==null && value!=='') {
+      body.append(detail(label,value,false,label==='调用参数' ? 'tool-arguments' : ''));
+    }
+    if(row.kind==='tool') {
+      const args=row.details?.find(([label])=>label==='调用参数')?.[1], result=row.details?.find(([label])=>label==='执行结果')?.[1];
+      const path=row.title==='repair_artifact' ? args?.path : result?.repairTool==='repair_artifact' ? result.path : undefined;
+      if(path) {
+        const button=node('button','ghost-button','查看完整修复过程');
+        button.onclick=()=>{state.view='repairs';state.query=path;$('search').value=path;renderContent();$('conversation').scrollTop=0;};body.append(button);
+      }
+    }
+    if(row.debug)body.append(detail('调试详情',row.debug,false,'debug-details'));
+    return article;
+  }
+  function renderContent() {
+    const group=selected(); if(!group)return;
+    const timeline=core.timeline(group.records), summary=core.summary(group.records,timeline);
+    $('taskTitle').textContent=summary.title; $('taskTitle').title=group.turnId || group.records[0]?.runId || '';
+    $('taskMeta').textContent=`${summary.status} · 用户 ${summary.users} 条 · Agent ${summary.replies} 条 · 工具 ${summary.tools} 次`;
+    const notices=[...state.warnings,...core.warnings(group.records)];
+    if(summary.error)notices.push(`任务失败：${core.text(summary.error)}`);
+    $('notice').textContent=[...new Set(notices)].slice(0,8).join(' '); $('notice').classList.toggle('hidden',!notices.length);
+    const repairs=core.repairRows(group.records,timeline);
+    const rows=state.view==='timeline' ? core.processTimeline(group.records,timeline,repairs) : state.view==='repairs' ? core.artifactView(group.records,timeline,repairs) : state.view==='requests' ? core.requestRows(group.records) : group.records.map(r=>({record:r,kind:'event',title:r.type,details:[['JSON',r.type==='legacy.history' ? r.payload : r]]}));
+    $('filterBar').classList.toggle('hidden',state.view!=='timeline');
+    const query=state.query.trim().toLowerCase();
+    const visible=rows.filter(row=>(state.view!=='timeline' || state.filter==='all' || row.kind===state.filter) && (!query || core.text(state.view==='timeline' ? {...row,record:undefined} : row).toLowerCase().includes(query)));
+    $('stats').textContent=`${visible.length} / ${rows.length} 步`;
+    $('conversation').replaceChildren(...visible.map(entry));
+    if(!visible.length)$('conversation').append(node('div','empty-result',state.view==='repairs' && !rows.length ? '日志中没有记录产物处理过程。' : state.view==='requests' && group.records.some(r=>r.type==='legacy.history') ? '桌面历史未记录每轮请求快照，请切换到对话过程。' : '没有匹配的记录'));
+    document.querySelectorAll('[data-view]').forEach(button=>{const active=button.dataset.view===state.view; button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active ? 0 : -1;});
+    document.querySelectorAll('[data-filter]').forEach(button=>{const active=button.dataset.filter===state.filter;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
+  }
+  function render() {
+    $('emptyState').classList.toggle('hidden',state.groups.length>0); $('historyView').classList.toggle('hidden',state.groups.length===0);
+    $('sessionList').replaceChildren();
+    for(const group of state.groups) {
+      const button=node('button',`session-item${group.key===state.selected ? ' active' : ''}`); button.append(node('span','session-avatar','AG'));
+      const summary=core.summary(group.records), main=node('span','session-main');
+      button.title=`${summary.title}\n${group.turnId || ''}`;
+      main.append(node('span','session-title',summary.title),node('span','session-meta',`${summary.status} · ${summary.tools} 次工具调用`));button.append(main);
+      button.onclick=()=>{state.selected=group.key;state.query='';state.filter='all';$('search').value='';render();$('conversation').scrollTop=0;};$('sessionList').append(button);
+    }
+    renderContent();
+  }
+  function importTexts(texts) {
+    const parsed=texts.map(core.parse), incoming=parsed.flatMap(p=>p.records), warnings=parsed.flatMap(p=>p.warnings);
+    const result=core.merge(state.records,incoming); state.records=result.records; state.groups=core.groups(state.records); state.warnings=[...new Set([...state.warnings,...warnings])];
+    if(incoming.length) { const key=core.groups([incoming[0]])[0].key; state.selected=key; state.filter='all'; state.query='';$('search').value=''; $('importDialog').close(); }
+    render(); toast(incoming.length ? `已导入 ${result.added} 条记录${warnings.length ? '，部分记录已跳过' : ''}` : warnings[0] || '没有找到记录');
+  }
+  async function loadFiles(files) { try { importTexts(await Promise.all([...files].map(file=>file.text()))); $('fileInput').value=''; } catch(error) { toast(`导入失败：${error.message}`); } }
+  function openImport() { $('importDialog').showModal(); $('logInput').focus(); }
+  async function copy(value) {
+    const text=core.text(value);
+    try { await navigator.clipboard.writeText(text);toast('已复制'); }
+    catch { $('logInput').value=text;openImport();toast('剪贴板不可用，请在文本框中手动复制');$('logInput').select(); }
+  }
+  function exported() { return {schemaVersion:'datavisool-agent-trace-export/v1',records:selected().records.map(r=>r.type==='legacy.history' ? r.payload : r)}; }
+  $('openImport').onclick=openImport;$('emptyImport').onclick=openImport;$('closeDialog').onclick=()=>$('importDialog').close();
+  $('chooseFile').onclick=()=>$('fileInput').click();$('fileInput').onchange=()=>loadFiles($('fileInput').files);
+  $('clearInput').onclick=()=>{$('logInput').value='';$('logInput').focus();};$('parseInput').onclick=()=>importTexts([$('logInput').value]);
+  $('search').oninput=()=>{state.query=$('search').value;renderContent();};
+  $('copyJson').onclick=()=>copy(exported());
+  $('exportJson').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(exported(),null,2)],{type:'application/json'}));const link=node('a');link.href=url;link.download=`agent-trace-${selected().turnId || 'task'}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+  document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>{state.view=button.dataset.view;renderContent();});
+  document.querySelector('.view-tabs').onkeydown=event=>{
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    const tabs=[...document.querySelectorAll('[data-view]')], current=tabs.indexOf(document.activeElement);
+    if(current<0)return;event.preventDefault();
+    const next=event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (current+(event.key==='ArrowRight' ? 1 : -1)+tabs.length)%tabs.length;
+    tabs[next].click();tabs[next].focus();
+  };
+  $('filterBar').onclick=event=>{const button=event.target.closest('[data-filter]');if(button){state.filter=button.dataset.filter;renderContent();}};
+  ['dragenter','dragover'].forEach(type=>document.addEventListener(type,event=>{event.preventDefault();$('dropZone').classList.add('dragging');}));
+  ['dragleave','drop'].forEach(type=>document.addEventListener(type,event=>{event.preventDefault();$('dropZone').classList.remove('dragging');}));
+  document.addEventListener('drop',event=>{if(event.dataTransfer.files.length)loadFiles(event.dataTransfer.files);});
+  document.addEventListener('keydown',event=>{
+    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='o'){event.preventDefault();if(!$('importDialog').open)openImport();}
+    if(event.key==='/' && !$('importDialog').open && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){event.preventDefault();$('search').focus();}
+  });
+  render();
+})();
+</script>
+</body></html>

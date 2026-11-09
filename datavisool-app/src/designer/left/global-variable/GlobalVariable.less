@@ -1,0 +1,215 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.global-variable {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  background: var(--bg-surface-1);
+  font-family: var(--datavisool-font-family);
+
+  .global-variable-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-height: 0;
+    padding: var(--space-4);
+    overflow: auto;
+  }
+
+  .gv-item {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface-2);
+    transition: border-color 140ms ease-out, background-color 140ms ease-out;
+
+    &:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-hover);
+    }
+  }
+
+  .gv-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .gv-name {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .gv-prefix {
+    flex: 0 0 auto;
+    color: var(--text-tertiary);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .gv-key {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gv-badge {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    background: var(--bg-surface-1);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+
+  .gv-source {
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .gv-operate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .gv-action {
+    min-width: 0;
+    height: 32px;
+    padding: 0 var(--space-2);
+    border-color: transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    transition: color 140ms ease-out, background-color 140ms ease-out;
+
+    &:hover {
+      border-color: transparent;
+      background: var(--bg-active);
+      color: var(--text-primary);
+    }
+
+    &.delete {
+      color: var(--danger);
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  .gv-empty {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-2);
+    text-align: center;
+  }
+
+  .gv-empty-title {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .gv-empty-desc {
+    max-width: 224px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .gv-empty-action {
+    margin-top: var(--space-2);
+    height: 40px;
+    padding: 0 var(--space-4);
+    border-color: transparent;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    box-shadow: none;
+    color: var(--primary-foreground);
+    font-size: 14px;
+    font-weight: 500;
+
+    .i-icon {
+      display: flex;
+    }
+
+    &:hover {
+      border-color: transparent;
+      background: var(--primary-hover);
+      filter: none;
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-focus);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gv-item,
+    .gv-action,
+    .gv-empty-action {
+      transition: none;
+      transform: none;
+    }
+  }
+}
+
+.global-variable-edit-panel {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  height: auto;
+  overflow: visible;
+
+  .data-config {
+    padding: 0;
+    margin-top: 16px;
+  }
+}

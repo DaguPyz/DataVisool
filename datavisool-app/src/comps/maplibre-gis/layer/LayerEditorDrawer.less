@@ -1,0 +1,54 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+@import '@/comps/maplibre-gis/comm/MapLibreGisDrawerCommon.less';
+
+.mlgis-layer-drawer {
+  .mlgis-filter-compare {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-filter-compare-row1 {
+    display: grid;
+    grid-template-columns: 1fr 80px 110px;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-filter-compare-row2 {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-style-stop-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-style-stop-value {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-style-match-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mlgis-style-match-value {
+    width: 100%;
+    min-width: 0;
+  }
+}

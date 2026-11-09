@@ -1,0 +1,32 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+[data-toolbar-magnification] .workspace-icon-button > .i-icon,
+[data-toolbar-magnification] .menu-item-icon > .i-icon,
+[data-toolbar-magnification] .item-icon > .i-icon,
+[data-toolbar-magnification] .ai-driven-button > .i-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-toolbar-magnification] .workspace-icon-button > .i-icon,
+  [data-toolbar-magnification] .workspace-icon-button > .workspace-text-icon,
+  [data-toolbar-magnification] .workspace-icon-button > .workspace-magnify-text,
+  [data-toolbar-magnification] .menu-item-icon > .i-icon,
+  [data-toolbar-magnification] .item-icon > .i-icon,
+  [data-toolbar-magnification] .ai-driven-button > .i-icon {
+    transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: center;
+    transform: scale(calc(1 + var(--workspace-tool-proximity, 0) * 0.22));
+  }
+
+  .workspace-toolbar-container[data-toolbar-magnification] button.workspace-icon-button:not(.is-active),
+  .workspace-zoom-controls[data-toolbar-magnification] button.workspace-icon-button,
+  .designer-left-menus[data-toolbar-magnification] button.menu-item:not(.menu-item-active),
+  .designer-left-menus[data-toolbar-magnification] button.ai-driven-button:not(.ai-driven-button-active),
+  .datavisool-config-menu[data-toolbar-magnification] .menu-list button.menu-item:not(.menu-item-active) {
+    background: rgba(67, 95, 168, calc(var(--workspace-tool-proximity, 0) * 0.16));
+    border-color: rgba(96, 125, 205, calc(var(--workspace-tool-proximity, 0) * 0.18));
+  }
+}

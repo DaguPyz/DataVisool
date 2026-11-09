@@ -1,0 +1,92 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.context-menu-container.bp-context-menu {
+  width: 190px;
+  box-sizing: border-box;
+  padding: 8px;
+  overflow: hidden;
+  color: #f3f7ff;
+  background: #111a2e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  .context-menu-item {
+    position: relative;
+    min-height: 34px;
+    box-sizing: border-box;
+    gap: 10px;
+    padding: 0 10px;
+    color: #aab7d1;
+    font-size: 13px;
+    line-height: 34px;
+    border-radius: 8px;
+    transition: color 160ms ease, background-color 160ms ease;
+
+    .context-menu-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      margin-right: 0;
+      flex: 0 0 20px;
+      color: currentColor;
+      line-height: 0;
+
+      .i-icon, svg {
+        display: block;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .context-menu-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover {
+      color: #f3f7ff;
+      background: #1a2740;
+    }
+
+    &:active {
+      background: #1d3155;
+    }
+  }
+
+  .context-menu-item-separated {
+    margin-top: 8px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 8px;
+      right: 8px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .context-menu-item-danger {
+    color: #f87171;
+
+    &:hover {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.12);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .context-menu-container.bp-context-menu .context-menu-item {
+    transition: none;
+  }
+}

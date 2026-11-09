@@ -1,0 +1,428 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.datavisool-global-filter-dialog {
+  --filter-surface: #111a2e;
+  --filter-surface-secondary: #162238;
+  --filter-hover: #1a2740;
+  --filter-border: rgba(255, 255, 255, 0.08);
+  --filter-border-subtle: rgba(255, 255, 255, 0.06);
+  --filter-border-strong: rgba(255, 255, 255, 0.12);
+  --filter-border-focus: rgba(59, 130, 246, 0.45);
+  --filter-text: #f3f7ff;
+  --filter-text-secondary: #aab7d1;
+  --filter-text-tertiary: #7c8aa5;
+  --filter-primary: #3b82f6;
+  --filter-primary-hover: #4a90ff;
+
+  box-sizing: border-box;
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--filter-border);
+  border-radius: 16px;
+  color: var(--filter-text);
+  background: var(--filter-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  font-family: var(--datavisool-font-family, Inter, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif);
+
+  .datavisool-dialog-close-floating {
+    top: 24px;
+    right: 24px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: var(--filter-text-secondary);
+    background: transparent;
+    transition: color 160ms ease-out, background-color 160ms ease-out;
+
+    svg {
+      stroke-width: 1.75px;
+    }
+
+    &:hover {
+      border-color: var(--filter-border);
+      color: var(--filter-text);
+      background: var(--filter-hover);
+    }
+
+    &:focus-visible {
+      border-color: var(--filter-border-focus);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+    }
+  }
+}
+
+.datavisool-global-filter-body {
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+
+.datavisool-global-filter-config {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex-direction: column;
+  color: var(--filter-text);
+
+  .global-filter-header {
+    flex: 0 0 auto;
+    padding: 24px 72px 24px 24px;
+    border-bottom: 1px solid var(--filter-border-subtle);
+  }
+
+  .global-filter-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    h2 {
+      margin: 0;
+      color: var(--filter-text);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 40px;
+    }
+  }
+
+  .global-filter-heading p {
+    margin: 8px 0 0;
+    color: var(--filter-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .global-filter-state {
+    display: inline-flex;
+    height: 24px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: var(--filter-text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 12px;
+    line-height: 18px;
+    transition: color 200ms ease-out, background-color 200ms ease-out;
+
+    &::before {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--filter-text-tertiary);
+      content: '';
+    }
+
+    &.enabled {
+      color: var(--filter-text);
+      background: rgba(59, 130, 246, 0.14);
+
+      &::before {
+        background: var(--filter-primary);
+      }
+    }
+  }
+
+  .global-filter-panel {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 24px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+    scrollbar-color: var(--filter-border-strong) transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: var(--filter-border-strong);
+    }
+  }
+
+  .global-filter-overview {
+    display: grid;
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr) 160px;
+    align-items: center;
+    gap: 24px;
+    padding: 16px;
+    border: 1px solid var(--filter-border);
+    border-radius: 12px;
+    background: var(--filter-surface-secondary);
+  }
+
+  .global-filter-enable-row {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .global-filter-enable-copy {
+    min-width: 0;
+
+    label {
+      color: var(--filter-text);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+      cursor: pointer;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: var(--filter-text-secondary);
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .global-filter-switch-field {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .global-filter-switch {
+    .datavisool-switch-track {
+      border-color: var(--filter-border-strong);
+      background: var(--filter-hover);
+      box-shadow: none;
+    }
+
+    .datavisool-switch-track::before {
+      background: var(--filter-primary);
+    }
+
+    &.datavisool-switch-checked .datavisool-switch-track {
+      border-color: var(--filter-primary);
+      box-shadow: none;
+    }
+
+    &:hover .datavisool-switch-track {
+      border-color: var(--filter-text-tertiary);
+      box-shadow: none;
+    }
+
+    &:focus-visible .datavisool-switch-track {
+      border-color: var(--filter-border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+    }
+  }
+
+  .global-filter-visual {
+    position: relative;
+    height: 96px;
+    overflow: hidden;
+    margin: 0;
+    border-radius: 8px;
+    background: var(--bg-canvas, #0a1020);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      transition: filter 200ms ease-out;
+    }
+
+    figcaption {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      padding: 0 8px;
+      border-radius: 8px;
+      color: var(--filter-text-secondary);
+      background: rgba(10, 16, 32, 0.88);
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
+
+  .global-filter-parameters {
+    flex: 0 0 auto;
+
+    h3 {
+      margin: 0 0 16px;
+      color: var(--filter-text);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+    }
+  }
+
+  .global-filter-sliders {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+  }
+
+  .global-filter-slider-item {
+    min-width: 0;
+  }
+
+  .global-filter-slider-label {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--filter-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+
+    small {
+      margin-left: auto;
+      color: var(--filter-text-tertiary);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+    }
+  }
+
+  .global-filter-slider-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--filter-text-secondary);
+
+    svg {
+      display: block;
+    }
+  }
+
+  .global-filter-slider {
+    width: 100%;
+    min-width: 0;
+
+    .datavisool-slider-main {
+      min-height: 40px;
+      gap: 12px;
+    }
+
+    .datavisool-slider-control {
+      --datavisool-slider-track-height: 4px;
+      --datavisool-slider-thumb-size: 16px;
+      min-width: 0;
+      height: 40px;
+      margin: 0 8px;
+    }
+
+    .datavisool-slider-rail {
+      background: var(--filter-border-strong);
+    }
+
+    .datavisool-slider-fill {
+      background: var(--filter-primary);
+      box-shadow: none;
+    }
+
+    .datavisool-slider-thumb {
+      box-sizing: border-box;
+      border: 2px solid var(--filter-primary);
+      background: var(--filter-text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+      transition: box-shadow 160ms ease-out;
+    }
+
+    .datavisool-slider-control:hover .datavisool-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    .datavisool-slider-control:focus-visible .datavisool-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.24);
+    }
+
+    .datavisool-slider-value {
+      box-sizing: border-box;
+      width: 80px;
+      min-height: 40px;
+      flex: 0 0 80px;
+      border: 1px solid var(--filter-border);
+      border-radius: 10px;
+      color: var(--filter-text);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 13px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      line-height: 20px;
+    }
+  }
+
+  .global-filter-footer {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid var(--filter-border-subtle);
+
+    .btn-confirm {
+      height: 40px;
+      min-width: 96px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: #ffffff;
+      background: var(--filter-primary);
+      box-shadow: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 160ms ease-out, box-shadow 160ms ease-out;
+
+      &:hover {
+        border-color: transparent;
+        background: var(--filter-primary-hover);
+        filter: none;
+      }
+
+      &:focus-visible {
+        border-color: var(--filter-border-focus);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.24);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .datavisool-global-filter-config {
+    .global-filter-title-row h2 {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    .global-filter-overview,
+    .global-filter-sliders {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .global-filter-overview {
+      gap: 16px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datavisool-global-filter-dialog {
+    &,
+    *,
+    *::before {
+      transition: none;
+    }
+  }
+}

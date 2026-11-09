@@ -1,0 +1,1106 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.dynamicScriptPage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(39, 56, 98, 0.86);
+  background:
+    radial-gradient(760px 430px at 6% 0%, rgba(40, 73, 168, 0.15), transparent 68%),
+    radial-gradient(860px 520px at 74% 8%, rgba(41, 63, 130, 0.09), transparent 66%),
+    linear-gradient(180deg, #070d1e 0%, #030917 46%, #040916 100%);
+  box-shadow: inset 0 1px 0 rgba(148, 176, 255, 0.07), 0 26px 70px rgba(0, 0, 0, 0.30);
+  box-sizing: border-box;
+}
+
+.waveBackground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -9px;
+  z-index: 0;
+  width: 100%;
+  height: 332px;
+  object-fit: cover;
+  object-position: center bottom;
+  opacity: 0.64;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pageHeader {
+  position: relative;
+  z-index: 1;
+  min-height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+  padding: 33px 37px 31px 51px;
+  border-bottom: 1px solid rgba(35, 48, 82, 0.76);
+  background:
+    radial-gradient(480px 120px at 6% 0%, rgba(46, 88, 201, 0.17), transparent 72%),
+    linear-gradient(180deg, rgba(9, 15, 33, 0.82), rgba(6, 11, 26, 0.72));
+  box-sizing: border-box;
+}
+
+.headerTitleArea {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 23px;
+}
+
+.titleIcon {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  filter: drop-shadow(0 0 18px rgba(51, 115, 255, 0.38));
+}
+
+.titleText {
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 38px;
+    letter-spacing: 0;
+    text-shadow: 0 0 18px rgba(132, 165, 255, 0.18);
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: #a8b3cf;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
+}
+
+.headerTools {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.searchInputField {
+  width: 320px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(51, 67, 111, 0.88);
+  background: rgba(8, 14, 34, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    border-color: rgba(57, 132, 255, 0.88);
+    box-shadow: 0 0 0 2px rgba(39, 117, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  :global(.datavisool-input-prefix) {
+    margin-right: 13px;
+  }
+
+  :global(.datavisool-input-native) {
+    color: #f3f7ff;
+    background: transparent;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0;
+
+    &::placeholder {
+      color: #8d9abd;
+    }
+  }
+}
+
+.createButton,
+.batchDeleteButton {
+  height: 56px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 25px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.createButton {
+  min-width: 123px;
+  border: 0;
+  color: #ffffff;
+  background: linear-gradient(112deg, #1678ff 0%, #2d62ff 45%, #8c23ff 100%);
+  box-shadow: 0 14px 28px rgba(42, 94, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+
+  &:hover,
+  &:focus {
+    color: #ffffff !important;
+    background: linear-gradient(112deg, #2384ff 0%, #386cff 45%, #9d34ff 100%) !important;
+    box-shadow: 0 16px 34px rgba(48, 100, 255, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+}
+
+.batchDeleteButton {
+  min-width: 125px;
+  border: 1px solid rgba(56, 71, 115, 0.86);
+  color: #a9b4cf;
+  background: rgba(15, 23, 48, 0.78);
+
+  &:hover,
+  &:focus {
+    color: #dce5ff !important;
+    border-color: rgba(89, 107, 162, 0.94) !important;
+    background: rgba(24, 33, 65, 0.94) !important;
+  }
+}
+
+.pageBody {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 139, 180, 0.5) transparent;
+  padding: 24px 52px 32px;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(125, 139, 180, 0.5);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(151, 166, 211, 0.68);
+  }
+}
+
+.scriptGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(352px, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+@media (min-width: 1400px) {
+  .scriptGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.scriptCard {
+  position: relative;
+  width: 100%;
+  height: 268px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 29px 28px 26px;
+  border-radius: 8px;
+  border: 1px solid rgba(92, 112, 154, 0.34);
+  background:
+    radial-gradient(360px 190px at 17% 6%, rgba(69, 92, 184, 0.22), transparent 66%),
+    linear-gradient(151deg, rgba(27, 39, 77, 0.86) 0%, rgba(13, 20, 48, 0.94) 54%, rgba(8, 13, 34, 0.98) 100%);
+  box-shadow:
+    0 14px 28px rgba(2, 11, 31, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  box-sizing: border-box;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(118deg, rgba(255, 255, 255, 0.06), transparent 35%, rgba(77, 117, 255, 0.03));
+    opacity: 0.52;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px rgba(7, 24, 68, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+}
+
+.selectedCard {
+  border-color: rgba(88, 149, 255, 0.54);
+  box-shadow:
+    inset 0 0 0 1px rgba(130, 180, 255, 0.34),
+    0 0 0 1px rgba(93, 122, 226, 0.18),
+    0 0 24px rgba(44, 125, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.cardHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 27px;
+}
+
+.scriptIcon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  color: #f6fbff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.remoteIcon {
+  background:
+    radial-gradient(circle at 35% 20%, rgba(255, 255, 255, 0.30), transparent 20%),
+    linear-gradient(137deg, #b748ff 0%, #682dff 52%, #2558ff 100%);
+  box-shadow: 0 0 24px rgba(116, 48, 255, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.localIcon {
+  background:
+    radial-gradient(circle at 32% 20%, rgba(33, 235, 255, 0.58), transparent 24%),
+    linear-gradient(137deg, #0fa3ff 0%, #1f76f2 52%, #2649d5 100%);
+  box-shadow: 0 0 24px rgba(32, 137, 255, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.cardTitleBlock {
+  min-width: 0;
+  flex: 1;
+  padding-top: 8px;
+
+  h2 {
+    width: 100%;
+    margin: 0;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 31px;
+    letter-spacing: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  p {
+    width: 100%;
+    margin: 10px 0 0;
+    color: #8591b8;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.selectBox {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-top: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(92, 107, 153, 0.90);
+  color: #ffffff;
+  background: rgba(20, 29, 58, 0.78);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+
+  &:hover {
+    border-color: rgba(111, 156, 255, 0.96);
+  }
+}
+
+.selectBoxActive {
+  border-color: rgba(126, 62, 255, 0.96);
+  background: linear-gradient(135deg, #2782ff 0%, #8e29ff 100%);
+  box-shadow: 0 0 16px rgba(95, 70, 255, 0.38);
+}
+
+.tagRow {
+  position: relative;
+  z-index: 1;
+  min-height: 36px;
+  margin: 25px 0 21px;
+}
+
+.remoteTag,
+.localTag {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.remoteTag {
+  color: #11d6ff;
+  background: rgba(22, 110, 197, 0.34);
+}
+
+.localTag {
+  color: #29f09f;
+  background: rgba(20, 123, 99, 0.34);
+}
+
+.cardDivider {
+  position: relative;
+  z-index: 1;
+  height: 1px;
+  background: rgba(48, 64, 103, 0.74);
+}
+
+.cardActions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  margin-top: 27px;
+
+  button {
+    min-width: 0;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid rgba(55, 70, 112, 0.68);
+    color: #b6c7ea;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: 0;
+    cursor: pointer;
+    transition: color 160ms ease, text-shadow 160ms ease;
+
+    &:last-child {
+      border-right: 0;
+    }
+
+    &:hover {
+      color: #6bddff;
+      text-shadow: 0 0 12px rgba(38, 200, 255, 0.30);
+    }
+  }
+
+  .deleteAction {
+    color: #ff4f91;
+
+    &:hover {
+      color: #ff84b5;
+      text-shadow: 0 0 12px rgba(255, 79, 145, 0.30);
+    }
+  }
+}
+
+.emptyWrap {
+  position: relative;
+  z-index: 1;
+  min-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  border: 1px dashed rgba(68, 86, 136, 0.70);
+  background: rgba(11, 18, 39, 0.54);
+
+  :global(.datavisool-empty-description) {
+    color: #aeb8d3;
+  }
+}
+
+.paginationContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 38px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  :global(.datavisool-pagination-total) {
+    margin-right: 15px;
+    color: #aeb8cf;
+    font-size: 15px;
+    line-height: 44px;
+  }
+
+  :global(.datavisool-pagination-pages) {
+    gap: 12px;
+  }
+
+  :global(.datavisool-pagination-item),
+  :global(.datavisool-pagination-arrow) {
+    min-width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid rgba(58, 73, 116, 0.80);
+    background: rgba(19, 28, 55, 0.68);
+    color: #9eaccf;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 42px;
+
+    &:hover {
+      border-color: rgba(44, 133, 255, 0.86);
+      color: #5ac7ff;
+      background: rgba(26, 38, 73, 0.84);
+    }
+  }
+
+  :global(.datavisool-pagination-item-active) {
+    border-color: rgba(96, 56, 255, 0.98);
+    background: linear-gradient(135deg, #237cff 0%, #8d23ff 100%);
+    box-shadow: 0 0 18px rgba(66, 103, 255, 0.36);
+    color: #ffffff;
+  }
+
+  :global(.datavisool-pagination-arrow) {
+    border-color: rgba(50, 65, 105, 0.64);
+    color: #7180a4;
+    background: rgba(19, 28, 55, 0.52);
+  }
+
+  :global(.datavisool-pagination-item:disabled),
+  :global(.datavisool-pagination-arrow:disabled) {
+    color: rgba(113, 128, 164, 0.35);
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: rgba(58, 73, 116, 0.80);
+      background: rgba(19, 28, 55, 0.68);
+    }
+  }
+}
+
+.renameContent {
+  padding: 10px 0;
+
+  :global(.datavisool-input-shell) {
+    height: 40px;
+    border-color: rgba(58, 76, 126, 0.90);
+    color: #f4f7ff;
+    background: #090f24;
+
+    &:focus-within {
+      border-color: rgba(57, 132, 255, 0.88);
+      box-shadow: 0 0 0 2px rgba(39, 117, 255, 0.14);
+    }
+  }
+
+  :global(.datavisool-input-native) {
+    color: #f4f7ff;
+
+    &::placeholder {
+      color: #7784a8;
+    }
+  }
+}
+
+@import "./DynamicScriptList.modal.module.less";
+
+@media (max-width: 1280px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .headerTools {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .searchInputField {
+    width: 420px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 960px) {
+  .dynamicScriptPage {
+    height: 100%;
+  }
+
+  .pageHeader {
+    padding: 28px 24px;
+  }
+
+  .pageBody {
+    padding: 24px;
+  }
+
+  .scriptGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .scriptCard {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .headerTitleArea {
+    gap: 16px;
+  }
+
+  .titleIcon {
+    width: 56px;
+    height: 64px;
+  }
+
+  .titleText {
+    h1 {
+      font-size: 26px;
+      line-height: 34px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .createButton,
+  .batchDeleteButton,
+  .searchInputField {
+    width: 100%;
+  }
+
+  .scriptCard {
+    height: auto;
+    min-height: 268px;
+    padding: 24px 20px;
+  }
+
+  .cardHeader {
+    gap: 16px;
+  }
+
+  .scriptIcon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cardTitleBlock {
+    h2 {
+      font-size: 21px;
+      line-height: 28px;
+    }
+  }
+
+  .cardActions {
+    gap: 0;
+
+    button {
+      font-size: 14px;
+      gap: 6px;
+    }
+  }
+}
+
+/* Desktop resource-management treatment; project settings keeps the existing theme. */
+.resourceManagementPage {
+  --resource-bg: #0a1020;
+  --resource-surface: #111a2e;
+  --resource-surface-raised: #162238;
+  --resource-hover: #1a2740;
+  --resource-border: rgba(255, 255, 255, 0.08);
+  --resource-border-subtle: rgba(255, 255, 255, 0.06);
+  --resource-focus: rgba(59, 130, 246, 0.45);
+  --resource-text: #f3f7ff;
+  --resource-text-secondary: #aab7d1;
+  --resource-text-tertiary: #7c8aa5;
+  --resource-primary: #3b82f6;
+  --resource-teal: #22c7b8;
+  --resource-purple: #8b5cf6;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  padding: 24px;
+  border: 0;
+  border-radius: 0;
+  color: var(--resource-text);
+  background: var(--resource-bg);
+  box-shadow: none;
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.resourceManagementPage .waveBackground {
+  display: none;
+}
+
+.resourceManagementPage .pageHeader {
+  min-height: auto;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--resource-border-subtle);
+  background: transparent;
+}
+
+.resourceManagementPage .headerTitleArea {
+  align-items: center;
+  gap: 12px;
+}
+
+.resourceManagementPage .titleIcon {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  border-radius: 10px;
+  color: var(--resource-primary);
+  background: rgba(59, 130, 246, 0.14);
+  filter: none;
+}
+
+.resourceManagementPage .titleIcon :global(svg) {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.resourceManagementPage .titleText h1 {
+  color: var(--resource-text);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  text-shadow: none;
+}
+
+.resourceManagementPage .titleText p {
+  margin-top: 8px;
+  color: var(--resource-text-secondary);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.resourceManagementPage .headerTools {
+  gap: 16px;
+}
+
+.resourceManagementPage .searchInputField {
+  width: 320px;
+}
+
+.resourceManagementPage .searchInput {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--resource-border);
+  border-radius: 10px;
+  background: var(--resource-surface);
+  box-shadow: none;
+}
+
+.resourceManagementPage .searchInput:hover,
+.resourceManagementPage .searchInput:focus,
+.resourceManagementPage .searchInput:focus-within {
+  border-color: var(--resource-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.resourceManagementPage .searchInput :global(.datavisool-input-prefix) {
+  margin-right: 8px;
+  color: var(--resource-text-tertiary);
+}
+
+.resourceManagementPage .searchInput :global(.datavisool-input-native) {
+  color: var(--resource-text);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.resourceManagementPage .searchInput :global(.datavisool-input-native)::placeholder {
+  color: var(--resource-text-tertiary);
+}
+
+.resourceManagementPage .createButton,
+.resourceManagementPage .batchDeleteButton {
+  height: 40px;
+  min-width: 0;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.resourceManagementPage .createButton {
+  border: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+}
+
+.resourceManagementPage .createButton:hover,
+.resourceManagementPage .createButton:focus {
+  color: #ffffff !important;
+  background: #4a90ff !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+}
+
+.resourceManagementPage .batchDeleteButton {
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.resourceManagementPage .batchDeleteButton:hover,
+.resourceManagementPage .batchDeleteButton:focus {
+  border-color: rgba(239, 68, 68, 0.48) !important;
+  color: #fecaca !important;
+  background: rgba(239, 68, 68, 0.14) !important;
+}
+
+.resourceManagementPage .pageBody {
+  padding: 24px 0 0;
+  scrollbar-color: rgba(124, 138, 165, 0.52) transparent;
+}
+
+.resourceManagementPage .pageBody::-webkit-scrollbar-thumb {
+  background: rgba(124, 138, 165, 0.52);
+}
+
+.resourceManagementPage .scriptGrid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.resourceManagementPage .scriptCard {
+  height: auto;
+  min-height: 0;
+  padding: 20px;
+  border: 1px solid var(--resource-border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%), var(--resource-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, transform 140ms ease-out;
+}
+
+.resourceManagementPage .scriptCard::after {
+  display: none;
+}
+
+.resourceManagementPage .scriptCard:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--resource-surface-raised);
+  transform: translateY(-1px);
+}
+
+.resourceManagementPage .scriptCard.selectedCard {
+  border-color: rgba(59, 130, 246, 0.62);
+  background: var(--resource-surface-raised);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18), 0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.resourceManagementPage .cardHeader {
+  gap: 12px;
+}
+
+.resourceManagementPage .scriptIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.resourceManagementPage .remoteIcon {
+  color: var(--resource-purple);
+  background: rgba(139, 92, 246, 0.16);
+  box-shadow: none;
+}
+
+.resourceManagementPage .localIcon {
+  color: var(--resource-teal);
+  background: rgba(34, 199, 184, 0.16);
+  box-shadow: none;
+}
+
+.resourceManagementPage .cardTitleBlock {
+  padding-top: 0;
+}
+
+.resourceManagementPage .cardTitleBlock h2 {
+  color: var(--resource-text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.resourceManagementPage .cardTitleBlock p {
+  margin-top: 4px;
+  color: var(--resource-text-tertiary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.resourceManagementPage .selectBox {
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+  border-color: rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.resourceManagementPage .selectBox:hover {
+  border-color: var(--resource-primary);
+}
+
+.resourceManagementPage .selectBoxActive {
+  border-color: var(--resource-primary);
+  background: var(--resource-primary);
+  box-shadow: none;
+}
+
+.resourceManagementPage .tagRow {
+  min-height: 22px;
+  margin: 16px 0;
+}
+
+.resourceManagementPage .remoteTag,
+.resourceManagementPage .localTag {
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.resourceManagementPage .remoteTag {
+  border-color: rgba(139, 92, 246, 0.22);
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, 0.10);
+}
+
+.resourceManagementPage .localTag {
+  border-color: rgba(34, 199, 184, 0.22);
+  color: #8be4d8;
+  background: rgba(34, 199, 184, 0.10);
+}
+
+.resourceManagementPage .cardDivider {
+  background: var(--resource-border-subtle);
+}
+
+.resourceManagementPage .cardActions {
+  display: flex;
+  grid-template-columns: none;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 0;
+}
+
+.resourceManagementPage .cardActions button {
+  height: 28px;
+  gap: 4px;
+  padding: 0 6px;
+  border-right: 0;
+  border-radius: 6px;
+  color: var(--resource-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  text-shadow: none;
+}
+
+.resourceManagementPage .cardActions button :global(svg) {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  align-self: center;
+}
+
+.resourceManagementPage .cardActions button:hover {
+  color: var(--resource-text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.resourceManagementPage .cardActions .deleteAction {
+  color: var(--resource-text-secondary);
+}
+
+.resourceManagementPage .cardActions .deleteAction:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.10);
+}
+
+.resourceManagementPage .emptyWrap {
+  min-height: 220px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: var(--resource-surface);
+}
+
+.resourceManagementPage .emptyWrap :global(.datavisool-empty-description) {
+  color: var(--resource-text-tertiary);
+}
+
+.resourceManagementPage .paginationContainer {
+  margin-top: 24px;
+}
+
+.resourceManagementPage .pagination {
+  gap: 0;
+
+  :global(.datavisool-pagination-total) {
+    margin-right: 12px;
+    color: var(--resource-text-tertiary);
+    font-size: 13px;
+    line-height: 32px;
+  }
+
+  :global(.datavisool-pagination-pages) {
+    gap: 8px;
+  }
+
+  :global(.datavisool-pagination-item),
+  :global(.datavisool-pagination-arrow) {
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid var(--resource-border);
+    border-radius: 8px;
+    background: var(--resource-surface);
+    color: var(--resource-text-secondary);
+    font-size: 13px;
+    line-height: 30px;
+  }
+
+  :global(.datavisool-pagination-item:hover),
+  :global(.datavisool-pagination-arrow:hover) {
+    border-color: var(--resource-focus);
+    background: var(--resource-hover);
+    color: var(--resource-text);
+  }
+
+  :global(.datavisool-pagination-item-active) {
+    border-color: var(--resource-primary);
+    background: var(--resource-primary);
+    box-shadow: none;
+    color: #ffffff;
+  }
+
+  :global(.datavisool-pagination-arrow) {
+    color: var(--resource-text-tertiary);
+  }
+
+  :global(.datavisool-pagination-item:disabled),
+  :global(.datavisool-pagination-arrow:disabled) {
+    border-color: var(--resource-border);
+    background: var(--resource-surface);
+    color: rgba(124, 138, 165, 0.45);
+  }
+}
+
+@media (max-width: 1280px) {
+  .resourceManagementPage .headerTools {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .resourceManagementPage {
+    padding: 16px;
+  }
+
+  .resourceManagementPage .pageHeader {
+    padding-bottom: 20px;
+  }
+
+  .resourceManagementPage .pageBody {
+    padding-top: 20px;
+  }
+
+  .resourceManagementPage .headerTitleArea {
+    gap: 10px;
+  }
+
+  .resourceManagementPage .titleText h1 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .resourceManagementPage .headerTools {
+    gap: 8px;
+  }
+
+  .resourceManagementPage .searchInputField,
+  .resourceManagementPage .createButton,
+  .resourceManagementPage .batchDeleteButton {
+    width: 100%;
+  }
+
+  .resourceManagementPage .scriptGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+}

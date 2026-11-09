@@ -1,0 +1,207 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.dialog {
+  --update-surface: #111a2e;
+  --update-surface-raised: #162238;
+  --update-border: rgba(255, 255, 255, 0.08);
+  --update-text: #f3f7ff;
+  --update-text-secondary: #aab7d1;
+  --update-text-tertiary: #7c8aa5;
+  --update-primary: #3b82f6;
+
+  border-color: var(--update-border);
+  border-radius: 16px;
+  background: var(--update-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+
+  :global(.datavisool-dialog-body) {
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+  }
+}
+
+.notice {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 26px 18px;
+  background: var(--update-surface);
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+.updateMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 11px;
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  border-radius: 10px;
+  color: #9bbdff;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.headingText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+
+  span {
+    color: var(--update-text-tertiary);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1;
+  }
+
+  h2 {
+    margin: 0;
+    color: var(--update-text);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    line-height: 1.25;
+  }
+}
+
+.releaseBadge {
+  padding: 4px 7px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 99px;
+  color: #9bbdff;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.message {
+  position: relative;
+  z-index: 1;
+  margin: 19px 0 16px;
+  color: var(--update-text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.versionInfo {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr);
+  min-height: 62px;
+  padding: 0 13px;
+  border: 1px solid var(--update-border);
+  border-radius: 12px;
+  background: var(--update-surface-raised);
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  > div:first-child {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  > div:last-child {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  span {
+    color: var(--update-text-tertiary);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  strong {
+    min-height: 16px;
+    overflow: hidden;
+    color: var(--update-text-secondary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  i {
+    justify-self: center;
+    color: var(--update-primary);
+    font-size: 16px;
+    font-style: normal;
+    text-align: center;
+  }
+}
+
+.latestVersion strong {
+  color: var(--update-text);
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.contactButton {
+  min-width: 126px;
+  border-color: var(--update-primary);
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  color: #f7faff;
+}
+
+.contactButton:hover:not(:disabled) {
+  border-color: #4a90ff;
+  background: #4a90ff;
+  color: #ffffff;
+}
+
+.skipButton {
+  min-width: auto;
+  padding-right: 4px;
+  padding-left: 4px;
+  color: var(--update-text-tertiary);
+}
+
+.skipButton:hover:not(:disabled) {
+  color: var(--update-text);
+  background: transparent;
+}
+
+@media (max-width: 560px) {
+  .dialog {
+    :global(.datavisool-dialog-body) {
+      padding: 0;
+    }
+  }
+
+  .notice {
+    padding: 21px 20px 16px;
+  }
+}

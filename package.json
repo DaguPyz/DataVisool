@@ -1,0 +1,14 @@
+{
+  "name": "datavisool-web",
+  "private": true,
+  "version": "2026.9.0",
+  "description": "DataVisool Web 数据可视化设计器",
+  "main": "index.js",
+  "scripts": {
+    "test": "pnpm -F datavisool-app test",
+    "verify:shared:both": "node script/verification/verify-shared-consumers.mjs"
+  },
+  "keywords": [],
+  "author": "DAGU",
+  "license": "SEE LICENSE IN LICENSE"
+}

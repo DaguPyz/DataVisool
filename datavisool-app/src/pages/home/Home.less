@@ -1,0 +1,163 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+@import "@/style/AppTheme.less";
+
+.datavisool-home {
+  --home-bg-canvas: #0a1020;
+  --home-bg-sidebar: #0b1222;
+  --home-bg-surface-1: #111a2e;
+  --home-bg-surface-2: #162238;
+  --home-bg-hover: #1a2740;
+  --home-bg-active: #1d3155;
+  --home-border-subtle: rgba(255, 255, 255, 0.06);
+  --home-border-default: rgba(255, 255, 255, 0.08);
+  --home-border-focus: rgba(59, 130, 246, 0.45);
+  --home-text-primary: #f3f7ff;
+  --home-text-secondary: #aab7d1;
+  --home-text-tertiary: #7c8aa5;
+  --home-primary: #3b82f6;
+
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--home-bg-canvas);
+  color: var(--home-text-primary);
+  font-family: var(--datavisool-font-family);
+
+  .home-left {
+    display: flex;
+    flex: 0 0 240px;
+    width: 240px;
+    height: 100%;
+    min-width: 0;
+    padding: 0;
+    background: var(--home-bg-sidebar);
+    border-right: 1px solid var(--home-border-subtle);
+  }
+
+  .home-side-card {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .datavisool-home-body-left {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .home-right {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    padding: 0;
+    background: var(--home-bg-canvas);
+  }
+
+  .home-main-card {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .home-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+
+    .home-route {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      padding: 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      .home-route-inner {
+        min-height: 100%;
+        height: auto;
+        transform-origin: 50% 30%;
+        will-change: opacity, transform;
+      }
+
+      .home-route-inner.is-entering {
+        animation: datavisool-home-route-in 200ms ease-out both;
+      }
+
+      .home-route-inner.is-leaving {
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 160ms ease-out, transform 160ms ease-out;
+      }
+    }
+  }
+}
+
+@keyframes datavisool-home-route-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1023px) {
+  .datavisool-home {
+    .home-left {
+      flex-basis: 64px;
+      width: 64px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datavisool-home {
+    .home-route-inner.is-entering {
+      animation: none;
+    }
+
+    .home-route-inner.is-leaving {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

@@ -1,0 +1,441 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.datavisool-login {
+  --login-bg-canvas: #0a1020;
+  --login-bg-surface: #111a2e;
+  --login-bg-secondary: #162238;
+  --login-border-subtle: rgba(255, 255, 255, 0.06);
+  --login-border: rgba(255, 255, 255, 0.08);
+  --login-border-strong: rgba(255, 255, 255, 0.12);
+  --login-border-focus: rgba(59, 130, 246, 0.45);
+  --login-text: #f3f7ff;
+  --login-text-secondary: #aab7d1;
+  --login-text-tertiary: #7c8aa5;
+  --login-primary: #3b82f6;
+  --login-primary-hover: #4a90ff;
+  --login-teal: #22c7b8;
+
+  // Keep the shared controls consistent with this page without changing the app theme.
+  --datavisool-ui-primary: var(--login-primary);
+  --datavisool-ui-primary-hover: var(--login-primary-hover);
+  --datavisool-ui-control-height: 40px;
+  --datavisool-ui-control-radius: 10px;
+  --datavisool-ui-control-bg: rgba(255, 255, 255, 0.03);
+  --datavisool-ui-control-border: var(--login-border);
+  --datavisool-ui-control-border-hover: var(--login-border-strong);
+  --datavisool-ui-control-shadow: none;
+  --datavisool-ui-control-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  --datavisool-ui-primary-gradient: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 32px;
+  overflow: hidden;
+  color: var(--login-text);
+  background: var(--login-bg-canvas);
+  font-family: Inter, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+
+  .datavisool-login-shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    width: 100%;
+    max-width: 960px;
+    min-height: 560px;
+    overflow: hidden;
+    border: 1px solid var(--login-border);
+    border-radius: 16px;
+    background: var(--login-bg-surface);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    animation: datavisool-login-enter 200ms ease-out both;
+  }
+
+  .login-overview {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 48px;
+    background: var(--login-bg-canvas);
+    border-right: 1px solid var(--login-border-subtle);
+  }
+
+  .login-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .login-brand-name {
+      color: var(--login-text);
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--login-text-tertiary);
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  .login-overview-content {
+    margin: 48px 0 32px;
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 600;
+    }
+
+    > p {
+      max-width: 320px;
+      margin: 12px 0 0;
+      color: var(--login-text-secondary);
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .login-highlights {
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--login-border-subtle);
+
+      &:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      > .i-icon {
+        display: inline-flex;
+        flex: 0 0 auto;
+        color: var(--login-text-tertiary);
+      }
+    }
+
+    h3 {
+      margin: 0;
+      color: var(--login-text-secondary);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 500;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--login-text-tertiary);
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .login-overview-footer {
+    margin-top: auto;
+    color: var(--login-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 1.6px;
+  }
+
+  .datavisool-login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 48px;
+  }
+
+  .login-header {
+    margin-bottom: 32px;
+
+    .login-eyebrow {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--login-text-tertiary);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 40px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: var(--login-text-secondary);
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .login-body {
+    width: 100%;
+  }
+
+  .login-item {
+    margin-bottom: 24px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--login-text-secondary);
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .datavisool-input-shell {
+      width: 100%;
+      height: 40px;
+      min-height: 40px;
+      padding: 0 12px;
+      gap: 8px;
+      border: 1px solid var(--login-border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: none;
+      transition: border-color 140ms ease-out, box-shadow 140ms ease-out;
+
+      &:hover {
+        border-color: var(--login-border-strong);
+      }
+
+      &:focus-within {
+        border-color: var(--login-border-focus);
+        box-shadow: var(--datavisool-ui-control-focus-shadow);
+      }
+
+      .datavisool-input-prefix {
+        display: inline-flex;
+        align-items: center;
+        color: var(--login-text-tertiary);
+      }
+
+      .datavisool-input-native {
+        color: var(--login-text);
+        background: transparent;
+        font-size: 14px;
+        line-height: 22px;
+
+        &::placeholder {
+          color: var(--login-text-tertiary);
+        }
+
+        &:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0 1000px #182135 inset;
+          -webkit-text-fill-color: var(--login-text);
+          caret-color: var(--login-text);
+        }
+      }
+    }
+  }
+
+  .login-action {
+    margin-top: 32px;
+    margin-bottom: 0;
+
+    .datavisool-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      min-height: 40px;
+      padding: 0 16px;
+      border: 1px solid var(--login-border-subtle);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--datavisool-ui-primary-gradient);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+      transition: background-color 140ms ease-out, box-shadow 140ms ease-out;
+
+      &:hover {
+        background: var(--login-primary-hover);
+        filter: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--login-primary);
+        outline-offset: 4px;
+      }
+
+      &:active {
+        background: var(--login-primary);
+        box-shadow: none;
+      }
+    }
+  }
+
+  .service-terms {
+    margin-top: 16px;
+    color: var(--login-text-tertiary);
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+
+    button {
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--login-primary);
+      font: inherit;
+      cursor: pointer;
+      transition: color 140ms ease-out;
+
+      &:hover {
+        color: var(--login-primary-hover);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--login-primary);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .login-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--login-border-subtle);
+    color: var(--login-text-tertiary);
+    font-size: 12px;
+    line-height: 18px;
+
+    > .i-icon {
+      display: inline-flex;
+      flex: 0 0 auto;
+      color: var(--login-teal);
+    }
+  }
+}
+
+@keyframes datavisool-login-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1023px) {
+  .datavisool-login {
+    padding: 24px;
+
+    .datavisool-login-shell {
+      max-width: 880px;
+    }
+
+    .login-overview,
+    .datavisool-login-container {
+      padding: 40px 32px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .datavisool-login {
+    padding: 24px;
+
+    .datavisool-login-shell {
+      max-width: 440px;
+      min-height: 0;
+      grid-template-columns: 1fr;
+    }
+
+    .login-overview {
+      padding: 24px 32px;
+      border-right: 0;
+      border-bottom: 1px solid var(--login-border-subtle);
+    }
+
+    .login-overview-content,
+    .login-overview-footer {
+      display: none;
+    }
+
+    .datavisool-login-container {
+      padding: 32px;
+    }
+
+    .login-header {
+      margin-bottom: 24px;
+    }
+
+    .login-header .login-eyebrow {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 479px) {
+  .datavisool-login {
+    padding: 16px;
+
+    .login-overview {
+      padding: 24px;
+    }
+
+    .datavisool-login-container {
+      padding: 32px 24px;
+    }
+
+    .service-terms {
+      max-width: 240px;
+      margin-inline: auto;
+    }
+
+    .login-security {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datavisool-login .datavisool-login-shell {
+    animation: none;
+  }
+
+  .datavisool-login .datavisool-input-shell,
+  .datavisool-login .datavisool-button,
+  .datavisool-login .service-terms button {
+    transition: none;
+  }
+}

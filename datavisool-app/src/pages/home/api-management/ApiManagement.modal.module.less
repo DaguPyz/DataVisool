@@ -1,0 +1,512 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+/*
+ * Copyright (c) 2024 DataVisool.
+ * All rights reserved.
+ */
+
+.apiEditDialog {
+  --api-modal-surface: #111a2e;
+  --api-modal-surface-raised: #162238;
+  --api-modal-hover: #1a2740;
+  --api-modal-code-surface: #030816;
+  --api-modal-code-gutter: #071021;
+  --api-modal-border-subtle: rgba(255, 255, 255, 0.06);
+  --api-modal-border: rgba(255, 255, 255, 0.08);
+  --api-modal-border-strong: rgba(255, 255, 255, 0.12);
+  --api-modal-focus: rgba(59, 130, 246, 0.45);
+  --api-modal-focus-ring: rgba(59, 130, 246, 0.14);
+  --api-modal-text: #f3f7ff;
+  --api-modal-text-secondary: #aab7d1;
+  --api-modal-text-tertiary: #7c8aa5;
+  --api-modal-primary: #3b82f6;
+  --api-modal-primary-hover: #4a90ff;
+
+  max-width: calc(100vw - 64px);
+  border: 1px solid var(--api-modal-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%),
+    var(--api-modal-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+}
+
+.apiEditDialogBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  background: var(--api-modal-surface);
+  color: var(--api-modal-text);
+}
+
+.apiModalContent {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px 32px;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 165, 0.5);
+  }
+}
+
+.apiModalHeader {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 32px 0;
+  box-sizing: border-box;
+}
+
+.apiModalHeaderIcon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--api-modal-primary);
+  flex: 0 0 auto;
+}
+
+.apiModalTitleBlock {
+  min-width: 0;
+  padding-top: 5px;
+
+  h2 {
+    margin: 0;
+    color: var(--api-modal-text);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: 0;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: var(--api-modal-text-tertiary);
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+}
+
+.apiModalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.apiModalRow {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.apiModalLabel {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  color: var(--api-modal-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.apiModalHelpIcon {
+  margin-left: 4px;
+  color: var(--api-modal-text-tertiary);
+  flex: 0 0 auto;
+}
+
+.apiModalControlSlot {
+  min-width: 0;
+}
+
+.apiModalInput,
+.apiModalSelect {
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--api-modal-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--api-modal-text);
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--api-modal-focus);
+    box-shadow: 0 0 0 3px var(--api-modal-focus-ring);
+  }
+
+  :global(.datavisool-input-affix),
+  :global(.datavisool-select-prefix),
+  :global(.datavisool-select-chevron) {
+    color: var(--api-modal-primary);
+  }
+
+  :global(.datavisool-input-native),
+  :global(.datavisool-select-value) {
+    color: var(--api-modal-text);
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
+
+  :global(.datavisool-input-native::placeholder),
+  :global(.datavisool-select-placeholder) {
+    color: var(--api-modal-text-tertiary);
+  }
+}
+
+.apiModalSelect {
+  padding: 0;
+}
+
+.apiInputCount,
+.apiUrlExample {
+  color: var(--api-modal-text-tertiary);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.apiModalSelectPanel {
+  // 下拉面板挂载到 document.body，不能依赖弹框容器继承的变量。
+  --api-modal-surface-raised: #162238;
+  --api-modal-border-strong: rgba(255, 255, 255, 0.12);
+  --api-modal-text: #f3f7ff;
+  --api-modal-primary: #3b82f6;
+
+  border: 1px solid var(--api-modal-border-strong);
+  border-radius: 10px;
+  background: var(--api-modal-surface-raised);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  backdrop-filter: none;
+
+  :global(.datavisool-select-option) {
+    color: var(--api-modal-text);
+  }
+
+  :global(.datavisool-select-option:hover:not(:disabled)),
+  :global(.datavisool-select-option-active:not(:disabled)) {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  :global(.datavisool-select-option-selected) {
+    border-color: rgba(59, 130, 246, 0.52);
+    background: rgba(59, 130, 246, 0.16);
+  }
+
+  :global(.datavisool-select-option-check) {
+    color: var(--api-modal-primary);
+  }
+}
+
+.apiModalCodeEditor {
+  position: relative;
+  min-height: 102px;
+  border: 1px solid var(--api-modal-border);
+  border-radius: 10px;
+  background: var(--api-modal-code-surface);
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--api-modal-focus);
+    box-shadow: 0 0 0 3px var(--api-modal-focus-ring);
+  }
+
+  &[data-readonly="true"] {
+    border-style: solid;
+  }
+
+  :global(.datavisool-code-editor-toolbar) {
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    z-index: 2;
+    min-height: 26px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    gap: 8px;
+  }
+
+  :global(.datavisool-code-editor-meta) {
+    gap: 8px;
+  }
+
+  :global(.datavisool-code-editor-lang) {
+    min-height: 22px;
+    border: 0;
+    background: transparent;
+    color: var(--api-modal-text-tertiary);
+    font-size: 13px;
+    font-weight: 650;
+    padding: 0;
+  }
+
+  :global(.datavisool-code-editor-chip) {
+    display: none;
+  }
+
+  :global(.datavisool-code-editor-action) {
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    color: var(--api-modal-text-tertiary);
+  }
+
+  :global(.datavisool-code-editor-surface) {
+    min-height: inherit;
+    background: var(--api-modal-code-surface);
+  }
+
+  :global(.CodeMirror) {
+    background: var(--api-modal-code-surface);
+    color: #e6edf7;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.58;
+  }
+
+  :global(.CodeMirror-lines) {
+    padding: 12px 0;
+  }
+
+  :global(.CodeMirror pre.CodeMirror-line),
+  :global(.CodeMirror pre.CodeMirror-line-like) {
+    padding: 0 14px;
+  }
+
+  :global(.CodeMirror-gutters) {
+    border-right: 1px solid var(--api-modal-border-subtle);
+    background: var(--api-modal-code-gutter);
+    color: #7890b6;
+    font-size: 13px;
+  }
+
+  :global(.CodeMirror-linenumbers) {
+    min-width: 48px;
+  }
+
+  :global(.CodeMirror-linenumber) {
+    padding: 0 10px 0 12px;
+  }
+
+  :global(.CodeMirror-activeline-background),
+  :global(.CodeMirror-activeline-gutter) {
+    background: rgba(59, 130, 246, 0.1);
+  }
+}
+
+.apiModalResultEditor {
+  min-height: 160px;
+}
+
+.apiModalFooter {
+  min-height: 88px;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border-top: 1px solid var(--api-modal-border-subtle);
+  background: rgba(255, 255, 255, 0.015);
+  box-sizing: border-box;
+}
+
+.apiModalTipIcon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #f5b544;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.apiModalTipCopy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  strong {
+    color: var(--api-modal-text);
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0;
+  }
+
+  span {
+    color: var(--api-modal-text-tertiary);
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0;
+  }
+}
+
+.apiModalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.apiCancelButton,
+.apiTestButton,
+.apiCreateButton {
+  height: 40px !important;
+  min-height: 40px;
+  min-width: 92px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.apiCancelButton {
+  color: var(--api-modal-text-secondary);
+  border: 1px solid var(--api-modal-border);
+  background: rgba(255, 255, 255, 0.04);
+
+  &:hover,
+  &:focus {
+    color: var(--api-modal-text);
+    border-color: var(--api-modal-border-strong);
+    background: var(--api-modal-hover);
+  }
+}
+
+.apiTestButton {
+  color: var(--api-modal-primary);
+  border: 1px solid rgba(59, 130, 246, 0.36);
+  background: rgba(59, 130, 246, 0.08);
+
+  &:hover,
+  &:focus {
+    color: var(--api-modal-primary-hover);
+    border-color: rgba(59, 130, 246, 0.56);
+    background: rgba(59, 130, 246, 0.14);
+  }
+}
+
+.apiCreateButton {
+  min-width: 112px;
+  color: #ffffff;
+  border: 0;
+  background: linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+
+  &:hover,
+  &:focus {
+    color: #ffffff;
+    background: var(--api-modal-primary-hover);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(59, 130, 246, 0.25);
+  }
+}
+
+.apiCancelButton:focus-visible,
+.apiTestButton:focus-visible,
+.apiCreateButton:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.28);
+}
+
+@media (max-width: 768px) {
+  .apiEditDialog .apiCancelButton,
+  .apiEditDialog .apiTestButton,
+  .apiEditDialog .apiCreateButton {
+    height: 40px !important;
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 960px) {
+  .apiEditDialog {
+    width: 92vw !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .apiModalContent {
+    padding: 20px 18px 18px;
+  }
+
+  .apiModalHeader {
+    min-height: auto;
+    height: auto;
+    padding: 20px 18px 0;
+    gap: 12px;
+  }
+
+  .apiModalHeaderIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .apiModalTitleBlock h2 {
+    font-size: 22px;
+    line-height: 32px;
+  }
+
+  .apiModalTitleBlock p {
+    white-space: normal;
+  }
+
+  .apiModalRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .apiModalLabel {
+    min-height: 30px;
+  }
+
+  .apiUrlExample {
+    display: none;
+  }
+
+  .apiModalFooter {
+    grid-template-columns: 32px minmax(0, 1fr);
+    padding: 16px 18px;
+  }
+
+  .apiModalActions {
+    width: 100%;
+    grid-column: 1 / -1;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .apiEditDialog .apiCancelButton,
+  .apiEditDialog .apiTestButton,
+  .apiEditDialog .apiCreateButton {
+    flex: 1;
+    min-width: 0;
+  }
+}

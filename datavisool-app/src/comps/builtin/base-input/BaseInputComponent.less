@@ -1,0 +1,39 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.base-input-component {
+  --backgroundColorHover: rgba(253, 93, 147, 0.1);
+  --borderRadiusHover: 6px;
+  --borderWidthHover: 1px;
+  --borderColorHover: #FD5D93;
+  width: 100%;
+  height: 100%;
+
+  input {
+    width: 100%;
+    height: 100%;
+    background: #1E1E2F;
+    border: 1px solid #2B3553;
+    border-radius: 6px;
+    color: #FFFFFF;
+    font-family: "Poppins", sans-serif;
+    padding: 0 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+
+    &:hover {
+      background-color: var(--backgroundColorHover) !important;
+      border-radius: var(--borderRadiusHover) !important;
+      border-width: var(--borderWidthHover) !important;
+      border-color: var(--borderColorHover) !important;
+    }
+
+    &:focus {
+      border-color: #FD5D93 !important;
+      box-shadow: 0 0 0 2px rgba(253, 93, 147, 0.15);
+    }
+  }
+}
