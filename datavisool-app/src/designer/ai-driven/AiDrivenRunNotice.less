@@ -1,0 +1,40 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.ai-driven-run-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px 20px;
+  padding: 8px 10px;
+  color: #e1bf67;
+  border: 1px solid rgba(245, 201, 106, 0.18);
+  border-radius: 9px;
+  background: rgba(245, 201, 106, 0.07);
+  font-size: 10px;
+  line-height: 15px;
+
+  svg {
+    flex: 0 0 auto;
+    margin-top: 1px;
+  }
+
+  &.is-missingConstraint {
+    color: #f0ca7a;
+  }
+
+  &.is-rejected {
+    color: #e8aa8d;
+    border-color: rgba(232, 170, 141, 0.18);
+    background: rgba(232, 170, 141, 0.07);
+  }
+
+  &.is-executionError {
+    color: #f29b9b;
+    border-color: rgba(242, 135, 135, 0.18);
+    background: rgba(242, 135, 135, 0.07);
+  }
+}
