@@ -11,8 +11,6 @@ backend/release
 static
 /security/ai_model_api_key.key
 hs_err_pid*.log
-ai-driven/attachment-staging
-ai-driven/workspaces
 output
 agent-project-workspaces
 测试用
@@ -29,6 +27,5 @@ lcp-web-改造基线与代码索引.md
 测试报告
 测试资源
 datavisool-promo-video
-ai-driven
 .DS_Store
 *.tsbuildinfo

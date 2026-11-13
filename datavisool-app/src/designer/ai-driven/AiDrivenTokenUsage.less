@@ -1,0 +1,158 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.ai-driven-run-token-usage {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 6px 10px;
+  color: var(--datavisool-color-text-secondary, #a8b3cf);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+
+  > span:not(.ai-driven-run-token-divider) {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  em {
+    color: var(--datavisool-color-text-secondary, #a8b3cf);
+    font-style: normal;
+  }
+
+  b {
+    color: #b8c2d1;
+    font-weight: 600;
+  }
+
+  .is-total b {
+    color: var(--run-accent);
+  }
+
+  &:hover,
+  &[aria-expanded='true'] {
+    border-color: var(--datavisool-color-border, rgba(86, 110, 161, 0.42));
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--datavisool-color-ring, #5986ff);
+    outline-offset: 2px;
+  }
+}
+
+.ai-driven-run-token-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--datavisool-color-border-soft, rgba(86, 110, 161, 0.24));
+}
+
+.ai-driven-token-popover .ant-popover-container {
+  padding: 16px;
+  border: 1px solid var(--datavisool-color-border, rgba(86, 110, 161, 0.42));
+  border-radius: 12px;
+  background: var(--datavisool-color-bg-elevated, #111a31);
+  box-shadow: var(--datavisool-shadow-panel, 0 18px 54px rgba(0, 0, 0, 0.42));
+}
+
+.ai-driven-token-details {
+  width: min(340px, calc(100vw - 64px));
+  max-height: min(520px, calc(100vh - 100px));
+  overflow-y: auto;
+  color: var(--datavisool-color-text-primary, #fff);
+  font-family: var(--datavisool-font-family, sans-serif);
+  font-size: 12px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+
+  .ai-driven-token-details-title {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 6px 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  th {
+    color: var(--datavisool-color-text-secondary, #a8b3cf);
+    font-weight: 400;
+  }
+
+  th:first-child {
+    text-align: left;
+  }
+
+  thead th {
+    padding-top: 0;
+    border-bottom: 1px solid var(--datavisool-color-border-soft, rgba(86, 110, 161, 0.24));
+    font-size: 11px;
+  }
+
+  .is-total td {
+    color: var(--datavisool-color-info, #38bdf8);
+    font-weight: 600;
+  }
+
+  .ai-driven-token-context {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--datavisool-color-border-soft, rgba(86, 110, 161, 0.24));
+
+    > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    dt {
+      color: var(--datavisool-color-text-secondary, #a8b3cf);
+    }
+
+    dd {
+      margin: 0;
+      text-align: right;
+    }
+  }
+
+  p {
+    margin: 12px 0 0;
+    color: var(--datavisool-color-text-secondary, #a8b3cf);
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 760px) {
+  .ai-driven-run-panel-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ai-driven-run-panel-meta {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

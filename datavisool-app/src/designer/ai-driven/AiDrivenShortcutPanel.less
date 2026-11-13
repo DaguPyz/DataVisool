@@ -1,0 +1,129 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.ai-driven-shortcut-panel {
+  position: fixed;
+  z-index: 1320;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(79, 184, 255, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(29, 36, 55, 0.96) 0%, rgba(18, 25, 41, 0.98) 100%);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  pointer-events: auto;
+  transform-origin: center top;
+  animation: ai-driven-shortcut-panel-in 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.is-top {
+    transform: translateY(-100%);
+    transform-origin: center bottom;
+  }
+
+  &.is-bottom {
+    transform: translateY(0);
+  }
+}
+
+.ai-driven-shortcut-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 20px;
+  padding: 0 4px 2px;
+}
+
+.ai-driven-shortcut-panel-title {
+  color: #8FA3C7;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 16px;
+}
+
+.ai-driven-shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-driven-shortcut-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(79, 184, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(79, 184, 255, 0.08);
+  color: #E8F2FF;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(79, 184, 255, 0.34);
+    background: rgba(79, 184, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 8px 18px rgba(79, 184, 255, 0.10);
+    outline: none;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.ai-driven-shortcut-token {
+  min-width: 0;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 18px;
+}
+
+.ai-driven-shortcut-summary {
+  flex: 0 0 auto;
+  color: #AEBAD1;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+@keyframes ai-driven-shortcut-panel-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-driven-shortcut-panel {
+    animation: none;
+    transition: none;
+  }
+}
