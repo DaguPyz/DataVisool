@@ -1,0 +1,1050 @@
+{
+  "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2",
+  "documents": [
+    {
+      "componentType": "AMap",
+      "componentName": "自定义高德地图",
+      "componentInfo": {
+        "componentType": "AMap",
+        "componentName": "自定义高德地图",
+        "description": "高德地图容器组件，一个实例用于渲染一幅可交互的二维或三维高德地图及其原生地图图层，适用于明确需要高德地图能力的地图主视觉。",
+        "nativeCapabilities": "一幅地图的底图、原生地图图层、标记、视角和交互",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "220ed4ac737224e18b92b0ecf8d1f2d3f182a443cdf54bff93700a615f5fb95c",
+      "bytes": 652,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "0b655d9eb3b585571fd6233a5691abaabdc00e00f49f7f79d2f63e92102b0499",
+      "path": "components/AMap/AMap.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseArea",
+      "componentName": "Antd基础面积图",
+      "componentInfo": {
+        "componentType": "AntdBaseArea",
+        "componentName": "Antd基础面积图",
+        "description": "基础面积图组件，适用于趋势面积展示、单指标变化体量、连续变化强调。",
+        "nativeCapabilities": "面积区域、坐标轴、完整图例、数据标签、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "f526710bfed999aa2204e1ea71e0e733a932b3f9aa6c9fd77ec4dcf27aacf7da",
+      "bytes": 25430,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "e17837abf6d0938bc20112da6b489cbc8ea13d978cdb0ce8c4370d18cd87e892",
+      "path": "components/AntdBaseArea/AntdBaseArea.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseBar",
+      "componentName": "Antd基础条形图",
+      "componentInfo": {
+        "componentType": "AntdBaseBar",
+        "componentName": "Antd基础条形图",
+        "description": "基础条形图组件，用于横向展示分类数据的数值对比，适用于横向分类数值对比、排行榜、名称较长的分类排名、Top N 对比。",
+        "nativeCapabilities": "横向条形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "7223c3ac581f9ea129e4b731bbdc4c55953d3bce9a2c0b7bbc6f7f48786bfe53",
+      "bytes": 25589,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "97b620a6f90c6b961800fac0a623f572e144ec5024e3620f58f754ef6372c258",
+      "path": "components/AntdBaseBar/AntdBaseBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseColumn",
+      "componentName": "Antd基础柱状图",
+      "componentInfo": {
+        "componentType": "AntdBaseColumn",
+        "componentName": "Antd基础柱状图",
+        "description": "基础柱状图组件，用于纵向展示分类数据的数值对比，适用于纵向分类数值对比、指标柱状对比、按类别统计展示。",
+        "nativeCapabilities": "纵向柱形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "e8cf867497a1e33ab5ae6cb6a10779357cfaa6c6361c7c3f7030e6117afca373",
+      "bytes": 25633,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "4a7a501c4aadc052f41eafc40515144c1eeec196a1f9550d1b4c5c59ea5e0a8b",
+      "path": "components/AntdBaseColumn/AntdBaseColumn.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseLine",
+      "componentName": "Antd基础折线图",
+      "componentInfo": {
+        "componentType": "AntdBaseLine",
+        "componentName": "Antd基础折线图",
+        "description": "基础折线图组件，用于展示单一指标随分类或时间变化的趋势，适用于单指标趋势展示、时间序列变化、连续分类变化、走势分析。",
+        "nativeCapabilities": "单条折线及数据点、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "76f6a04d31d12c0166f4810fa43b5cb6f0b44c45725ac481e20895d9a418ad93",
+      "bytes": 25847,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "f0333fb7a15d8ba101c01dd929ac90d859329e3cdb8a1d949e17bbd6a11bbe00",
+      "path": "components/AntdBaseLine/AntdBaseLine.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseRadialBar",
+      "componentName": "Antd基础玉珏图",
+      "componentInfo": {
+        "componentType": "AntdBaseRadialBar",
+        "componentName": "Antd基础玉珏图",
+        "description": "基础玉珏图组件，用于在极坐标中展示分类数值大小，适用于极坐标分类排名、环形条形对比、分类数值大小展示。",
+        "nativeCapabilities": "极坐标条形、极坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "ec04588106d7fa9090e81b3c431216cf8a903e986ac75d3c400e2743a10c2b45",
+      "bytes": 28125,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "349fe13b23c05779146a4592a76deceab9a329867854cab2f2d012126402fa0c",
+      "path": "components/AntdBaseRadialBar/AntdBaseRadialBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdBaseRose",
+      "componentName": "Antd基础玫瑰图",
+      "componentInfo": {
+        "componentType": "AntdBaseRose",
+        "componentName": "Antd基础玫瑰图",
+        "description": "基础玫瑰图组件，用于在极坐标中展示分类数值对比，适用于极坐标分类数值对比、玫瑰图分类展示、分类强弱对比。",
+        "nativeCapabilities": "玫瑰扇区、极坐标轴、数据标签、完整图例、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "4724f7176af992970362979a75c2192163d45d69268126d99885bb9fe47de8cb",
+      "bytes": 11903,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "3f1e1c2154a5103576576335f50b640b7275c7f74fe58ccc12a914b692133a29",
+      "path": "components/AntdBaseRose/AntdBaseRose.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdGauge",
+      "componentName": "Antd仪表盘",
+      "componentInfo": {
+        "componentType": "AntdGauge",
+        "componentName": "Antd仪表盘",
+        "description": "仪表盘组件，用于展示 0 到 1 的进度、达成率或指标占比，适用于单指标进度、达成率、评分仪表盘、运行状态指数。",
+        "nativeCapabilities": "仪表弧线、进度色带、刻度轴、指针、数据标签、中心统计文本、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "2f9f7f5901fad99a9a3126f087f195716a1d67f76a48afeea46a5694d58499da",
+      "bytes": 20294,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "cc3811b08964aab448aac0f2cb7f987e039d2e76a7045099ca18597c80285683",
+      "path": "components/AntdGauge/AntdGauge.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdGroupBar",
+      "componentName": "Antd分组条形图",
+      "componentInfo": {
+        "componentType": "AntdGroupBar",
+        "componentName": "Antd分组条形图",
+        "description": "分组条形图组件，用于横向展示同一分类下多个分组的数值对比，适用于横向多系列分类对比、同一分类下多个指标对比、分组排名对比。",
+        "nativeCapabilities": "多系列分组条形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "cddcc1eb4df017207b7c88bc923859e4d151aca774df41250a73fc9b6a9517af",
+      "bytes": 25755,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "f050d4f47ed0b91c1f24499c6ec07c9428392ee7b4944ce36ce93990f5219bf5",
+      "path": "components/AntdGroupBar/AntdGroupBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdGroupColumn",
+      "componentName": "Antd分组柱状图",
+      "componentInfo": {
+        "componentType": "AntdGroupColumn",
+        "componentName": "Antd分组柱状图",
+        "description": "分组柱状图组件，用于纵向展示同一分类下多个分组的数值对比，适用于纵向多系列分类对比、同一分类下多个指标对比、分组柱状对比。",
+        "nativeCapabilities": "多系列分组柱形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "628172608bf649ab088a40153801a10ddfb08a6575511326ec9716b34a5bc9f4",
+      "bytes": 20922,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "8157a15ca4abfad389fc61fa3750b37248ea685a72e5dbb789464c857b16bf5e",
+      "path": "components/AntdGroupColumn/AntdGroupColumn.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdGroupRose",
+      "componentName": "Antd分组玫瑰图",
+      "componentInfo": {
+        "componentType": "AntdGroupRose",
+        "componentName": "Antd分组玫瑰图",
+        "description": "分组玫瑰图组件，用于在极坐标中展示多个系列的分类对比，适用于极坐标多系列分类对比、分组玫瑰图展示、多个指标分类对比。",
+        "nativeCapabilities": "多系列分组玫瑰扇区、极坐标轴、数据标签、完整图例、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "58cc6db490a8ace8cdad42f9023b5e06b8d157ffef689c98cf4ca3ee4ad3d239",
+      "bytes": 11983,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "b3831830ca7a4728e3a23b7ae5c5606c86e60a08929d8a4300f78077d2ee7591",
+      "path": "components/AntdGroupRose/AntdGroupRose.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdLiquid",
+      "componentName": "Antd水波图",
+      "componentInfo": {
+        "componentType": "AntdLiquid",
+        "componentName": "Antd水波图",
+        "description": "水波图组件，用于展示 0 到 1 的进度、占比或液位指标，适用于液位指标、完成率、容量占比、单指标进度。",
+        "nativeCapabilities": "水波形、容器轮廓、中心统计文本、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "4d36a308b70fcfd0bf71b3043cc203b18fc76b2e4f2f27f2d186b3e0b7160b79",
+      "bytes": 11699,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "8c78ca9bd3865762a08f7be43d273b45c7f8e7bdfed4dc42a51f71fd68fbf554",
+      "path": "components/AntdLiquid/AntdLiquid.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdMultiLine",
+      "componentName": "Antd多折线图",
+      "componentInfo": {
+        "componentType": "AntdMultiLine",
+        "componentName": "Antd多折线图",
+        "description": "多折线图组件，用于展示多个系列随分类或时间变化的趋势对比，适用于多指标趋势对比、多系列时间序列、走势对比分析。",
+        "nativeCapabilities": "多系列折线及数据点、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "01de06852ba4912ef7d1ba81d83b3f6dd32dfcb0ee4d3b11cc80ede2c44c32ba",
+      "bytes": 26158,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "431108e9e642477261a69cd93101b65ecfccbbdc1e014afb10b8c8d9695de33c",
+      "path": "components/AntdMultiLine/AntdMultiLine.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdPercentArea",
+      "componentName": "Antd百分比面积图",
+      "componentInfo": {
+        "componentType": "AntdPercentArea",
+        "componentName": "Antd百分比面积图",
+        "description": "百分比面积图组件，用于展示各分组在同一 x 轴维度下的占比变化，适用于比例随时间变化、多系列占比趋势、百分比构成变化。",
+        "nativeCapabilities": "多系列百分比面积、坐标轴、完整图例、数据标签、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "5b5f2a7f65c8195b604b56b7a95a64bd1af6340867b110ad9bb044afa28ab6d1",
+      "bytes": 26724,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "a2be0772aaa5bc7214139dbeca1235623583c0dd72e4261f101131d26cd66857",
+      "path": "components/AntdPercentArea/AntdPercentArea.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdPercentBar",
+      "componentName": "Antd百分比条形图",
+      "componentInfo": {
+        "componentType": "AntdPercentBar",
+        "componentName": "Antd百分比条形图",
+        "description": "百分比条形图组件，用于横向展示同一分类下各分组的占比构成，适用于横向百分比构成、分类占比对比、多分组比例展示。",
+        "nativeCapabilities": "多系列百分比条形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "ef257763256765331e97b4e01c9d0c9ccb3619c4481c2d6f9428fa77cf134550",
+      "bytes": 26008,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "0b6fdc452a78808aa9315491486a3dba5bf3d231b520a665fc164e5183849a4e",
+      "path": "components/AntdPercentBar/AntdPercentBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdPercentColumn",
+      "componentName": "Antd百分比柱状图",
+      "componentInfo": {
+        "componentType": "AntdPercentColumn",
+        "componentName": "Antd百分比柱状图",
+        "description": "百分比柱状图组件，用于纵向展示同一分类下各分组的占比构成，适用于纵向百分比构成、分类占比对比、多分组比例展示。",
+        "nativeCapabilities": "多系列百分比柱形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "acb33c54237a12528ed3ae6e92d08a1b1407d0c4ce661a276c19010a0161e007",
+      "bytes": 26051,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "9f146822bcff7d59172de3cb8a0fd1b5d7139997d8a7842a64eeecda91e567e1",
+      "path": "components/AntdPercentColumn/AntdPercentColumn.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdPie",
+      "componentName": "Antd饼图",
+      "componentInfo": {
+        "componentType": "AntdPie",
+        "componentName": "Antd饼图",
+        "description": "饼图/环图组件，用于展示分类占比，适用于分类占比、环图占比、组成结构展示、少量分类比例对比。",
+        "nativeCapabilities": "饼图或环图扇区、数据标签和引导线、完整图例（标记/名称/附加值）、中心统计文本、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "dbed8ec14d51450b0bc0fdce30a5502dfa6c9f28e06f12d4059120a8784c1f23",
+      "bytes": 15235,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "1d735a8c272b8f98185924d8e8de50814da3d77a1dd4790ab7acbca8c4152ec4",
+      "path": "components/AntdPie/AntdPie.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdRadar",
+      "componentName": "Antd雷达图",
+      "componentInfo": {
+        "componentType": "AntdRadar",
+        "componentName": "Antd雷达图",
+        "description": "雷达图组件，用于展示多个维度上的指标强弱，适用于多维能力对比、指标雷达评估、对象画像展示、维度强弱展示。",
+        "nativeCapabilities": "雷达网格轴、多系列区域或折线、数据点、数据标签、完整图例、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "01f773baca60bde8c43c8ae3059f68f556bcb9a7ac0d01ec1b13bcc0dd97b102",
+      "bytes": 24573,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "ada5d2ee351435aece0b453fd946aebf8cd111f0bb485a082e4edd48745c70c2",
+      "path": "components/AntdRadar/AntdRadar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdRangeBar",
+      "componentName": "Antd区间条形图",
+      "componentInfo": {
+        "componentType": "AntdRangeBar",
+        "componentName": "Antd区间条形图",
+        "description": "区间条形图组件，用于横向展示分类数据的起止区间，适用于横向区间对比、起止范围展示、时间跨度或数值区间展示。",
+        "nativeCapabilities": "横向区间条形、坐标轴、完整图例、区间数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "2051a4978cf0ea1ad37fc3bfb6d2f3fa06e8316c9ccf3df8d888b889f5c507ef",
+      "bytes": 25672,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "40f278df44deb6338629a4dd6b0dd004753a100d403f4852c24e64b91c238752",
+      "path": "components/AntdRangeBar/AntdRangeBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdRangeColumn",
+      "componentName": "Antd区间柱状图",
+      "componentInfo": {
+        "componentType": "AntdRangeColumn",
+        "componentName": "Antd区间柱状图",
+        "description": "区间柱状图组件，用于纵向展示分类数据的起止区间，适用于纵向区间对比、起止范围展示、区间柱状统计。",
+        "nativeCapabilities": "纵向区间柱形、坐标轴、完整图例、区间数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "5aeabb56c51584e54df1b3420e74b845a7b9f70802541084a7d244cb529c6f25",
+      "bytes": 25674,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "23366430ab93a3f6bb13f1f2683d7f0e36828b43393a93aebf3d2841619cdcf9",
+      "path": "components/AntdRangeColumn/AntdRangeColumn.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdRingProgress",
+      "componentName": "Antd迷你环图",
+      "componentInfo": {
+        "componentType": "AntdRingProgress",
+        "componentName": "Antd迷你环图",
+        "description": "进度环组件，用于展示单个 0 到 1 的进度或完成率，适用于环形进度、完成率、单指标占比、任务进度展示。",
+        "nativeCapabilities": "进度环、背景轨道、完整图例、数据标签、中心统计文本、提示框",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "d732694491372336e14d7a65de22166912cabf8d3ae1b9c38d8c10053d988d17",
+      "bytes": 7634,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "6f1131634758658cf4c285102869adf4c7472c06764973e97a6f6386a7d326a9",
+      "path": "components/AntdRingProgress/AntdRingProgress.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdScatterBubble",
+      "componentName": "Antd气泡图",
+      "componentInfo": {
+        "componentType": "AntdScatterBubble",
+        "componentName": "Antd气泡图",
+        "description": "气泡图组件，用于同时展示 x 值、y 值、气泡大小和分类颜色，适用于多指标相关性分析、气泡大小对比、分类分布展示、异常点识别。",
+        "nativeCapabilities": "分类气泡点、坐标轴、数据标签、完整图例、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "54a7f38418ec449ddcd168e6354eeca8b16d5f57f4ac9fbce57c36cfe0635ef7",
+      "bytes": 26338,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "b967fe1d8a4daa813c77119fdb1d544295c4507cda285ffbcca1cf38c14f5378",
+      "path": "components/AntdScatterBubble/AntdScatterBubble.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdScatterPoint",
+      "componentName": "Antd散点图",
+      "componentInfo": {
+        "componentType": "AntdScatterPoint",
+        "componentName": "Antd散点图",
+        "description": "散点图组件，用于展示 x 值和 y 值之间的分布关系，适用于相关性分析、分布观察、异常点识别、二维指标对比。",
+        "nativeCapabilities": "散点、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "860ae7f64712a97afe0f9e3d0b5af8976ada79ad6bd2ccc2075f2d1a7a5060a3",
+      "bytes": 26263,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "ef36e6911d13bc7f77fd42c692f77af952da1ed0cc5bbf28e81a73b0e96e931e",
+      "path": "components/AntdScatterPoint/AntdScatterPoint.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdStackArea",
+      "componentName": "Antd堆叠面积图",
+      "componentInfo": {
+        "componentType": "AntdStackArea",
+        "componentName": "Antd堆叠面积图",
+        "description": "堆叠面积图组件，用于展示多个分组在同一 x 轴维度下的数值累加变化，适用于多系列累加趋势、总量变化与组成展示、堆叠面积分析。",
+        "nativeCapabilities": "多系列堆叠面积、坐标轴、完整图例、数据标签、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "4dbd9bb435f1e29896d91ed3ac11730703bb6f2dc6c68b18abdb785202ce64aa",
+      "bytes": 26790,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "ad68394cc727b336750d18244b95d7e6ba57203ecc3b49f7e8121c81191d5062",
+      "path": "components/AntdStackArea/AntdStackArea.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdStackBar",
+      "componentName": "Antd堆叠条形图",
+      "componentInfo": {
+        "componentType": "AntdStackBar",
+        "componentName": "Antd堆叠条形图",
+        "description": "堆叠条形图组件，用于横向展示同一分类下多个分组的数值累加构成，适用于横向堆叠构成、分类总量与组成对比、多分组累加对比。",
+        "nativeCapabilities": "多系列堆叠条形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "71b071655d36212ea57f458e700048d3cb628be701f31298ee829ecc0ae8699f",
+      "bytes": 25786,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "25e82eb9c3961ea276f7574da700f53f253930a43657f0e69b68cb8cf872c7dc",
+      "path": "components/AntdStackBar/AntdStackBar.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdStackColumn",
+      "componentName": "Antd堆叠柱状图",
+      "componentInfo": {
+        "componentType": "AntdStackColumn",
+        "componentName": "Antd堆叠柱状图",
+        "description": "堆叠柱状图组件，用于纵向展示同一分类下多个分组的数值累加构成，适用于纵向堆叠构成、分类总量与组成展示、多分组累加展示。",
+        "nativeCapabilities": "多系列堆叠柱形、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "1bcb12816a7c501f8869502a4cd1f891e7577543caac3eebf037a93da8afeab6",
+      "bytes": 25925,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "bda90edea1232534b30b267255d658b102303bf09f74049d97272e6cc230fe7b",
+      "path": "components/AntdStackColumn/AntdStackColumn.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdStackRose",
+      "componentName": "Antd堆叠玫瑰图",
+      "componentInfo": {
+        "componentType": "AntdStackRose",
+        "componentName": "Antd堆叠玫瑰图",
+        "description": "堆叠玫瑰图组件，用于展示多个系列在同一分类下的堆叠数值，适用于极坐标堆叠构成、多系列分类组成展示、堆叠玫瑰图展示。",
+        "nativeCapabilities": "多系列堆叠玫瑰扇区、极坐标轴、数据标签、完整图例、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "0be27309da63ea0a9e6e392f1903612c6a72881a2d1ca0eec65bf3bbcc4929bc",
+      "bytes": 11980,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "4ed32408ecd6cd415e418c30c70c0286cd0f1d9f3a21f46e66b7540eb9e8439d",
+      "path": "components/AntdStackRose/AntdStackRose.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdStepLine",
+      "componentName": "Antd阶梯折线图",
+      "componentInfo": {
+        "componentType": "AntdStepLine",
+        "componentName": "Antd阶梯折线图",
+        "description": "阶梯折线图组件，用于展示按阶段变化的数值趋势，适用于阶段性变化展示、阶梯式状态变化、分段数值趋势。",
+        "nativeCapabilities": "阶梯折线及数据点、坐标轴、完整图例、数据标签、提示框、标注、滚动条",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "d776f4332ea82d511db7a9eccd0058fc190cbd95ac24350d95c9283fe650ace5",
+      "bytes": 26092,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "963141d8eb58ff34d8c111f3f4eca3df0beabf3aedca3b87aad3206617d3489a",
+      "path": "components/AntdStepLine/AntdStepLine.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "AntdWordCloud",
+      "componentName": "Antd词云图",
+      "componentInfo": {
+        "componentType": "AntdWordCloud",
+        "componentName": "Antd词云图",
+        "description": "词云图组件，用于按权重展示词条大小和颜色，适用于关键词权重展示、标签热度、词频可视化、主题分布展示。",
+        "nativeCapabilities": "全部词条文字、权重字号和颜色、完整图例、提示框、标注",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "bf2d1ceb91e8a3957ccb63db58d9ec6759544ca1fafb01040396a314fa08a39f",
+      "bytes": 10351,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "cea48cb49efe433a5118a63a6782b65a9ebc9743e03a7bd4321da4f289ba7929",
+      "path": "components/AntdWordCloud/AntdWordCloud.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseButton",
+      "componentName": "按钮",
+      "componentInfo": {
+        "componentType": "BaseButton",
+        "componentName": "按钮",
+        "description": "基础按钮组件，用于展示按钮文本并响应点击事件，适用于操作按钮、工具栏动作、表单提交、页面跳转入口。",
+        "nativeCapabilities": "一个按钮的底板、边框和按钮文字",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "c3a8e9f62570314a5260fb7042dfba28540e3b899479453a0684f7891dc4b32e",
+      "bytes": 4659,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "973ddad6681b3b8a5be78733e451faa86bf9f10302be0412b7e877ac81480422",
+      "path": "components/BaseButton/BaseButton.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseColorBlock",
+      "componentName": "基础色块",
+      "componentInfo": {
+        "componentType": "BaseColorBlock",
+        "componentName": "基础色块",
+        "description": "基础色块组件，用于展示背景色、边框、阴影等装饰性视觉块，并支持点击事件，适用于背景色块、卡片底板、分割块、视觉装饰区域。",
+        "nativeCapabilities": "一个背景色、边框和阴影组成的色块；不包含内部内容",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "aac5d9863313ef9785417a015af628d3e684e5b4ffaf12e72ceaa5b17a733710",
+      "bytes": 3767,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "75f2c90a6613fe0ea1fc360162b86a13d8327138be83306b7144bc940dfd2cf4",
+      "path": "components/BaseColorBlock/BaseColorBlock.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseIframe",
+      "componentName": "基础iframe",
+      "componentInfo": {
+        "componentType": "BaseIframe",
+        "componentName": "基础iframe",
+        "description": "基础 iframe 组件，用于在画布中嵌入外部页面，适用于外部页面嵌入、第三方系统页面、地图或报表链接嵌入、网页容器。",
+        "nativeCapabilities": "一个外部网页的完整可见内容",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "1871bac5571ae6882a89284e3d01032d0d368a17d623c101168ad1ddd42bfea5",
+      "bytes": 2196,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "0b40fc5fafc02fc08e6b7da00c372b49a7da34f374f718f459a89a14c2f86739",
+      "path": "components/BaseIframe/BaseIframe.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseImage",
+      "componentName": "基础图片",
+      "componentInfo": {
+        "componentType": "BaseImage",
+        "componentName": "基础图片",
+        "description": "基础图片组件，用于展示在线图片、本地上传图片或数据源绑定图片，适用于图片展示、图标展示、头像、背景图、品牌标识。",
+        "nativeCapabilities": "单张图片及其完整图像内容",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "8c1aa32ce284180f02e7d77bf00ea1b38925474f3a55f172ccf2e84ecb8d4690",
+      "bytes": 3246,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "b139e3eb2fe96618141f7af516c1da42f3dde08842fe9700ff7f7c48bbd1426d",
+      "path": "components/BaseImage/BaseImage.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseInput",
+      "componentName": "输入框",
+      "componentInfo": {
+        "componentType": "BaseInput",
+        "componentName": "输入框",
+        "description": "基础输入框组件，用于接收文本输入并响应点击、值改变事件，适用于文本输入、搜索条件、表单字段、筛选输入框。",
+        "nativeCapabilities": "一个输入框的底板、边框、占位文字和输入文字",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "a412051784f534bced299d2696ce4d900844c5967eb649d27a08af014e9265fb",
+      "bytes": 4676,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "9482729e6c6601aa25d6dbba1c85677c0fc7f4ac2a279c9209aefe2ce6c73097",
+      "path": "components/BaseInput/BaseInput.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseSelect",
+      "componentName": "下拉框",
+      "componentInfo": {
+        "componentType": "BaseSelect",
+        "componentName": "下拉框",
+        "description": "基础下拉框组件，用于展示选项列表并响应点击、选项改变事件，适用于下拉筛选、选项选择、表单选择字段、条件切换。",
+        "nativeCapabilities": "一个选择框的底板、当前值、下拉标记和选项列表",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "dcd67fb254bf8bb5c1983d37a2cacf2c544181c2f751fc30bc770de9e1c142aa",
+      "bytes": 5535,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "a66edf0b1dcd00c4a52ea507795aa01aa70c8b9a553ffb9a3d9596c03e7c2f14",
+      "path": "components/BaseSelect/BaseSelect.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseTab",
+      "componentName": "按钮选项卡",
+      "componentInfo": {
+        "componentType": "BaseTab",
+        "componentName": "按钮选项卡",
+        "description": "按钮选项卡组件，用于展示选项列表并响应选中改变、值变化和点击选项事件，适用于页签切换、分类筛选、菜单选项、状态分组切换。",
+        "nativeCapabilities": "整组选项按钮、选项文字和选中状态",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "fc8eaaa1265d84889c240ef1ee6f5b5b73ffd96c087548fe90adf75343f5a862",
+      "bytes": 8007,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "3702f9077f4f989ba8431aecd50d4427f7ebe19a2d8e98a4c2cba28f0b48d756",
+      "path": "components/BaseTab/BaseTab.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseText",
+      "componentName": "基础文本",
+      "componentInfo": {
+        "componentType": "BaseText",
+        "componentName": "基础文本",
+        "description": "基础文本组件，用于展示静态或数据驱动的文本内容，并响应点击事件，适用于标题、说明文字、标签文本、静态文案、数据驱动文本。",
+        "nativeCapabilities": "单个静态或数据驱动文本块",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "eaf09dd502e852813fede3f350cb93e3fe35a1724acc69dad4bf58cf0efb7bcb",
+      "bytes": 5877,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "6b8d2cc107905cb866ce19bb56d8a773666ea1873bfcc9a5f77559df8f10c5de",
+      "path": "components/BaseText/BaseText.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "BaseVideo",
+      "componentName": "视频",
+      "componentInfo": {
+        "componentType": "BaseVideo",
+        "componentName": "视频",
+        "description": "视频组件，用于展示视频资源，并支持封面、播放控制和填充模式配置，适用于视频文件播放、宣传视频、监控视频片段、带封面的视频展示。",
+        "nativeCapabilities": "一个视频画面、封面和原生播放控件",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "0881c3f94eb5835762b1133925a6c370c01fcb3abe87d7e2368cb0b311b4514c",
+      "bytes": 3667,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "a3292f7a46af270f399055e5cf44a2a94c5c884527217e4a649619f209ee0039",
+      "path": "components/BaseVideo/BaseVideo.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "DateTime",
+      "componentName": "当前时间",
+      "componentInfo": {
+        "componentType": "DateTime",
+        "componentName": "当前时间",
+        "description": "当前时间组件，用于按指定格式实时展示本地日期时间，适用于当前时间展示、日期时间标题、系统时间、大屏时钟。",
+        "nativeCapabilities": "一段按格式实时更新的日期时间文本",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "6a6087b412d3ce34ff6f798171b0c1f3581bffbab5ff2617bf118f93f6024284",
+      "bytes": 3948,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "7b77278aaf4782898506b36981dd52b20e1ec8a2ab870c5aeff151924798be4e",
+      "path": "components/DateTime/DateTime.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "DateTimePicker",
+      "componentName": "日期时间选择器",
+      "componentInfo": {
+        "componentType": "DateTimePicker",
+        "componentName": "日期时间选择器",
+        "description": "日期时间选择输入组件，一个实例用于渲染一个可交互的日期、时间或日期时间选择控件，不适用于只读日期时间文字。",
+        "nativeCapabilities": "一个日期时间输入框、当前值和选择面板",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "f30ae714fc3e5ed5b16b024d5b527ccd1784de3657d70ace43374e7721cd6bbf",
+      "bytes": 10351,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "dc63e5e02f2d34879e12feefa0306e9c39de440c0d5871c3f3d8fa32fd0981fc",
+      "path": "components/DateTimePicker/DateTimePicker.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "DigitalFlipper",
+      "componentName": "数字翻牌器",
+      "componentInfo": {
+        "componentType": "DigitalFlipper",
+        "componentName": "数字翻牌器",
+        "description": "数字翻牌器组件，用于展示数值，并支持前后缀、小数位、分隔符和翻牌动画，适用于核心指标数值、大屏 KPI、实时计数、金额或数量展示。",
+        "nativeCapabilities": "一个数值、前后缀、小数和分隔符及翻牌动画",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "88820d6a9558ce9663af0788d84ebd7ad020aa60df618683fea2e1d5dcea8897",
+      "bytes": 5910,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "e77072f2dd57bf9455920ff592351fca7e4dabd04b33500c9a9895e7e5cf589f",
+      "path": "components/DigitalFlipper/DigitalFlipper.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "ECharts",
+      "componentName": "Echarts自定义图表",
+      "componentInfo": {
+        "componentType": "ECharts",
+        "componentName": "Echarts自定义图表",
+        "description": "自定义 ECharts 图表组件，一个实例可通过 ECharts 配置渲染单系列、多系列或多种系列组合的完整图表，适用于标准图表组件无法表达的组合图、复杂坐标系和自定义图表。",
+        "nativeCapabilities": "一个完整ECharts图表：多种系列、坐标系、坐标轴、图例、标签、提示框、标注",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "def089fae7bafd617e4532594dc05e866925f115327332550f7a31894a049194",
+      "bytes": 739,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "3b26490443bca20dd65d0793e2cdee073d816efd6313e326e99fb009d5e4ef62",
+      "path": "components/ECharts/ECharts.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "FlvPlayer",
+      "componentName": "FLV视频流",
+      "componentInfo": {
+        "componentType": "FlvPlayer",
+        "componentName": "FLV视频流",
+        "description": "FLV 视频流组件，用于播放 FLV 格式的视频流地址，适用于FLV 直播流播放、实时视频流、监控流展示。",
+        "nativeCapabilities": "一个FLV视频流画面和原生播放控件",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "2283fd4c85cdc693e04c84a3501ecb3b70ed49cb9596ab283fbcb6f95d104ca4",
+      "bytes": 2628,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "b9caba6440f0f554e28888ac2eb96a3c8fcce220ff91cbf66dbf2379ba4e320f",
+      "path": "components/FlvPlayer/FlvPlayer.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "FourAngleGlowBorder",
+      "componentName": "四角辉光边框",
+      "componentInfo": {
+        "componentType": "FourAngleGlowBorder",
+        "componentName": "四角辉光边框",
+        "description": "四角辉光边框装饰组件，用于在组件区域四角绘制发光边框效果，适用于科技风边框、卡片角标装饰、重点区域外框、大屏装饰边框。",
+        "nativeCapabilities": "一个矩形区域四角的整套辉光边框；不包含背景和内部内容",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "682384b605f63a2ac0b2ea083fab30be086088d12e297ad1ab5997e830b60845",
+      "bytes": 2946,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "64f679b3e6127a7701cebbd06d7feb68e22c397c0cf0d5812834a573e61a91cb",
+      "path": "components/FourAngleGlowBorder/FourAngleGlowBorder.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "G2PlotCustom",
+      "componentName": "G2Plot自定义图表",
+      "componentInfo": {
+        "componentType": "G2PlotCustom",
+        "componentName": "G2Plot自定义图表",
+        "description": "自定义 G2Plot 图表组件，一个实例用于通过 G2Plot 配置渲染标准组件无法表达的定制统计图表；只能选择 G2Plot 本身支持的图表结构。",
+        "nativeCapabilities": "一个完整G2Plot图表：图形、坐标轴、图例、标签、提示框、标注",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "1171e7cf7688a8a286b0009103cd2b17efcde52b1d1725534e050206dafdb52a",
+      "bytes": 682,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "0cfdcdc264ea72b2da95eb59b3598f5a37f617934334a5daa296116444741ab7",
+      "path": "components/G2PlotCustom/G2PlotCustom.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "HlsPlayer",
+      "componentName": "HLS视频流",
+      "componentInfo": {
+        "componentType": "HlsPlayer",
+        "componentName": "HLS视频流",
+        "description": "HLS 视频流组件，用于播放 HLS/M3U8 格式的视频流地址，适用于HLS/M3U8 视频流播放、实时视频流、直播画面展示。",
+        "nativeCapabilities": "一个HLS视频流画面和原生播放控件",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "d8ca37d1921e5eb0a263b6b71d8b7c9489a9a37fa6e6fdf230945a6236bcf4ca",
+      "bytes": 2708,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "bafcd028f45535fccc579a6a69b97fee0aa614651baef1fe2d737c302ec65326",
+      "path": "components/HlsPlayer/HlsPlayer.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "LcBaseTable",
+      "componentName": "基础表格",
+      "componentInfo": {
+        "componentType": "LcBaseTable",
+        "componentName": "基础表格",
+        "description": "基础表格组件，用于展示列配置和行数据，并支持表头、表体、行背景和轮播展示配置，适用于数据明细、订单列表、设备状态表、排行表、字段型数据展示。",
+        "nativeCapabilities": "一个完整表格的表头、数据行、单元格、行背景和滚动轮播",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "d424c6007ec6687f7ea0558678bc4b1fa36827b582a3b6b2993ebee523e60ef8",
+      "bytes": 6930,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "06d4200aaad16a1141405f79adb1c924ad620a9e4b914c203687f41b5d608306",
+      "path": "components/LcBaseTable/LcBaseTable.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "LoopContainer",
+      "componentName": "循环容器",
+      "componentInfo": {
+        "componentType": "LoopContainer",
+        "componentName": "循环容器",
+        "description": "数据驱动的重复内容容器，一个实例用于根据列表数据重复渲染同一套子组件模板并控制排列或轮播；不负责替代模板内部的文字、图标、数值或装饰组件。",
+        "nativeCapabilities": "重复渲染子组件模板并控制排列轮播；不包含模板内部可见内容",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "0471ac8c873707418ace8559c770b35240dc0d52d005941b214441b39c819de9",
+      "bytes": 700,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "8918df3411cd19a339396b339b396e53c20157ac42ae27dbf508670c726200ac",
+      "path": "components/LoopContainer/LoopContainer.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "MapLibreGis",
+      "componentName": "GIS(MapLibre)",
+      "componentInfo": {
+        "componentType": "MapLibreGis",
+        "componentName": "GIS(MapLibre)",
+        "description": "MapLibre GIS 地图组件，一个实例用于渲染一幅带数据源、图层、视角、地形、天空和交互能力的二维或三维矢量地图主视觉。",
+        "nativeCapabilities": "一幅矢量地图的数据图层、标记、地形、天空、视角和交互",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "f5b905b4bf784168aeb2a2d0ee6e0a86420a29b244b550407e9a827c364eb08c",
+      "bytes": 646,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "24a410ce0ea562d07a791b3c99b6cbb2690bbc077a16fd0f5dfcc67fec10401a",
+      "path": "components/MapLibreGis/MapLibreGis.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "ScreenReference",
+      "componentName": "大屏引用",
+      "componentInfo": {
+        "componentType": "ScreenReference",
+        "componentName": "大屏引用",
+        "description": "已有大屏页面引用组件，一个实例用于整体嵌入并显示一个已存在的大屏页面，不用于从当前设计稿重新组合普通区域内容。",
+        "nativeCapabilities": "一个被引用大屏页面的全部可见内容",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "9146af7c075361cb666ded476eb2ea1e27a90cabfe4b2b7eb1af77230b5ac6ea",
+      "bytes": 2751,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "79c8411dab4e9d1cc0558a7a56f5784a7e3f1c08c322965cf7531325bf4bbe6c",
+      "path": "components/ScreenReference/ScreenReference.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "Switch",
+      "componentName": "开关组件",
+      "componentInfo": {
+        "componentType": "Switch",
+        "componentName": "开关组件",
+        "description": "基础开关组件，用于展示布尔开关状态并响应状态改变、点击、开启、关闭、切换和值变化事件，适用于布尔开关、启停状态、功能开关、筛选开关。",
+        "nativeCapabilities": "一个开关的轨道、滑块和开关状态",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "d5415c074ad2b745a5d17268b78013944b4cda5d7f238733c08a1ecf32519e0a",
+      "bytes": 6773,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "04925413407685bc112f9509951336278d69c8dedd972a47234e90c0b3ed5561",
+      "path": "components/Switch/Switch.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "TextScroller",
+      "componentName": "文字弹幕",
+      "componentInfo": {
+        "componentType": "TextScroller",
+        "componentName": "文字弹幕",
+        "description": "文字弹幕组件，用于横向滚动展示文本内容，并响应点击事件，适用于滚动公告、消息字幕、实时告警文本、横向弹幕。",
+        "nativeCapabilities": "一个横向滚动文本块及其滚动效果",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "17c98bc2f7b67dc3e91acf4bc1f137036aa91ec3f19d6a430233ce2f8544eaf4",
+      "bytes": 4631,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "62f755fbcc9d9175c1f373c22899391b0a39a6e6ed4778d4d65853506cc952b2",
+      "path": "components/TextScroller/TextScroller.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "ThreeModel",
+      "componentName": "3D模型",
+      "componentInfo": {
+        "componentType": "ThreeModel",
+        "componentName": "3D模型",
+        "description": "三维模型查看组件，一个实例用于加载并渲染一个 GLB、GLTF 等受支持格式的三维模型场景，适用于独立三维物体或模型主视觉。",
+        "nativeCapabilities": "一个三维模型场景中的网格、材质、灯光和相机视角",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "f99e4af70a1bbc716132fc795739f1c4b71c267fb5b8498dbebce69a521c3f04",
+      "bytes": 629,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "2ae7269741941cfc4c5b77c1b9ebe9a268a1ed0da826b5e4c38462e29c142e54",
+      "path": "components/ThreeModel/ThreeModel.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "carousel",
+      "componentName": "轮播图",
+      "componentInfo": {
+        "componentType": "carousel",
+        "componentName": "轮播图",
+        "description": "轮播图组件，用于展示图片列表，并支持自动播放、指示按钮和切换动效配置，适用于图片轮播、Banner 展示、多图切换、宣传位轮播。",
+        "nativeCapabilities": "整组轮播图片、指示器和切换控件",
+        "selectable": true
+      },
+      "hasFullSpec": true,
+      "sha256": "542f0a1a86bf73cf33cfd99ad5451dde16674f922fbe2d205309b361c6bd9d5a",
+      "bytes": 3326,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "f6b85518c06c54636e196a78f6d2a4f2326abb47d98c76ce083544c2fc23d4c2",
+      "path": "components/carousel/carousel.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    },
+    {
+      "componentType": "group",
+      "componentName": "分组图层",
+      "componentInfo": {
+        "componentType": "group",
+        "componentName": "分组图层",
+        "description": "仅用于设计器内部组织多个已有组件的逻辑分组，不产生独立可见视觉实例，组件选择阶段不得选择。",
+        "nativeCapabilities": "不产生可见结构，仅组织已有组件",
+        "selectable": false
+      },
+      "hasFullSpec": false,
+      "sha256": "09e09c8f97ad60cef556e31edfd650d80c5956d31eefb44431fc57af205c6942",
+      "bytes": 566,
+      "documentFormatVersion": "component-document/v1",
+      "componentVersion": "ce9e61d9b45229ef0d99e7e5d6629482cb9ff80de98d9aee4107ee0115a142e3",
+      "path": "components/group/group.md",
+      "source": "builtin",
+      "corpusVersion": "50df2e171cc72b3de888a696d4353cf20ff55f91d5ddc87b73ce08fd97a705f2"
+    }
+  ]
+}
