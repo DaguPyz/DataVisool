@@ -68,6 +68,21 @@ function Test-ReadableFile {
     finally { if ($null -ne $stream) { $stream.Dispose() } }
 }
 
+function Read-StartupLog {
+    param([string] $Path)
+    # The Java process keeps each redirected log open for writing during startup.
+    $stream = [System.IO.File]::Open($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    $reader = $null
+    try {
+        $reader = [System.IO.StreamReader]::new($stream)
+        return $reader.ReadToEnd()
+    }
+    finally {
+        if ($null -ne $reader) { $reader.Dispose() }
+        else { $stream.Dispose() }
+    }
+}
+
 function Test-Java17Executable {
     param([Parameter(Mandatory = $true)][string] $JavaPath)
     if (-not (Test-Path -LiteralPath $JavaPath -PathType Leaf)) { throw (Get-DvMessage "找不到 Java 可执行文件：'$JavaPath'。" "Java executable not found: '$JavaPath'.") }
@@ -694,8 +709,10 @@ try {
             $retryForAdmin = $false
             while ([DateTime]::UtcNow -lt $deadline) {
                 $process.Refresh()
-                $startupLog = [System.IO.File]::ReadAllText($paths.Stdout) + [System.IO.File]::ReadAllText($paths.Stderr)
-                if ($process.HasExited) {
+                # Check for exit before reading so failures are matched against the final log.
+                $hasExited = $process.HasExited
+                $startupLog = (Read-StartupLog -Path $paths.Stdout) + (Read-StartupLog -Path $paths.Stderr)
+                if ($hasExited) {
                     if ($newRecorded) {
                         Remove-Item -LiteralPath $paths.Pid, $paths.Metadata -Force -ErrorAction SilentlyContinue
                     }

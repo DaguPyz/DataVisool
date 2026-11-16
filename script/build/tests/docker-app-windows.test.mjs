@@ -289,3 +289,33 @@ Write-Output 'Native PowerShell replacement smoke passed.'
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Native PowerShell replacement smoke passed/);
 });
+
+test('native PowerShell launcher reads a startup log while it is open for writing', { skip: !POWERSHELL_BIN }, t => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'datavisool-startup-log-'));
+  t.after(() => fs.rmSync(tempRoot, { recursive: true, force: true }));
+  const smokeScript = path.join(tempRoot, 'read-startup-log.ps1');
+  fs.writeFileSync(smokeScript, String.raw`
+param([string] $SourcePath, [string] $LogPath)
+$ErrorActionPreference = 'Stop'
+$tokens = $null; $parseErrors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile($SourcePath, [ref]$tokens, [ref]$parseErrors)
+if ($parseErrors.Count -gt 0) { throw 'PowerShell parse failed.' }
+$helper = $ast.Find({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Read-StartupLog' }, $true)
+. ([scriptblock]::Create($helper.Extent.Text))
+
+$writer = [System.IO.File]::Open($LogPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::ReadWrite)
+try {
+    if ((Read-StartupLog -Path $LogPath) -cne '') { throw 'An empty startup log did not read as an empty string.' }
+    $marker = 'IllegalStateException: DATAVISOOL_ADMIN_PASSWORD'
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($marker)
+    $writer.Write($bytes, 0, $bytes.Length)
+    $writer.Flush()
+    if ((Read-StartupLog -Path $LogPath) -cne $marker) { throw 'The startup marker could not be read while the log was open for writing.' }
+}
+finally { $writer.Dispose() }
+`, 'utf8');
+  const result = spawnSync(POWERSHELL_BIN, [
+    '-NoProfile', '-File', smokeScript, '-SourcePath', NATIVE_DISPATCHER_PS1, '-LogPath', path.join(tempRoot, 'startup.stdout.log'),
+  ], { encoding: 'utf8', timeout: 30000 });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+});
