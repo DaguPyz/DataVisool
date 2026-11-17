@@ -11,7 +11,6 @@ import {Navigate, type RouteObject} from "react-router-dom";
 const DesignerViewPage = lazy(() => import('../pages/preview/DesignerViewPage.tsx'));
 const DesignerReleasePage = lazy(() => import('../pages/release/DesignerReleasePage.tsx'));
 const DesignerPage = lazy(() => import('../pages/designer/DesignerPage.tsx'));
-const Login = lazy(() => import('../pages/login/Login'));
 const Home = lazy(() => import('../pages/home/Home'));
 const DataBaseList = lazy(() => import('../pages/home/database/DataBaseList.tsx'));
 const TemplateMarket = lazy(() => import('../pages/home/template-market/TemplateMarket.tsx'));
@@ -38,7 +37,6 @@ const ConsoleDashboard = lazy(() => import('../pages/home/console/ConsoleDashboa
 export default [
     {path: '/preview', element: <DesignerViewPage/>},
     {path: '/release/:id', element: <DesignerReleasePage/>},
-    {path: '/login', element: <Login/>},
     {path: '/test', element: <Demo/>},
     {path: '/designer', element: <DesignerPage/>},
     {
@@ -67,7 +65,6 @@ export default [
             {index: true, element: <Navigate to="console" replace/>}
         ],
     },
-    {path: '/', element: <Login/>},
     {path: '/notFound', element: <NotFound/>},
     {path: '/noAuth', element: <NoAuth/>},
     {path: '/error', element: <Error/>},

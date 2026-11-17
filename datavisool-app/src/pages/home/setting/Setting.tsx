@@ -83,7 +83,7 @@ export default function Setting() {
             avatar: nextUser.avatar ?? currentAuthInfo.avatar,
             phone: nextUser.phone,
             email: nextUser.email,
-        } as IUserInfo, true);
+        } as IUserInfo);
         window.dispatchEvent(new CustomEvent('datavisool-user-info-updated'));
     }, []);
 

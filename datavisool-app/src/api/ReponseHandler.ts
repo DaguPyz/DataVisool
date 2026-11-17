@@ -26,6 +26,7 @@ const responseHandlerMapping: Record<number, () => void> = {
 export interface ResponseHandlerOptions {
     suppressErrorMessage?: boolean | ((response: HttpResponse) => boolean);
     onSuccess?: (response: HttpResponse) => void;
+    handleSessionExpiry?: boolean;
 }
 
 const responseHandler = (response: HttpResponse, options: ResponseHandlerOptions = {}): unknown => {
@@ -34,8 +35,7 @@ const responseHandler = (response: HttpResponse, options: ResponseHandlerOptions
         options.onSuccess?.(response);
         return response.data;
     } else {
-        const handler = responseHandlerMapping[code];
-        handler && handler();
+        if (options.handleSessionExpiry !== false) responseHandlerMapping[code]?.();
         const suppressErrorMessage = typeof options.suppressErrorMessage === "function"
             ? options.suppressErrorMessage(response)
             : options.suppressErrorMessage === true;

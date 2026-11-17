@@ -16,8 +16,8 @@ export interface RouteRegistration {
 }
 
 export interface UiService {
-    /** Register a route tree before the application view is mounted. */
-    registerRoutes(routes: readonly RouteObject[]): RouteRegistration;
+    /** Register a route tree and check its required destinations when the UI mounts. */
+    registerRoutes(routes: readonly RouteObject[], requiredPaths?: readonly string[]): RouteRegistration;
     /** Build the router and attach the root view after all startup plugins have activated. */
     mount(container: HTMLElement): void;
 }

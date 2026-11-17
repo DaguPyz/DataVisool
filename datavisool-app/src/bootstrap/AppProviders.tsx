@@ -4,7 +4,7 @@ import {DataVisoolUIProvider} from '@datavisool/ui';
 import dayjs from 'dayjs';
 import {getLocale, tx} from '@/i18n/miniI18n.ts';
 import {useLocaleVersion} from '@/i18n/useLocaleVersion.ts';
-import type {RootProvidersProps} from '@/plugins/ui/contract.ts';
+import type {RootProvidersProps} from '@/contracts/ui.ts';
 
 export function AppProviders({renderContent}: RootProvidersProps) {
     useLocaleVersion();

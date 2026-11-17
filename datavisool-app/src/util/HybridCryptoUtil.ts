@@ -6,7 +6,7 @@
 
 import JSEncrypt from "jsencrypt";
 import CryptoJS from "crypto-js";
-import FetchUtil from "./FetchUtil.ts";
+import FetchUtil, {type FetchRequestInit} from "./FetchUtil.ts";
 
 export interface EncryptResult {
     encryptedData: string;   // AES 加密后的数据 (Base64)
@@ -38,13 +38,13 @@ export class HybridCryptoUtil {
     }
 
     /** 获取服务器公钥 (请求加密使用) */
-    private static async getServerPublicKey(): Promise<string> {
+    private static async getServerPublicKey(options?: FetchRequestInit): Promise<string> {
         if (this.SERVER_PUBLIC_KEY) {
             return this.SERVER_PUBLIC_KEY;
         } else {
-            const response = await FetchUtil.get<any>("/api/security/getEncryptKey")
+            const response = await FetchUtil.get<{key: string} | null>("/api/security/getEncryptKey", options);
             if (response === null) {
-                console.error('安全策略初始化失败');
+                if (!options?.signal?.aborted) console.error('安全策略初始化失败');
                 return '';
             }
             const newKey = response.key;
@@ -109,10 +109,11 @@ export class HybridCryptoUtil {
     }
 
     /** 加密请求数据 */
-    public static async encryptRequest(plainText: string): Promise<EncryptResult> {
+    public static async encryptRequest(plainText: string, options?: FetchRequestInit): Promise<EncryptResult> {
         const aesKey = this.generateAesKey();
         const iv = this.generateIv();
-        const serverPublicKey = await this.getServerPublicKey();
+        const serverPublicKey = await this.getServerPublicKey(options);
+        if (options?.signal?.aborted) throw new DOMException('Encryption request was aborted.', 'AbortError');
 
         const encryptedData = this.aesEncrypt(plainText, aesKey, iv);
         const encryptedAesKey = this.rsaEncrypt(aesKey, serverPublicKey);

@@ -1,9 +1,45 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+import {generateKeyPairSync} from 'node:crypto';
 import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
     await page.addInitScript(() => localStorage.setItem('datavisool-i18n-locale', 'zh-CN'));
     await page.route('**/static/logo/**', (route) => route.fulfill({status: 404}));
+});
+
+test('直接访问根地址会显示登录页并保留地址', async ({page}) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', {name: '登录控制台'})).toBeVisible();
+    await expect(page).toHaveURL('/');
+});
+
+test('应用停用时取消未完成的登录请求', async ({page}) => {
+    const {publicKey} = generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {type: 'spki', format: 'der'},
+        privateKeyEncoding: {type: 'pkcs8', format: 'der'},
+    });
+    await page.route('**/api/security/getEncryptKey', route => route.fulfill({
+        json: {code: 200, msg: '', data: {key: publicKey.toString('base64')}},
+    }));
+    const loginEndpoint = '/api/authenticate/login';
+    await page.route(`**${loginEndpoint}`, () => {});
+    await page.goto('/login');
+    await page.getByLabel('用户名').fill('sample-user');
+    await page.getByLabel('密码').fill('sample-password');
+
+    const sent = page.waitForRequest(request => new URL(request.url()).pathname === loginEndpoint);
+    await page.getByRole('button', {name: '登录', exact: true}).click();
+    const loginRequest = await sent;
+    const failed = page.waitForEvent('requestfailed', {predicate: request => request === loginRequest});
+    await page.evaluate(async () => {
+        const appModule = '/src/bootstrap/startApplication.ts';
+        const {startApplication} = await import(/* @vite-ignore */ appModule);
+        await (await startApplication()).stop();
+    });
+
+    expect((await failed).failure()?.errorText).toBe('net::ERR_ABORTED');
+    expect(await page.evaluate(() => localStorage.getItem('DATAVISOOL_USER_INFO'))).toBeNull();
 });
 
 test('账号密码可以输入，密码默认隐藏', async ({page}) => {

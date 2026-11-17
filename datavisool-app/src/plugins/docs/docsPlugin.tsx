@@ -2,7 +2,7 @@
 
 import {lazy} from 'react';
 import {useLocation} from 'react-router-dom';
-import {uiKey} from '@/plugins/ui/contract.ts';
+import {uiKey} from '@/contracts/ui.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 export function createDocsPlugin(): Plugin {

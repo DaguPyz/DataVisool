@@ -8,7 +8,7 @@ import './Login.less';
 import {useNavigate} from "react-router-dom";
 import {memo, useRef, useState} from "react";
 import FetchUtil from "../../util/FetchUtil.ts";
-import AuthTools, {IUserInfo} from "@/util/AuthTools.ts";
+import type {IUserInfo, SessionService} from "@/contracts/session.ts";
 import {Button, Input} from '@datavisool/ui';
 import logo from '../../images/datavisool-logo.webp';
 import ServiceTerms from "./ServiceTerms.tsx";
@@ -22,7 +22,13 @@ const loginHighlights = [
     {label: '发布管理', description: '项目预览与版本发布', icon: Send}
 ];
 
-const Login = memo(() => {
+interface LoginProps {
+    readonly session: SessionService;
+    readonly getRequestSignal: () => AbortSignal | null;
+    readonly successPath: string;
+}
+
+const Login = memo(({session, getRequestSignal, successPath}: LoginProps) => {
     const navigate = useNavigate();
     const usernameRef = useRef("");
     const passwordRef = useRef("");
@@ -31,16 +37,26 @@ const Login = memo(() => {
     const [serviceTerms, setServiceTerms] = useState(false);
 
     const login = async () => {
-        const pwd = await HybridCryptoUtil.encryptRequest(passwordRef.current);
-        FetchUtil.post<IUserInfo>("/api/authenticate/login",
-            {username: usernameRef.current, password: pwd},
-        ).then(res => {
-            if (res !== null) {
-                AuthTools.setUserInfo(res, true);
-                navigate('/home/console');
-            }
-        })
-    }
+        const signal = getRequestSignal();
+        if (!signal) return;
+
+        const options = {signal, handleSessionExpiry: false};
+        try {
+            const password = await HybridCryptoUtil.encryptRequest(passwordRef.current, options);
+            if (signal.aborted) return;
+
+            const userInfo = await FetchUtil.post<IUserInfo | null>('/api/authenticate/login', {
+                username: usernameRef.current,
+                password,
+            }, options);
+            if (signal.aborted || userInfo === null) return;
+
+            session.setUserInfo(userInfo);
+            navigate(successPath);
+        } catch (error) {
+            if (!signal.aborted) throw error;
+        }
+    };
 
     return (
         <div className={'datavisool-login'}>

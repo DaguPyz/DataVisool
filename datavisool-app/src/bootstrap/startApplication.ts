@@ -2,7 +2,7 @@
 
 import {startDomTranslator} from '@/i18n/miniI18n.ts';
 import logo from '@/images/datavisool-logo.webp';
-import {uiKey} from '@/plugins/ui/contract.ts';
+import {uiKey} from '@/contracts/ui.ts';
 import {setFavicon} from '@/util/LogoUtil.ts';
 import {createAppPlugins} from './appPlugins.ts';
 import {createAppRuntime} from './createAppRuntime.ts';
