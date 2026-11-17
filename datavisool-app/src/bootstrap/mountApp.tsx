@@ -5,17 +5,24 @@ import {createRoot, type Root} from 'react-dom/client';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import {DataVisoolUIProvider, GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
 import dayjs from 'dayjs';
-import AppErrorBoundary from '@/components/app-error/AppErrorBoundary.tsx';
 import {getLocale, startDomTranslator, tx} from '@/i18n/miniI18n.ts';
 import {useLocaleVersion} from '@/i18n/useLocaleVersion.ts';
 import logo from '@/images/datavisool-logo.webp';
-import ErrorPage from '@/pages/result/Error.tsx';
+import {errorUiKey} from '@/plugins/error-ui/contract.ts';
 import routerConfig from '@/router/router.tsx';
 import withRouteErrorElement from '@/router/withRouteErrorElement.tsx';
 import {setFavicon} from '@/util/LogoUtil.ts';
+import type {AppView} from './startApplication.ts';
 
-export function mountApp(container: HTMLElement): void {
+const mountApp: AppView['mount'] = (container, runtime, onUnmount) => {
+    const {ErrorBoundary, ErrorPage} = runtime.get(errorUiKey);
     const router = createBrowserRouter(withRouteErrorElement(routerConfig, <ErrorPage homePath="/home/console"/>));
+    let root: Root | undefined;
+    onUnmount(() => {
+        root?.unmount();
+        root = undefined;
+        router.dispose();
+    });
 
     function AppRoot() {
         useLocaleVersion();
@@ -25,32 +32,20 @@ export function mountApp(container: HTMLElement): void {
         return (
             <DataVisoolUIProvider locale={locale} translate={tx}>
                 <Suspense fallback={<Loading/>}>
-                    <AppErrorBoundary homePath="/home/console">
+                    <ErrorBoundary homePath="/home/console">
                         <RouterProvider router={router}/>
                         <GlobalMessage/>
                         <GlobalModal/>
-                    </AppErrorBoundary>
+                    </ErrorBoundary>
                 </Suspense>
             </DataVisoolUIProvider>
         );
     }
 
-    let root: Root | undefined;
-    try {
-        root = createRoot(container);
-        setFavicon('/static/logo/logo.png', logo);
-        startDomTranslator();
-        root.render(<AppRoot/>);
-    } catch (error) {
-        const errors = [error];
-        for (const cleanup of [() => root?.unmount(), () => router.dispose()]) {
-            try {
-                cleanup();
-            } catch (cleanupError) {
-                errors.push(cleanupError);
-            }
-        }
-        if (errors.length > 1) throw new AggregateError(errors, 'DataVisool view setup and cleanup failed.');
-        throw error;
-    }
-}
+    root = createRoot(container);
+    setFavicon('/static/logo/logo.png', logo);
+    startDomTranslator();
+    root.render(<AppRoot/>);
+};
+
+export const appView: AppView = {requires: [errorUiKey], mount: mountApp};

@@ -2,21 +2,44 @@
 
 import {createAppPlugins} from './appPlugins.ts';
 import {createAppRuntime} from './createAppRuntime.ts';
-import type {Visloom} from '../visloom/index.ts';
+import type {CapabilityKey, Plugin, Visloom} from '../visloom/index.ts';
 
-type MountApp = (container: HTMLElement) => void | Promise<void>;
+type UnmountApp = () => void | Promise<void>;
+
+export interface AppView {
+    readonly requires: readonly CapabilityKey[];
+    mount(
+        container: HTMLElement,
+        runtime: Pick<Visloom, 'get'>,
+        onUnmount: (cleanup: UnmountApp) => void,
+    ): void | Promise<void>;
+}
 
 let startup: Promise<Visloom> | undefined;
 
 /** Start the browser application once and mount the view after its plugins are ready. */
-export function startApplication(mountApp: MountApp): Promise<Visloom> {
+export function startApplication(view: AppView): Promise<Visloom> {
     startup ??= Promise.resolve().then(async () => {
         const container = document.getElementById('root');
         if (!container) throw new Error("Application root '#root' was not found.");
 
-        const runtime = await createAppRuntime(createAppPlugins());
+        let unmount: UnmountApp | undefined;
+        const appRoot: Plugin = {
+            id: 'app-root',
+            requires: view.requires,
+            provides: [],
+            activate(context) {
+                context.onStop({
+                    async withdraw() {
+                        await unmount?.();
+                        unmount = undefined;
+                    },
+                });
+            },
+        };
+        const runtime = await createAppRuntime([...createAppPlugins(), appRoot]);
         try {
-            await mountApp(container);
+            await view.mount(container, runtime, cleanup => { unmount = cleanup; });
         } catch (error) {
             try {
                 await runtime.stop();
