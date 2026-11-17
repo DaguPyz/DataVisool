@@ -4,17 +4,18 @@ import {Suspense, type ComponentType} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
 import {createBrowserRouter, matchRoutes, RouterProvider, type RouteObject} from 'react-router-dom';
 import {GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
+import {errorUiKey} from '@/contracts/errorUi.ts';
 import {uiKey, type RootProvidersProps, type UiService} from '@/contracts/ui.ts';
-import {errorUiKey} from '@/plugins/error-ui/contract.ts';
-import withRouteErrorElement from '@/router/withRouteErrorElement.tsx';
 import type {Plugin} from '@/visloom/index.ts';
+import withRouteErrorElement from './withRouteErrorElement.tsx';
 
 interface UiPluginOptions {
     readonly RootProviders: ComponentType<RootProvidersProps>;
     readonly homePath: string;
+    readonly errorPath?: string;
 }
 
-export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plugin {
+export function createUiPlugin({RootProviders, homePath, errorPath}: UiPluginOptions): Plugin {
     return {
         id: 'ui',
         requires: [errorUiKey],
@@ -73,6 +74,8 @@ export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plug
                     mountAttempted = true;
                     const groups = [...routeGroups];
                     const routeTree = groups.flatMap(group => group.routes);
+                    const errorPage = <ErrorPage homePath={homePath}/>;
+                    if (errorPath) routeTree.push({path: errorPath, element: errorPage});
                     for (const path of groups.flatMap(group => group.requiredPaths)) {
                         const matches = matchRoutes(routeTree, path);
                         const match = matches?.[matches.length - 1];
@@ -81,7 +84,7 @@ export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plug
                             throw new Error(`Required route '${path}' is not registered.`);
                         }
                     }
-                    const routes = withRouteErrorElement(routeTree, <ErrorPage homePath={homePath}/>);
+                    const routes = withRouteErrorElement(routeTree, errorPage);
                     const mountedRouter = createBrowserRouter(routes);
                     router = mountedRouter;
                     root = createRoot(container);

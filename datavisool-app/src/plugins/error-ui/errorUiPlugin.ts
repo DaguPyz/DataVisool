@@ -1,9 +1,9 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import AppErrorBoundary from '@/components/app-error/AppErrorBoundary.tsx';
-import ErrorPage from '@/pages/result/Error.tsx';
+import {errorUiKey, type ErrorUiService} from '@/contracts/errorUi.ts';
 import type {Plugin} from '@/visloom/index.ts';
-import {errorUiKey, type ErrorUiService} from './contract.ts';
+import AppErrorBoundary from './AppErrorBoundary.tsx';
+import ErrorPage from './ErrorPage.tsx';
 
 const errorUi: ErrorUiService = Object.freeze({ErrorBoundary: AppErrorBoundary, ErrorPage});
 

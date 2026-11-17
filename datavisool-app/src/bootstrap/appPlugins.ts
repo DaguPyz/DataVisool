@@ -14,7 +14,7 @@ export function createAppPlugins(): readonly Plugin[] {
     const homePath = '/home/console';
     return [
         createErrorUiPlugin(),
-        createUiPlugin({RootProviders: AppProviders, homePath}),
+        createUiPlugin({RootProviders: AppProviders, homePath, errorPath: '/error'}),
         createDocsPlugin({workbenchPath: homePath}),
         createSessionPlugin(),
         createLoginPlugin({successPath: homePath}),

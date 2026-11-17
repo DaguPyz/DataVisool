@@ -5,26 +5,14 @@
  */
 
 import {Component, type ReactNode} from "react";
-import ErrorPage from "../../pages/result/Error.tsx";
-
-export interface AppErrorBoundaryProps {
-    children: ReactNode;
-    homePath: string;
-    homeText?: string;
-    reloadText?: string;
-    backText?: string;
-}
+import type {AppErrorBoundaryProps} from "@/contracts/errorUi.ts";
+import {buildErrorCode} from "./buildErrorCode.ts";
+import ErrorPage from "./ErrorPage.tsx";
 
 interface AppErrorBoundaryState {
     hasError: boolean;
     errorCode: string;
 }
-
-const buildErrorCode = () => {
-    const stamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
-    const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
-    return `ERR-${stamp}-${suffix}`;
-};
 
 export default class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
     public override state: AppErrorBoundaryState = {

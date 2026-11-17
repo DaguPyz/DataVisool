@@ -6,35 +6,18 @@
 
 import {Button} from "@datavisool/ui";
 import {useMemo} from "react";
-import "./Error.less";
 import {Attention, Home, Return, UpdateRotation} from "@icon-park/react";
-
-export interface ErrorPageProps {
-    title?: string;
-    description?: string;
-    homePath?: string;
-    errorCode?: string;
-    homeText?: string;
-    reloadText?: string;
-    backText?: string;
-    onHome?: () => void;
-    onReload?: () => void;
-    onBack?: () => void;
-}
-
-const buildErrorCode = () => {
-    const stamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
-    const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
-    return `ERR-${stamp}-${suffix}`;
-};
+import type {ErrorPageProps} from "@/contracts/errorUi.ts";
+import {buildErrorCode} from "./buildErrorCode.ts";
+import "./ErrorPage.less";
 
 const defaultDescription = "我们已自动拦截这次异常，并隐藏了技术堆栈。你可以尝试重新加载页面，或返回首页继续操作。";
 
-export default function Error(props: ErrorPageProps = {}) {
+export default function ErrorPage(props: ErrorPageProps) {
     const {
         title = "页面暂时无法正常显示",
         description = defaultDescription,
-        homePath = "/home/console",
+        homePath,
         errorCode,
         homeText = "返回首页",
         reloadText = "重新加载",

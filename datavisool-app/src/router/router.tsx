@@ -19,7 +19,6 @@ const Demo = lazy(() => import('../test/Demo'));
 const UserManagement = lazy(() => import('../pages/home/user-management/UserManagement.tsx'));
 const NotFound = lazy(() => import('../pages/result/NotFound.tsx'));
 const NoAuth = lazy(() => import('../pages/result/NoAuth.tsx'));
-const Error = lazy(() => import('../pages/result/Error.tsx'));
 const ResourceManagement = lazy(() => import('../pages/home/resource-management/ResourceManagement.tsx'));
 const RemoteComponentManagement = lazy(() => import('../pages/home/remote-component/RemoteComponentManagement.tsx'));
 const ApiManagement = lazy(() => import('../pages/home/api-management/ApiManagement.tsx'));
@@ -67,6 +66,5 @@ export default [
     },
     {path: '/notFound', element: <NotFound/>},
     {path: '/noAuth', element: <NoAuth/>},
-    {path: '/error', element: <Error/>},
     {path: '*', element: <NotFound/>}
 ] as RouteObject[];
