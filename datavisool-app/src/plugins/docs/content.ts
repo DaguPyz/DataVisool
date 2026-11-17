@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import loaders from 'virtual:user-guide/catalog';
-import navigation from '../../../../docs/zh-cn/navigation.json';
+import navigation from './navigation.json';
 
 export interface DocHeading {
     id: string;
@@ -62,7 +62,7 @@ export async function searchDocArticles(query: string): Promise<DocSearchResult[
 
     const {default: articles} = await import('virtual:user-guide/search-index');
     const terms = normalizedQuery.split(/\s+/).filter(Boolean);
-    const results: Array<DocSearchResult & {score: number}> = [];
+    const results: Array<{score: number; result: DocSearchResult}> = [];
 
     for (const article of articles) {
         const title = article.title.toLocaleLowerCase();
@@ -93,20 +93,22 @@ export async function searchDocArticles(query: string): Promise<DocSearchResult[
         }
 
         results.push({
-            id: article.id,
-            title: article.title,
-            path: article.path,
-            snippet: bestSection ? makeSnippet(bestSection.text, terms) : article.sections.find(section => section.text)?.text.slice(0, 96) || '',
-            headingText: bestSection?.headingText,
-            headingId: bestSection?.headingId,
             score: bestScore,
+            result: {
+                id: article.id,
+                title: article.title,
+                path: article.path,
+                snippet: bestSection ? makeSnippet(bestSection.text, terms) : article.sections.find(section => section.text)?.text.slice(0, 96) || '',
+                headingText: bestSection?.headingText,
+                headingId: bestSection?.headingId,
+            },
         });
     }
 
     return results
-        .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title, "zh-CN"))
+        .sort((left, right) => right.score - left.score || left.result.title.localeCompare(right.result.title, "zh-CN"))
         .slice(0, 12)
-        .map(({score: _score, ...result}) => result);
+        .map(({result}) => result);
 }
 
 function makeSnippet(text: string, terms: string[]): string {

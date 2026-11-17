@@ -8,6 +8,7 @@ test('未登录读者能从文档首页搜索正文、分享章节并放大截�
     await page.goto('/docs');
     await expect(page).toHaveURL(/\/docs\/zh-cn$/);
     await expect(page.getByRole('heading', {level: 1})).toContainText('DataVisool');
+    await expect(page.getByRole('link', {name: '返回工作台'})).toHaveAttribute('href', '/home/console');
     await page.getByRole('button', {name: '搜索文档'}).click();
     await page.getByRole('searchbox', {name: '搜索文档'}).fill('1920');
     const hit = page.getByRole('dialog').getByRole('link').filter({hasText: '快速开始'}).first();

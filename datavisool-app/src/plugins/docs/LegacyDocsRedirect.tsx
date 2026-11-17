@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
-import navigation from '../../../../docs/zh-cn/navigation.json';
+import navigation from './navigation.json';
 
 const home = '/docs/zh-cn';
 

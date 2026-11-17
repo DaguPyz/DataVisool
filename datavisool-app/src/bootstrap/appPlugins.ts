@@ -15,7 +15,7 @@ export function createAppPlugins(): readonly Plugin[] {
     return [
         createErrorUiPlugin(),
         createUiPlugin({RootProviders: AppProviders, homePath}),
-        createDocsPlugin(),
+        createDocsPlugin({workbenchPath: homePath}),
         createSessionPlugin(),
         createLoginPlugin({successPath: homePath}),
         createLegacyRoutesPlugin(),

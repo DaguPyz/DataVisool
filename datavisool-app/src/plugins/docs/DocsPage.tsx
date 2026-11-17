@@ -3,7 +3,7 @@ import {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {ArrowLeft, ArrowRight, Close, HamburgerButton, ListTwo, Moon, Right, Search, SunOne} from '@icon-park/react';
 import {ChapterNav} from './ChapterNav';
-import legacyHeadings from '../../../../docs/zh-cn/legacy-headings.json';
+import legacyHeadings from './legacy-headings.json';
 import logo from '@/images/datavisool-logo.webp';
 import {DOC_ARTICLES, loadDocArticle, type DocArticle} from './content';
 import MarkdownArticle from './article';
@@ -29,7 +29,7 @@ function PageToc({article, active, close}: {article: DocArticle; active: string;
     </nav>;
 }
 
-export default function DocsPage() {
+export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
     const {pathname, hash, key: locationKey} = useLocation();
     const navigate = useNavigate();
     let path = pathname.replace(/\/+$/, '');
@@ -141,7 +141,9 @@ export default function DocsPage() {
                     <button className="dv-docs-icon" aria-label={themeLabel} title={themeLabel} onClick={toggleTheme}>
                         {theme === 'dark' ? <SunOne size={18}/> : <Moon size={17}/>}
                     </button>
-                    <Link to="/home/console" className="dv-docs-back" aria-label="返回工作台"><ArrowLeft size={16}/><span>返回工作台</span></Link>
+                    {workbenchPath && <Link to={workbenchPath} className="dv-docs-back" aria-label="返回工作台">
+                        <ArrowLeft size={16}/><span>返回工作台</span>
+                    </Link>}
                 </div>
             </div>
         </header>

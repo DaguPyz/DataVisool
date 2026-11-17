@@ -7,9 +7,10 @@ import {remark} from 'remark';
 import remarkGfm from 'remark-gfm';
 
 const root = fileURLToPath(new URL('../../docs/zh-cn/', import.meta.url));
+const navigationFile = fileURLToPath(new URL('../src/plugins/docs/navigation.json', import.meta.url));
 const prefix = 'virtual:user-guide/';
 const parser = remark().use(remarkGfm);
-const isExternal = url => /^(?:[a-z][a-z\d+.\-]*:|\/\/)/i.test(url);
+const isExternal = url => /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url);
 const quote = JSON.stringify;
 
 function nodeText(node) {
@@ -71,7 +72,7 @@ function targetPath(sourcePath, url) {
 }
 
 function createGuide() {
-    const nav = JSON.parse(fs.readFileSync(path.join(root, 'navigation.json'), 'utf8'));
+    const nav = JSON.parse(fs.readFileSync(navigationFile, 'utf8'));
     const entries = nav.articles.map(readArticle);
     const byId = new Map(entries.map(a => [a.meta.id, a]));
     const bySource = new Map(entries.map(a => [a.meta.sourcePath, a]));
@@ -132,9 +133,9 @@ export default function userGuidePlugin() {
             if (key.startsWith('articles/')) return guide.modules.get(key.slice('articles/'.length));
         },
         configureServer(server) {
-            server.watcher.add(root);
+            server.watcher.add([root, navigationFile]);
             const invalidate = (_event, file) => {
-                if (!file.startsWith(root)) return;
+                if (file !== navigationFile && !file.startsWith(root)) return;
                 guide = undefined;
                 for (const mod of server.moduleGraph.idToModuleMap.values()) {
                     if (mod.id?.startsWith('\0' + prefix)) server.moduleGraph.invalidateModule(mod);

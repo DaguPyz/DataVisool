@@ -2,7 +2,7 @@
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {BookOpen, Down, Right} from '@icon-park/react';
-import navigation from '../../../../docs/zh-cn/navigation.json';
+import navigation from './navigation.json';
 
 interface Chapter {
     id: string;
