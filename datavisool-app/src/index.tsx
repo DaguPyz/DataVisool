@@ -8,7 +8,6 @@ import '@datavisool/ui/style.css';
 import './index.less';
 import './theme/default.less';
 import {getLocale} from '@/i18n/miniI18n.ts';
-import {appView} from './bootstrap/mountApp.tsx';
 import {showStartupError, startApplication} from './bootstrap/startApplication.ts';
 
-void startApplication(appView).catch(error => showStartupError(error, getLocale()));
+void startApplication().catch(error => showStartupError(error, getLocale()));

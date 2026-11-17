@@ -1,45 +1,27 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
+import {startDomTranslator} from '@/i18n/miniI18n.ts';
+import logo from '@/images/datavisool-logo.webp';
+import {uiKey} from '@/plugins/ui/contract.ts';
+import {setFavicon} from '@/util/LogoUtil.ts';
 import {createAppPlugins} from './appPlugins.ts';
 import {createAppRuntime} from './createAppRuntime.ts';
-import type {CapabilityKey, Plugin, Visloom} from '../visloom/index.ts';
-
-type UnmountApp = () => void | Promise<void>;
-
-export interface AppView {
-    readonly requires: readonly CapabilityKey[];
-    mount(
-        container: HTMLElement,
-        runtime: Pick<Visloom, 'get'>,
-        onUnmount: (cleanup: UnmountApp) => void,
-    ): void | Promise<void>;
-}
+import type {Visloom} from '../visloom/index.ts';
 
 let startup: Promise<Visloom> | undefined;
 
 /** Start the browser application once and mount the view after its plugins are ready. */
-export function startApplication(view: AppView): Promise<Visloom> {
+export function startApplication(): Promise<Visloom> {
     startup ??= Promise.resolve().then(async () => {
         const container = document.getElementById('root');
         if (!container) throw new Error("Application root '#root' was not found.");
 
-        let unmount: UnmountApp | undefined;
-        const appRoot: Plugin = {
-            id: 'app-root',
-            requires: view.requires,
-            provides: [],
-            activate(context) {
-                context.onStop({
-                    async withdraw() {
-                        await unmount?.();
-                        unmount = undefined;
-                    },
-                });
-            },
-        };
-        const runtime = await createAppRuntime([...createAppPlugins(), appRoot]);
+        const runtime = await createAppRuntime(createAppPlugins());
         try {
-            await view.mount(container, runtime, cleanup => { unmount = cleanup; });
+            const ui = runtime.get(uiKey);
+            setFavicon('/static/logo/logo.png', logo);
+            startDomTranslator();
+            ui.mount(container);
         } catch (error) {
             try {
                 await runtime.stop();
