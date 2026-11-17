@@ -6,7 +6,7 @@
 
 
 import {lazy} from "react";
-import {Navigate, RouteObject, useLocation} from "react-router-dom";
+import {Navigate, type RouteObject} from "react-router-dom";
 
 const DesignerViewPage = lazy(() => import('../pages/preview/DesignerViewPage.tsx'));
 const DesignerReleasePage = lazy(() => import('../pages/release/DesignerReleasePage.tsx'));
@@ -16,8 +16,6 @@ const Home = lazy(() => import('../pages/home/Home'));
 const DataBaseList = lazy(() => import('../pages/home/database/DataBaseList.tsx'));
 const TemplateMarket = lazy(() => import('../pages/home/template-market/TemplateMarket.tsx'));
 const MoreInfo = lazy(() => import('../pages/home/more-info/MoreInfo.tsx'));
-const DocsPage = lazy(() => import('../pages/docs/DocsPage.tsx'));
-const LegacyDocsRedirect = lazy(() => import('../pages/docs/LegacyDocsRedirect.tsx'));
 const Demo = lazy(() => import('../test/Demo'));
 const UserManagement = lazy(() => import('../pages/home/user-management/UserManagement.tsx'));
 const NotFound = lazy(() => import('../pages/result/NotFound.tsx'));
@@ -37,15 +35,7 @@ const ProjectSetting = lazy(() => import('../pages/home/project-setting/ProjectS
 const ProjectList = lazy(() => import('../pages/home/project-list/ProjectList.tsx'));
 const ConsoleDashboard = lazy(() => import('../pages/home/console/ConsoleDashboard.tsx'));
 
-function DocsRoute() {
-    const {search} = useLocation();
-    return new URLSearchParams(search).has('legacy') ? <LegacyDocsRedirect/> : <DocsPage/>;
-}
-
 export default [
-    {path: '/docs', element: <LegacyDocsRedirect/>},
-    {path: '/docs/zh-cn/*', element: <DocsRoute/>},
-    {path: '/docs/*', element: <LegacyDocsRedirect/>},
     {path: '/preview', element: <DesignerViewPage/>},
     {path: '/release/:id', element: <DesignerReleasePage/>},
     {path: '/login', element: <Login/>},
