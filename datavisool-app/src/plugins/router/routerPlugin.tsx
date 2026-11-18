@@ -1,9 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {createBrowserRouter, generatePath, Link, matchRoutes, RouterProvider} from 'react-router-dom';
-import {errorUiKey} from '@/contracts/errorUi.ts';
 import {
-    routeChangedKey, routerKey, type RouteDefinition, type RouteLinkProps, type RouteLocation, type RouterService,
+    routeChangedKey, type RouteDefinition, type RouteLinkProps, type RouteLocation, type RouterService,
 } from '@/contracts/router.ts';
 import type {Plugin} from '@/visloom/index.ts';
 import {buildRouteTree, createLocationSnapshot} from './buildRouteTree.tsx';
@@ -13,13 +12,18 @@ interface RouterPluginOptions {
     readonly errorPath?: string;
 }
 
+/**
+ * 组装各插件登记的页面，并提供站内跳转和当前位置。插件声明依赖
+ * `router` 后可以使用 `ctx.router`。类型由 `@datavisool/plugin-api/contracts/router` 提供。
+ * @pluginDocs
+ */
 export function createRouterPlugin({homePath, errorPath}: RouterPluginOptions): Plugin {
     return {
         id: 'router',
-        requires: [errorUiKey],
-        provides: [routerKey],
+        requires: ['errorUi'],
+        provides: ['router'],
         activate(context) {
-            const {ErrorPage} = context.get(errorUiKey);
+            const {ErrorPage} = context.errorUi;
             const groups = new Set<{routes: readonly RouteDefinition[]; requiredPaths: readonly string[]}>();
             let active = true;
             let acceptingNavigation = true;
@@ -123,7 +127,7 @@ export function createRouterPlugin({homePath, errorPath}: RouterPluginOptions): 
                     await router.navigate(to, options);
                 },
             };
-            context.provide(routerKey, service);
+            context.provide('router', service);
         },
     };
 }

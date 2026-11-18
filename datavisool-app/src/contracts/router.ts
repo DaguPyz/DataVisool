@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import type {AnchorHTMLAttributes, ComponentType, ReactNode} from 'react';
-import {createEventKey, createServiceKey, type PluginStopScope} from '@/visloom/index.ts';
+import {createEventKey, type PluginStopScope} from '@/visloom';
 
 /** The published route ID for plugins that contribute pages under /home. */
 export const homeRouteId = 'app:home';
@@ -54,5 +54,9 @@ export interface RouterService {
     navigate(to: string, options?: {readonly replace?: boolean}): Promise<void>;
 }
 
-export const routerKey = createServiceKey<RouterService>('app/router');
+declare module '../visloom/contracts/index.ts' {
+    interface PluginServices {
+        router: RouterService;
+    }
+}
 export const routeChangedKey = createEventKey<RouteLocation>('app/router/changed');

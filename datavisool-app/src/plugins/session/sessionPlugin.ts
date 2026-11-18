@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {sessionChangedKey, sessionKey, type IUserInfo} from '@/contracts/session.ts';
+import {sessionChangedKey, type IUserInfo} from '@/contracts/session.ts';
 import FetchUtil from '@/util/FetchUtil.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
@@ -10,7 +10,7 @@ export function createSessionPlugin(): Plugin {
     return {
         id: 'session',
         requires: [],
-        provides: [sessionKey],
+        provides: ['session'],
         activate(context) {
             const notifyChanged = () => {
                 void context.emit(sessionChangedKey, undefined).catch(error => console.error('Session update notification failed.', error));
@@ -25,7 +25,7 @@ export function createSessionPlugin(): Plugin {
                 notifyChanged();
             };
 
-            context.provide(sessionKey, {
+            context.provide('session', {
                 getUserInfo,
                 setUserInfo(userInfo) {
                     localStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));

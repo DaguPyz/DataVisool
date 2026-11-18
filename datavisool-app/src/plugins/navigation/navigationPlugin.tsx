@@ -1,9 +1,9 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy, useSyncExternalStore} from 'react';
-import {navigationKey, type NavigationMenuEntry, type NavigationProps} from '@/contracts/navigation.ts';
-import {routeChangedKey, routerKey} from '@/contracts/router.ts';
-import {sessionChangedKey, sessionKey, type RoleType} from '@/contracts/session.ts';
+import type {NavigationMenuEntry, NavigationProps} from '@/contracts/navigation.ts';
+import {routeChangedKey} from '@/contracts/router.ts';
+import {sessionChangedKey, type RoleType} from '@/contracts/session.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 function isVisible(entry: NavigationMenuEntry, roles: readonly RoleType[]) {
@@ -11,7 +11,7 @@ function isVisible(entry: NavigationMenuEntry, roles: readonly RoleType[]) {
 }
 
 /**
- * 提供工作台的业务菜单。替代实现通过 `navigationKey` 接收菜单登记，以用户角色和已匹配路由决定展示与选中状态。
+ * 提供工作台的业务菜单。替代实现通过 `navigation` 接收菜单登记，以用户角色和已匹配路由决定展示与选中状态。
  * @pluginDocs
  */
 export function createNavigationPlugin(): Plugin {
@@ -19,11 +19,11 @@ export function createNavigationPlugin(): Plugin {
 
     return {
         id: 'navigation',
-        requires: [routerKey, sessionKey],
-        provides: [navigationKey],
+        requires: ['router', 'session'],
+        provides: ['navigation'],
         activate(context) {
-            const router = context.get(routerKey);
-            const session = context.get(sessionKey);
+            const router = context.router;
+            const session = context.session;
             const entries = new Map<string, NavigationMenuEntry>();
             const listeners = new Set<() => void>();
             let revision = 0;
@@ -70,7 +70,7 @@ export function createNavigationPlugin(): Plugin {
                                        navigate={navigate} canNavigate={canNavigate} runTransition={runTransition}/>;
             }
 
-            context.provide(navigationKey, {
+            context.provide('navigation', {
                 Navigation,
                 registerMenuEntries(items) {
                     if (!accepting || router.getLocation()) {

@@ -1,11 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import {homeLayoutKey} from '@/contracts/homeLayout.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 /**
- * 提供工作台的布局组件。替代实现通过 `homeLayoutKey` 提供 `Layout`，由工作台传入导航和当前业务页。
+ * 提供工作台的布局组件。替代实现通过 `homeLayout` 提供 `Layout`，由工作台传入导航和当前业务页。
  * @pluginDocs
  */
 export function createHomeLayoutPlugin(): Plugin {
@@ -14,9 +13,9 @@ export function createHomeLayoutPlugin(): Plugin {
     return {
         id: 'home-layout',
         requires: [],
-        provides: [homeLayoutKey],
+        provides: ['homeLayout'],
         activate(context) {
-            context.provide(homeLayoutKey, {Layout});
+            context.provide('homeLayout', {Layout});
         },
     };
 }

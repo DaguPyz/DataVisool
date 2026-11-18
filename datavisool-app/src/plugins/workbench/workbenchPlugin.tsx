@@ -2,11 +2,9 @@
 
 import {lazy} from 'react';
 import {brandLogoChangedKey} from '@/contracts/brand.ts';
-import {homeLayoutKey} from '@/contracts/homeLayout.ts';
-import {navigationKey} from '@/contracts/navigation.ts';
-import {homeRouteId, routerKey} from '@/contracts/router.ts';
-import {sessionChangedKey, sessionKey} from '@/contracts/session.ts';
-import {workbenchKey, type WorkbenchAccountEntry} from '@/contracts/workbench.ts';
+import {homeRouteId} from '@/contracts/router.ts';
+import {sessionChangedKey} from '@/contracts/session.ts';
+import type {WorkbenchAccountEntry} from '@/contracts/workbench.ts';
 import type {Plugin} from '@/visloom/index.ts';
 import type {WorkbenchSnapshot} from './Workbench.tsx';
 
@@ -19,13 +17,13 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
     const Workbench = lazy(() => import('./Workbench.tsx'));
     return {
         id: 'workbench',
-        requires: [homeLayoutKey, navigationKey, routerKey, sessionKey],
-        provides: [workbenchKey],
+        requires: ['homeLayout', 'navigation', 'router', 'session'],
+        provides: ['workbench'],
         activate(context) {
-            const {Layout} = context.get(homeLayoutKey);
-            const {Navigation} = context.get(navigationKey);
-            const session = context.get(sessionKey);
-            const router = context.get(routerKey);
+            const {Layout} = context.homeLayout;
+            const {Navigation} = context.navigation;
+            const session = context.session;
+            const router = context.router;
             const accountGroups = new Set<readonly WorkbenchAccountEntry[]>();
             const listeners = new Set<() => void>();
             let active = true;
@@ -85,7 +83,7 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                 accountGroups.clear();
             });
 
-            context.provide(workbenchKey, {
+            context.provide('workbench', {
                 registerAccountEntries(entries) {
                     if (!active || router.getLocation()) throw new Error('Register account entries before mounting the UI.');
                     const group = [...entries];

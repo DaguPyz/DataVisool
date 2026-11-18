@@ -2,15 +2,16 @@
 
 import {EventBus} from './EventBus.ts';
 import {createPluginList, type PluginListEntry} from './PluginList.ts';
-import {ProviderRegistry, type PendingProvider} from './ProviderRegistry.ts';
+import {ProviderRegistry} from './ProviderRegistry.ts';
 import {
     PluginStopCancelledError,
     type Plugin,
     type PluginContext,
+    type PluginContextApi,
     type PluginStopParticipant,
     type PluginStopScope,
 } from './contracts/Plugin.ts';
-import type {ServiceKey} from './contracts/ServiceKey.ts';
+import type {ServiceType} from './contracts/index.ts';
 
 type Cleanup = () => void | Promise<void>;
 type StopHook = keyof PluginStopParticipant;
@@ -24,7 +25,7 @@ interface StopRegistration {
 
 interface ActivePlugin {
     readonly plan: PluginListEntry;
-    readonly pending: Map<symbol, PendingProvider>;
+    readonly pending: Map<string, unknown>;
     readonly cleanups: Set<Cleanup>;
     readonly stopParticipants: StopRegistration[];
     state: 'activating' | 'active' | 'stopping' | 'disposing' | 'inactive';
@@ -71,9 +72,9 @@ export class Visloom {
                 };
                 try {
                     await plan.activate(this.createContext(entry));
-                    const missing = [...plan.provides.values()].filter(key => !entry.pending.has(key.token));
+                    const missing = [...plan.provides].filter(name => !entry.pending.has(name));
                     if (missing.length) {
-                        throw new Error(`Declared services were not provided: ${missing.map(key => key.id).join(', ')}.`);
+                        throw new Error(`Declared services were not provided: ${missing.join(', ')}.`);
                     }
                     this.providers.commit(plan.id, entry.pending);
                     entry.pending.clear();
@@ -96,9 +97,9 @@ export class Visloom {
     }
 
     /** Read an activated capability from the application entry point. */
-    get<T>(key: ServiceKey<T>): T {
+    get<Name extends string>(name: Name): ServiceType<Name> {
         if (!this.running) throw new Error('Visloom is not running.');
-        return this.providers.get(key);
+        return this.providers.get(name);
     }
 
     /** Stop one plugin after checking that all its dependents have stopped. */
@@ -126,28 +127,28 @@ export class Visloom {
             }
         };
 
-        const context: PluginContext = {
-            provide: (key, service) => {
+        const context: PluginContextApi = {
+            provide: (name, service) => {
                 assertUsable();
                 if (entry.state !== 'activating') {
                     throw new Error(`Plugin '${plan.id}' can only register services during activate().`);
                 }
-                const declaredKey = plan.provides.get(key.token);
-                if (!declaredKey) {
-                    throw new Error(`Plugin '${plan.id}' cannot provide undeclared service '${key.id}'.`);
+                if (!plan.provides.has(name)) {
+                    throw new Error(`Plugin '${plan.id}' cannot provide undeclared service '${name}'.`);
                 }
-                if (entry.pending.has(key.token)) {
-                    throw new Error(`Plugin '${plan.id}' already provided service '${key.id}'.`);
+                if (entry.pending.has(name)) {
+                    throw new Error(`Plugin '${plan.id}' already provided service '${name}'.`);
                 }
-                entry.pending.set(key.token, {key: declaredKey, service});
+                entry.pending.set(name, service);
             },
-            get: <T>(key: ServiceKey<T>): T => {
+            get: name => {
                 assertUsable();
-                if (!plan.requires.has(key.token) && !plan.provides.has(key.token)) {
-                    throw new Error(`Plugin '${plan.id}' cannot read undeclared service '${key.id}'.`);
+                if (!plan.requires.has(name) && !plan.provides.has(name)) {
+                    throw new Error(`Plugin '${plan.id}' cannot read undeclared service '${name}'.`);
                 }
-                const pending = entry.pending.get(key.token);
-                return pending ? pending.service as T : this.providers.get(key);
+                return entry.pending.has(name)
+                    ? entry.pending.get(name) as ServiceType<typeof name>
+                    : this.providers.get(name);
             },
             on: (key, listener) => {
                 assertCanRegister();
@@ -180,7 +181,10 @@ export class Visloom {
                 });
             },
         };
-        return Object.freeze(context);
+        for (const name of new Set([...plan.requires, ...plan.provides])) {
+            Object.defineProperty(context, name, {get: () => context.get(name)});
+        }
+        return Object.freeze(context) as PluginContext;
     }
 
     private requestStop(pluginId?: string): Promise<void> {
@@ -204,7 +208,7 @@ export class Visloom {
         if (!entry) throw new Error(`Plugin '${pluginId}' is not active.`);
 
         const dependents = [...this.active.values()]
-            .filter(candidate => [...candidate.plan.requires.keys()].some(token => entry.plan.provides.has(token)))
+            .filter(candidate => [...candidate.plan.requires].some(name => entry.plan.provides.has(name)))
             .map(candidate => candidate.plan.id);
         if (dependents.length) {
             throw new Error(`Plugin '${pluginId}' is required by plugins: ${dependents.join(', ')}.`);

@@ -1,7 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import type {ComponentType, ReactNode} from 'react';
-import {createServiceKey} from '@/visloom/index.ts';
 
 export interface HomeLayoutProps {
     /** 工作台传入的导航视图，由布局决定放置位置。 */
@@ -15,4 +14,8 @@ export interface HomeLayoutService {
     readonly Layout: ComponentType<HomeLayoutProps>;
 }
 
-export const homeLayoutKey = createServiceKey<HomeLayoutService>('app/home-layout');
+declare module '../visloom/contracts/index.ts' {
+    interface PluginServices {
+        homeLayout: HomeLayoutService;
+    }
+}

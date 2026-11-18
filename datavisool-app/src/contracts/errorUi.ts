@@ -1,7 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import type {ComponentType, ReactNode} from 'react';
-import {createServiceKey} from '@/visloom/index.ts';
 
 export interface AppErrorBoundaryProps {
     children: ReactNode;
@@ -29,4 +28,8 @@ export interface ErrorUiService {
     readonly ErrorPage: ComponentType<ErrorPageProps>;
 }
 
-export const errorUiKey = createServiceKey<ErrorUiService>('app/error-ui');
+declare module '../visloom/contracts/index.ts' {
+    interface PluginServices {
+        errorUi: ErrorUiService;
+    }
+}

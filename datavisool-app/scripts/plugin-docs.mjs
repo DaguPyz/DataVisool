@@ -10,6 +10,8 @@ const appRoot = fileURLToPath(new URL('../', import.meta.url));
 const configFile = path.join(appRoot, 'tsconfig.json');
 const startupFile = path.join(appRoot, 'src/bootstrap/appPlugins.ts');
 const pluginContractFile = path.join(appRoot, 'src/visloom/contracts/Plugin.ts');
+const serviceContractFile = path.join(appRoot, 'src/visloom/contracts/index.ts');
+const appContracts = path.join(appRoot, 'src/contracts');
 const publicDirectories = ['src/contracts', 'src/visloom/contracts'].map(dir => path.join(appRoot, dir) + path.sep);
 export const pluginOutlineFile = fileURLToPath(new URL('../../datavisool-doc/一切皆插件改造大纲.md', import.meta.url));
 
@@ -70,7 +72,7 @@ function compileSources() {
     if (config.errors.length) {
         throw new Error(config.errors.map(error => ts.flattenDiagnosticMessageText(error.messageText, '\n')).join('\n'));
     }
-    return ts.createProgram([startupFile], config.options);
+    return ts.createProgram([startupFile, ...ts.sys.readDirectory(appContracts, ['.ts'])], config.options);
 }
 
 function collectTypes(checker, roots, watchFiles, factoryFile) {
@@ -124,27 +126,23 @@ export function createPluginDocArticles() {
     const program = compileSources();
     const checker = program.getTypeChecker();
     const startup = program.getSourceFile(startupFile);
-    const watchFiles = new Set([startupFile, configFile, pluginContractFile, pluginOutlineFile]);
+    const watchFiles = new Set([startupFile, configFile, pluginContractFile, serviceContractFile, pluginOutlineFile]);
     const createAppPlugins = startup.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'createAppPlugins');
     if (!createAppPlugins) fail(startup, '缺少 createAppPlugins。');
-    const services = new Map();
+    const serviceContract = program.getSourceFile(serviceContractFile)?.statements
+        .find(node => ts.isInterfaceDeclaration(node) && node.name.text === 'PluginServices');
+    if (!serviceContract) throw new Error('缺少 Visloom 的 PluginServices 公开接口。');
+    const services = checker.getTypeAtLocation(serviceContract);
 
     function readService(reference) {
-        const keyDeclaration = read(declaration(checker, reference), ts.isVariableDeclaration, '公共能力标识');
-        const cached = services.get(keyDeclaration);
-        if (cached) return cached;
-        const constructor = read(keyDeclaration.initializer, ts.isCallExpression, 'createServiceKey 调用');
-        const type = constructor.typeArguments?.[0];
-        if (declaration(checker, constructor.expression)?.name?.getText() !== 'createServiceKey' || !type) {
-            fail(constructor, '能力须由 createServiceKey<T>() 声明。');
+        const name = literal(reference);
+        const member = services.getProperty(name)?.valueDeclaration;
+        if (!member || !ts.isPropertySignature(member) || !member.type) {
+            fail(reference, 'PluginServices 缺少能力类型 ' + name + '。');
         }
-        const id = literal(constructor.arguments[0]);
-        const file = keyDeclaration.getSourceFile().fileName;
+        const file = member.getSourceFile().fileName;
         watchFiles.add(file);
-        // Use the declaration as the identity, just as the application shares a key instance.
-        const service = {key: {kind: 'service', id, token: Symbol(id)}, name: keyDeclaration.name.getText(), file, type};
-        services.set(keyDeclaration, service);
-        return service;
+        return {name, file, type: member.type};
     }
 
     const descriptors = array(returned(createAppPlugins)).map(expression => {
@@ -161,20 +159,20 @@ export function createPluginDocArticles() {
     });
     const pluginList = createPluginList(descriptors.map(({id, requires, provides}) => ({
         id,
-        requires: requires.map(service => service.key),
-        provides: provides.map(service => service.key),
+        requires: requires.map(service => service.name),
+        provides: provides.map(service => service.name),
         activate() {},
     })));
 
     const providers = new Map();
     for (const plugin of pluginList) {
-        for (const token of plugin.provides.keys()) providers.set(token, plugin.id);
+        for (const name of plugin.provides) providers.set(name, plugin.id);
     }
     const pilot = new Map(descriptors.filter(({factory}) => hasTag(factory, 'pluginDocs')).map(spec => [spec.id, spec]));
     const overviewRows = pluginList.map(plugin => row(
         pilot.has(plugin.id) ? link(inline(plugin.id), topic + '/' + plugin.id) : inline(plugin.id),
-        list([...plugin.requires.values()].map(key => inline(key.id))),
-        list([...plugin.provides.values()].map(key => inline(key.id))),
+        list([...plugin.requires].map(inline)),
+        list([...plugin.provides].map(inline)),
     ));
     const overview = makeArticle(topic, '插件开发', 0, [
         '下表列出当前默认装配的 ' + pluginList.length + ' 个插件，按 Visloom 校验后的启动顺序排列。带链接的条目提供替换说明。',
@@ -203,9 +201,9 @@ export function createPluginDocArticles() {
         const signature = 'function ' + factory.name.getText() + checker.signatureToString(type, factory) + ';';
         const factoryTypes = collectTypes(checker, factory.parameters.map(parameter => parameter.type), watchFiles, factory.getSourceFile().fileName);
         const relationships = [
-            ...requires.map(({key}) => row('依赖', inline(key.id), inline(providers.get(key.token)))),
-            ...provides.map(({key}) => row('提供', inline(key.id),
-                list(pluginList.filter(plugin => plugin.requires.has(key.token)).map(plugin => inline(plugin.id))),
+            ...requires.map(({name}) => row('依赖', inline(name), inline(providers.get(name)))),
+            ...provides.map(({name}) => row('提供', inline(name),
+                list(pluginList.filter(plugin => plugin.requires.has(name)).map(plugin => inline(plugin.id))),
             )),
         ];
         const views = ['## 工厂签名', code([signature, factoryTypes].filter(Boolean).join('\n\n'))];
@@ -218,9 +216,9 @@ export function createPluginDocArticles() {
         for (const [heading, capabilities] of [['提供的接口', provides], ['依赖的接口', requires]]) {
             if (!capabilities.length) continue;
             views.push('## ' + heading);
-            for (const {key, name, file, type} of capabilities) {
-                views.push('### ' + inline(key.id));
-                views.push('公共标识 ' + inline(name) + ' · ' + inline(path.relative(appRoot, file)));
+            for (const {name, file, type} of capabilities) {
+                views.push('### ' + inline(name));
+                views.push('上下文属性 ' + inline('ctx.' + name) + ' · ' + inline(path.relative(appRoot, file)));
                 views.push(code(collectTypes(checker, [type], watchFiles) || type.getText()));
             }
         }

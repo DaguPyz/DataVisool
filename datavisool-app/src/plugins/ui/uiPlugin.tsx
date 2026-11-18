@@ -3,9 +3,7 @@
 import {Suspense, type ComponentType} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
 import {GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
-import {errorUiKey} from '@/contracts/errorUi.ts';
-import {routerKey} from '@/contracts/router.ts';
-import {uiKey, type RootProvidersProps} from '@/contracts/ui.ts';
+import type {RootProvidersProps} from '@/contracts/ui.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 interface UiPluginOptions {
@@ -16,11 +14,11 @@ interface UiPluginOptions {
 export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plugin {
     return {
         id: 'ui',
-        requires: [errorUiKey, routerKey],
-        provides: [uiKey],
+        requires: ['errorUi', 'router'],
+        provides: ['ui'],
         activate(context) {
-            const {ErrorBoundary} = context.get(errorUiKey);
-            const router = context.get(routerKey);
+            const {ErrorBoundary} = context.errorUi;
+            const router = context.router;
             let active = true;
             let mountAttempted = false;
             let root: Root | undefined;
@@ -36,7 +34,7 @@ export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plug
             });
             context.onDispose(() => { active = false; });
 
-            context.provide(uiKey, {
+            context.provide('ui', {
                 mount(container) {
                     if (!active) throw new Error('UI plugin is not active.');
                     if (mountAttempted) throw new Error('The UI can only be mounted once.');

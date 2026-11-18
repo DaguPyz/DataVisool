@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import {routerKey, type RouteRenderContext} from '@/contracts/router.ts';
+import type {RouteRenderContext} from '@/contracts/router.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 interface DocsPluginOptions {
@@ -14,10 +14,10 @@ export function createDocsPlugin({workbenchPath}: DocsPluginOptions = {}): Plugi
 
     return {
         id: 'docs',
-        requires: [routerKey],
+        requires: ['router'],
         provides: [],
         activate(context) {
-            const router = context.get(routerKey);
+            const router = context.router;
             const redirect = ({location}: RouteRenderContext) => (
                 <LegacyDocsRedirect location={location} navigate={router.navigate}/>
             );

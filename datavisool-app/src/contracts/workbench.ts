@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {createServiceKey, type PluginStopParticipant} from '@/visloom/index.ts';
+import type {PluginStopParticipant} from '../visloom/contracts/index.ts';
 
 export interface WorkbenchAccountEntry {
     readonly routeId: string;
@@ -12,4 +12,8 @@ export interface WorkbenchService {
     registerAccountEntries(entries: readonly WorkbenchAccountEntry[]): PluginStopParticipant & {dispose(): void};
 }
 
-export const workbenchKey = createServiceKey<WorkbenchService>('app/workbench');
+declare module '../visloom/contracts/index.ts' {
+    interface PluginServices {
+        workbench: WorkbenchService;
+    }
+}

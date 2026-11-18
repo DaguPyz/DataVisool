@@ -54,12 +54,8 @@ test('导航在直达、历史切换和角色变化后同步菜单状态', async
 
     const setRole = (role: string) => page.evaluate(async role => {
         const appModule = '/src/bootstrap/startApplication.ts';
-        const sessionModule = '/src/contracts/session.ts';
-        const [{startApplication}, {sessionKey}] = await Promise.all([
-            import(/* @vite-ignore */ appModule),
-            import(/* @vite-ignore */ sessionModule),
-        ]);
-        const session: SessionService = (await startApplication()).get(sessionKey);
+        const {startApplication} = await import(/* @vite-ignore */ appModule);
+        const session: SessionService = (await startApplication()).get('session');
         session.setUserInfo({...session.getUserInfo()!, roles: [role as RoleType]});
     }, role);
     const users = menu.getByRole('menuitem', {name: '用户管理', exact: true});

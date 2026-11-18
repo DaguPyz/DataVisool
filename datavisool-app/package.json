@@ -7,6 +7,8 @@
   "scripts": {
     "docs:generate": "node scripts/component-docs.mjs",
     "docs:test": "node --test scripts/component-docs.test.mjs",
+    "plugin:template": "node scripts/build-plugin-template.mjs",
+    "plugin:test": "node --test scripts/plugin-template.test.mjs",
     "dev": "vite --config vite.dev.config.ts",
     "build:local": "pnpm docs:generate && tsc && vite build --config vite.build.config.ts",
     "build": "pnpm run build:local",

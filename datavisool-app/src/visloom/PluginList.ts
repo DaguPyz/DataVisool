@@ -1,12 +1,16 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import type {Plugin} from './contracts/Plugin.ts';
-import type {CapabilityKey} from './contracts/ServiceKey.ts';
+
+const reservedServiceNames = new Set([
+    'provide', 'get', 'on', 'emit', 'onDispose', 'onStop', 'then',
+    ...Object.getOwnPropertyNames(Object.prototype),
+]);
 
 export interface PluginListEntry {
     readonly id: string;
-    readonly requires: ReadonlyMap<symbol, CapabilityKey>;
-    readonly provides: ReadonlyMap<symbol, CapabilityKey>;
+    readonly requires: ReadonlySet<string>;
+    readonly provides: ReadonlySet<string>;
     readonly activate: Plugin['activate'];
     readonly deactivate?: Plugin['deactivate'];
 }
@@ -15,16 +19,16 @@ export interface PluginListEntry {
 export function createPluginList(plugins: readonly Plugin[]): readonly PluginListEntry[] {
     const entries = plugins.map(readPlugin);
     const ids = new Set<string>();
-    const providers = new Map<symbol, string>();
+    const providers = new Map<string, string>();
     for (const entry of entries) {
         if (ids.has(entry.id)) throw new Error(`Duplicate plugin ID '${entry.id}'.`);
         ids.add(entry.id);
-        for (const key of entry.provides.values()) {
-            const provider = providers.get(key.token);
+        for (const name of entry.provides) {
+            const provider = providers.get(name);
             if (provider !== undefined) {
-                throw new Error(`Service '${key.id}' has multiple providers: '${provider}' and '${entry.id}'.`);
+                throw new Error(`Service '${name}' has multiple providers: '${provider}' and '${entry.id}'.`);
             }
-            providers.set(key.token, entry.id);
+            providers.set(name, entry.id);
         }
     }
 
@@ -32,10 +36,10 @@ export function createPluginList(plugins: readonly Plugin[]): readonly PluginLis
     const dependents = new Map<string, Set<string>>();
     for (const entry of entries) {
         const requiredPlugins = new Set<string>();
-        for (const key of entry.requires.values()) {
-            const provider = providers.get(key.token);
+        for (const name of entry.requires) {
+            const provider = providers.get(name);
             if (provider === undefined) {
-                throw new Error(`Plugin '${entry.id}' requires service '${key.id}', which has no provider.`);
+                throw new Error(`Plugin '${entry.id}' requires service '${name}', which has no provider.`);
             }
             requiredPlugins.add(provider);
             const consumers = dependents.get(provider) ?? new Set<string>();
@@ -79,21 +83,24 @@ function readPlugin(plugin: Plugin): PluginListEntry {
 function readDeclaration(
     pluginId: string,
     field: 'requires' | 'provides',
-    keys: readonly CapabilityKey[],
-): ReadonlyMap<symbol, CapabilityKey> {
-    if (!Array.isArray(keys)) {
+    names: readonly string[],
+): ReadonlySet<string> {
+    if (!Array.isArray(names)) {
         throw new TypeError(`Plugin '${pluginId}' must declare '${field}' as an array.`);
     }
 
-    const declaration = new Map<symbol, CapabilityKey>();
-    for (const key of keys) {
-        if (key?.kind !== 'service' || typeof key.token !== 'symbol' || typeof key.id !== 'string' || !key.id.trim()) {
-            throw new TypeError(`Plugin '${pluginId}' declares an invalid service key in '${field}'.`);
+    const declaration = new Set<string>();
+    for (const name of names) {
+        if (typeof name !== 'string' || !name.trim()) {
+            throw new TypeError(`Plugin '${pluginId}' declares an invalid service name in '${field}'.`);
         }
-        if (declaration.has(key.token)) {
-            throw new Error(`Plugin '${pluginId}' declares service '${key.id}' more than once in '${field}'.`);
+        if (reservedServiceNames.has(name)) {
+            throw new Error(`Plugin '${pluginId}' declares reserved service name '${name}' in '${field}'.`);
         }
-        declaration.set(key.token, {kind: 'service', id: key.id, token: key.token});
+        if (declaration.has(name)) {
+            throw new Error(`Plugin '${pluginId}' declares service '${name}' more than once in '${field}'.`);
+        }
+        declaration.add(name);
     }
     return declaration;
 }

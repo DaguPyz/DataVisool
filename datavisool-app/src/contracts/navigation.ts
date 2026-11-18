@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import type {ComponentType, ReactNode} from 'react';
-import {createServiceKey, type PluginStopScope} from '@/visloom/index.ts';
+import type {PluginStopScope} from '../visloom/contracts/index.ts';
 import type {RoleType} from './session.ts';
 
 export interface NavigationMenuGroup {
@@ -40,4 +40,8 @@ export interface NavigationService {
     registerMenuEntries(entries: readonly NavigationMenuEntry[]): NavigationMenuRegistration;
 }
 
-export const navigationKey = createServiceKey<NavigationService>('app/navigation');
+declare module '../visloom/contracts/index.ts' {
+    interface PluginServices {
+        navigation: NavigationService;
+    }
+}

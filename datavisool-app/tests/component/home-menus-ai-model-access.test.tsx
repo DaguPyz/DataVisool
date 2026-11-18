@@ -2,9 +2,8 @@
 import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {Suspense} from "react";
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import {navigationKey} from "@/contracts/navigation.ts";
-import {routerKey, type RouteLocation} from "@/contracts/router.ts";
-import {RoleType, sessionKey} from "@/contracts/session.ts";
+import type {RouteLocation} from "@/contracts/router.ts";
+import {RoleType} from "@/contracts/session.ts";
 import {createLegacyWorkbenchPages} from "@/plugins/legacy-routes/workbenchPages.tsx";
 import {createNavigationPlugin} from "@/plugins/navigation/navigationPlugin.tsx";
 import {type Plugin, Visloom} from "@/visloom/index.ts";
@@ -29,9 +28,9 @@ async function renderMenus(role: RoleType) {
     const services: Plugin = {
         id: "fixture-services",
         requires: [],
-        provides: [routerKey, sessionKey],
+        provides: ['router', 'session'],
         activate(context) {
-            context.provide(routerKey, {
+            context.provide('router', {
                 Link: () => null,
                 registerRoutes: () => { throw new Error("No fixture routes"); },
                 createView: () => null,
@@ -39,7 +38,7 @@ async function renderMenus(role: RoleType) {
                 pathFor: routeId => "/fixture/" + routeId,
                 navigate: mocks.navigate,
             });
-            context.provide(sessionKey, {
+            context.provide('session', {
                 getUserInfo: () => userInfo, setUserInfo() {}, removeUser() {}, logout: async () => true,
             });
             context.onStop({withdraw() { location = undefined; }});
@@ -47,13 +46,13 @@ async function renderMenus(role: RoleType) {
     };
     const menuContributor: Plugin = {
         id: "fixture-menus",
-        requires: [navigationKey],
+        requires: ['navigation'],
         provides: [],
         activate(context) {
             const entries = createLegacyWorkbenchPages(() => {}).flatMap(({route, menu}) =>
                 menu ? [{routeId: route.id, ...menu}] : [],
             );
-            const registration = context.get(navigationKey).registerMenuEntries(entries);
+            const registration = context.navigation.registerMenuEntries(entries);
             context.onStop(registration);
             context.onDispose(registration.dispose);
         },
@@ -62,7 +61,7 @@ async function renderMenus(role: RoleType) {
     await runtime.start([services, createNavigationPlugin(), menuContributor]);
     runtimes.push(runtime);
     location = {key: "fixture", pathname: "/home/console", hash: "", search: "", matchedRouteIds: ["app:console"]};
-    const {Navigation} = runtime.get(navigationKey);
+    const {Navigation} = runtime.get('navigation');
     render(<Suspense fallback={null}><Navigation/></Suspense>);
 }
 

@@ -95,16 +95,22 @@ test('插件专题通过目录和搜索展示生成的能力、路由和规则',
 
     await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
     await expect(page).toHaveURL(topic);
-    await expect(article.getByRole('row', {name: /workbench.*app\/home-layout.*app\/workbench/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /workbench.*homeLayout.*workbench/})).toBeVisible();
+    await article.getByRole('link', {name: 'router', exact: true}).click();
+    await expect(page).toHaveURL(topic + '/router');
+    await expect(article.getByText('@datavisool/plugin-api/contracts/router', {exact: true})).toBeVisible();
+    await expect(article.locator('pre code').filter({hasText: 'interface RouterService'})).toContainText('registerRoutes');
+
+    await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
     await article.getByRole('link', {name: 'navigation', exact: true}).click();
     await expect(page).toHaveURL(topic + '/navigation');
-    await expect(article.getByRole('row', {name: /提供.*app\/navigation.*workbench/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /提供.*navigation.*workbench/})).toBeVisible();
     await expect(article.locator('pre code').filter({hasText: 'interface NavigationService'})).toContainText('registerMenuEntries');
 
     await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
     await article.getByRole('link', {name: 'home-layout', exact: true}).click();
     await expect(page).toHaveURL(topic + '/home-layout');
-    await expect(article.getByRole('row', {name: /提供.*app\/home-layout.*workbench/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /提供.*homeLayout.*workbench/})).toBeVisible();
     const layoutCode = article.locator('pre code').filter({hasText: 'interface HomeLayoutService'});
     await expect(layoutCode).toContainText('readonly Layout: ComponentType<HomeLayoutProps>');
     await expect(layoutCode).toContainText('readonly navigation: ReactNode');
@@ -115,7 +121,7 @@ test('插件专题通过目录和搜索展示生成的能力、路由和规则',
     await expect(article.getByRole('heading', {name: 'login', exact: true})).toBeVisible();
     await expect(article.getByRole('row', {name: /login:root\s+\/$/})).toBeVisible();
     await expect(article.getByRole('row', {name: /login:form\s+\/login/})).toBeVisible();
-    await expect(article.getByRole('row', {name: /依赖.*app\/session.*session/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /依赖.*session.*session/})).toBeVisible();
 
     await article.getByRole('link', {name: '查看统一的插件规范'}).click();
     await expect(page).toHaveURL(topic + '/design');

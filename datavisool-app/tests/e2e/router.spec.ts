@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {expect, test, type Page} from '@playwright/test';
-import type {RouteDefinition, RouterService} from '../../src/contracts/router.ts';
+import type {RouteDefinition} from '../../src/contracts/router.ts';
 import type {Plugin} from '../../src/visloom/index.ts';
 
 async function serveFixture(page: Page) {
@@ -84,11 +84,10 @@ test('路由组装拒绝重复 ID、冲突路径、缺失父级和循环', async
     const errors = await page.evaluate(async () => {
         const modules = [
             '/src/bootstrap/createAppRuntime.ts',
-            '/src/contracts/router.ts',
             '/src/plugins/error-ui/errorUiPlugin.ts',
             '/src/plugins/router/routerPlugin.tsx',
         ];
-        const [{createAppRuntime}, {routerKey}, {createErrorUiPlugin}, {createRouterPlugin}] =
+        const [{createAppRuntime}, {createErrorUiPlugin}, {createRouterPlugin}] =
             await Promise.all(modules.map(path => import(/* @vite-ignore */ path)));
 
         const route = (id: string, path: string, parentId?: string): RouteDefinition => ({id, path, parentId, render: () => null});
@@ -103,17 +102,17 @@ test('路由组装拒绝重复 ID、冲突路径、缺失父级和循环', async
         for (const {routes, requiredPaths} of cases) {
             const contributor: Plugin = {
                 id: 'fixture-routes',
-                requires: [routerKey],
+                requires: ['router'],
                 provides: [],
                 activate(context) {
-                    const registration = context.get<RouterService>(routerKey).registerRoutes(routes, requiredPaths);
+                    const registration = context.router.registerRoutes(routes, requiredPaths);
                     context.onStop(registration);
                     context.onDispose(registration.dispose);
                 },
             };
             const runtime = await createAppRuntime([contributor, createRouterPlugin({homePath: '/'}), createErrorUiPlugin()]);
             try {
-                runtime.get(routerKey).createView();
+                runtime.get('router').createView();
             } catch (error) {
                 failures.push(String(error));
             } finally {

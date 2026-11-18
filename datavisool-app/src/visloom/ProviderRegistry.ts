@@ -1,33 +1,28 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {CapabilityKey, ServiceKey} from './contracts/ServiceKey.ts';
-
-export interface PendingProvider {
-    readonly key: CapabilityKey;
-    readonly service: unknown;
-}
+import type {ServiceType} from './contracts/index.ts';
 
 export class ProviderRegistry {
-    private readonly providers = new Map<symbol, {pluginId: string; service: unknown}>();
+    private readonly providers = new Map<string, {pluginId: string; service: unknown}>();
 
-    commit(pluginId: string, pending: ReadonlyMap<symbol, PendingProvider>): void {
-        for (const {key} of pending.values()) {
-            if (this.providers.has(key.token)) throw new Error(`Service '${key.id}' is already registered.`);
+    commit(pluginId: string, pending: ReadonlyMap<string, unknown>): void {
+        for (const name of pending.keys()) {
+            if (this.providers.has(name)) throw new Error(`Service '${name}' is already registered.`);
         }
-        for (const {key, service} of pending.values()) {
-            this.providers.set(key.token, {pluginId, service});
+        for (const [name, service] of pending) {
+            this.providers.set(name, {pluginId, service});
         }
     }
 
-    get<T>(key: ServiceKey<T>): T {
-        const provider = this.providers.get(key.token);
-        if (!provider) throw new Error(`Service '${key.id}' is not registered.`);
-        return provider.service as T;
+    get<Name extends string>(name: Name): ServiceType<Name> {
+        const provider = this.providers.get(name);
+        if (!provider) throw new Error(`Service '${name}' is not registered.`);
+        return provider.service as ServiceType<Name>;
     }
 
     removePlugin(pluginId: string): void {
-        for (const [token, provider] of this.providers) {
-            if (provider.pluginId === pluginId) this.providers.delete(token);
+        for (const [name, provider] of this.providers) {
+            if (provider.pluginId === pluginId) this.providers.delete(name);
         }
     }
 }

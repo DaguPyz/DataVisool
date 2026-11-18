@@ -2,20 +2,17 @@
 
 import {createAppPlugins} from '@/bootstrap/appPlugins.ts';
 import {createAppRuntime} from '@/bootstrap/createAppRuntime.ts';
-import {homeLayoutKey} from '@/contracts/homeLayout.ts';
-import {navigationKey, type NavigationMenuEntry} from '@/contracts/navigation.ts';
-import {homeRouteId, routeChangedKey, routerKey} from '@/contracts/router.ts';
-import {sessionKey} from '@/contracts/session.ts';
-import {uiKey} from '@/contracts/ui.ts';
+import type {NavigationMenuEntry} from '@/contracts/navigation.ts';
+import {homeRouteId, routeChangedKey} from '@/contracts/router.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 function createReportsPlugin(): Plugin {
     return {
         id: 'fixture-reports',
-        requires: [navigationKey, routerKey],
+        requires: ['navigation', 'router'],
         provides: [],
         activate(context) {
-            const router = context.get(routerKey);
+            const router = context.router;
             const events = document.createElement('output');
             events.id = 'route-events';
             document.body.append(events);
@@ -40,7 +37,7 @@ function createReportsPlugin(): Plugin {
             ]);
             context.onStop(registration);
             context.onDispose(registration.dispose);
-            const menus = context.get(navigationKey).registerMenuEntries([
+            const menus = context.navigation.registerMenuEntries([
                 {routeId: 'reports:list', label: 'Reports', order: 200},
             ]);
             context.onStop(menus);
@@ -53,9 +50,9 @@ function createAlternateLayoutPlugin(): Plugin {
     return {
         id: 'fixture-layout',
         requires: [],
-        provides: [homeLayoutKey],
+        provides: ['homeLayout'],
         activate(context) {
-            context.provide(homeLayoutKey, {
+            context.provide('homeLayout', {
                 Layout({navigation, content}) {
                     return (
                         <div style={{display: 'grid', gridTemplateRows: '220px minmax(0, 1fr)', height: '100%'}}>
@@ -72,13 +69,13 @@ function createAlternateLayoutPlugin(): Plugin {
 function createAlternateNavigationPlugin(): Plugin {
     return {
         id: 'fixture-navigation',
-        requires: [routerKey, sessionKey],
-        provides: [navigationKey],
+        requires: ['router', 'session'],
+        provides: ['navigation'],
         activate(context) {
-            const router = context.get(routerKey);
-            const session = context.get(sessionKey);
+            const router = context.router;
+            const session = context.session;
             const entries = new Set<NavigationMenuEntry>();
-            context.provide(navigationKey, {
+            context.provide('navigation', {
                 Navigation({runTransition}) {
                     const roles = session.getUserInfo()?.roles ?? [];
                     const active = router.getLocation()?.matchedRouteIds ?? [];
@@ -110,12 +107,12 @@ function createAlternateNavigationPlugin(): Plugin {
 async function mountFixture() {
     const options = new URLSearchParams(window.location.search);
     const plugins = createAppPlugins().map(plugin => {
-        if (options.get('layout') === 'alternate' && plugin.provides.includes(homeLayoutKey)) return createAlternateLayoutPlugin();
-        if (options.get('navigation') === 'alternate' && plugin.provides.includes(navigationKey)) return createAlternateNavigationPlugin();
+        if (options.get('layout') === 'alternate' && plugin.provides.includes('homeLayout')) return createAlternateLayoutPlugin();
+        if (options.get('navigation') === 'alternate' && plugin.provides.includes('navigation')) return createAlternateNavigationPlugin();
         return plugin;
     });
     const runtime = await createAppRuntime([createReportsPlugin(), ...plugins]);
-    runtime.get(uiKey).mount(document.getElementById('root')!);
+    runtime.get('ui').mount(document.getElementById('root')!);
 }
 
 void mountFixture();

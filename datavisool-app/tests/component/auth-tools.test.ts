@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {RoleType, sessionKey} from '@/contracts/session.ts';
+import {RoleType} from '@/contracts/session.ts';
 import {createSessionPlugin} from '@/plugins/session/sessionPlugin.ts';
 import AuthTools, {bindLegacySession} from '@/util/AuthTools.ts';
 import {Visloom} from '@/visloom/index.ts';
@@ -23,10 +23,10 @@ describe('Web authentication tools', () => {
             createSessionPlugin(),
             {
                 id: 'legacy-auth-consumer',
-                requires: [sessionKey],
+                requires: ['session'],
                 provides: [],
                 activate(context) {
-                    context.onDispose(bindLegacySession(() => context.get(sessionKey)));
+                    context.onDispose(bindLegacySession(() => context.session));
                 },
             },
         ]);
@@ -39,7 +39,7 @@ describe('Web authentication tools', () => {
 
     it('stores, refreshes and clears the signed-in user and token', () => {
         const user = {id: '1', name: 'User', username: 'user', token: 'token-1', roles: [RoleType.USER]};
-        const session = runtime.get(sessionKey);
+        const session = runtime.get('session');
         values.set(USER_INFO_KEY, JSON.stringify(user));
         expect(AuthTools.getUserId()).toBe('1');
         expect(AuthTools.getToken()).toBe('token-1');

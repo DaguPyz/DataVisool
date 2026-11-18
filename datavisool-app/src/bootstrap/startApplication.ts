@@ -2,7 +2,6 @@
 
 import {startDomTranslator} from '@/i18n/miniI18n.ts';
 import logo from '@/images/datavisool-logo.webp';
-import {uiKey} from '@/contracts/ui.ts';
 import {setFavicon} from '@/util/LogoUtil.ts';
 import {createAppPlugins} from './appPlugins.ts';
 import {createAppRuntime} from './createAppRuntime.ts';
@@ -18,7 +17,7 @@ export function startApplication(): Promise<Visloom> {
 
         const runtime = await createAppRuntime(createAppPlugins());
         try {
-            const ui = runtime.get(uiKey);
+            const ui = runtime.get('ui');
             setFavicon('/static/logo/logo.png', logo);
             startDomTranslator();
             ui.mount(container);
