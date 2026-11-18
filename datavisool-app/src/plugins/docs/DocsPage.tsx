@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {ArrowLeft, ArrowRight, Close, HamburgerButton, ListTwo, Moon, Right, Search, SunOne} from '@icon-park/react';
-import type {RouteLocation, RouterService} from '@/contracts/router.ts';
+import type {RouteLocation, RouterService} from '@datavisool/sdk/plugin/contracts/router';
 import {ChapterNav} from './ChapterNav';
 import legacyHeadings from './legacy-headings.json';
 import logo from '@/images/datavisool-logo.webp';

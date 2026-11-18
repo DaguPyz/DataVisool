@@ -6,12 +6,12 @@
 
 import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode} from 'react';
 import {GlobalModal, Loading, globalMessage} from '@datavisool/ui';
-import type {BrandLogo} from '@/contracts/brand.ts';
-import type {HomeLayoutService} from '@/contracts/homeLayout.ts';
-import type {NavigationService} from '@/contracts/navigation.ts';
-import type {RouteLocation, RouterService} from '@/contracts/router.ts';
-import {RoleType, type SessionService} from '@/contracts/session.ts';
-import type {WorkbenchAccountEntry} from '@/contracts/workbench.ts';
+import type {BrandLogo} from '@datavisool/sdk/plugin/contracts/brand';
+import type {HomeLayoutService} from '@datavisool/sdk/plugin/contracts/homeLayout';
+import type {NavigationService} from '@datavisool/sdk/plugin/contracts/navigation';
+import type {RouteLocation, RouterService} from '@datavisool/sdk/plugin/contracts/router';
+import {RoleType, type SessionService} from '@datavisool/sdk/plugin/contracts/session';
+import type {WorkbenchAccountEntry} from '@datavisool/sdk/plugin/contracts/workbench';
 import {tx} from '@/i18n/miniI18n.ts';
 import {WorkbenchSidebar} from './WorkbenchSidebar.tsx';
 import {useWorkbenchRequests, type WorkbenchRequest} from './useWorkbenchRequests.ts';

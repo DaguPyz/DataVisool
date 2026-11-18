@@ -28,7 +28,7 @@ export interface ErrorUiService {
     readonly ErrorPage: ComponentType<ErrorPageProps>;
 }
 
-declare module '../visloom/contracts/index.ts' {
+declare module '../../plugin.js' {
     interface PluginServices {
         errorUi: ErrorUiService;
     }

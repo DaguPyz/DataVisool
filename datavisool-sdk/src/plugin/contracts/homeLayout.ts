@@ -14,7 +14,7 @@ export interface HomeLayoutService {
     readonly Layout: ComponentType<HomeLayoutProps>;
 }
 
-declare module '../visloom/contracts/index.ts' {
+declare module '../../plugin.js' {
     interface PluginServices {
         homeLayout: HomeLayoutService;
     }

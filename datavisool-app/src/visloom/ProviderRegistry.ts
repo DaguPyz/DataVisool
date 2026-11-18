@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {ServiceType} from './contracts/index.ts';
+import type {ServiceType} from '@datavisool/sdk/plugin';
 
 export class ProviderRegistry {
     private readonly providers = new Map<string, {pluginId: string; service: unknown}>();

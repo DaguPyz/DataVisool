@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {ErrorUiService} from '@/contracts/errorUi.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {ErrorUiService} from '@datavisool/sdk/plugin/contracts/errorUi';
+import type {Plugin} from '@datavisool/sdk/plugin';
 import AppErrorBoundary from './AppErrorBoundary.tsx';
 import ErrorPage from './ErrorPage.tsx';
 

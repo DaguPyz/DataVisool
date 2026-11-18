@@ -1,11 +1,11 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import {brandLogoChangedKey} from '@/contracts/brand.ts';
-import {homeRouteId} from '@/contracts/router.ts';
-import {sessionChangedKey} from '@/contracts/session.ts';
-import type {WorkbenchAccountEntry} from '@/contracts/workbench.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import {brandLogoChangedKey} from '@datavisool/sdk/plugin/contracts/brand';
+import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
+import {sessionChangedKey} from '@datavisool/sdk/plugin/contracts/session';
+import type {WorkbenchAccountEntry} from '@datavisool/sdk/plugin/contracts/workbench';
+import type {Plugin} from '@datavisool/sdk/plugin';
 import type {WorkbenchSnapshot} from './Workbench.tsx';
 
 interface WorkbenchPluginOptions {

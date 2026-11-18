@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {createEventKey} from '../visloom/contracts/index.ts';
+import {createEventKey} from '../../plugin.js';
 
 export interface IUserInfo {
     id: string;
@@ -27,7 +27,7 @@ export interface SessionService {
     logout(signal: AbortSignal): Promise<boolean>;
 }
 
-declare module '../visloom/contracts/index.ts' {
+declare module '../../plugin.js' {
     interface PluginServices {
         session: SessionService;
     }

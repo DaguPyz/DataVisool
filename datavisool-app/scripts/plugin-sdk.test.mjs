@@ -2,52 +2,77 @@
 
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
+import {copyFileSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {dirname, join} from 'node:path';
 import test from 'node:test';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {unzipSync} from 'fflate';
+import {PluginStopCancelledError} from '@datavisool/sdk/plugin';
 import {Visloom} from '../src/visloom/index.ts';
 
 const tsc = fileURLToPath(import.meta.resolve('typescript/bin/tsc'));
 
-function extractStarter(files, root) {
-    for (const [path, bytes] of Object.entries(files)) {
-        const target = join(root, path);
-        mkdirSync(dirname(target), {recursive: true});
-        writeFileSync(target, bytes);
-    }
-    // Resolve the template's local SDK and installed type package without registry access.
+function createPluginProject(root) {
     const modules = join(root, 'node_modules');
+    const sdk = dirname(dirname(fileURLToPath(import.meta.resolve('@datavisool/sdk/plugin'))));
     const reactTypes = dirname(fileURLToPath(import.meta.resolve('@types/react/package.json')));
+    mkdirSync(join(root, 'src'), {recursive: true});
     mkdirSync(join(modules, '@datavisool'), {recursive: true});
     mkdirSync(join(modules, '@types'), {recursive: true});
-    symlinkSync(join(root, 'sdk'), join(modules, '@datavisool/plugin-api'), 'junction');
+    symlinkSync(sdk, join(modules, '@datavisool/sdk'), 'junction');
     symlinkSync(reactTypes, join(modules, '@types/react'), 'junction');
+    writeFileSync(join(root, 'package.json'), JSON.stringify({type: 'module'}));
+    writeFileSync(join(root, 'tsconfig.json'), JSON.stringify({
+        compilerOptions: {
+            target: 'ES2022', module: 'NodeNext', strict: true, declaration: true, rootDir: 'src', outDir: 'dist',
+        },
+        include: ['src'],
+    }));
 }
 
 test('plugin B gets typed service properties from only the declaration emitted by plugin A', async t => {
     const work = mkdtempSync(join(tmpdir(), 'datavisool-plugin-test-'));
     t.after(() => rmSync(work, {recursive: true, force: true}));
-    const archive = join(work, 'template.zip');
-    const build = fileURLToPath(new URL('./build-plugin-template.mjs', import.meta.url));
-    execFileSync(process.execPath, [build, archive]);
-
-    const files = unzipSync(readFileSync(archive));
     const provider = join(work, 'plugin-a');
     const consumer = join(work, 'plugin-b');
-    extractStarter(files, provider);
-    extractStarter(files, consumer);
+    createPluginProject(provider);
+    createPluginProject(consumer);
+    writeFileSync(join(provider, 'src/report.ts'), `
+import type {} from '@datavisool/sdk/plugin';
+
+export interface ReportService {
+    formatTitle(title: string): string;
+}
+
+declare module '@datavisool/sdk/plugin' {
+    interface PluginServices {
+        reports: ReportService;
+    }
+}
+`);
+    writeFileSync(join(provider, 'src/index.ts'), `
+import type {Plugin} from '@datavisool/sdk/plugin';
+import type {} from './report.js';
+
+export default function createProvider(): Plugin {
+    return {
+        id: 'example/report-provider',
+        requires: [],
+        provides: ['reports'],
+        activate(ctx) {
+            ctx.provide('reports', {formatTitle: title => 'Report: ' + title.trim()});
+        },
+    };
+}
+`);
     execFileSync(process.execPath, [tsc, '-p', 'tsconfig.json'], {cwd: provider});
 
-    rmSync(join(consumer, 'src/contracts/report.ts'));
     const types = join(consumer, 'src/types');
     mkdirSync(types);
-    copyFileSync(join(provider, 'dist/contracts/report.d.ts'), join(types, 'report.d.ts'));
+    copyFileSync(join(provider, 'dist/report.d.ts'), join(types, 'report.d.ts'));
     writeFileSync(join(consumer, 'src/index.ts'), `
-import type {PluginContext, Plugin} from '@datavisool/plugin-api';
-import type {} from '@datavisool/plugin-api/contracts/router';
+import type {PluginContext, Plugin} from '@datavisool/sdk/plugin';
+import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
 
 export let formatted = '';
 export let activeContext: PluginContext;
@@ -57,7 +82,7 @@ export function checkTypes(ctx: PluginContext) {
     ctx.reports.formatTitle(123);
     // @ts-expect-error Undeclared methods are absent from the imported contract.
     ctx.reports.publish();
-    return ctx.router.pathFor('app:home');
+    return ctx.router.pathFor(homeRouteId);
 }
 
 export default function createConsumer(): Plugin {
@@ -72,7 +97,7 @@ export default function createConsumer(): Plugin {
     };
 }
 `);
-    execFileSync(process.execPath, [tsc, '-p', 'tsconfig.json', '--skipLibCheck', 'false'], {cwd: consumer});
+    execFileSync(process.execPath, [tsc, '-p', 'tsconfig.json'], {cwd: consumer});
 
     const {default: createProvider} = await import(pathToFileURL(join(provider, 'dist/index.js')).href);
     const client = await import(pathToFileURL(join(consumer, 'dist/index.js')).href);
@@ -90,4 +115,23 @@ export default function createConsumer(): Plugin {
     await assert.rejects(runtime.stopPlugin(plugin.id), /required by plugins/);
     await runtime.stop();
     assert.throws(() => client.activeContext.reports, /context is no longer active/);
+});
+
+test('the Web runtime recognizes stop cancellation from the SDK', async () => {
+    const runtime = new Visloom();
+    const cancelled = new PluginStopCancelledError();
+    let shouldCancel = true;
+    await runtime.start([{
+        id: 'example/cancel-stop',
+        requires: [],
+        provides: [],
+        activate(ctx) {
+            ctx.onStop({prepare() {
+                if (shouldCancel) throw cancelled;
+            }});
+        },
+    }]);
+    await assert.rejects(runtime.stop(), error => error === cancelled);
+    shouldCancel = false;
+    await runtime.stop();
 });

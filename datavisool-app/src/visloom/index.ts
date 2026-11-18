@@ -2,4 +2,3 @@
 
 export {Visloom, PluginLifecycleError} from './Visloom.ts';
 export {EventDispatchError} from './EventBus.ts';
-export * from './contracts/index.ts';

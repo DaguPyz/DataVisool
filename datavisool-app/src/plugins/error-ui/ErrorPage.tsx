@@ -7,7 +7,7 @@
 import {Button} from "@datavisool/ui";
 import {useMemo} from "react";
 import {Attention, Home, Return, UpdateRotation} from "@icon-park/react";
-import type {ErrorPageProps} from "@/contracts/errorUi.ts";
+import type {ErrorPageProps} from "@datavisool/sdk/plugin/contracts/errorUi";
 import {buildErrorCode} from "./buildErrorCode.ts";
 import "./ErrorPage.less";
 

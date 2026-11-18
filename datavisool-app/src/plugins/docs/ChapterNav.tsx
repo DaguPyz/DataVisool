@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useState} from 'react';
 import {BookOpen, Down, Right} from '@icon-park/react';
-import type {RouterService} from '@/contracts/router.ts';
+import type {RouterService} from '@datavisool/sdk/plugin/contracts/router';
 import {DOC_ARTICLES, type DocArticleMeta} from './content';
 
 interface Branch extends DocArticleMeta {

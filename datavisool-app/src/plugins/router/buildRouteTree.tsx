@@ -2,7 +2,7 @@
 
 import type {ReactNode} from 'react';
 import {Navigate, useLocation, useMatches, useOutlet, useParams, type RouteObject} from 'react-router-dom';
-import type {RouteDefinition, RouteLocation, RouteRenderContext} from '@/contracts/router.ts';
+import type {RouteDefinition, RouteLocation, RouteRenderContext} from '@datavisool/sdk/plugin/contracts/router';
 
 interface RouteEntry {
     readonly definition: RouteDefinition;

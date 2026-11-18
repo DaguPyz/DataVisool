@@ -21,7 +21,7 @@ import {
     User
 } from "@icon-park/react";
 import styles from "@/pages/home/setting/Setting.module.less";
-import type {BrandLogo} from "@/contracts/brand.ts";
+import type {BrandLogo} from "@datavisool/sdk/plugin/contracts/brand";
 import packageJson from "@/../package.json";
 import AuthTools, {IUserInfo} from "@/util/AuthTools.ts";
 import {globalMessage} from "@datavisool/ui";

@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {EventKey, EventListener} from './EventKey.ts';
-import type {PluginServices, ServiceType} from './index.ts';
+import type {EventKey, EventListener} from './EventKey.js';
+import type {PluginServices, ServiceType} from '../plugin.js';
 
 type Action = () => void | Promise<void>;
 

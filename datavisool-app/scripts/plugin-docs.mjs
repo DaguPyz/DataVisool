@@ -9,10 +9,11 @@ import {createPluginList} from '../src/visloom/PluginList.ts';
 const appRoot = fileURLToPath(new URL('../', import.meta.url));
 const configFile = path.join(appRoot, 'tsconfig.json');
 const startupFile = path.join(appRoot, 'src/bootstrap/appPlugins.ts');
-const pluginContractFile = path.join(appRoot, 'src/visloom/contracts/Plugin.ts');
-const serviceContractFile = path.join(appRoot, 'src/visloom/contracts/index.ts');
-const appContracts = path.join(appRoot, 'src/contracts');
-const publicDirectories = ['src/contracts', 'src/visloom/contracts'].map(dir => path.join(appRoot, dir) + path.sep);
+const sdkSource = path.resolve(appRoot, '../datavisool-sdk/src');
+const pluginSource = path.join(sdkSource, 'plugin');
+const pluginContractFile = path.join(pluginSource, 'Plugin.ts');
+const serviceContractFile = path.join(sdkSource, 'plugin.ts');
+const pluginContracts = path.join(pluginSource, 'contracts');
 export const pluginOutlineFile = fileURLToPath(new URL('../../datavisool-doc/一切皆插件改造大纲.md', import.meta.url));
 
 const topic = 'develop/plugins';
@@ -72,7 +73,14 @@ function compileSources() {
     if (config.errors.length) {
         throw new Error(config.errors.map(error => ts.flattenDiagnosticMessageText(error.messageText, '\n')).join('\n'));
     }
-    return ts.createProgram([startupFile, ...ts.sys.readDirectory(appContracts, ['.ts'])], config.options);
+    return ts.createProgram([startupFile, ...ts.sys.readDirectory(pluginContracts, ['.ts'])], {
+        ...config.options,
+        paths: {
+            ...config.options.paths,
+            '@datavisool/sdk/plugin': [serviceContractFile],
+            '@datavisool/sdk/plugin/contracts/*': [path.join(pluginContracts, '*.ts')],
+        },
+    });
 }
 
 function collectTypes(checker, roots, watchFiles, factoryFile) {
@@ -83,7 +91,8 @@ function collectTypes(checker, roots, watchFiles, factoryFile) {
             const type = declaration(checker, node.typeName);
             if (type && (ts.isInterfaceDeclaration(type) || ts.isTypeAliasDeclaration(type) || ts.isEnumDeclaration(type))) {
                 const file = type.getSourceFile().fileName;
-                if ((file === factoryFile || publicDirectories.some(dir => file.startsWith(dir))) && !collected.has(type)) {
+                if ((file === factoryFile || file === serviceContractFile || file.startsWith(pluginSource + path.sep))
+                    && !collected.has(type)) {
                     collected.add(type);
                     watchFiles.add(file);
                     visit(type);
@@ -218,7 +227,8 @@ export function createPluginDocArticles() {
             views.push('## ' + heading);
             for (const {name, file, type} of capabilities) {
                 views.push('### ' + inline(name));
-                views.push('上下文属性 ' + inline('ctx.' + name) + ' · ' + inline(path.relative(appRoot, file)));
+                const contract = path.basename(file, '.ts');
+                views.push('上下文属性 ' + inline('ctx.' + name) + ' · ' + inline('@datavisool/sdk/plugin/contracts/' + contract));
                 views.push(code(collectTypes(checker, [type], watchFiles) || type.getText()));
             }
         }

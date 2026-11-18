@@ -1,9 +1,9 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {brandLogoChangedKey} from '@/contracts/brand.ts';
-import {homeRouteId} from '@/contracts/router.ts';
+import {brandLogoChangedKey} from '@datavisool/sdk/plugin/contracts/brand';
+import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
 import {bindLegacySession} from '@/util/AuthTools.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {Plugin} from '@datavisool/sdk/plugin';
 import legacyRoutes from './legacyRoutes.tsx';
 import {createLegacyWorkbenchPages} from './workbenchPages.tsx';
 

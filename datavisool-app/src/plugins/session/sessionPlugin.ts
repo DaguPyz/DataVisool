@@ -1,8 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {sessionChangedKey, type IUserInfo} from '@/contracts/session.ts';
+import {sessionChangedKey, type IUserInfo} from '@datavisool/sdk/plugin/contracts/session';
 import FetchUtil from '@/util/FetchUtil.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 const USER_INFO_KEY = 'DATAVISOOL_USER_INFO';
 

@@ -6,8 +6,8 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {globalMessage, Menu, type MenuItemType} from '@datavisool/ui';
-import type {NavigationMenuEntry, NavigationProps} from '@/contracts/navigation.ts';
-import type {RouteLocation} from '@/contracts/router.ts';
+import type {NavigationMenuEntry, NavigationProps} from '@datavisool/sdk/plugin/contracts/navigation';
+import type {RouteLocation} from '@datavisool/sdk/plugin/contracts/router';
 import {tx} from '@/i18n/miniI18n.ts';
 import {useLocaleVersion} from '@/i18n/useLocaleVersion.ts';
 import './NavigationMenu.less';

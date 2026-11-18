@@ -7,7 +7,7 @@
 import './Login.less';
 import {memo, useRef, useState} from "react";
 import FetchUtil from "../../util/FetchUtil.ts";
-import type {IUserInfo, SessionService} from "@/contracts/session.ts";
+import type {IUserInfo, SessionService} from "@datavisool/sdk/plugin/contracts/session";
 import {Button, Input} from '@datavisool/ui';
 import logo from '../../images/datavisool-logo.webp';
 import ServiceTerms from "./ServiceTerms.tsx";

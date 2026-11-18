@@ -10,8 +10,8 @@ import {
     type PluginContextApi,
     type PluginStopParticipant,
     type PluginStopScope,
-} from './contracts/Plugin.ts';
-import type {ServiceType} from './contracts/index.ts';
+    type ServiceType,
+} from '@datavisool/sdk/plugin';
 
 type Cleanup = () => void | Promise<void>;
 type StopHook = keyof PluginStopParticipant;

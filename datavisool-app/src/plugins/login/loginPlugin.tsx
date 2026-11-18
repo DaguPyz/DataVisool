@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import type {Plugin} from '@/visloom/index.ts';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 interface LoginPluginOptions {
     /** 宿主指定的登录成功跳转地址。 */

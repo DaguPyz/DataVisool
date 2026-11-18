@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {EventKey, EventListener} from './contracts/EventKey.ts';
+import type {EventKey, EventListener} from '@datavisool/sdk/plugin';
 
 interface EventSubscription {
     readonly pluginId: string;

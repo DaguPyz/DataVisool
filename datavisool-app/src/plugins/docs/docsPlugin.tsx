@@ -1,8 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import type {RouteRenderContext} from '@/contracts/router.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {RouteRenderContext} from '@datavisool/sdk/plugin/contracts/router';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 interface DocsPluginOptions {
     readonly workbenchPath?: string;

@@ -5,13 +5,16 @@
 import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
 import path from 'node:path';
+import manifest from './package.json';
+
+const entryNames = Object.keys(manifest.exports).map(name => name === '.' ? 'main' : name.slice(2));
 
 export default defineConfig({
     plugins: [dts({include: ['src'], entryRoot: 'src'})],
     build: {
         copyPublicDir: false,
         lib: {
-            entry: Object.fromEntries(['main', 'core', 'utils', 'react', 'host', 'types'].map(name => [name, path.resolve(__dirname, `src/${name}.ts`)])),
+            entry: Object.fromEntries(entryNames.map(name => [name, path.resolve(__dirname, `src/${name}.ts`)])),
             formats: ['es'],
             fileName: (_format, name) => `${name}.js`,
         },

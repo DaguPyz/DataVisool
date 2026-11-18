@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {expect, test, type Page} from '@playwright/test';
-import type {RoleType, SessionService} from '../../src/contracts/session.ts';
+import type {RoleType, SessionService} from '@datavisool/sdk/plugin/contracts/session';
 
 const logoutEndpoint = '/api/authenticate/logout';
 const updateEndpoint = '/api/webUpdate/check';

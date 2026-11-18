@@ -17,6 +17,8 @@ pnpm -F datavisool-app exec playwright install chromium
 
 `verify:shared` 运行 Playwright 测试和前端生产构建。测试服务器启动前会自动构建工作区依赖。共享包的发布产物可在根目录用 `pnpm test:package-artifacts` 验证。
 
+`pnpm -F datavisool-app test:plugin-sdk` 验证独立插件通过 SDK 共享服务类型、由 Visloom 激活和停用。
+
 控制台用例位于 `tests/e2e/console-dashboard.spec.ts`，可用 `pnpm -F datavisool-app exec playwright test tests/e2e/console-dashboard.spec.ts` 单独运行。测试拦截接口并使用虚构数据，不读写真实项目；它验证前端表现及请求，不代替真实后端联调。布局用例会保存浏览器截图到 `test-results/`。
 
 `tests/e2e/console-backend.spec.ts` 使用真实后端创建并逻辑删除一个测试项目，要求独立且初始无项目的测试数据库；除登录测试的三个环境变量外，还需设置 `DATAVISOOL_E2E_ALLOW_WRITES=isolated`，未设置时跳过。请勿指向现有业务数据库。

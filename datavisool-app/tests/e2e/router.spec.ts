@@ -1,8 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {expect, test, type Page} from '@playwright/test';
-import type {RouteDefinition} from '../../src/contracts/router.ts';
-import type {Plugin} from '../../src/visloom/index.ts';
+import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 async function serveFixture(page: Page) {
     await page.addInitScript(() => {

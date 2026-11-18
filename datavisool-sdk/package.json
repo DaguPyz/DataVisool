@@ -30,6 +30,42 @@
     "./types": {
       "types": "./dist/types.d.ts",
       "import": "./dist/types.js"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./plugin/contracts/brand": {
+      "types": "./dist/plugin/contracts/brand.d.ts",
+      "import": "./dist/plugin/contracts/brand.js"
+    },
+    "./plugin/contracts/errorUi": {
+      "types": "./dist/plugin/contracts/errorUi.d.ts",
+      "import": "./dist/plugin/contracts/errorUi.js"
+    },
+    "./plugin/contracts/homeLayout": {
+      "types": "./dist/plugin/contracts/homeLayout.d.ts",
+      "import": "./dist/plugin/contracts/homeLayout.js"
+    },
+    "./plugin/contracts/navigation": {
+      "types": "./dist/plugin/contracts/navigation.d.ts",
+      "import": "./dist/plugin/contracts/navigation.js"
+    },
+    "./plugin/contracts/router": {
+      "types": "./dist/plugin/contracts/router.d.ts",
+      "import": "./dist/plugin/contracts/router.js"
+    },
+    "./plugin/contracts/session": {
+      "types": "./dist/plugin/contracts/session.d.ts",
+      "import": "./dist/plugin/contracts/session.js"
+    },
+    "./plugin/contracts/ui": {
+      "types": "./dist/plugin/contracts/ui.d.ts",
+      "import": "./dist/plugin/contracts/ui.js"
+    },
+    "./plugin/contracts/workbench": {
+      "types": "./dist/plugin/contracts/workbench.d.ts",
+      "import": "./dist/plugin/contracts/workbench.js"
     }
   },
   "publishConfig": {

@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {HomeLayoutProps} from '@/contracts/homeLayout.ts';
+import type {HomeLayoutProps} from '@datavisool/sdk/plugin/contracts/homeLayout';
 import './HomeLayout.less';
 
 export default function HomeLayout({navigation, content}: HomeLayoutProps) {

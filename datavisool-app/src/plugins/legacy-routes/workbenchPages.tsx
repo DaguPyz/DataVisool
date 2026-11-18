@@ -5,10 +5,10 @@ import {
     FolderClose, FontSize, Help, Send, Setting as SettingsIcon, User, VideoOne,
 } from '@icon-park/react';
 import {lazy} from 'react';
-import type {BrandLogo} from '@/contracts/brand.ts';
-import type {NavigationMenuEntry, NavigationMenuGroup} from '@/contracts/navigation.ts';
-import type {RouteDefinition} from '@/contracts/router.ts';
-import {RoleType} from '@/contracts/session.ts';
+import type {BrandLogo} from '@datavisool/sdk/plugin/contracts/brand';
+import type {NavigationMenuEntry, NavigationMenuGroup} from '@datavisool/sdk/plugin/contracts/navigation';
+import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
+import {RoleType} from '@datavisool/sdk/plugin/contracts/session';
 
 const ConsoleDashboard = lazy(() => import('@/pages/home/console/ConsoleDashboard.tsx'));
 const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));

@@ -2,11 +2,12 @@
 import {cleanup, fireEvent, render, screen} from "@testing-library/react";
 import {Suspense} from "react";
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import type {RouteLocation} from "@/contracts/router.ts";
-import {RoleType} from "@/contracts/session.ts";
+import type {RouteLocation} from "@datavisool/sdk/plugin/contracts/router";
+import {RoleType} from "@datavisool/sdk/plugin/contracts/session";
 import {createLegacyWorkbenchPages} from "@/plugins/legacy-routes/workbenchPages.tsx";
 import {createNavigationPlugin} from "@/plugins/navigation/navigationPlugin.tsx";
-import {type Plugin, Visloom} from "@/visloom/index.ts";
+import type {Plugin} from "@datavisool/sdk/plugin";
+import {Visloom} from "@/visloom/index.ts";
 
 const mocks = vi.hoisted(() => ({navigate: vi.fn(async () => {})}));
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));

@@ -5,7 +5,7 @@
  */
 
 import {Component, type ReactNode} from "react";
-import type {AppErrorBoundaryProps} from "@/contracts/errorUi.ts";
+import type {AppErrorBoundaryProps} from "@datavisool/sdk/plugin/contracts/errorUi";
 import {buildErrorCode} from "./buildErrorCode.ts";
 import ErrorPage from "./ErrorPage.tsx";
 

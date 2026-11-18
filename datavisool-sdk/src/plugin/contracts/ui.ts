@@ -11,7 +11,7 @@ export interface UiService {
     mount(container: HTMLElement): void;
 }
 
-declare module '../visloom/contracts/index.ts' {
+declare module '../../plugin.js' {
     interface PluginServices {
         ui: UiService;
     }

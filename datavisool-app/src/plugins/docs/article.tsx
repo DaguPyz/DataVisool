@@ -3,7 +3,7 @@
 import {Children, isValidElement, memo, ReactNode, useMemo, useState} from "react";
 import ReactMarkdown, {Components, ExtraProps} from "react-markdown";
 import remarkGfm from "remark-gfm";
-import type {RouterService} from '@/contracts/router.ts';
+import type {RouterService} from '@datavisool/sdk/plugin/contracts/router';
 import type {DocArticle} from "./content";
 
 export interface MarkdownArticleProps {

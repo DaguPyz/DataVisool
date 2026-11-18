@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {RoleType} from '@/contracts/session.ts';
+import {RoleType} from '@datavisool/sdk/plugin/contracts/session';
 import {createSessionPlugin} from '@/plugins/session/sessionPlugin.ts';
 import AuthTools, {bindLegacySession} from '@/util/AuthTools.ts';
 import {Visloom} from '@/visloom/index.ts';

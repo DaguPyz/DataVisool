@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import type {Plugin} from './contracts/Plugin.ts';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 const reservedServiceNames = new Set([
     'provide', 'get', 'on', 'emit', 'onDispose', 'onStop', 'then',

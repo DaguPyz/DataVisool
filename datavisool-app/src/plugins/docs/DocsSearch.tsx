@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useEffect, useState} from 'react';
 import {Close, FileText, Search} from '@icon-park/react';
-import type {RouterService} from '@/contracts/router.ts';
+import type {RouterService} from '@datavisool/sdk/plugin/contracts/router';
 import {DOC_ARTICLES, searchDocArticles} from './content';
 import {DocsDialog} from './DocsDialog';
 

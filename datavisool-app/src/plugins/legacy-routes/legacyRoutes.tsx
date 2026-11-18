@@ -6,7 +6,7 @@
 
 
 import {lazy} from "react";
-import type {RouteDefinition} from '@/contracts/router.ts';
+import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
 
 const DesignerViewPage = lazy(() => import('@/pages/preview/DesignerViewPage.tsx'));
 const DesignerReleasePage = lazy(() => import('@/pages/release/DesignerReleasePage.tsx'));

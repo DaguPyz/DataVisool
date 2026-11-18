@@ -10,7 +10,7 @@ import {createRouterPlugin} from '@/plugins/router/routerPlugin.tsx';
 import {createSessionPlugin} from '@/plugins/session/sessionPlugin.ts';
 import {createUiPlugin} from '@/plugins/ui/uiPlugin.tsx';
 import {createWorkbenchPlugin} from '@/plugins/workbench/workbenchPlugin.tsx';
-import type {Plugin} from '../visloom/index.ts';
+import type {Plugin} from '@datavisool/sdk/plugin';
 import {AppProviders} from './AppProviders.tsx';
 
 /** Select the built-in plugins for this application. */

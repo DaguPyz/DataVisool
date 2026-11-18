@@ -3,8 +3,8 @@
 import {createBrowserRouter, generatePath, Link, matchRoutes, RouterProvider} from 'react-router-dom';
 import {
     routeChangedKey, type RouteDefinition, type RouteLinkProps, type RouteLocation, type RouterService,
-} from '@/contracts/router.ts';
-import type {Plugin} from '@/visloom/index.ts';
+} from '@datavisool/sdk/plugin/contracts/router';
+import type {Plugin} from '@datavisool/sdk/plugin';
 import {buildRouteTree, createLocationSnapshot} from './buildRouteTree.tsx';
 
 interface RouterPluginOptions {
@@ -14,7 +14,7 @@ interface RouterPluginOptions {
 
 /**
  * 组装各插件登记的页面，并提供站内跳转和当前位置。插件声明依赖
- * `router` 后可以使用 `ctx.router`。类型由 `@datavisool/plugin-api/contracts/router` 提供。
+ * `router` 后可以使用 `ctx.router`。
  * @pluginDocs
  */
 export function createRouterPlugin({homePath, errorPath}: RouterPluginOptions): Plugin {

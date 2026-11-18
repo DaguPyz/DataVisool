@@ -98,7 +98,7 @@ test('插件专题通过目录和搜索展示生成的能力、路由和规则',
     await expect(article.getByRole('row', {name: /workbench.*homeLayout.*workbench/})).toBeVisible();
     await article.getByRole('link', {name: 'router', exact: true}).click();
     await expect(page).toHaveURL(topic + '/router');
-    await expect(article.getByText('@datavisool/plugin-api/contracts/router', {exact: true})).toBeVisible();
+    await expect(article.getByText('@datavisool/sdk/plugin/contracts/router', {exact: true})).toBeVisible();
     await expect(article.locator('pre code').filter({hasText: 'interface RouterService'})).toContainText('registerRoutes');
 
     await chapters.getByRole('link', {name: '插件开发', exact: true}).click();

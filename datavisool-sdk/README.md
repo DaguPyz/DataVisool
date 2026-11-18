@@ -19,3 +19,14 @@ import type {ComponentBaseProps, UpdateOptions} from '@datavisool/sdk/types';
 React 组件渲染失败时，SDK 默认显示简短提示。宿主可通过 `setRenderErrorFallback` 提供自己的错误提示组件，传入 `undefined` 可恢复默认提示。
 
 自定义组件的开发和兼容说明见 [组件开发总览](../docs/zh-cn/develop/index.md)。
+
+## 应用插件
+
+从 `@datavisool/sdk/plugin` 导入插件生命周期、上下文和事件接口。使用内置服务时，导入相应契约，并在插件的 `requires` 中声明服务名。例如路由服务使用以下导入：
+
+```ts
+import type {Plugin} from '@datavisool/sdk/plugin';
+import type {} from '@datavisool/sdk/plugin/contracts/router';
+```
+
+插件提供自定义服务时，可在公共声明中扩展 `@datavisool/sdk/plugin` 的 `PluginServices` 接口。能力注册与依赖关系由 [Visloom 插件内核](../datavisool-doc/一切皆插件改造大纲.md) 管理。

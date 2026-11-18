@@ -1,10 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy, useSyncExternalStore} from 'react';
-import type {NavigationMenuEntry, NavigationProps} from '@/contracts/navigation.ts';
-import {routeChangedKey} from '@/contracts/router.ts';
-import {sessionChangedKey, type RoleType} from '@/contracts/session.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {NavigationMenuEntry, NavigationProps} from '@datavisool/sdk/plugin/contracts/navigation';
+import {routeChangedKey} from '@datavisool/sdk/plugin/contracts/router';
+import {sessionChangedKey, type RoleType} from '@datavisool/sdk/plugin/contracts/session';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 function isVisible(entry: NavigationMenuEntry, roles: readonly RoleType[]) {
     return !entry.roles || entry.roles.some(role => roles.includes(role));

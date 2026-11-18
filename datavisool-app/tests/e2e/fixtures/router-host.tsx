@@ -2,9 +2,9 @@
 
 import {createAppPlugins} from '@/bootstrap/appPlugins.ts';
 import {createAppRuntime} from '@/bootstrap/createAppRuntime.ts';
-import type {NavigationMenuEntry} from '@/contracts/navigation.ts';
-import {homeRouteId, routeChangedKey} from '@/contracts/router.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {NavigationMenuEntry} from '@datavisool/sdk/plugin/contracts/navigation';
+import {homeRouteId, routeChangedKey} from '@datavisool/sdk/plugin/contracts/router';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 function createReportsPlugin(): Plugin {
     return {

@@ -3,8 +3,8 @@
 import {Suspense, type ComponentType} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
 import {GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
-import type {RootProvidersProps} from '@/contracts/ui.ts';
-import type {Plugin} from '@/visloom/index.ts';
+import type {RootProvidersProps} from '@datavisool/sdk/plugin/contracts/ui';
+import type {Plugin} from '@datavisool/sdk/plugin';
 
 interface UiPluginOptions {
     readonly RootProviders: ComponentType<RootProvidersProps>;

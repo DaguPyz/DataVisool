@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useEffect} from 'react';
-import type {RouteLocation, RouterService} from '@/contracts/router.ts';
+import type {RouteLocation, RouterService} from '@datavisool/sdk/plugin/contracts/router';
 import navigation from './navigation.json';
 
 const home = '/docs/zh-cn';

@@ -4,9 +4,9 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import type {IUserInfo, SessionService} from '@/contracts/session.ts';
+import type {IUserInfo, SessionService} from '@datavisool/sdk/plugin/contracts/session';
 
-export {RoleType, type IUserInfo} from '@/contracts/session.ts';
+export {RoleType, type IUserInfo} from '@datavisool/sdk/plugin/contracts/session';
 
 let getSession: (() => SessionService) | undefined;
 
