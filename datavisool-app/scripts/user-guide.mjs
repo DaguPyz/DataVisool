@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import GithubSlugger from 'github-slugger';
 import {remark} from 'remark';
 import remarkGfm from 'remark-gfm';
+import {createPluginDocArticles, pluginOutlineFile} from './plugin-docs.mjs';
 
 const root = fileURLToPath(new URL('../../docs/zh-cn/', import.meta.url));
 const navigationFile = fileURLToPath(new URL('../src/plugins/docs/navigation.json', import.meta.url));
@@ -20,9 +21,7 @@ function nodeText(node) {
     return (node.children || []).map(nodeText).join(inline ? '' : ' ');
 }
 
-function readArticle(meta) {
-    const source = fs.readFileSync(path.join(root, meta.sourcePath), 'utf8');
-    const markdown = source;
+function readArticle(meta, markdown = fs.readFileSync(path.join(root, meta.sourcePath), 'utf8')) {
     const tree = parser.parse(markdown);
     const slugger = new GithubSlugger();
     const headings = [];
@@ -73,7 +72,11 @@ function targetPath(sourcePath, url) {
 
 function createGuide() {
     const nav = JSON.parse(fs.readFileSync(navigationFile, 'utf8'));
-    const entries = nav.articles.map(readArticle);
+    const entries = nav.articles.map(meta => readArticle(meta));
+    const {articles, watchFiles} = createPluginDocArticles();
+    const startChapter = entries.findIndex(article => article.meta.id === 'start');
+    entries.splice(startChapter < 0 ? entries.length : startChapter, 0,
+        ...articles.map(({meta, markdown}) => readArticle(meta, markdown)));
     const byId = new Map(entries.map(a => [a.meta.id, a]));
     const bySource = new Map(entries.map(a => [a.meta.sourcePath, a]));
     const byRoute = new Map(entries.map(a => [a.meta.path, a]));
@@ -109,12 +112,15 @@ function createGuide() {
     const index = entries.map(({meta, title, sections}) => ({
         id: meta.id, title, navTitle: meta.title, path: meta.path, sections,
     }));
-    return {modules, index};
+    return {modules, index, navigation: entries.map(article => article.meta), watchFiles};
 }
 
 /** Build the article graph from published Markdown. Vite fingerprints the images each page actually uses. */
 export default function userGuidePlugin() {
     let guide;
+    let pluginInputs = new Set([pluginOutlineFile]);
+    const isGuideInput = file => file === navigationFile || file.startsWith(root) || pluginInputs.has(file);
+
     return {
         name: 'datavisool-user-guide',
         resolveId(id) {
@@ -122,20 +128,28 @@ export default function userGuidePlugin() {
         },
         load(id) {
             if (!id.startsWith('\0' + prefix)) return;
-            guide ??= createGuide();
+            if (!guide) {
+                guide = createGuide();
+                pluginInputs = guide.watchFiles;
+            }
+            for (const file of pluginInputs) this.addWatchFile(file);
             const key = id.slice(prefix.length + 1);
             if (key === 'catalog') {
                 const loaders = [...guide.modules.keys()].map(id =>
                     quote(id) + ': () => import(' + quote(prefix + 'articles/' + id) + ').then(m => m.default)');
                 return 'export default {' + loaders.join(',\n') + '}';
             }
+            if (key === 'navigation') return 'export default ' + quote(guide.navigation);
             if (key === 'search-index') return 'export default ' + quote(guide.index);
             if (key.startsWith('articles/')) return guide.modules.get(key.slice('articles/'.length));
         },
+        watchChange(file) {
+            if (isGuideInput(file)) guide = undefined;
+        },
         configureServer(server) {
-            server.watcher.add([root, navigationFile]);
+            server.watcher.add([root, navigationFile, pluginOutlineFile]);
             const invalidate = (_event, file) => {
-                if (file !== navigationFile && !file.startsWith(root)) return;
+                if (!isGuideInput(file)) return;
                 guide = undefined;
                 for (const mod of server.moduleGraph.idToModuleMap.values()) {
                     if (mod.id?.startsWith('\0' + prefix)) server.moduleGraph.invalidateModule(mod);

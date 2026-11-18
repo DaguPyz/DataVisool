@@ -2,20 +2,13 @@
 import {useState} from 'react';
 import {BookOpen, Down, Right} from '@icon-park/react';
 import type {RouterService} from '@/contracts/router.ts';
-import navigation from './navigation.json';
+import {DOC_ARTICLES, type DocArticleMeta} from './content';
 
-interface Chapter {
-    id: string;
-    title: string;
-    path: string;
-    depth: number;
-}
-
-interface Branch extends Chapter {
+interface Branch extends DocArticleMeta {
     children: Branch[];
 }
 
-function chapterTree(chapters: Chapter[]): Branch[] {
+function chapterTree(chapters: readonly DocArticleMeta[]): Branch[] {
     const roots: Branch[] = [];
     const parents: Branch[] = [];
     for (const chapter of chapters) {
@@ -28,7 +21,7 @@ function chapterTree(chapters: Chapter[]): Branch[] {
     return roots;
 }
 
-const guide = chapterTree(navigation.articles);
+const guide = chapterTree(DOC_ARTICLES);
 
 function containsPath(branch: Branch, path: string): boolean {
     return branch.path === path || branch.children.some(child => containsPath(child, path));

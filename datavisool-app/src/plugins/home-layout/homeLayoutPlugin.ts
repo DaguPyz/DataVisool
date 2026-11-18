@@ -4,6 +4,10 @@ import {lazy} from 'react';
 import {homeLayoutKey} from '@/contracts/homeLayout.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
+/**
+ * 提供工作台的布局组件。替代实现通过 `homeLayoutKey` 提供 `Layout`，由工作台传入导航和当前业务页。
+ * @pluginDocs
+ */
 export function createHomeLayoutPlugin(): Plugin {
     const Layout = lazy(() => import('./HomeLayout.tsx'));
 

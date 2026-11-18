@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import loaders from 'virtual:user-guide/catalog';
-import navigation from './navigation.json';
+import navigation from 'virtual:user-guide/navigation';
 
 export interface DocHeading {
     id: string;
@@ -13,6 +13,7 @@ export interface DocArticleMeta {
     id: string;
     title: string;
     path: string;
+    depth: number;
     sourcePath?: string;
 }
 
@@ -34,7 +35,7 @@ export interface DocSearchResult {
     headingId?: string;
 }
 
-export const DOC_ARTICLES: ReadonlyArray<DocArticleMeta> = navigation.articles;
+export const DOC_ARTICLES = navigation;
 
 interface SearchSection {
     headingText?: string;

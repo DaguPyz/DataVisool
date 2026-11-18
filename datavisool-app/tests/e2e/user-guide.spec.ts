@@ -84,3 +84,37 @@ test('从折叠目录打开工作台设置，能显示中文文件名截图', as
     await expect.poll(() => screenshot.evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     await expect(chapters.getByRole('link', {name: '设置', exact: true})).toHaveAttribute('aria-current', 'page');
 });
+
+test('插件专题通过目录和搜索展示生成的能力、路由和规则', async ({page}) => {
+    const topic = '/docs/zh-cn/develop/plugins';
+    await page.setViewportSize({width: 1440, height: 900});
+    await page.route('**/static/logo/**', route => route.fulfill({status: 404}));
+    await page.goto('/docs/zh-cn');
+    const chapters = page.getByRole('navigation', {name: '文档目录'});
+    const article = page.getByRole('main');
+
+    await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
+    await expect(page).toHaveURL(topic);
+    await expect(article.getByRole('row', {name: /workbench.*app\/home-layout.*app\/workbench/})).toBeVisible();
+    await article.getByRole('link', {name: 'home-layout', exact: true}).click();
+    await expect(page).toHaveURL(topic + '/home-layout');
+    await expect(article.getByRole('row', {name: /提供.*app\/home-layout.*workbench/})).toBeVisible();
+    const layoutCode = article.locator('pre code').filter({hasText: 'interface HomeLayoutService'});
+    await expect(layoutCode).toContainText('readonly Layout: ComponentType<HomeLayoutProps>');
+    await expect(layoutCode).toContainText('readonly navigation: ReactNode');
+
+    await page.getByRole('button', {name: '搜索文档'}).click();
+    await page.getByRole('searchbox', {name: '搜索文档'}).fill('login:form');
+    await page.getByRole('dialog').getByRole('link', {name: /公开路由.*login/}).click();
+    await expect(article.getByRole('heading', {name: 'login', exact: true})).toBeVisible();
+    await expect(article.getByRole('row', {name: /login:root\s+\/$/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /login:form\s+\/login/})).toBeVisible();
+    await expect(article.getByRole('row', {name: /依赖.*app\/session.*session/})).toBeVisible();
+
+    await article.getByRole('link', {name: '查看统一的插件规范'}).click();
+    await expect(page).toHaveURL(topic + '/design');
+    await expect(article.getByRole('heading', {name: '禁止事项', exact: true})).toBeVisible();
+    await expect(article.getByRole('heading', {name: '停用清理', exact: true})).toBeVisible();
+    await page.setViewportSize({width: 390, height: 844});
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

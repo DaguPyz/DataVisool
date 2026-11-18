@@ -6,9 +6,21 @@ import {sessionKey} from '@/contracts/session.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 interface LoginPluginOptions {
+    /** 宿主指定的登录成功跳转地址。 */
     readonly successPath: string;
 }
 
+/** @publicRoutes */
+const loginRoutes = [
+    {id: 'login:root', path: '/'},
+    {id: 'login:form', path: '/login'},
+] as const;
+
+/**
+ * 提供工作台登录入口。登录成功后通过会话能力保存会话，再跳转到宿主指定的页面。
+ * 应用关闭时取消进行中的登录请求并撤销路由登记。
+ * @pluginDocs
+ */
 export function createLoginPlugin({successPath}: LoginPluginOptions): Plugin {
     const Login = lazy(() => import('./Login.tsx'));
 
@@ -24,10 +36,10 @@ export function createLoginPlugin({successPath}: LoginPluginOptions): Plugin {
             const session = context.get(sessionKey);
             const renderLogin = () => <Login session={session} getRequestSignal={getRequestSignal}
                                              onLoginSuccess={() => router.navigate(successPath)}/>;
-            const registration = router.registerRoutes([
-                {id: 'login:root', path: '/', render: renderLogin},
-                {id: 'login:form', path: '/login', render: renderLogin},
-            ], [successPath]);
+            const registration = router.registerRoutes(
+                loginRoutes.map(route => ({...route, render: renderLogin})),
+                [successPath],
+            );
             context.onStop({
                 pause() {
                     acceptingLogins = false;
