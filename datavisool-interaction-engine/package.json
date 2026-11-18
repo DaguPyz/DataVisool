@@ -1,0 +1,48 @@
+{
+  "license": "SEE LICENSE IN LICENSE",
+  "name": "@datavisool/interaction-engine",
+  "private": false,
+  "version": "0.1.0",
+  "description": "DataVisool high-performance interaction engine scaffold.",
+  "author": "DAGU",
+  "type": "module",
+  "main": "dist/datavisool-interaction-engine.js",
+  "module": "dist/datavisool-interaction-engine.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/datavisool-interaction-engine.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --p ./tsconfig-build.json && vite build",
+    "prepublishOnly": "pnpm run build",
+    "release": "node ./scripts/publish.mjs",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:perf": "pnpm run build && node ./scripts/perf-baseline.mjs",
+    "test:acceptance": "pnpm run build && node ./scripts/perf-acceptance.mjs",
+    "test:perf:sustained": "pnpm run build && node --expose-gc ./scripts/perf-sustained.mjs",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@vitest/coverage-v8": "^4.0.18",
+    "jsdom": "^28.1.0",
+    "typescript": "^5.0.2",
+    "vite": "^5.4.20",
+    "vite-plugin-dts": "4.0.0-beta.1",
+    "vitest": "^4.0.18"
+  }
+}

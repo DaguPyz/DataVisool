@@ -1,0 +1,105 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-avatar {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      background: var(--datavisool-ui-bg-active, #1d3155);
+      box-shadow: none;
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1;
+      text-align: center;
+      vertical-align: middle;
+      user-select: none;
+    }
+  
+    .datavisool-avatar-size-sm {
+      box-sizing: border-box;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      font-size: 11px;
+    }
+  
+    .datavisool-avatar-size-md {
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      font-size: 14px;
+    }
+  
+    .datavisool-avatar-size-lg {
+      box-sizing: border-box;
+      width: 64px;
+      height: 64px;
+      min-width: 64px;
+      font-size: 22px;
+    }
+  
+    .datavisool-avatar-size-xl {
+      box-sizing: border-box;
+      width: 100px;
+      height: 100px;
+      min-width: 100px;
+      font-size: 38px;
+    }
+  
+    .datavisool-avatar-shape-circle {
+      border-radius: 999px;
+    }
+  
+    .datavisool-avatar-shape-square {
+      border-radius: 10px;
+    }
+  
+    .datavisool-avatar-image,
+    .datavisool-avatar-custom {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  
+    .datavisool-avatar-image {
+      object-fit: cover;
+    }
+  
+    .datavisool-avatar-custom {
+      line-height: 0;
+    }
+  
+    .datavisool-avatar-custom > img,
+    .datavisool-avatar-custom > svg {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  
+    .datavisool-avatar-fallback {
+      box-sizing: border-box;
+      display: inline-flex;
+      max-width: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+}

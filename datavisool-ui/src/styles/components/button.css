@@ -1,0 +1,266 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-button {
+      box-sizing: border-box;
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      outline: none;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0;
+      line-height: 1;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+      transition: background 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, opacity 160ms ease, transform 160ms ease, filter 160ms ease;
+    }
+  
+    .datavisool-button > .i-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 0;
+    }
+
+    .datavisool-button svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+  
+    .datavisool-button:hover {
+      text-decoration: none;
+    }
+  
+    .datavisool-button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  
+    .datavisool-button:focus-visible {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-button:disabled,
+    .datavisool-button[aria-disabled="true"] {
+      pointer-events: none;
+      cursor: not-allowed;
+      opacity: 0.52;
+      transform: none;
+    }
+  
+    .datavisool-button-size-default {
+      min-width: 84px;
+      height: 40px;
+      padding: 0 16px;
+    }
+  
+    .datavisool-button-size-sm {
+      min-width: 68px;
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+  
+    .datavisool-button-size-lg {
+      min-width: 104px;
+      height: 48px;
+      padding: 0 24px;
+      font-size: 16px;
+    }
+  
+    .datavisool-button-size-icon {
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+  
+    .datavisool-button-block {
+      width: 100%;
+    }
+  
+    .datavisool-button-variant-default,
+    .datavisool-button-primary {
+      border-color: rgba(125, 154, 255, 0.46);
+      background: var(--datavisool-ui-primary-gradient, linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%));
+      box-shadow: 0 12px 28px rgba(54, 102, 255, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+    }
+  
+    .datavisool-button-variant-default:hover,
+    .datavisool-button-primary:hover {
+      border-color: rgba(158, 181, 255, 0.68);
+      filter: brightness(1.08);
+    }
+  
+    .datavisool-button-variant-default:focus-visible,
+    .datavisool-button-primary:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59, 130, 255, 0.22), 0 18px 36px rgba(54, 102, 255, 0.3);
+    }
+  
+    .datavisool-button-variant-outline,
+    .datavisool-button-surface {
+      border-color: var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      background: rgba(13, 22, 46, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 24px rgba(0, 0, 0, 0.16);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-button-variant-outline:hover,
+    .datavisool-button-surface:hover {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      background: rgba(23, 34, 60, 0.84);
+    }
+  
+    .datavisool-button-variant-secondary {
+      border-color: rgba(86, 110, 161, 0.32);
+      background: var(--datavisool-ui-secondary, #162238);
+      color: var(--datavisool-ui-secondary-foreground, #f3f7ff);
+    }
+  
+    .datavisool-button-variant-secondary:hover {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      background: rgba(30, 45, 78, 0.94);
+    }
+  
+    .datavisool-button-variant-ghost {
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-button-variant-ghost:hover {
+      border-color: rgba(86, 110, 161, 0.24);
+      background: rgba(80, 102, 160, 0.2);
+    }
+  
+    .datavisool-button-variant-link {
+      width: auto;
+      min-width: 0;
+      height: auto;
+      padding: 0;
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+      color: var(--datavisool-ui-primary, #3b82f6);
+      text-underline-offset: 4px;
+    }
+  
+    .datavisool-button-variant-link:hover {
+      color: var(--datavisool-ui-color-info, #38bdf8);
+      text-decoration: underline;
+    }
+  
+    .datavisool-button-variant-destructive {
+      border-color: rgba(251, 113, 133, 0.48);
+      background: rgba(251, 113, 133, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      color: var(--datavisool-ui-destructive, #ef4444);
+    }
+  
+    .datavisool-button-variant-destructive:hover {
+      border-color: rgba(251, 113, 133, 0.72);
+      background: rgba(251, 113, 133, 0.22);
+      color: var(--datavisool-ui-destructive-foreground, #ffffff);
+    }
+  
+    .datavisool-button-dashed {
+      border-style: dashed;
+    }
+  
+    .datavisool-button-spinner {
+      animation: datavisool-ui-button-spin 800ms linear infinite;
+    }
+  
+    @keyframes datavisool-ui-button-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-button {
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      font-weight: 500;
+      transition-duration: 160ms;
+    }
+  
+    .datavisool-button:focus-visible {
+      border-color: var(--datavisool-ui-border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: var(--datavisool-ui-shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-button-variant-default,
+    .datavisool-button-primary {
+      border-color: rgba(255, 255, 255, 0.06);
+      background: var(--datavisool-ui-primary-gradient, linear-gradient(135deg, #4c8dff 0%, #3b82f6 100%));
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 6px 20px rgba(59, 130, 246, 0.22);
+    }
+  
+    .datavisool-button-variant-default:hover,
+    .datavisool-button-primary:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: var(--datavisool-ui-primary-hover, #4a90ff);
+      filter: none;
+    }
+  
+    .datavisool-button-variant-default:focus-visible,
+    .datavisool-button-primary:focus-visible {
+      box-shadow: var(--datavisool-ui-shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14)), 0 6px 20px rgba(59, 130, 246, 0.22);
+    }
+  
+    .datavisool-button-variant-outline,
+    .datavisool-button-surface,
+    .datavisool-button-variant-secondary {
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: none;
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-button-variant-outline:hover,
+    .datavisool-button-surface:hover,
+    .datavisool-button-variant-secondary:hover,
+    .datavisool-button-variant-ghost:hover {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+    }
+  
+    .datavisool-button-variant-ghost {
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-button-variant-link,
+    .datavisool-button-variant-link:hover {
+      color: var(--datavisool-ui-primary, #3b82f6);
+    }
+  
+    .datavisool-button-variant-destructive {
+      border-color: rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.12);
+      box-shadow: none;
+      color: #f87171;
+    }
+  
+    .datavisool-button-variant-destructive:hover {
+      border-color: rgba(239, 68, 68, 0.52);
+      background: rgba(239, 68, 68, 0.18);
+      color: #fca5a5;
+    }
+}

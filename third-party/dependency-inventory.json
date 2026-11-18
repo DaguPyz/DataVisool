@@ -1,10 +1,14 @@
 {
   "description": "Runtime dependency metadata collected from local packages; not a legal assessment.",
   "input_sha256": {
-    "pnpm-lock.yaml": "395f07d222fe42371f5e3c145ac2ef3c0e571d33e14ff00b2dd46d5d9b503e00",
-    "datavisool-app/package.json": "64c8f025addaebe4f0796a4b0a2f149f4e4a28c97ea4e18e84ef1841a87d5140",
-    "datavisool-server/pom.xml": "328b4838d3c68e64c2ed862682201b13d49e4ccec3e715fbd07b5fdaca352d9d",
-    "datavisool-server/datavisool-service/pom.xml": "e63c44fe7cbf705186606114657f748f43c16f4f636a57a42d84e81e9b464c18",
+    "pnpm-lock.yaml": "8935efe5fc0d020ed495fb9a4d0968f0dc189c4e24ba67bc019eec9faa60b80f",
+    "pnpm-workspace.yaml": "0cc4b59ad516bc04a9a69717144501507656ac7c718da5dc2b9cd158f21b758d",
+    "datavisool-app/package.json": "aa30785ae69f7e7f36e8e61ff190859f5a09c0d3688a5ad02f51976bca04612b",
+    "datavisool-interaction-engine/package.json": "5a08b974800599d2feaf719bdc1096b264f9fa124718eb13af06aef7f10f36a1",
+    "datavisool-sdk/package.json": "d8c5772809e826d48d0fd12d11eee5de8039c1848907384670e73fd17f94c508",
+    "datavisool-ui/package.json": "b7ccaefd355863655fe05773b25c4daf7fc95bec9cb1d708aad0bdf87cce46af",
+    "datavisool-server/pom.xml": "83a0d38a03a66eb5f63be6478c960eac82fa9adf1ecaca4acba93e1596c9e60a",
+    "datavisool-server/datavisool-service/pom.xml": "45e8a60095714c22db6f5de1463c85dc1db51b0eaf52a347d52bd68284ef83bc",
     "third-party/pinned-sources.json": "3d5afcd9a6f452c7f3f19352cc70eda10d716d69951613ab33f597b86fa484c9"
   },
   "npm": [
@@ -7264,19 +7268,6 @@
         }
       ],
       "needs_review": false
-    },
-    {
-      "package": "com.gitee.lcm742320521:classfinal-core",
-      "version": "1.4.1",
-      "scope": "embedded-agent",
-      "licenses": [
-        {
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ],
-      "notices": [],
-      "needs_review": true
     },
     {
       "package": "com.github.jsqlparser:jsqlparser",

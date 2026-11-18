@@ -99,6 +99,10 @@ Open the address printed by Vite. The frontend development server proxies `/api/
 | Directory | Contents |
 | --- | --- |
 | [`datavisool-app`](datavisool-app/) | React application, dashboard designer, and frontend tests |
+| [`datavisool-cli`](datavisool-cli/) | Custom component scaffolding, preview, and ZIP builds |
+| [`datavisool-interaction-engine`](datavisool-interaction-engine/) | Canvas drag, resize, selection, and snapping |
+| [`datavisool-sdk`](datavisool-sdk/) | Component contracts, types, and utilities |
+| [`datavisool-ui`](datavisool-ui/) | Shared React UI components |
 | [`datavisool-server`](datavisool-server/) | Spring Boot service, APIs, and resource handling |
 | [`docs/zh-cn`](docs/zh-cn/) | Chinese user guide, deployment, and development documentation |
 | [`script/build`](script/build/) | Scripts for building Web deployment packages |

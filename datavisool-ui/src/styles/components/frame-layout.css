@@ -1,0 +1,165 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-frame-layout {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--datavisool-ui-background, #0a1020);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-frame-layout-variant-default {
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+    }
+  
+    .datavisool-frame-layout-variant-surface {
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+    }
+  
+    .datavisool-frame-layout-variant-plain {
+      background: transparent;
+    }
+  
+    .datavisool-frame-header,
+    .datavisool-frame-footer,
+    .datavisool-frame-side,
+    .datavisool-frame-content {
+      box-sizing: border-box;
+      min-width: 0;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-frame-header,
+    .datavisool-frame-footer {
+      flex: 0 0 auto;
+      border-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+    }
+  
+    .datavisool-frame-header {
+      box-sizing: border-box;
+      height: var(--datavisool-frame-header-height, auto);
+      min-height: var(--datavisool-frame-header-height, 0);
+      border-bottom: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-frame-footer {
+      box-sizing: border-box;
+      height: var(--datavisool-frame-footer-height, auto);
+      min-height: var(--datavisool-frame-footer-height, 0);
+      border-top: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-frame-body {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+  
+    .datavisool-frame-main {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex: 1 1 auto;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  
+    .datavisool-frame-main-body {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+  
+    .datavisool-frame-content {
+      box-sizing: border-box;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+  
+    .datavisool-frame-side {
+      box-sizing: border-box;
+      min-height: 0;
+      flex: 0 0 auto;
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      overflow: hidden;
+    }
+  
+    .datavisool-frame-left {
+      box-sizing: border-box;
+      width: var(--datavisool-frame-left-width, auto);
+      border-right: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-frame-right {
+      box-sizing: border-box;
+      width: var(--datavisool-frame-right-width, auto);
+      border-left: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-frame-region-scroll {
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+  
+    .datavisool-frame-layout-density-compact .datavisool-frame-header,
+    .datavisool-frame-layout-density-compact .datavisool-frame-footer {
+      font-size: 13px;
+    }
+  
+    .datavisool-frame-layout-density-comfortable .datavisool-frame-header,
+    .datavisool-frame-layout-density-comfortable .datavisool-frame-footer {
+      font-size: 14px;
+    }
+  
+    .datavisool-frame-layout-safe {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+    }
+  
+    @media (max-width: 768px) {
+      .datavisool-frame-layout-responsive .datavisool-frame-body,
+      .datavisool-frame-layout-responsive .datavisool-frame-main-body {
+        flex-direction: column;
+      }
+  
+      .datavisool-frame-layout-responsive .datavisool-frame-left,
+      .datavisool-frame-layout-responsive .datavisool-frame-right {
+        box-sizing: border-box;
+        width: 100%;
+        max-height: 40dvh;
+        border-right: 0;
+        border-left: 0;
+      }
+  
+      .datavisool-frame-layout-responsive .datavisool-frame-left {
+        box-sizing: border-box;
+        border-bottom: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      }
+  
+      .datavisool-frame-layout-responsive .datavisool-frame-right {
+        box-sizing: border-box;
+        border-top: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      }
+    }
+}

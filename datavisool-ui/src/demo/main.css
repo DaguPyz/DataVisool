@@ -1,0 +1,68 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+.datavisool-demo-page {
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--datavisool-app-font-family);
+  padding: 32px;
+}
+
+.datavisool-demo-panel {
+  display: flex;
+  width: min(100%, 672px);
+  flex-direction: column;
+  gap: 24px;
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  background: var(--bg-surface-1);
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+}
+
+.datavisool-demo-heading h1 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.datavisool-demo-heading p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.datavisool-demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.datavisool-demo-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 680px) {
+  .datavisool-demo-page {
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .datavisool-demo-panel {
+    padding: 18px;
+  }
+
+  .datavisool-demo-control-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,63 @@
+/*
+ * CodeMirror 5.65.20 CSS, scoped for DataVisool UI.
+ * Copyright (C) 2017 by Marijn Haverbeke <marijnhaverbeke.berlin> and others.
+ * Licensed under the MIT License.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@layer datavisool-ui.vendor {
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog, .datavisool-code-editor-hints) .CodeMirror-hints {
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+  list-style: none;
+
+  margin: 0;
+  padding: 2px;
+
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  border-radius: 3px;
+  border: 1px solid silver;
+
+  background: white;
+  font-size: 90%;
+  font-family: monospace;
+
+  max-height: 20em;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog, .datavisool-code-editor-hints) .CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog, .datavisool-code-editor-hints) li.CodeMirror-hint-active {
+  background: #08f;
+  color: white;
+}
+
+}

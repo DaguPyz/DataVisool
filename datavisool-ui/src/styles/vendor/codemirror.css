@@ -1,0 +1,380 @@
+/*
+ * CodeMirror 5.65.20 CSS, scoped for DataVisool UI.
+ * Copyright (C) 2017 by Marijn Haverbeke <marijnhaverbeke.berlin> and others.
+ * Licensed under the MIT License.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+@layer datavisool-ui.vendor {
+/* BASICS */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  font-family: monospace;
+  height: 300px;
+  color: black;
+  direction: ltr;
+}
+
+/* PADDING */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-lines {
+  padding: 4px 0; /* Vertical padding around content */
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror pre.CodeMirror-line,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror pre.CodeMirror-line-like {
+  padding: 0 4px; /* Horizontal padding of content */
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-scrollbar-filler,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-filler {
+  background-color: white; /* The little square between H and V scrollbars */
+}
+
+/* GUTTER */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutters {
+  border-right: 1px solid #ddd;
+  background-color: #f7f7f7;
+  white-space: nowrap;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-linenumbers {}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-linenumber {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  color: #999;
+  white-space: nowrap;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-guttermarker { color: black; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-guttermarker-subtle { color: #999; }
+
+/* CURSOR */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-cursor {
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
+}
+/* Shown when moving in bi-directional text */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror div.CodeMirror-secondarycursor {
+  border-left: 1px solid silver;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-cursor {
+  width: auto;
+  border: 0 !important;
+  background: #7e7;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor div.CodeMirror-cursors {
+  z-index: 1;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line::selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line > span::selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line > span > span::selection { background: transparent; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line::-moz-selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor .CodeMirror-line > span > span::-moz-selection { background: transparent; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-fat-cursor { caret-color: transparent; }
+@-moz-keyframes datavisool-ui-codemirror-blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@-webkit-keyframes datavisool-ui-codemirror-blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@keyframes datavisool-ui-codemirror-blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+
+/* Can style cursor different in overwrite (non-insert) mode */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-overwrite .CodeMirror-cursor {}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-tab { display: inline-block; text-decoration: inherit; }
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-rulers {
+  position: absolute;
+  left: 0; right: 0; top: -50px; bottom: 0;
+  overflow: hidden;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-ruler {
+  border-left: 1px solid #ccc;
+  top: 0; bottom: 0;
+  position: absolute;
+}
+
+/* DEFAULT THEME */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-header {color: blue;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-quote {color: #090;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-negative {color: #d44;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-positive {color: #292;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-header,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-strong {font-weight: bold;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-em {font-style: italic;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-link {text-decoration: underline;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-strikethrough {text-decoration: line-through;}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-keyword {color: #708;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-atom {color: #219;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-number {color: #164;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-def {color: #00f;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-variable,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-punctuation,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-property,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-operator {}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-variable-2 {color: #05a;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-variable-3,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-type {color: #085;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-comment {color: #a50;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-string {color: #a11;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-string-2 {color: #f50;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-meta {color: #555;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-qualifier {color: #555;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-builtin {color: #30a;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-bracket {color: #997;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-tag {color: #170;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-attribute {color: #00c;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-hr {color: #999;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-link {color: #00c;}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-s-default .cm-error {color: #f00;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-invalidchar {color: #f00;}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-composing { border-bottom: 2px solid; }
+
+/* Default styles for common addons */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) div.CodeMirror span.CodeMirror-matchingbracket {color: #0b0;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-activeline-background {background: #e8f2ff;}
+
+/* STOP */
+
+/* The rest of this file contains styles related to the mechanics of
+   the editor. You probably shouldn't touch them. */
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror {
+  position: relative;
+  overflow: hidden;
+  background: white;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-scroll {
+  overflow: scroll !important; /* Things will break if this is overridden */
+  /* 50px is the magic margin used to hide the element's real scrollbars */
+  /* See overflow: hidden in .CodeMirror */
+  margin-bottom: -50px; margin-right: -50px;
+  padding-bottom: 50px;
+  height: 100%;
+  outline: none; /* Prevent dragging from highlighting the element */
+  position: relative;
+  z-index: 0;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-sizer {
+  position: relative;
+  border-right: 50px solid transparent;
+}
+
+/* The fake, visible scrollbars. Used to force redraw during scrolling
+   before actual scrolling happens, thus preventing shaking and
+   flickering artifacts. */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-vscrollbar,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-hscrollbar,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-scrollbar-filler,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-filler {
+  position: absolute;
+  z-index: 6;
+  display: none;
+  outline: none;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-vscrollbar {
+  right: 0; top: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-hscrollbar {
+  bottom: 0; left: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-scrollbar-filler {
+  right: 0; bottom: 0;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-filler {
+  left: 0; bottom: 0;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutters {
+  position: absolute; left: 0; top: 0;
+  min-height: 100%;
+  z-index: 3;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter {
+  white-space: normal;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -50px;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-wrapper {
+  position: absolute;
+  z-index: 4;
+  background: none !important;
+  border: none !important;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-background {
+  position: absolute;
+  top: 0; bottom: 0;
+  z-index: 4;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-elt {
+  position: absolute;
+  cursor: default;
+  z-index: 4;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-wrapper ::selection { background-color: transparent }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter-wrapper ::-moz-selection { background-color: transparent }
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-lines {
+  cursor: text;
+  min-height: 1px; /* prevents collapsing before first draw */
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror pre.CodeMirror-line,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror pre.CodeMirror-line-like {
+  /* Reset some styles that the rest of the page might have set */
+  -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+  border-width: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+  z-index: 2;
+  position: relative;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-variant-ligatures: contextual;
+  font-variant-ligatures: contextual;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-wrap pre.CodeMirror-line,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-wrap pre.CodeMirror-line-like {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-linebackground {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 0;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-linewidget {
+  position: relative;
+  z-index: 2;
+  padding: 0.1px; /* Force widget margins to stay inside of the container */
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-widget {}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-rtl pre { direction: rtl; }
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-code {
+  outline: none;
+}
+
+/* Force content-box sizing for the elements where we expect it */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-scroll,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-sizer,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutter,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-gutters,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-linenumber {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-measure {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-cursor {
+  position: absolute;
+  pointer-events: none;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-measure pre { position: static; }
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) div.CodeMirror-cursors {
+  visibility: hidden;
+  position: relative;
+  z-index: 3;
+}
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) div.CodeMirror-dragcursors {
+  visibility: visible;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-focused div.CodeMirror-cursors {
+  visibility: visible;
+}
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-selected { background: #d9d9d9; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-crosshair { cursor: crosshair; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line::selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line > span::selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line > span > span::selection { background: #d7d4f0; }
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line::-moz-selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line > span::-moz-selection,
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }
+
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-searching {
+  background-color: #ffa;
+  background-color: rgba(255, 255, 0, .4);
+}
+
+/* Used to force a border model for a node */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-force-border { padding-right: .1px; }
+
+@media print {
+  /* Hide the cursor when printing */
+  :where(.datavisool-code-editor, .datavisool-code-editor-dialog) .CodeMirror div.CodeMirror-cursors {
+    visibility: hidden;
+  }
+}
+
+/* See issue #2901 */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) .cm-tab-wrap-hack:after { content: ''; }
+
+/* Help users use markselection to safely style text background */
+:where(.datavisool-code-editor, .datavisool-code-editor-dialog) span.CodeMirror-selectedtext { background: none; }
+
+}

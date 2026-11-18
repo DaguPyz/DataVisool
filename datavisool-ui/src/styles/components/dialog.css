@@ -1,0 +1,199 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-dialog-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(2, 8, 23, 0.58);
+      opacity: 0;
+      backdrop-filter: blur(5px);
+      transition: opacity 200ms ease;
+    }
+  
+    .datavisool-dialog-mask.visible {
+      opacity: 1;
+      animation: datavisool-dialog-mask-enter 200ms ease;
+    }
+  
+    .datavisool-dialog-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2001;
+      width: 0;
+      height: 0;
+    }
+  
+    .datavisool-dialog {
+      box-sizing: border-box;
+      position: absolute;
+      display: flex;
+      overflow: hidden;
+      flex-direction: column;
+      border: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+      border-radius: 8px;
+      background: var(--datavisool-ui-panel-bg, #111a2e);
+      box-shadow: var(--datavisool-ui-panel-shadow, 0 8px 24px rgba(0, 0, 0, 0.24)), 0 24px 80px rgba(8, 15, 33, 0.38);
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      opacity: 0;
+      pointer-events: auto;
+      transform: scale(0.95);
+      transform-origin: top left;
+      transition: opacity 200ms ease, transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    }
+  
+    .datavisool-dialog.visible {
+      opacity: 1;
+      transform: scale(1);
+      animation: datavisool-dialog-enter 200ms ease;
+    }
+
+    @keyframes datavisool-dialog-mask-enter {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes datavisool-dialog-enter {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  
+    .datavisool-dialog-header {
+      box-sizing: border-box;
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      height: 48px;
+      padding: 0 18px 0 20px;
+      border-bottom: 1px solid var(--datavisool-ui-color-border, rgba(255, 255, 255, 0.06));
+      background: rgba(17, 28, 56, 0.92);
+      cursor: move;
+      user-select: none;
+    }
+  
+    .datavisool-dialog-title {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-dialog-close {
+      box-sizing: border-box;
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+  
+    .datavisool-dialog-close:hover {
+      border-color: rgba(86, 110, 161, 0.38);
+      background: rgba(80, 102, 160, 0.22);
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-dialog-close:focus-visible {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+      outline: none;
+    }
+  
+    .datavisool-dialog-close-floating {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+    }
+  
+    .datavisool-dialog-body {
+      box-sizing: border-box;
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 20px;
+      background: rgba(8, 15, 33, 0.72);
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-dialog-mask,
+      .datavisool-dialog,
+      .datavisool-dialog-mask.visible,
+      .datavisool-dialog.visible {
+        transition: none;
+        animation: none;
+      }
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-dialog-mask {
+      background: rgba(10, 16, 32, 0.7);
+      backdrop-filter: blur(4px);
+    }
+  
+    .datavisool-dialog {
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-xl, 16px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: var(--datavisool-ui-shadow-float, 0 12px 32px rgba(0, 0, 0, 0.32));
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-dialog-header {
+      height: 56px;
+      padding: 0 var(--datavisool-ui-space-6, 24px);
+      border-bottom-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+    }
+  
+    .datavisool-dialog-title {
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-weight: 600;
+    }
+  
+    .datavisool-dialog-close {
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-dialog-close:hover {
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-dialog-close:focus-visible {
+      border-color: var(--datavisool-ui-border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: var(--datavisool-ui-shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-dialog-body {
+      padding: var(--datavisool-ui-space-6, 24px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+}
