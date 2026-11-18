@@ -2,10 +2,10 @@
 
 import {Suspense, type ComponentType} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
-import {createBrowserRouter, matchRoutes, RouterProvider, type RouteObject} from 'react-router-dom';
+import {createBrowserRouter, matchRoutes, RouterProvider} from 'react-router-dom';
 import {GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
 import {errorUiKey} from '@/contracts/errorUi.ts';
-import {uiKey, type RootProvidersProps, type UiService} from '@/contracts/ui.ts';
+import {uiKey, type RootProvidersProps, type RouteSource, type UiService} from '@/contracts/ui.ts';
 import type {Plugin} from '@/visloom/index.ts';
 import withRouteErrorElement from './withRouteErrorElement.tsx';
 
@@ -22,7 +22,7 @@ export function createUiPlugin({RootProviders, homePath, errorPath}: UiPluginOpt
         provides: [uiKey],
         activate(context) {
             const {ErrorBoundary, ErrorPage} = context.get(errorUiKey);
-            const routeGroups = new Set<{routes: RouteObject[]; requiredPaths: string[]}>();
+            const routeGroups = new Set<{routes: RouteSource; requiredPaths: string[]}>();
             let active = true;
             let mountAttempted = false;
             let router: ReturnType<typeof createBrowserRouter> | undefined;
@@ -52,8 +52,11 @@ export function createUiPlugin({RootProviders, homePath, errorPath}: UiPluginOpt
                 registerRoutes(routes, requiredPaths = []) {
                     requireActive();
                     if (mountAttempted) throw new Error('Register routes before mounting the UI.');
-                    const group = {routes: [...routes], requiredPaths: [...requiredPaths]};
-                    if (group.routes.length || group.requiredPaths.length) routeGroups.add(group);
+                    const routeSource = typeof routes === 'function' ? routes : [...routes];
+                    const group = {routes: routeSource, requiredPaths: [...requiredPaths]};
+                    if (typeof routeSource === 'function' || routeSource.length || group.requiredPaths.length) {
+                        routeGroups.add(group);
+                    }
                     return {
                         prepare(scope) {
                             if (scope === 'plugin' && router && routeGroups.has(group)) {
@@ -73,7 +76,7 @@ export function createUiPlugin({RootProviders, homePath, errorPath}: UiPluginOpt
                     if (mountAttempted) throw new Error('The UI can only be mounted once.');
                     mountAttempted = true;
                     const groups = [...routeGroups];
-                    const routeTree = groups.flatMap(group => group.routes);
+                    const routeTree = groups.flatMap(({routes}) => typeof routes === 'function' ? routes() : routes);
                     const errorPage = <ErrorPage homePath={homePath}/>;
                     if (errorPath) routeTree.push({path: errorPath, element: errorPage});
                     for (const path of groups.flatMap(group => group.requiredPaths)) {

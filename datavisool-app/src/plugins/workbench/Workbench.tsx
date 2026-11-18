@@ -1,0 +1,141 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import {Outlet, useLocation, useNavigate} from 'react-router-dom';
+import {GlobalModal, Loading, globalMessage} from '@datavisool/ui';
+import type {BrandLogo} from '@/contracts/brand.ts';
+import {RoleType, type SessionService} from '@/contracts/session.ts';
+import type {WorkbenchPage} from '@/contracts/workbench.ts';
+import {tx} from '@/i18n/miniI18n.ts';
+import {HomeMenus} from './HomeMenus.tsx';
+import {useWorkbenchRequests, type WorkbenchRequest} from './useWorkbenchRequests.ts';
+import WebUpdateNotice from './WebUpdateNotice.tsx';
+import './Workbench.less';
+
+export interface WorkbenchSnapshot {
+    readonly signal: AbortSignal;
+    readonly logoRevisions: Readonly<Partial<Record<BrandLogo, number>>>;
+}
+
+interface WorkbenchProps {
+    readonly pages: readonly WorkbenchPage[];
+    readonly session: SessionService;
+    readonly loginPath: string;
+    readonly canOperate: () => boolean;
+    readonly subscribe: (listener: () => void) => () => void;
+    readonly getSnapshot: () => WorkbenchSnapshot;
+}
+
+const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSnapshot}: WorkbenchProps) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const {signal, logoRevisions} = useSyncExternalStore(subscribe, getSnapshot);
+    const userInfo = session.getUserInfo();
+    const updateToken = userInfo?.roles?.includes(RoleType.SYSTEM_ADMIN) ? userInfo.token : undefined;
+    const beginRequest = useWorkbenchRequests(signal, canOperate);
+    const logoutRequest = useRef<WorkbenchRequest>();
+    const navigateTimer = useRef<number>();
+    const leaveTimer = useRef<number>();
+    const enterTimer = useRef<number>();
+    const [pendingMenuKey, setPendingMenuKey] = useState<string>();
+    const [routeStage, setRouteStage] = useState<'idle' | 'leaving' | 'entering'>('idle');
+
+    useEffect(() => {
+        const clearTimers = () => {
+            window.clearTimeout(navigateTimer.current);
+            window.clearTimeout(leaveTimer.current);
+            window.clearTimeout(enterTimer.current);
+        };
+        signal.addEventListener('abort', clearTimers, {once: true});
+        return () => {
+            signal.removeEventListener('abort', clearTimers);
+            clearTimers();
+        };
+    }, [signal]);
+
+    useEffect(() => {
+        window.clearTimeout(navigateTimer.current);
+        window.clearTimeout(leaveTimer.current);
+        setPendingMenuKey(undefined);
+        if (signal.aborted) return;
+        setRouteStage('entering');
+        const timeout = window.setTimeout(() => setRouteStage(prev => prev === 'entering' ? 'idle' : prev), 420);
+        enterTimer.current = timeout;
+        return () => window.clearTimeout(timeout);
+    }, [location.key, signal]);
+
+    const selectPage = (path: string) => {
+        if (!canOperate() || signal.aborted) return;
+        window.clearTimeout(navigateTimer.current);
+        window.clearTimeout(leaveTimer.current);
+        setPendingMenuKey(path);
+        setRouteStage('leaving');
+        navigateTimer.current = window.setTimeout(() => {
+            if (!signal.aborted && canOperate()) navigate(path);
+        }, 260);
+        leaveTimer.current = window.setTimeout(() => {
+            setPendingMenuKey(undefined);
+            setRouteStage(prev => prev === 'leaving' ? 'idle' : prev);
+        }, 340);
+    };
+
+    const handleLogout = async () => {
+        if (logoutRequest.current && !logoutRequest.current.signal.aborted) return;
+        const request = beginRequest();
+        if (!request) return;
+        logoutRequest.current = request;
+        try {
+            if (await session.logout(request.signal) && !request.signal.aborted) navigate(loginPath);
+        } catch {
+            if (!request.signal.aborted) globalMessage.messageApi?.error(tx('退出失败，请重试'));
+        } finally {
+            request.finish();
+            if (logoutRequest.current === request) logoutRequest.current = undefined;
+        }
+    };
+
+    const handleSessionExpiry = useCallback((token: string) => {
+        if (session.getUserInfo()?.token !== token) return;
+        session.removeUser();
+        navigate(loginPath);
+    }, [session, navigate, loginPath]);
+
+    const routeInnerClassName = routeStage === 'idle' ? 'home-route-inner' : `home-route-inner is-${routeStage}`;
+
+    return (
+        <>
+            <div className="datavisool-home">
+                <div className="home-left">
+                    <div className="home-side-card">
+                        <div className={'datavisool-home-body-left'}>
+                            <HomeMenus pages={pages} userInfo={userInfo} logoRevisions={logoRevisions}
+                                       pendingMenuKey={pendingMenuKey} onSelectPage={selectPage}
+                                       onLogout={handleLogout} canOperate={canOperate}/>
+                        </div>
+                    </div>
+                </div>
+                <div className="home-right">
+                    <div className="home-main-card">
+                        <div className="home-content">
+                            <div className="home-route">
+                                <div key={location.key} className={routeInnerClassName}>
+                                    <Suspense fallback={<Loading/>}>
+                                        <Outlet/>
+                                    </Suspense>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <GlobalModal/>
+            </div>
+            <WebUpdateNotice token={updateToken} beginRequest={beginRequest} onSessionExpiry={handleSessionExpiry}/>
+        </>
+    );
+})
+
+export default Workbench;

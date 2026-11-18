@@ -15,9 +15,11 @@ export interface RouteRegistration {
     dispose(): void;
 }
 
+export type RouteSource = readonly RouteObject[] | (() => readonly RouteObject[]);
+
 export interface UiService {
-    /** Register a route tree and check its required destinations when the UI mounts. */
-    registerRoutes(routes: readonly RouteObject[], requiredPaths?: readonly string[]): RouteRegistration;
+    /** Resolve route factories once at mount, after all plugins have activated. */
+    registerRoutes(routes: RouteSource, requiredPaths?: readonly string[]): RouteRegistration;
     /** Build the router and attach the root view after all startup plugins have activated. */
     mount(container: HTMLElement): void;
 }

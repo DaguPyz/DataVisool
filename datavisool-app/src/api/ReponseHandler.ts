@@ -19,14 +19,11 @@ const unLoginHandler = () => {
     }
 }
 
-const responseHandlerMapping: Record<number, () => void> = {
-    10002: unLoginHandler
-}
-
 export interface ResponseHandlerOptions {
     suppressErrorMessage?: boolean | ((response: HttpResponse) => boolean);
     onSuccess?: (response: HttpResponse) => void;
     handleSessionExpiry?: boolean;
+    onSessionExpiry?: () => void;
 }
 
 const responseHandler = (response: HttpResponse, options: ResponseHandlerOptions = {}): unknown => {
@@ -35,7 +32,7 @@ const responseHandler = (response: HttpResponse, options: ResponseHandlerOptions
         options.onSuccess?.(response);
         return response.data;
     } else {
-        if (options.handleSessionExpiry !== false) responseHandlerMapping[code]?.();
+        if (code == 10002 && options.handleSessionExpiry !== false) (options.onSessionExpiry ?? unLoginHandler)();
         const suppressErrorMessage = typeof options.suppressErrorMessage === "function"
             ? options.suppressErrorMessage(response)
             : options.suppressErrorMessage === true;

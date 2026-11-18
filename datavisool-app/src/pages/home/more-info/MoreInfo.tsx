@@ -7,7 +7,7 @@
 import {BookOpen, Headset, Peoples, Right, VideocameraOne} from "@icon-park/react";
 import styles from "@/pages/home/more-info/MoreInfo.module.less";
 import {type ReactNode, useState} from "react";
-import author from "@/pages/home/more-info/author.webp";
+import author from "@/images/support-qr-code.webp";
 import ContactAuthorModal from "@/comps/common-component/contact-author/ContactAuthorModal.tsx";
 import {globalMessage} from "@datavisool/ui";
 import {tx} from "@/i18n/miniI18n.ts";

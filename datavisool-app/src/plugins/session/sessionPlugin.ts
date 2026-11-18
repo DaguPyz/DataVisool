@@ -1,6 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {sessionKey, type IUserInfo} from '@/contracts/session.ts';
+import {sessionChangedKey, sessionKey, type IUserInfo} from '@/contracts/session.ts';
+import FetchUtil from '@/util/FetchUtil.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 const USER_INFO_KEY = 'DATAVISOOL_USER_INFO';
@@ -11,17 +12,40 @@ export function createSessionPlugin(): Plugin {
         requires: [],
         provides: [sessionKey],
         activate(context) {
+            const notifyChanged = () => {
+                void context.emit(sessionChangedKey, undefined).catch(error => console.error('Session update notification failed.', error));
+            };
+            const getUserInfo = () => {
+                const storedUser = localStorage.getItem(USER_INFO_KEY);
+                return storedUser === null ? null : JSON.parse(storedUser) as IUserInfo;
+            };
+            const removeUser = () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem(USER_INFO_KEY);
+                notifyChanged();
+            };
+
             context.provide(sessionKey, {
-                getUserInfo() {
-                    const storedUser = localStorage.getItem(USER_INFO_KEY);
-                    return storedUser === null ? null : JSON.parse(storedUser) as IUserInfo;
-                },
+                getUserInfo,
                 setUserInfo(userInfo) {
                     localStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
+                    notifyChanged();
                 },
-                removeUser() {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem(USER_INFO_KEY);
+                removeUser,
+                async logout(signal) {
+                    if (signal.aborted) return false;
+                    const token = getUserInfo()?.token;
+                    if (!token) return true;
+
+                    const response = await FetchUtil.doRequest('/api/authenticate/logout', 'POST', {
+                        Authorization: `Bearer ${token}`,
+                    }, {}, {signal});
+                    if (signal.aborted || getUserInfo()?.token !== token) return false;
+                    if (response.code !== 200 && response.code !== 10002) {
+                        throw new Error(response.msg || 'Could not log out.');
+                    }
+                    removeUser();
+                    return true;
                 },
             });
         },

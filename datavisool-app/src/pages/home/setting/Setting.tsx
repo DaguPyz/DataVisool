@@ -21,6 +21,7 @@ import {
     User
 } from "@icon-park/react";
 import styles from "@/pages/home/setting/Setting.module.less";
+import type {BrandLogo} from "@/contracts/brand.ts";
 import packageJson from "@/../package.json";
 import AuthTools, {IUserInfo} from "@/util/AuthTools.ts";
 import {globalMessage} from "@datavisool/ui";
@@ -46,7 +47,7 @@ type AccountUserInfo = Partial<IUserInfo> & {
 type AccountFieldKey = 'name' | 'phone' | 'email' | 'password';
 type SettingSectionKey = 'account' | 'general' | 'brand' | 'about';
 
-export default function Setting() {
+export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (logo: BrandLogo) => void}) {
     useLocaleVersion();
     const [activeKey, setActiveKey] = useState<SettingSectionKey>('account');
     const [userInfo, setUserInfo] = useState<AccountUserInfo | null>(AuthTools.getUserInfo());
@@ -84,7 +85,6 @@ export default function Setting() {
             phone: nextUser.phone,
             email: nextUser.email,
         } as IUserInfo);
-        window.dispatchEvent(new CustomEvent('datavisool-user-info-updated'));
     }, []);
 
     const loadAccountUserInfo = useCallback(async () => {
@@ -161,11 +161,11 @@ export default function Setting() {
         AuthFetchUtil.post<boolean>('/api/config/updateMainLogo', formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(res => {
             if (res === true) {
                 setMainLogo(`/static/logo/main-logo.png?${Date.now()}`);
-                window.dispatchEvent(new CustomEvent('datavisool-main-logo-updated'));
+                onBrandLogoChanged?.('main');
                 globalMessage.success(tx('已保存'));
             } else if (res !== null) globalMessage.error(tx('保存失败'));
         }).catch(() => globalMessage.error(tx('保存失败')));
-    }, []);
+    }, [onBrandLogoChanged]);
 
     const uploadLogoIcon = useCallback((file: File) => {
         const formData = new FormData();
@@ -173,11 +173,11 @@ export default function Setting() {
         AuthFetchUtil.post<boolean>('/api/config/updateLogo', formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(res => {
             if (res === true) {
                 setLogo(`/static/logo/logo.png?${Date.now()}`);
-                window.dispatchEvent(new CustomEvent('datavisool-logo-updated'));
+                onBrandLogoChanged?.('icon');
                 globalMessage.success(tx('已保存'));
             } else if (res !== null) globalMessage.error(tx('保存失败'));
         }).catch(() => globalMessage.error(tx('保存失败')));
-    }, []);
+    }, [onBrandLogoChanged]);
 
     const chooseBrandImage = useCallback((onFile: (file: File) => void) => {
         const input = document.createElement('input');
