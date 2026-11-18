@@ -23,8 +23,8 @@
     - [@antv/g2plot](package.json) (Statistical charts)
 - **UI Components**:
     - [Ant Design (antd)](package.json): General UI components
-    - **@datavisool/ui@0.1.0**: Shared UI components installed from npm
-- **Component SDK**: `@datavisool/sdk@0.1.0`, shared with Desktop for types, component contracts, and utilities
+    - **@datavisool/ui** provides shared UI components from the Web workspace.
+- **Component SDK** `@datavisool/sdk` is maintained in the Web workspace and provides types, component contracts, and utilities shared with Desktop.
 - **Canvas Interaction**:
     - `@datavisool/interaction-engine`: Component interaction and selection
 
@@ -37,6 +37,10 @@ The project follows a Monorepo structure defined in `pnpm-workspace.yaml`.
 | Package Name | Path | Description |
 | :--- | :--- | :--- |
 | **datavisool-app** | `datavisool-app/` | **Main Application Core**. Contains the Designer, Blueprint system, Renderer, and entry points. |
+| `datavisool-cli` | `datavisool-cli/` | Custom component scaffolding |
+| `@datavisool/interaction-engine` | `datavisool-interaction-engine/` | Canvas interactions |
+| `@datavisool/sdk` | `datavisool-sdk/` | Component contracts and shared utilities |
+| `@datavisool/ui` | `datavisool-ui/` | Shared React components |
 
 Web-specific authentication, permissions, and other capabilities absent from the shared SDK are maintained by the App.
 

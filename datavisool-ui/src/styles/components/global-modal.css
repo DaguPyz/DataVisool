@@ -1,0 +1,247 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-global-modal {
+      box-sizing: border-box;
+      position: fixed;
+      z-index: 9002;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 32px);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      pointer-events: none;
+    }
+  
+    .datavisool-global-modal-placement-top {
+      box-sizing: border-box;
+      align-items: flex-start;
+      padding-top: max(56px, env(safe-area-inset-top));
+    }
+  
+    .datavisool-global-modal-layer {
+      box-sizing: border-box;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: inherit;
+      justify-content: center;
+      padding: inherit;
+      pointer-events: none;
+    }
+  
+    .datavisool-global-modal-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.68);
+      backdrop-filter: blur(4px);
+      pointer-events: auto;
+      animation: datavisool-ui-modal-mask-enter 180ms ease-out;
+    }
+  
+    .datavisool-global-modal-card {
+      box-sizing: border-box;
+      --datavisool-modal-status: var(--datavisool-ui-color-info, #38bdf8);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      width: min(440px, 100%);
+      max-height: min(720px, calc(100dvh - 32px));
+      min-width: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-xl, 16px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      pointer-events: auto;
+      transform-origin: center;
+      animation: datavisool-ui-modal-card-enter 190ms ease-out;
+    }
+  
+    .datavisool-global-modal-tone-warning {
+      --datavisool-modal-status: #f59e0b;
+    }
+  
+    .datavisool-global-modal-tone-success {
+      --datavisool-modal-status: #22c55e;
+    }
+  
+    .datavisool-global-modal-tone-danger {
+      --datavisool-modal-status: #ef4444;
+    }
+  
+    .datavisool-global-modal-accent {
+      display: none;
+    }
+  
+    .datavisool-global-modal-header {
+      box-sizing: border-box;
+      display: grid;
+      min-width: 0;
+      grid-template-columns: 40px minmax(0, 1fr) 32px;
+      align-items: start;
+      gap: 12px;
+      padding: 24px 24px 8px;
+    }
+  
+    .datavisool-global-modal-icon {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid color-mix(in srgb, var(--datavisool-modal-status) 36%, transparent);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--datavisool-modal-status) 12%, transparent);
+      color: var(--datavisool-modal-status);
+    }
+  
+    .datavisool-global-modal-heading {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 5px;
+    }
+  
+    .datavisool-global-modal-heading h2 {
+      margin: 0;
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-global-modal-heading p {
+      margin: 0;
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      font-size: 12px;
+      font-weight: 550;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-global-modal-close {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      cursor: pointer;
+      outline: none;
+      transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-global-modal-close:hover:not(:disabled),
+    .datavisool-global-modal-close:focus-visible {
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-global-modal-close:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-global-modal-close:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+  
+    .datavisool-global-modal-close:disabled {
+      cursor: not-allowed;
+      opacity: 0.46;
+    }
+  
+    .datavisool-global-modal-body {
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: auto;
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      overflow-wrap: anywhere;
+      padding: 12px 24px 24px;
+    }
+  
+    .datavisool-global-modal-body:empty {
+      display: none;
+    }
+  
+    .datavisool-global-modal-footer {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 24px 24px;
+    }
+  
+    .datavisool-global-modal-footer .datavisool-button {
+      box-sizing: border-box;
+      min-width: 88px;
+    }
+  
+    .datavisool-global-modal-tone-danger .datavisool-button-variant-destructive {
+      border-color: #ef4444;
+      background: #ef4444;
+      box-shadow: none;
+      color: #ffffff;
+    }
+  
+    .datavisool-global-modal-tone-danger .datavisool-button-variant-destructive:hover {
+      border-color: #f05252;
+      background: #f05252;
+    }
+  
+    .datavisool-global-modal-tone-danger .datavisool-button-variant-destructive:focus-visible {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+    }
+  
+    .datavisool-global-modal-spinner {
+      animation: datavisool-ui-modal-spin 860ms linear infinite;
+    }
+  
+    @keyframes datavisool-ui-modal-mask-enter {
+      from {
+        opacity: 0;
+      }
+  
+      to {
+        opacity: 1;
+      }
+    }
+  
+    @keyframes datavisool-ui-modal-card-enter {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 10px, 0) scale(0.98);
+      }
+  
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+  
+    @keyframes datavisool-ui-modal-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+}

@@ -17,7 +17,7 @@ export default defineConfig({
         },
     }],
     webServer: {
-        command: 'pnpm exec vite --config vite.dev.config.ts --host 127.0.0.1 --port 4179 --strictPort',
+        command: 'pnpm run dev --host 127.0.0.1 --port 4179 --strictPort',
         url: 'http://127.0.0.1:4179/login',
         reuseExistingServer: false,
         timeout: 120_000,

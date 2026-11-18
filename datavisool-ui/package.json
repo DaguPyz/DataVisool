@@ -1,0 +1,69 @@
+{
+  "license": "SEE LICENSE IN LICENSE",
+  "name": "@datavisool/ui",
+  "version": "0.1.1",
+  "author": "DAGU",
+  "type": "module",
+  "main": "dist/datavisool-ui.js",
+  "module": "dist/datavisool-ui.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/datavisool-ui.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./feedback": {
+      "types": "./dist/feedback.d.ts",
+      "import": "./dist/feedback.js"
+    },
+    "./basic": {
+      "types": "./dist/basic.d.ts",
+      "import": "./dist/basic.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js"
+    },
+    "./code-editor": {
+      "types": "./dist/code-editor.d.ts",
+      "import": "./dist/code-editor.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "licenses"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build:webapp": "tsc && vite build",
+    "build": "tsc --p ./tsconfig-build.json && vite build",
+    "prepublishOnly": "pnpm run build",
+    "release": "node ./scripts/publish.mjs",
+    "check": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "codemirror": "5.65.20"
+  },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@types/codemirror": "5.60.17",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.7",
+    "vite-plugin-dts": "4.0.0-beta.1"
+  }
+}

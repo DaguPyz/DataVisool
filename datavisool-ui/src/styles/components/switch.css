@@ -1,0 +1,259 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-switch-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    .datavisool-switch-row {
+      display: inline-flex;
+      width: fit-content;
+      min-width: 0;
+      min-height: 44px;
+      align-items: center;
+      gap: 10px;
+    }
+  
+  .datavisool-switch {
+      box-sizing: border-box;
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      cursor: pointer;
+      outline: none;
+      padding: 0;
+      touch-action: manipulation;
+    }
+  
+  .datavisool-switch-track {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 999px;
+      background: #162238;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+  
+  .datavisool-switch-track::before {
+      box-sizing: border-box;
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #3b82f6;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+  
+  .datavisool-switch-thumb {
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 1;
+      display: block;
+      border-radius: 999px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+      transform: translateX(var(--datavisool-switch-thumb-off));
+      transition: transform 180ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    }
+  
+  .datavisool-switch-state-text {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      width: 100%;
+      align-items: center;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 11px;
+      font-weight: 650;
+      line-height: 1;
+      pointer-events: none;
+      transition: color 160ms ease;
+    }
+  
+    .datavisool-switch:hover:not(.datavisool-switch-disabled) .datavisool-switch-track {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 8px rgba(0, 0, 0, 0.16);
+    }
+  
+    .datavisool-switch:focus-visible .datavisool-switch-track {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  
+    .datavisool-switch:active:not(.datavisool-switch-disabled):not(.datavisool-switch-readonly) .datavisool-switch-thumb {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-switch-checked .datavisool-switch-track {
+      border-color: rgba(59, 130, 246, 0.72);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.14);
+    }
+  
+    .datavisool-switch-checked .datavisool-switch-track::before {
+      opacity: 1;
+    }
+  
+    .datavisool-switch-checked .datavisool-switch-thumb {
+      transform: translateX(var(--datavisool-switch-thumb-on));
+    }
+  
+    .datavisool-switch-checked .datavisool-switch-state-text {
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+    }
+  
+    .datavisool-switch-size-sm .datavisool-switch-track {
+      --datavisool-switch-thumb-off: 3px;
+      --datavisool-switch-thumb-on: 21px;
+      width: 42px;
+      height: 24px;
+    }
+  
+    .datavisool-switch-size-sm .datavisool-switch-thumb {
+      width: 18px;
+      height: 18px;
+    }
+  
+    .datavisool-switch-size-sm .datavisool-switch-state-text {
+      padding: 0 8px 0 24px;
+    }
+  
+    .datavisool-switch-size-sm.datavisool-switch-checked .datavisool-switch-state-text {
+      padding: 0 24px 0 8px;
+    }
+  
+    .datavisool-switch-size-md .datavisool-switch-track {
+      --datavisool-switch-thumb-off: 4px;
+      --datavisool-switch-thumb-on: 28px;
+      width: 56px;
+      height: 32px;
+    }
+  
+    .datavisool-switch-size-md .datavisool-switch-thumb {
+      width: 24px;
+      height: 24px;
+    }
+  
+    .datavisool-switch-size-md .datavisool-switch-state-text {
+      padding: 0 9px 0 32px;
+    }
+  
+    .datavisool-switch-size-md.datavisool-switch-checked .datavisool-switch-state-text {
+      padding: 0 32px 0 9px;
+    }
+  
+    .datavisool-switch-size-lg .datavisool-switch-track {
+      --datavisool-switch-thumb-off: 5px;
+      --datavisool-switch-thumb-on: 37px;
+      width: 72px;
+      height: 40px;
+    }
+  
+    .datavisool-switch-size-lg .datavisool-switch-thumb {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .datavisool-switch-size-lg .datavisool-switch-state-text {
+      padding: 0 12px 0 42px;
+      font-size: 12px;
+    }
+  
+    .datavisool-switch-size-lg.datavisool-switch-checked .datavisool-switch-state-text {
+      padding: 0 42px 0 12px;
+    }
+  
+    .datavisool-switch-label {
+      min-width: 0;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      user-select: none;
+    }
+  
+    .datavisool-switch-disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  
+    .datavisool-switch-disabled + .datavisool-switch-label,
+    .datavisool-switch-disabled ~ .datavisool-switch-label {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-switch-readonly {
+      cursor: default;
+    }
+  
+    .datavisool-switch-readonly .datavisool-switch-track {
+      border-style: dashed;
+    }
+  
+    .datavisool-switch-status-success .datavisool-switch-track {
+      border-color: rgba(34, 197, 94, 0.58);
+    }
+  
+    .datavisool-switch-status-success.datavisool-switch-checked .datavisool-switch-track::before {
+      background: #22c55e;
+    }
+  
+    .datavisool-switch-status-warning .datavisool-switch-track {
+      border-color: rgba(245, 158, 11, 0.62);
+    }
+  
+    .datavisool-switch-status-warning.datavisool-switch-checked .datavisool-switch-track::before {
+      background: #f59e0b;
+    }
+  
+    .datavisool-switch-status-error .datavisool-switch-track {
+      border-color: rgba(239, 68, 68, 0.66);
+    }
+  
+    .datavisool-switch-status-error.datavisool-switch-checked .datavisool-switch-track::before {
+      background: #ef4444;
+    }
+  
+    .datavisool-switch-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-switch-helper-success {
+      color: #22c55e;
+    }
+  
+    .datavisool-switch-helper-warning {
+      color: #f59e0b;
+    }
+  
+    .datavisool-switch-helper-error {
+      color: #ef4444;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-switch-track,
+      .datavisool-switch-track::before,
+      .datavisool-switch-thumb,
+      .datavisool-switch-state-text {
+        transition: none;
+      }
+    }
+}

@@ -15,7 +15,7 @@ pnpm -F datavisool-app exec playwright install chromium
 
 `tests/component/` 和 `tests/setup/` 是原 Vitest 测试，保留供迁移参考；它们不会被 Playwright 执行，不能视为已通过。后端和构建脚本测试不受此变更影响。
 
-`verify:shared` 目前只运行浏览器最小用例和前端构建，不再运行原共享组件测试；完整覆盖需后续迁移。
+`verify:shared` 运行 Playwright 测试和前端生产构建。测试服务器启动前会自动构建工作区依赖。共享包的发布产物可在根目录用 `pnpm test:package-artifacts` 验证。
 
 控制台用例位于 `tests/e2e/console-dashboard.spec.ts`，可用 `pnpm -F datavisool-app exec playwright test tests/e2e/console-dashboard.spec.ts` 单独运行。测试拦截接口并使用虚构数据，不读写真实项目；它验证前端表现及请求，不代替真实后端联调。布局用例会保存浏览器截图到 `test-results/`。
 

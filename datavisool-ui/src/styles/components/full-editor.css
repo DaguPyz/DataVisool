@@ -1,0 +1,82 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-full-editor {
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-full-editor-backdrop {
+      cursor: pointer;
+    }
+  
+    .datavisool-full-editor-modal {
+      box-sizing: border-box;
+      width: min(1180px, 100%);
+      height: min(820px, calc(100dvh - 48px));
+    }
+  
+    .datavisool-full-editor-header {
+      box-sizing: border-box;
+      min-height: 72px;
+    }
+  
+    .datavisool-full-editor-heading h2 {
+      max-width: min(720px, calc(100vw - 160px));
+    }
+  
+    .datavisool-full-editor-heading span {
+      max-width: min(760px, calc(100vw - 160px));
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-full-editor-body {
+      display: flex;
+      min-height: 0;
+      min-width: 0;
+      flex: 1 1 auto;
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+    }
+  
+    .datavisool-full-editor-body > .datavisool-field,
+    .datavisool-full-editor-body .datavisool-field-content,
+    .datavisool-full-editor-body .datavisool-code-editor {
+      height: 100%;
+      min-height: 0;
+    }
+  
+    .datavisool-full-editor-body .datavisool-code-editor {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  
+    .datavisool-full-editor-body .datavisool-code-editor-toolbar {
+      border-top: 0;
+    }
+  
+    .datavisool-full-editor-body .datavisool-code-editor-surface {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+  
+    .datavisool-full-editor-footer {
+      box-sizing: border-box;
+      min-height: 72px;
+    }
+  
+    .datavisool-full-editor-status {
+      box-sizing: border-box;
+      width: auto;
+      min-height: 36px;
+      border: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      gap: 14px;
+    }
+  
+    .datavisool-full-editor-actions .datavisool-button {
+      min-width: 96px;
+    }
+}

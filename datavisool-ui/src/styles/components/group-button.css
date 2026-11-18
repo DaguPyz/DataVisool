@@ -1,0 +1,232 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-group-button-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+  .datavisool-group-button {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: #111a2e;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      padding: 4px;
+    }
+  
+    .datavisool-group-button-horizontal {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  
+    .datavisool-group-button-vertical {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .datavisool-group-button-block {
+      width: 100%;
+    }
+  
+    .datavisool-group-button-equal .datavisool-group-button-item {
+      flex: 1 1 0;
+    }
+  
+    .datavisool-group-button-item {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.2;
+      letter-spacing: 0;
+      outline: none;
+      overflow: hidden;
+      text-align: center;
+      user-select: none;
+      transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, color 160ms ease, opacity 160ms ease, transform 160ms ease;
+    }
+  
+    .datavisool-group-button-item::before {
+      box-sizing: border-box;
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: #3b82f6;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+  
+    .datavisool-group-button-item-content {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-group-button-item:hover:not(:disabled) {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      background: #1a2740;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-group-button-item:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  
+    .datavisool-group-button-item:focus-visible {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  
+    .datavisool-group-button-item-selected {
+      border-color: rgba(59, 130, 246, 0.68);
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-group-button-item-selected::before {
+      opacity: 1;
+    }
+  
+    .datavisool-group-button-size-sm {
+      border-radius: 8px;
+      gap: 3px;
+      padding: 3px;
+    }
+  
+    .datavisool-group-button-size-sm .datavisool-group-button-item {
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+  
+    .datavisool-group-button-size-md .datavisool-group-button-item {
+      min-height: 40px;
+      padding: 0 14px;
+    }
+  
+    .datavisool-group-button-size-lg {
+      border-radius: 12px;
+      gap: 5px;
+      padding: 5px;
+    }
+  
+    .datavisool-group-button-size-lg .datavisool-group-button-item {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+  
+    .datavisool-group-button-status-success {
+      border-color: rgba(34, 197, 94, 0.48);
+    }
+  
+    .datavisool-group-button-status-success .datavisool-group-button-item-selected {
+      border-color: rgba(34, 197, 94, 0.68);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.18);
+    }
+  
+    .datavisool-group-button-status-success .datavisool-group-button-item-selected::before {
+      background: #22c55e;
+    }
+  
+    .datavisool-group-button-status-warning {
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+  
+    .datavisool-group-button-status-warning .datavisool-group-button-item-selected {
+      border-color: rgba(245, 158, 11, 0.72);
+      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.18);
+    }
+  
+    .datavisool-group-button-status-warning .datavisool-group-button-item-selected::before {
+      background: #f59e0b;
+    }
+  
+    .datavisool-group-button-status-error {
+      border-color: rgba(239, 68, 68, 0.56);
+    }
+  
+    .datavisool-group-button-status-error .datavisool-group-button-item-selected {
+      border-color: rgba(239, 68, 68, 0.76);
+      box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.18);
+    }
+  
+    .datavisool-group-button-status-error .datavisool-group-button-item-selected::before {
+      background: #ef4444;
+    }
+  
+    .datavisool-group-button-disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  
+    .datavisool-group-button-item:disabled,
+    .datavisool-group-button-item-disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  
+    .datavisool-group-button-readonly .datavisool-group-button-item {
+      cursor: default;
+    }
+  
+    .datavisool-group-button-readonly {
+      border-style: dashed;
+    }
+  
+    .datavisool-group-button-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-group-button-helper-success {
+      color: #22c55e;
+    }
+  
+    .datavisool-group-button-helper-warning {
+      color: #f59e0b;
+    }
+  
+    .datavisool-group-button-helper-error {
+      color: #ef4444;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-group-button-item,
+      .datavisool-group-button-item::before {
+        transition: none;
+      }
+    }
+}

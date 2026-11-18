@@ -1,0 +1,26 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-space {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+    }
+  
+    .datavisool-space-horizontal {
+      flex-direction: row;
+    }
+  
+    .datavisool-space-vertical {
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .datavisool-space-wrap {
+      flex-wrap: wrap;
+    }
+}

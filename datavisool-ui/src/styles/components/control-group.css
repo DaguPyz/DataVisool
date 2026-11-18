@@ -1,0 +1,245 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-control-group {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-control-group-header {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 52px;
+      width: 100%;
+      min-width: 0;
+      cursor: pointer;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      padding: 6px 8px 6px 16px;
+      text-align: left;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
+    }
+  
+    .datavisool-control-group-header:hover {
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+    }
+  
+    .datavisool-control-group-header:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--datavisool-ui-ring, rgba(59, 130, 246, 0.45)) 76%, transparent);
+      outline-offset: -2px;
+    }
+  
+    .datavisool-control-group-open .datavisool-control-group-header {
+      border-bottom-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      box-shadow: inset 3px 0 0 var(--datavisool-ui-color-primary, #3b82f6);
+    }
+  
+    .datavisool-control-group-heading {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .datavisool-control-group-title {
+      box-sizing: border-box;
+      min-width: 0;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-control-group-count {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 28px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(100, 150, 255, 0.34);
+      border-radius: 999px;
+      background: rgba(45, 109, 255, 0.14);
+      color: #cfe0ff;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1;
+      padding: 0 8px;
+    }
+  
+    .datavisool-control-group-actions {
+      display: inline-flex;
+      flex: none;
+      align-items: center;
+      gap: 6px;
+    }
+  
+    .datavisool-control-group-action {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      flex: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      color: #b9c7e6;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+    }
+  
+    .datavisool-control-group-action:hover:not(:disabled) {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: #f5f8ff;
+      transform: translateY(-1px);
+    }
+  
+    .datavisool-control-group-action:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--datavisool-ui-ring, rgba(59, 130, 246, 0.45)) 82%, transparent);
+      outline-offset: 2px;
+    }
+  
+    .datavisool-control-group-action:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+    }
+  
+    .datavisool-control-group-action-primary {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      background: var(--datavisool-ui-primary, #3b82f6);
+      color: #fff;
+    }
+  
+    .datavisool-control-group-toggle {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 32px;
+      height: 44px;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      color: #9fb1d5;
+    }
+  
+    .datavisool-control-group-toggle .datavisool-icon {
+      transition: transform 160ms ease;
+    }
+  
+    .datavisool-control-group-open .datavisool-control-group-toggle .datavisool-icon {
+      transform: rotate(90deg);
+    }
+  
+    .datavisool-control-group-body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 180ms ease;
+    }
+  
+    .datavisool-control-group-open .datavisool-control-group-body {
+      grid-template-rows: 1fr;
+    }
+  
+    .datavisool-control-group-body-inner {
+      box-sizing: border-box;
+      min-height: 0;
+      overflow: hidden;
+    }
+  
+    .datavisool-control-group-content {
+      box-sizing: border-box;
+      min-width: 0;
+      padding: 16px;
+    }
+  
+    .datavisool-control-group .datavisool-gui {
+      gap: 10px;
+    }
+  
+    .datavisool-control-group-empty {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+      padding: 14px;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-control-group-disabled {
+      opacity: 0.64;
+    }
+  
+    .datavisool-control-group-disabled .datavisool-control-group-header {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-control-group-disabled-content {
+      pointer-events: none;
+    }
+  
+    @media (max-width: 640px) {
+      .datavisool-control-group-header {
+        box-sizing: border-box;
+        align-items: stretch;
+        flex-direction: column;
+        padding: 10px;
+      }
+  
+      .datavisool-control-group-heading,
+      .datavisool-control-group-actions {
+        box-sizing: border-box;
+        width: 100%;
+      }
+  
+      .datavisool-control-group-actions {
+        justify-content: flex-end;
+      }
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-control-group-header,
+      .datavisool-control-group-action,
+      .datavisool-control-group-toggle .datavisool-icon,
+      .datavisool-control-group-body {
+        transition: none;
+      }
+    }
+}

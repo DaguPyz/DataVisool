@@ -1,3 +1,7 @@
 # Licensed under the DataVisool License. See the LICENSE file distributed with this software.
 packages:
   - 'datavisool-app'
+  - 'datavisool-cli'
+  - 'datavisool-interaction-engine'
+  - 'datavisool-sdk'
+  - 'datavisool-ui'

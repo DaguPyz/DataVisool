@@ -1,0 +1,15 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-active-glow {
+      box-shadow: 0 0 24px rgba(59, 130, 255, 0.26);
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-active-glow {
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.16), 0 6px 20px rgba(59, 130, 246, 0.16);
+    }
+}

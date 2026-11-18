@@ -1,0 +1,191 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-checkbox-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    .datavisool-checkbox {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      width: fit-content;
+      min-width: 0;
+      min-height: 44px;
+      align-items: center;
+      gap: 10px;
+      border-radius: 10px;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.45;
+      letter-spacing: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+  
+  .datavisool-checkbox-native {
+      box-sizing: border-box;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  
+    .datavisool-checkbox-control {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 6px;
+      background: var(--datavisool-ui-control-bg, rgba(255, 255, 255, 0.03));
+      box-shadow: none;
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+      transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-checkbox-control::after {
+      box-sizing: border-box;
+      content: "";
+      width: 42%;
+      height: 68%;
+      border: solid currentColor;
+      border-width: 0 2px 2px 0;
+      opacity: 0;
+      transform: translateY(-1px) rotate(45deg) scale(0.72);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+  
+    .datavisool-checkbox:hover:not(.datavisool-checkbox-disabled) .datavisool-checkbox-control {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      box-shadow: var(--datavisool-ui-control-shadow, none);
+    }
+  
+    .datavisool-checkbox-native:focus-visible + .datavisool-checkbox-control {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-checkbox:active:not(.datavisool-checkbox-disabled):not(.datavisool-checkbox-readonly) .datavisool-checkbox-control {
+      transform: scale(0.94);
+    }
+  
+    .datavisool-checkbox-checked .datavisool-checkbox-control {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      background: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: none;
+    }
+  
+    .datavisool-checkbox-checked .datavisool-checkbox-control::after {
+      opacity: 1;
+      transform: translateY(-1px) rotate(45deg) scale(1);
+    }
+  
+    .datavisool-checkbox-indeterminate .datavisool-checkbox-control {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      background: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: none;
+    }
+  
+    .datavisool-checkbox-indeterminate .datavisool-checkbox-control::after {
+      width: 56%;
+      height: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 1;
+      transform: none;
+    }
+  
+    .datavisool-checkbox-size-sm {
+      min-height: 36px;
+      gap: 8px;
+      font-size: 13px;
+    }
+  
+    .datavisool-checkbox-size-sm .datavisool-checkbox-control {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+    }
+  
+    .datavisool-checkbox-size-md .datavisool-checkbox-control {
+      width: 20px;
+      height: 20px;
+    }
+  
+    .datavisool-checkbox-size-lg {
+      min-height: 48px;
+      gap: 12px;
+      font-size: 15px;
+    }
+  
+    .datavisool-checkbox-size-lg .datavisool-checkbox-control {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+    }
+  
+    .datavisool-checkbox-label {
+      min-width: 0;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-checkbox-disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  
+    .datavisool-checkbox-readonly {
+      cursor: default;
+    }
+  
+    .datavisool-checkbox-readonly .datavisool-checkbox-control {
+      border-style: dashed;
+    }
+  
+    .datavisool-checkbox-status-success .datavisool-checkbox-control {
+      border-color: color-mix(in srgb, var(--datavisool-ui-success, #22c55e) 56%, transparent);
+    }
+  
+    .datavisool-checkbox-status-warning .datavisool-checkbox-control {
+      border-color: color-mix(in srgb, var(--datavisool-ui-warning, #f59e0b) 60%, transparent);
+    }
+  
+    .datavisool-checkbox-status-error .datavisool-checkbox-control {
+      border-color: color-mix(in srgb, var(--datavisool-ui-danger, #ef4444) 66%, transparent);
+    }
+  
+    .datavisool-checkbox-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-checkbox-helper-success {
+      color: var(--datavisool-ui-color-success, #22c55e);
+    }
+  
+    .datavisool-checkbox-helper-warning {
+      color: var(--datavisool-ui-color-warning, #f59e0b);
+    }
+  
+    .datavisool-checkbox-helper-error {
+      color: var(--datavisool-ui-destructive, #ef4444);
+    }
+}
