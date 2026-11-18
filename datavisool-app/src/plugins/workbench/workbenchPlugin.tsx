@@ -1,11 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import {Navigate} from 'react-router-dom';
 import {brandLogoChangedKey} from '@/contracts/brand.ts';
+import {homeRouteId, routerKey} from '@/contracts/router.ts';
 import {sessionChangedKey, sessionKey} from '@/contracts/session.ts';
-import {uiKey} from '@/contracts/ui.ts';
-import {workbenchKey, type WorkbenchPage} from '@/contracts/workbench.ts';
+import {workbenchKey, type WorkbenchMenuEntry} from '@/contracts/workbench.ts';
 import type {Plugin} from '@/visloom/index.ts';
 import type {WorkbenchSnapshot} from './Workbench.tsx';
 
@@ -18,14 +17,14 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
     const Workbench = lazy(() => import('./Workbench.tsx'));
     return {
         id: 'workbench',
-        requires: [uiKey, sessionKey],
+        requires: [routerKey, sessionKey],
         provides: [workbenchKey],
         activate(context) {
             const session = context.get(sessionKey);
-            const pageGroups = new Set<readonly WorkbenchPage[]>();
+            const router = context.get(routerKey);
+            const menuGroups = new Set<readonly WorkbenchMenuEntry[]>();
             const listeners = new Set<() => void>();
             let active = true;
-            let assembled = false;
             let acceptingOperations = true;
             let requests = new AbortController();
             let snapshot: WorkbenchSnapshot = {signal: requests.signal, logoRevisions: {}};
@@ -45,18 +44,18 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                 updateSnapshot({logoRevisions: {...snapshot.logoRevisions, [logo]: revision}});
             }));
 
-            const routes = context.get(uiKey).registerRoutes(() => {
-                assembled = true;
-                const pages = [...pageGroups].flat();
-                return [{
+            const routes = router.registerRoutes([
+                {
+                    id: homeRouteId,
                     path: '/home',
-                    id: '首页',
-                    element: <Workbench pages={pages} session={session} loginPath={loginPath}
-                                         canOperate={() => acceptingOperations} subscribe={subscribe}
-                                         getSnapshot={() => snapshot}/>,
-                    children: [...pages.map(page => page.route), {index: true, element: <Navigate to={homePath} replace/>}],
-                }];
-            }, [homePath, loginPath]);
+                    render: ({outlet, location}) => (
+                        <Workbench menuEntries={[...menuGroups].flat()} outlet={outlet} location={location}
+                                   router={router} session={session} loginPath={loginPath}
+                                   canOperate={() => acceptingOperations} subscribe={subscribe} getSnapshot={() => snapshot}/>
+                    ),
+                },
+                {id: 'app:home-index', parentId: homeRouteId, index: true, redirectTo: homePath},
+            ], [homePath, loginPath]);
 
             context.onStop({
                 pause() { acceptingOperations = false; },
@@ -78,29 +77,25 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                 acceptingOperations = false;
                 requests.abort();
                 listeners.clear();
-                pageGroups.clear();
+                menuGroups.clear();
             });
 
             context.provide(workbenchKey, {
-                registerPages(pages) {
-                    if (!active || assembled) throw new Error('Register workbench pages before mounting the UI.');
-                    const paths = new Set([...pageGroups].flatMap(group => group.map(page => page.route.path)));
-                    const group = pages.map(page => {
-                        const {path, id} = page.route;
-                        if (!path || path.startsWith('/')) throw new Error(`Invalid workbench page path '${path}'.`);
-                        if (paths.has(path)) throw new Error(`Workbench page '${path}' is already registered.`);
-                        paths.add(path);
-                        return {...page, route: {...page.route, id: id ?? `workbench:${path}`}};
-                    });
-                    if (group.length) pageGroups.add(group);
+                registerMenuEntries(entries) {
+                    if (!active || router.getLocation()) throw new Error('Register workbench menus before mounting the UI.');
+                    const group = [...entries];
+                    if (group.length) menuGroups.add(group);
                     return {
                         prepare(scope) {
-                            if (pageGroups.has(group)) routes.prepare(scope);
+                            if (scope === 'plugin' && router.getLocation() && menuGroups.has(group)) {
+                                throw new Error('Registered workbench menus stop with the mounted application.');
+                            }
                         },
                         dispose() {
-                            if (!pageGroups.has(group)) return;
-                            routes.prepare('plugin');
-                            pageGroups.delete(group);
+                            if (router.getLocation() && menuGroups.has(group)) {
+                                throw new Error('Unmount the workbench before removing registered menus.');
+                            }
+                            menuGroups.delete(group);
                         },
                     };
                 },

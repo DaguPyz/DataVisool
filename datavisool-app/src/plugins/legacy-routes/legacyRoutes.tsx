@@ -6,7 +6,7 @@
 
 
 import {lazy} from "react";
-import type {RouteObject} from "react-router-dom";
+import type {RouteDefinition} from '@/contracts/router.ts';
 
 const DesignerViewPage = lazy(() => import('@/pages/preview/DesignerViewPage.tsx'));
 const DesignerReleasePage = lazy(() => import('@/pages/release/DesignerReleasePage.tsx'));
@@ -16,11 +16,11 @@ const NotFound = lazy(() => import('@/pages/result/NotFound.tsx'));
 const NoAuth = lazy(() => import('@/pages/result/NoAuth.tsx'));
 
 export default [
-    {path: '/preview', element: <DesignerViewPage/>},
-    {path: '/release/:id', element: <DesignerReleasePage/>},
-    {path: '/test', element: <Demo/>},
-    {path: '/designer', element: <DesignerPage/>},
-    {path: '/notFound', element: <NotFound/>},
-    {path: '/noAuth', element: <NoAuth/>},
-    {path: '*', element: <NotFound/>}
-] as RouteObject[];
+    {id: 'legacy:preview', path: '/preview', render: () => <DesignerViewPage/>},
+    {id: 'legacy:release', path: '/release/:id', render: () => <DesignerReleasePage/>},
+    {id: 'legacy:test', path: '/test', render: () => <Demo/>},
+    {id: 'legacy:designer', path: '/designer', render: () => <DesignerPage/>},
+    {id: 'legacy:not-found', path: '/notFound', render: () => <NotFound/>},
+    {id: 'legacy:no-auth', path: '/noAuth', render: () => <NoAuth/>},
+    {id: 'legacy:fallback', path: '/*', render: () => <NotFound/>},
+] satisfies readonly RouteDefinition[];

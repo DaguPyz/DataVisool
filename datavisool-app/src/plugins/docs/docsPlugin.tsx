@@ -1,8 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
-import {useLocation} from 'react-router-dom';
-import {uiKey} from '@/contracts/ui.ts';
+import {routerKey, type RouteRenderContext} from '@/contracts/router.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 interface DocsPluginOptions {
@@ -13,22 +12,25 @@ export function createDocsPlugin({workbenchPath}: DocsPluginOptions = {}): Plugi
     const DocsPage = lazy(() => import('./DocsPage.tsx'));
     const LegacyDocsRedirect = lazy(() => import('./LegacyDocsRedirect.tsx'));
 
-    function DocsRoute() {
-        const {search} = useLocation();
-        return new URLSearchParams(search).has('legacy')
-            ? <LegacyDocsRedirect/>
-            : <DocsPage workbenchPath={workbenchPath}/>;
-    }
-
     return {
         id: 'docs',
-        requires: [uiKey],
+        requires: [routerKey],
         provides: [],
         activate(context) {
-            const registration = context.get(uiKey).registerRoutes([
-                {path: '/docs', element: <LegacyDocsRedirect/>},
-                {path: '/docs/zh-cn/*', element: <DocsRoute/>},
-                {path: '/docs/*', element: <LegacyDocsRedirect/>},
+            const router = context.get(routerKey);
+            const redirect = ({location}: RouteRenderContext) => (
+                <LegacyDocsRedirect location={location} navigate={router.navigate}/>
+            );
+            const registration = router.registerRoutes([
+                {id: 'docs:root', path: '/docs', render: redirect},
+                {
+                    id: 'docs:zh-cn',
+                    path: '/docs/zh-cn/*',
+                    render: route => new URLSearchParams(route.location.search).has('legacy')
+                        ? redirect(route)
+                        : <DocsPage workbenchPath={workbenchPath} location={route.location} router={router}/>,
+                },
+                {id: 'docs:legacy', path: '/docs/*', render: redirect},
             ], workbenchPath ? [workbenchPath] : []);
             context.onStop(registration);
             context.onDispose(registration.dispose);

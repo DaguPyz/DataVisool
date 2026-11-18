@@ -1,15 +1,15 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
 import {Close, FileText, Search} from '@icon-park/react';
+import type {RouterService} from '@/contracts/router.ts';
 import {DOC_ARTICLES, searchDocArticles} from './content';
 import {DocsDialog} from './DocsDialog';
 
-export function DocsSearch({onClose}: {onClose: () => void}) {
+export function DocsSearch({onClose, router}: {onClose: () => void; router: Pick<RouterService, 'Link' | 'navigate'>}) {
     const [query, setQuery] = useState('');
     const [hits, setHits] = useState<Awaited<ReturnType<typeof searchDocArticles>>>([]);
     const [status, setStatus] = useState<'ready' | 'loading' | 'error'>('ready');
-    const navigate = useNavigate();
+    const {Link, navigate} = router;
     const term = query.trim();
 
     useEffect(() => {
@@ -42,7 +42,7 @@ export function DocsSearch({onClose}: {onClose: () => void}) {
                    onKeyDown={event => {
                        if (event.key === 'Enter' && ready && items.length) {
                            event.preventDefault();
-                           navigate(items[0].path);
+                           void navigate(items[0].path);
                            onClose();
                        } else if (event.key === 'ArrowDown') {
                            event.preventDefault();

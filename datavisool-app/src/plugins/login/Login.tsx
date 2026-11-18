@@ -5,7 +5,6 @@
  */
 
 import './Login.less';
-import {useNavigate} from "react-router-dom";
 import {memo, useRef, useState} from "react";
 import FetchUtil from "../../util/FetchUtil.ts";
 import type {IUserInfo, SessionService} from "@/contracts/session.ts";
@@ -25,11 +24,10 @@ const loginHighlights = [
 interface LoginProps {
     readonly session: SessionService;
     readonly getRequestSignal: () => AbortSignal | null;
-    readonly successPath: string;
+    readonly onLoginSuccess: () => Promise<void>;
 }
 
-const Login = memo(({session, getRequestSignal, successPath}: LoginProps) => {
-    const navigate = useNavigate();
+const Login = memo(({session, getRequestSignal, onLoginSuccess}: LoginProps) => {
     const usernameRef = useRef("");
     const passwordRef = useRef("");
     const [logoSrc, setLogoSrc] = useState("/static/logo/logo.png")
@@ -52,7 +50,7 @@ const Login = memo(({session, getRequestSignal, successPath}: LoginProps) => {
             if (signal.aborted || userInfo === null) return;
 
             session.setUserInfo(userInfo);
-            navigate(successPath);
+            await onLoginSuccess();
         } catch (error) {
             if (!signal.aborted) throw error;
         }

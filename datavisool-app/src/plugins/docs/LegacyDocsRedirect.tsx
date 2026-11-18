@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import type {RouteLocation, RouterService} from '@/contracts/router.ts';
 import navigation from './navigation.json';
 
 const home = '/docs/zh-cn';
@@ -33,14 +33,13 @@ function legacyDestination(pathname: string, search: string, hash: string): stri
     return mapped + (heading && !hasAlias ? '#' + encodeURIComponent(heading) : '');
 }
 
-export default function LegacyDocsRedirect() {
-    const {pathname, search, hash} = useLocation();
-    const navigate = useNavigate();
+export default function LegacyDocsRedirect({location, navigate}: {location: RouteLocation; navigate: RouterService['navigate']}) {
+    const {pathname, search, hash} = location;
     const legacyHash = new URLSearchParams(search).get('legacy');
     const destination = legacyDestination(pathname, legacyHash ? '' : search, legacyHash ?? hash);
 
     useEffect(() => {
-        navigate(destination ?? home, {replace: true});
+        void navigate(destination ?? home, {replace: true});
     }, [destination, navigate]);
 
     return <main role="status" aria-live="polite" style={{padding: '2rem'}}>正在打开文档…</main>;

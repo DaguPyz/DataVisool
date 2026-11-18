@@ -27,6 +27,17 @@ test('工作台默认打开控制台并按角色显示登记的菜单', async ({
     await expect(page).toHaveURL('/home/aiModel');
 });
 
+test('旧账号设置地址和账号菜单都打开设置页', async ({page}) => {
+    await prepareWorkbench(page);
+    await page.goto('/home/userInfo');
+    await expect(page).toHaveURL('/home/setting');
+
+    await page.goto('/home/console');
+    await page.getByRole('button', {name: '账号菜单'}).click();
+    await page.getByText('账号设置', {exact: true}).click();
+    await expect(page).toHaveURL('/home/setting');
+});
+
 test('退出失败保留会话，重试成功后返回登录入口', async ({page}) => {
     await prepareWorkbench(page);
     let fail = true;

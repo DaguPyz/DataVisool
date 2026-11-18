@@ -2,16 +2,17 @@
 
 import {Children, isValidElement, memo, ReactNode, useMemo, useState} from "react";
 import ReactMarkdown, {Components, ExtraProps} from "react-markdown";
-import {Link} from "react-router-dom";
 import remarkGfm from "remark-gfm";
+import type {RouterService} from '@/contracts/router.ts';
 import type {DocArticle} from "./content";
 
 export interface MarkdownArticleProps {
     article: DocArticle;
+    Link: RouterService['Link'];
     onImageClick?: (src: string, alt: string) => void;
 }
 
-function MarkdownArticle({article, onImageClick}: MarkdownArticleProps) {
+function MarkdownArticle({article, onImageClick, Link}: MarkdownArticleProps) {
     const components = useMemo<Components>(() => {
         const headingsByLine = new Map(article.headings.map(heading => [heading.line, heading]));
 
@@ -75,7 +76,7 @@ function MarkdownArticle({article, onImageClick}: MarkdownArticleProps) {
                 );
             },
         };
-    }, [article, onImageClick]);
+    }, [article, onImageClick, Link]);
 
     return (
         <article className="docs-article">

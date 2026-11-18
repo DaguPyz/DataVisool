@@ -4,12 +4,12 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore} from 'react';
-import {Outlet, useLocation, useNavigate} from 'react-router-dom';
+import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode} from 'react';
 import {GlobalModal, Loading, globalMessage} from '@datavisool/ui';
 import type {BrandLogo} from '@/contracts/brand.ts';
+import type {RouteLocation, RouterService} from '@/contracts/router.ts';
 import {RoleType, type SessionService} from '@/contracts/session.ts';
-import type {WorkbenchPage} from '@/contracts/workbench.ts';
+import type {WorkbenchMenuEntry} from '@/contracts/workbench.ts';
 import {tx} from '@/i18n/miniI18n.ts';
 import {HomeMenus} from './HomeMenus.tsx';
 import {useWorkbenchRequests, type WorkbenchRequest} from './useWorkbenchRequests.ts';
@@ -22,7 +22,10 @@ export interface WorkbenchSnapshot {
 }
 
 interface WorkbenchProps {
-    readonly pages: readonly WorkbenchPage[];
+    readonly menuEntries: readonly WorkbenchMenuEntry[];
+    readonly outlet: ReactNode;
+    readonly location: RouteLocation;
+    readonly router: Pick<RouterService, 'navigate' | 'pathFor'>;
     readonly session: SessionService;
     readonly loginPath: string;
     readonly canOperate: () => boolean;
@@ -30,9 +33,9 @@ interface WorkbenchProps {
     readonly getSnapshot: () => WorkbenchSnapshot;
 }
 
-const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSnapshot}: WorkbenchProps) => {
-    const location = useLocation();
-    const navigate = useNavigate();
+const Workbench = memo(({
+    menuEntries, outlet, location, router, session, loginPath, canOperate, subscribe, getSnapshot,
+}: WorkbenchProps) => {
     const {signal, logoRevisions} = useSyncExternalStore(subscribe, getSnapshot);
     const userInfo = session.getUserInfo();
     const updateToken = userInfo?.roles?.includes(RoleType.SYSTEM_ADMIN) ? userInfo.token : undefined;
@@ -68,15 +71,17 @@ const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSn
         return () => window.clearTimeout(timeout);
     }, [location.key, signal]);
 
-    const selectPage = (path: string) => {
+    const openPage = (routeId: string) => {
+        if (canOperate() && !signal.aborted) void router.navigate(router.pathFor(routeId));
+    };
+
+    const selectPage = (routeId: string) => {
         if (!canOperate() || signal.aborted) return;
         window.clearTimeout(navigateTimer.current);
         window.clearTimeout(leaveTimer.current);
-        setPendingMenuKey(path);
+        setPendingMenuKey(routeId);
         setRouteStage('leaving');
-        navigateTimer.current = window.setTimeout(() => {
-            if (!signal.aborted && canOperate()) navigate(path);
-        }, 260);
+        navigateTimer.current = window.setTimeout(() => openPage(routeId), 260);
         leaveTimer.current = window.setTimeout(() => {
             setPendingMenuKey(undefined);
             setRouteStage(prev => prev === 'leaving' ? 'idle' : prev);
@@ -89,7 +94,7 @@ const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSn
         if (!request) return;
         logoutRequest.current = request;
         try {
-            if (await session.logout(request.signal) && !request.signal.aborted) navigate(loginPath);
+            if (await session.logout(request.signal) && !request.signal.aborted) await router.navigate(loginPath);
         } catch {
             if (!request.signal.aborted) globalMessage.messageApi?.error(tx('退出失败，请重试'));
         } finally {
@@ -101,8 +106,8 @@ const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSn
     const handleSessionExpiry = useCallback((token: string) => {
         if (session.getUserInfo()?.token !== token) return;
         session.removeUser();
-        navigate(loginPath);
-    }, [session, navigate, loginPath]);
+        void router.navigate(loginPath);
+    }, [session, router, loginPath]);
 
     const routeInnerClassName = routeStage === 'idle' ? 'home-route-inner' : `home-route-inner is-${routeStage}`;
 
@@ -112,9 +117,10 @@ const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSn
                 <div className="home-left">
                     <div className="home-side-card">
                         <div className={'datavisool-home-body-left'}>
-                            <HomeMenus pages={pages} userInfo={userInfo} logoRevisions={logoRevisions}
+                            <HomeMenus entries={menuEntries} userInfo={userInfo} logoRevisions={logoRevisions}
+                                       matchedRouteIds={location.matchedRouteIds}
                                        pendingMenuKey={pendingMenuKey} onSelectPage={selectPage}
-                                       onLogout={handleLogout} canOperate={canOperate}/>
+                                       onSelectAccountPage={openPage} onLogout={handleLogout}/>
                         </div>
                     </div>
                 </div>
@@ -124,7 +130,7 @@ const Workbench = memo(({pages, session, loginPath, canOperate, subscribe, getSn
                             <div className="home-route">
                                 <div key={location.key} className={routeInnerClassName}>
                                     <Suspense fallback={<Loading/>}>
-                                        <Outlet/>
+                                        {outlet}
                                     </Suspense>
                                 </div>
                             </div>

@@ -1,8 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {lazy} from 'react';
+import {routerKey} from '@/contracts/router.ts';
 import {sessionKey} from '@/contracts/session.ts';
-import {uiKey} from '@/contracts/ui.ts';
 import type {Plugin} from '@/visloom/index.ts';
 
 interface LoginPluginOptions {
@@ -14,17 +14,19 @@ export function createLoginPlugin({successPath}: LoginPluginOptions): Plugin {
 
     return {
         id: 'login',
-        requires: [uiKey, sessionKey],
+        requires: [routerKey, sessionKey],
         provides: [],
         activate(context) {
             let acceptingLogins = true;
             let requests = new AbortController();
             const getRequestSignal = () => acceptingLogins ? requests.signal : null;
-            const loginPage = <Login session={context.get(sessionKey)} getRequestSignal={getRequestSignal}
-                                     successPath={successPath}/>;
-            const registration = context.get(uiKey).registerRoutes([
-                {path: '/', element: loginPage},
-                {path: '/login', element: loginPage},
+            const router = context.get(routerKey);
+            const session = context.get(sessionKey);
+            const renderLogin = () => <Login session={session} getRequestSignal={getRequestSignal}
+                                             onLoginSuccess={() => router.navigate(successPath)}/>;
+            const registration = router.registerRoutes([
+                {id: 'login:root', path: '/', render: renderLogin},
+                {id: 'login:form', path: '/login', render: renderLogin},
             ], [successPath]);
             context.onStop({
                 pause() {

@@ -5,10 +5,10 @@ import {
     FolderClose, FontSize, Help, Send, Setting as SettingsIcon, User, VideoOne,
 } from '@icon-park/react';
 import {lazy} from 'react';
-import {Navigate} from 'react-router-dom';
 import type {BrandLogo} from '@/contracts/brand.ts';
+import type {RouteDefinition} from '@/contracts/router.ts';
 import {RoleType} from '@/contracts/session.ts';
-import type {WorkbenchMenuGroup, WorkbenchPage} from '@/contracts/workbench.ts';
+import type {WorkbenchMenuEntry, WorkbenchMenuGroup} from '@/contracts/workbench.ts';
 
 const ConsoleDashboard = lazy(() => import('@/pages/home/console/ConsoleDashboard.tsx'));
 const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));
@@ -37,68 +37,72 @@ const resources: WorkbenchMenuGroup = {
 };
 const systemAdmins = [RoleType.SYSTEM_ADMIN] as const;
 
-export function createLegacyWorkbenchPages(onBrandLogoChanged: (logo: BrandLogo) => void): readonly WorkbenchPage[] {
+interface LegacyWorkbenchPage extends Omit<WorkbenchMenuEntry, 'routeId'> {
+    readonly route: RouteDefinition;
+}
+
+export function createLegacyWorkbenchPages(onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {
     return [
         {
-            route: {path: 'console', element: <ConsoleDashboard/>, id: '控制台'},
+            route: {id: 'app:console', path: 'console', render: () => <ConsoleDashboard/>},
             menu: {label: '控制台', order: 10, icon: <DashboardOne {...iconProps}/>},
         },
         {
-            route: {path: 'server', element: <ProjectList/>, id: '项目列表'},
+            route: {id: 'app:projects', path: 'server', render: () => <ProjectList/>},
             menu: {label: '项目列表', order: 20, icon: <FolderClose {...iconProps}/>},
         },
         {
-            route: {path: 'database', element: <DataBaseList/>, id: '数据库列表'},
+            route: {id: 'app:database', path: 'database', render: () => <DataBaseList/>},
             menu: {label: '数据库管理', order: 10, icon: <DatabaseSetting {...iconProps}/>, group: dataSources},
         },
         {
-            route: {path: 'api', element: <ApiManagement/>, id: '接口管理'},
+            route: {id: 'app:api', path: 'api', render: () => <ApiManagement/>},
             menu: {label: 'API管理', order: 20, icon: <Api {...iconProps}/>, group: dataSources},
         },
         {
-            route: {path: 'aiModel', element: <AiModelManagement/>, id: 'AI模型管理'},
+            route: {id: 'app:ai-models', path: 'aiModel', render: () => <AiModelManagement/>},
             menu: {label: 'AI模型管理', order: 70, icon: <Brain {...iconProps}/>},
         },
-        {route: {path: 'template', element: <TemplateMarket/>, id: '模板市场'}},
+        {route: {id: 'app:templates', path: 'template', render: () => <TemplateMarket/>}},
         {
-            route: {path: 'user', element: <UserManagement/>, id: '用户管理'},
+            route: {id: 'app:users', path: 'user', render: () => <UserManagement/>},
             menu: {label: '用户管理', order: 80, icon: <User {...iconProps}/>, roles: systemAdmins},
         },
-        {route: {path: 'resource', element: <ResourceManagement/>, id: '资源管理'}},
+        {route: {id: 'app:resources', path: 'resource', render: () => <ResourceManagement/>}},
         {
-            route: {path: 'remoteComponent', element: <RemoteComponentManagement/>, id: '服务器组件'},
+            route: {id: 'app:remote-components', path: 'remoteComponent', render: () => <RemoteComponentManagement/>},
             menu: {label: '服务器组件', order: 50, icon: <DataServer {...iconProps}/>},
         },
         {
-            route: {path: 'releaseManagement', element: <ReleaseManagement/>, id: '发布管理'},
+            route: {id: 'app:release-management', path: 'releaseManagement', render: () => <ReleaseManagement/>},
             menu: {label: '发布管理', order: 60, icon: <Send {...iconProps}/>},
         },
-        {route: {path: 'userInfo', element: <Navigate to="../setting" replace/>, id: '用户信息'}},
+        {route: {id: 'app:user-info', path: 'userInfo', redirectTo: '../setting'}},
         {
-            route: {path: 'font', element: <FontManagement/>, id: '字体管理'},
+            route: {id: 'app:fonts', path: 'font', render: () => <FontManagement/>},
             menu: {label: '字体', order: 10, icon: <FontSize {...iconProps}/>, group: resources},
         },
         {
-            route: {path: 'videoResource', element: <VideoResourceManagement/>, id: '视频资源管理'},
+            route: {id: 'app:videos', path: 'videoResource', render: () => <VideoResourceManagement/>},
             menu: {label: '视频', order: 30, icon: <VideoOne {...iconProps}/>, group: resources},
         },
         {
-            route: {path: 'modelResource', element: <ThreeDModelResourceManagement/>, id: '3D模型资源管理'},
+            route: {id: 'app:models', path: 'modelResource', render: () => <ThreeDModelResourceManagement/>},
             menu: {label: '3D模型', order: 40, icon: <Cube {...iconProps}/>, group: resources},
         },
         {
-            route: {path: 'dynamicScript', element: <DynamicScriptManagement/>, id: '动态脚本管理'},
+            route: {id: 'app:dynamic-scripts', path: 'dynamicScript', render: () => <DynamicScriptManagement/>},
             menu: {label: '动态脚本', order: 20, icon: <FileCodeOne {...iconProps}/>, group: resources},
         },
         {
-            route: {path: 'setting', element: <Setting onBrandLogoChanged={onBrandLogoChanged}/>, id: '系统设置'},
+            route: {id: 'app:settings', path: 'setting', render: () => <Setting onBrandLogoChanged={onBrandLogoChanged}/>},
             menu: {label: '设置', order: 90, icon: <SettingsIcon {...iconProps}/>, roles: systemAdmins},
             accountMenuLabel: '账号设置',
         },
         {
-            route: {path: 'more', element: <MoreInfo/>, id: '更多信息'},
+            route: {id: 'app:help', path: 'more', render: () => <MoreInfo/>},
             menu: {label: '帮助', order: 100, icon: <Help {...iconProps}/>},
         },
-        {route: {path: 'projectSetting/:id', element: <ProjectSetting/>, id: '项目设置'}},
+        {route: {id: 'app:project-settings', path: 'projectSetting/:id', render: () => <ProjectSetting/>}},
     ];
 }

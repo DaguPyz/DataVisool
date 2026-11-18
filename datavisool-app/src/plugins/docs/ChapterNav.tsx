@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
 import {BookOpen, Down, Right} from '@icon-park/react';
+import type {RouterService} from '@/contracts/router.ts';
 import navigation from './navigation.json';
 
 interface Chapter {
@@ -34,8 +34,8 @@ function containsPath(branch: Branch, path: string): boolean {
     return branch.path === path || branch.children.some(child => containsPath(child, path));
 }
 
-function ChapterList({branches, path, close}: {
-    branches: Branch[]; path: string; close?: () => void;
+function ChapterList({branches, path, close, Link}: {
+    branches: Branch[]; path: string; close?: () => void; Link: RouterService['Link'];
 }) {
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
     return <ul>{branches.map(branch => {
@@ -50,14 +50,14 @@ function ChapterList({branches, path, close}: {
                     {open ? <Down size={12}/> : <Right size={12}/>}
                 </button>}
             </div>
-            {hasChildren && open && <ChapterList branches={branch.children} path={path} close={close}/>}
+            {hasChildren && open && <ChapterList branches={branch.children} path={path} close={close} Link={Link}/>}
         </li>;
     })}</ul>;
 }
 
-export function ChapterNav({path, close}: {path: string; close?: () => void}) {
+export function ChapterNav({path, close, Link}: {path: string; close?: () => void; Link: RouterService['Link']}) {
     return <nav aria-label="文档目录" className="dv-docs-chapters">
         <div className="dv-docs-nav-title"><BookOpen size={16}/>使用指南</div>
-        <ChapterList branches={guide} path={path} close={close} key={path}/>
+        <ChapterList branches={guide} path={path} close={close} Link={Link} key={path}/>
     </nav>;
 }

@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {useCallback, useEffect, useLayoutEffect, useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {ArrowLeft, ArrowRight, Close, HamburgerButton, ListTwo, Moon, Right, Search, SunOne} from '@icon-park/react';
+import type {RouteLocation, RouterService} from '@/contracts/router.ts';
 import {ChapterNav} from './ChapterNav';
 import legacyHeadings from './legacy-headings.json';
 import logo from '@/images/datavisool-logo.webp';
@@ -19,7 +19,9 @@ function savedTheme() {
     catch { return 'dark'; }
 }
 
-function PageToc({article, active, close}: {article: DocArticle; active: string; close?: () => void}) {
+function PageToc({article, active, close, Link}: {
+    article: DocArticle; active: string; close?: () => void; Link: RouterService['Link'];
+}) {
     if (!article.headings.length) return null;
     return <nav aria-label="本页目录" className="dv-docs-toc">
         <div className="dv-docs-nav-title"><ListTwo size={15}/>本页目录</div>
@@ -29,9 +31,11 @@ function PageToc({article, active, close}: {article: DocArticle; active: string;
     </nav>;
 }
 
-export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
-    const {pathname, hash, key: locationKey} = useLocation();
-    const navigate = useNavigate();
+export default function DocsPage({workbenchPath, location, router}: {
+    workbenchPath?: string; location: RouteLocation; router: Pick<RouterService, 'Link' | 'navigate'>;
+}) {
+    const {pathname, hash, key: locationKey} = location;
+    const {Link, navigate} = router;
     let path = pathname.replace(/\/+$/, '');
     try { path = decodeURI(path); } catch { /* An invalid address falls through to the missing-page view. */ }
     const collection = DOC_ARTICLES;
@@ -87,7 +91,7 @@ export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
         const aliases: Record<string, Record<string, string>> = legacyHeadings;
         const destination = aliases[article.id]?.[anchor];
         if (typeof destination === 'string' && !document.getElementById(anchor)) {
-            navigate(destination.startsWith('/') ? destination : article.path + '#' + encodeURIComponent(destination), {replace: true});
+            void navigate(destination.startsWith('/') ? destination : article.path + '#' + encodeURIComponent(destination), {replace: true});
             return;
         }
         const target = anchor && document.getElementById(anchor);
@@ -149,8 +153,8 @@ export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
         </header>
         <div className="dv-docs-layout">
             <aside className="dv-docs-sidebar">
-                <ChapterNav path={path}/>
-                {article && <div className="dv-docs-tablet-toc"><PageToc article={article} active={active}/></div>}
+                <ChapterNav path={path} Link={Link}/>
+                {article && <div className="dv-docs-tablet-toc"><PageToc article={article} active={active} Link={Link}/></div>}
             </aside>
             <button className="dv-docs-menu-trigger" onClick={() => setOverlay('menu')}>
                 <HamburgerButton size={17}/>目录<span>{page?.title}</span>
@@ -163,7 +167,7 @@ export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
                         : !article ? <p role="status">正在加载文档…</p>
                         : <>
                             <h1 id={article.titleId}>{article.title}</h1>
-                            <MarkdownArticle article={article} onImageClick={openImage}/>
+                            <MarkdownArticle article={article} onImageClick={openImage} Link={Link}/>
                             <nav aria-label="翻页" className="dv-docs-pager">
                                 {previous && <Link to={previous.path} rel="prev"><ArrowLeft size={18}/>
                                     <span><small>上一篇</small><strong>{previous.title}</strong></span></Link>}
@@ -172,13 +176,14 @@ export default function DocsPage({workbenchPath}: {workbenchPath?: string}) {
                             </nav>
                         </>}
                 </main>
-                {article && <aside className="dv-docs-page-nav"><PageToc article={article} active={active}/></aside>}
+                {article && <aside className="dv-docs-page-nav"><PageToc article={article} active={active} Link={Link}/></aside>}
             </div>
         </div>
-        {overlay === 'search' && <DocsSearch onClose={close}/>}
+        {overlay === 'search' && <DocsSearch onClose={close} router={router}/>}
         {overlay === 'menu' && <DocsDialog label="阅读目录" kind="menu" onClose={close}>
             <div className="dv-docs-dialog-head">阅读目录<button className="dv-docs-icon" aria-label="关闭目录" onClick={close}><Close size={17}/></button></div>
-            <ChapterNav path={path} close={close}/>{article && <PageToc article={article} active={active} close={close}/>}
+            <ChapterNav path={path} close={close} Link={Link}/>
+            {article && <PageToc article={article} active={active} close={close} Link={Link}/>}
         </DocsDialog>}
         {image && <DocsDialog label={image.alt || '截图预览'} kind="image" onClose={() => setImage(null)}>
             <div className="dv-docs-image-head"><span>{image.alt}</span><button className="dv-docs-icon" aria-label="关闭图片" onClick={() => setImage(null)}><Close size={18}/></button></div>
