@@ -1,15 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {AppProviders} from '@/bootstrap/AppProviders.tsx';
+import {createAppPlugins} from '@/bootstrap/appPlugins.ts';
 import {createAppRuntime} from '@/bootstrap/createAppRuntime.ts';
+import {homeLayoutKey} from '@/contracts/homeLayout.ts';
 import {homeRouteId, routeChangedKey, routerKey} from '@/contracts/router.ts';
 import {uiKey} from '@/contracts/ui.ts';
-import {createErrorUiPlugin} from '@/plugins/error-ui/errorUiPlugin.ts';
-import {createLoginPlugin} from '@/plugins/login/loginPlugin.tsx';
-import {createRouterPlugin} from '@/plugins/router/routerPlugin.tsx';
-import {createSessionPlugin} from '@/plugins/session/sessionPlugin.ts';
-import {createUiPlugin} from '@/plugins/ui/uiPlugin.tsx';
-import {createWorkbenchPlugin} from '@/plugins/workbench/workbenchPlugin.tsx';
 import type {Plugin} from '@/visloom/index.ts';
 
 function createReportsPlugin(): Plugin {
@@ -47,36 +42,32 @@ function createReportsPlugin(): Plugin {
     };
 }
 
-function createAlternateLayout(): Plugin {
+function createAlternateLayoutPlugin(): Plugin {
     return {
         id: 'fixture-layout',
-        requires: [routerKey],
-        provides: [],
+        requires: [],
+        provides: [homeLayoutKey],
         activate(context) {
-            const registration = context.get(routerKey).registerRoutes([
-                {id: homeRouteId, path: '/home', render: ({outlet}) => <main aria-label="Alternate layout">{outlet}</main>},
-            ]);
-            context.onStop(registration);
-            context.onDispose(registration.dispose);
+            context.provide(homeLayoutKey, {
+                Layout({navigation, content}) {
+                    return (
+                        <div style={{display: 'grid', gridTemplateRows: '220px minmax(0, 1fr)', height: '100%'}}>
+                            <section aria-label="Alternate navigation" style={{overflow: 'auto'}}>{navigation}</section>
+                            <main aria-label="Alternate layout" style={{overflow: 'auto'}}>{content}</main>
+                        </div>
+                    );
+                },
+            });
         },
     };
 }
 
 async function mountFixture() {
-    const homePath = '/home/reports';
-    const query = new URLSearchParams(window.location.search);
-    const layout = query.get('layout') === 'alternate'
-        ? createAlternateLayout()
-        : createWorkbenchPlugin({homePath, loginPath: '/login'});
-    const runtime = await createAppRuntime([
-        createReportsPlugin(),
-        createUiPlugin({RootProviders: AppProviders, homePath}),
-        createErrorUiPlugin(),
-        createRouterPlugin({homePath}),
-        createSessionPlugin(),
-        createLoginPlugin({successPath: homePath}),
-        layout,
-    ]);
+    const useAlternateLayout = new URLSearchParams(window.location.search).get('layout') === 'alternate';
+    const plugins = createAppPlugins().map(plugin =>
+        useAlternateLayout && plugin.provides.includes(homeLayoutKey) ? createAlternateLayoutPlugin() : plugin,
+    );
+    const runtime = await createAppRuntime([createReportsPlugin(), ...plugins]);
     runtime.get(uiKey).mount(document.getElementById('root')!);
 }
 

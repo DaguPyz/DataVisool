@@ -2,6 +2,7 @@
 
 import {createDocsPlugin} from '@/plugins/docs/docsPlugin.tsx';
 import {createErrorUiPlugin} from '@/plugins/error-ui/errorUiPlugin.ts';
+import {createHomeLayoutPlugin} from '@/plugins/home-layout/homeLayoutPlugin.ts';
 import {createLegacyRoutesPlugin} from '@/plugins/legacy-routes/legacyRoutesPlugin.ts';
 import {createLoginPlugin} from '@/plugins/login/loginPlugin.tsx';
 import {createRouterPlugin} from '@/plugins/router/routerPlugin.tsx';
@@ -21,6 +22,7 @@ export function createAppPlugins(): readonly Plugin[] {
         createDocsPlugin({workbenchPath: homePath}),
         createSessionPlugin(),
         createLoginPlugin({successPath: homePath}),
+        createHomeLayoutPlugin(),
         createWorkbenchPlugin({homePath, loginPath: '/login'}),
         createLegacyRoutesPlugin(),
     ];

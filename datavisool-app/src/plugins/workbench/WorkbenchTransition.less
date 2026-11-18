@@ -1,0 +1,46 @@
+/*
+ * Copyright © 2023-2026 xiaopujun
+ * All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+
+.home-route-inner {
+  min-height: 100%;
+  height: auto;
+  transform-origin: 50% 30%;
+  will-change: opacity, transform;
+}
+
+.home-route-inner.is-entering {
+  animation: datavisool-home-route-in 200ms ease-out both;
+}
+
+.home-route-inner.is-leaving {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease-out, transform 160ms ease-out;
+}
+
+@keyframes datavisool-home-route-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-route-inner.is-entering {
+    animation: none;
+  }
+
+  .home-route-inner.is-leaving {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}

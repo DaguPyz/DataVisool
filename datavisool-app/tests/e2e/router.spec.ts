@@ -5,7 +5,16 @@ import type {RouteDefinition, RouterService} from '../../src/contracts/router.ts
 import type {Plugin} from '../../src/visloom/index.ts';
 
 async function serveFixture(page: Page) {
+    await page.addInitScript(() => {
+        localStorage.setItem('datavisool-i18n-locale', 'zh-CN');
+        localStorage.setItem('DATAVISOOL_USER_INFO', JSON.stringify({
+            id: 'fixture-user', username: 'tester', name: 'Test User', token: 'fixture-token', roles: ['ROLE_USER'],
+        }));
+    });
     await page.route('**/static/logo/**', route => route.fulfill({status: 404}));
+    await page.route(url => url.pathname.startsWith('/api/'), route => route.fulfill({
+        json: {code: 200, msg: '', data: {records: [], total: 0}},
+    }));
     await page.route(url => url.pathname === '/src/index.tsx', async route => {
         const url = new URL('/tests/e2e/fixtures/router-host.tsx', route.request().url());
         const response = await route.fetch({url: url.href});
@@ -13,18 +22,26 @@ async function serveFixture(page: Page) {
     });
 }
 
-test('第三方子路由可直达、刷新并跟随布局替换', async ({page}) => {
+test('替换布局提供者后，原有菜单和第三方子路由仍可用', async ({page}) => {
     await serveFixture(page);
     await page.goto('/home/reports/42');
+    await expect(page.locator('.home-left').getByRole('menuitem', {name: '控制台', exact: true})).toBeVisible();
     await expect(page.locator('.home-content').getByRole('heading', {name: 'Report 42'})).toBeVisible();
     await page.reload();
     await expect(page.locator('.home-content').getByRole('heading', {name: 'Report 42'})).toBeVisible();
 
     await page.goto('/home/reports/42?layout=alternate');
     const alternateLayout = page.getByRole('main', {name: 'Alternate layout'});
+    const consoleMenu = page.getByRole('region', {name: 'Alternate navigation'})
+        .getByRole('menuitem', {name: '控制台', exact: true});
+    await expect(consoleMenu).toBeVisible();
     await expect(alternateLayout.getByRole('heading', {name: 'Report 42'})).toBeVisible();
     await page.reload();
     await expect(alternateLayout.getByRole('heading', {name: 'Report 42'})).toBeVisible();
+
+    await consoleMenu.click();
+    await expect(page).toHaveURL('/home/console');
+    await expect(alternateLayout.getByRole('heading', {name: '控制台', exact: true})).toBeVisible();
 });
 
 test('导航服务和浏览器后退都会发布已匹配的路由', async ({page}) => {

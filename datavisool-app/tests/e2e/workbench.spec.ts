@@ -22,9 +22,14 @@ test('工作台默认打开控制台并按角色显示登记的菜单', async ({
     await page.goto('/home');
     await expect(page).toHaveURL('/home/console');
     await expect(page.getByRole('heading', {name: '控制台', exact: true})).toBeVisible();
+    const navigation = page.locator('.home-left');
+    await expect(navigation).toHaveCSS('width', '240px');
     await expect(page.getByRole('menuitem', {name: '用户管理'})).toHaveCount(0);
     await page.getByRole('menuitem', {name: 'AI模型管理', exact: true}).click();
     await expect(page).toHaveURL('/home/aiModel');
+
+    await page.setViewportSize({width: 700, height: 900});
+    await expect(navigation).toHaveCSS('width', '64px');
 });
 
 test('旧账号设置地址和账号菜单都打开设置页', async ({page}) => {

@@ -7,6 +7,7 @@
 import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode} from 'react';
 import {GlobalModal, Loading, globalMessage} from '@datavisool/ui';
 import type {BrandLogo} from '@/contracts/brand.ts';
+import type {HomeLayoutService} from '@/contracts/homeLayout.ts';
 import type {RouteLocation, RouterService} from '@/contracts/router.ts';
 import {RoleType, type SessionService} from '@/contracts/session.ts';
 import type {WorkbenchMenuEntry} from '@/contracts/workbench.ts';
@@ -14,7 +15,7 @@ import {tx} from '@/i18n/miniI18n.ts';
 import {HomeMenus} from './HomeMenus.tsx';
 import {useWorkbenchRequests, type WorkbenchRequest} from './useWorkbenchRequests.ts';
 import WebUpdateNotice from './WebUpdateNotice.tsx';
-import './Workbench.less';
+import './WorkbenchTransition.less';
 
 export interface WorkbenchSnapshot {
     readonly signal: AbortSignal;
@@ -22,6 +23,7 @@ export interface WorkbenchSnapshot {
 }
 
 interface WorkbenchProps {
+    readonly Layout: HomeLayoutService['Layout'];
     readonly menuEntries: readonly WorkbenchMenuEntry[];
     readonly outlet: ReactNode;
     readonly location: RouteLocation;
@@ -34,7 +36,7 @@ interface WorkbenchProps {
 }
 
 const Workbench = memo(({
-    menuEntries, outlet, location, router, session, loginPath, canOperate, subscribe, getSnapshot,
+    Layout, menuEntries, outlet, location, router, session, loginPath, canOperate, subscribe, getSnapshot,
 }: WorkbenchProps) => {
     const {signal, logoRevisions} = useSyncExternalStore(subscribe, getSnapshot);
     const userInfo = session.getUserInfo();
@@ -113,32 +115,22 @@ const Workbench = memo(({
 
     return (
         <>
-            <div className="datavisool-home">
-                <div className="home-left">
-                    <div className="home-side-card">
-                        <div className={'datavisool-home-body-left'}>
-                            <HomeMenus entries={menuEntries} userInfo={userInfo} logoRevisions={logoRevisions}
-                                       matchedRouteIds={location.matchedRouteIds}
-                                       pendingMenuKey={pendingMenuKey} onSelectPage={selectPage}
-                                       onSelectAccountPage={openPage} onLogout={handleLogout}/>
-                        </div>
+            <Layout
+                navigation={
+                    <HomeMenus entries={menuEntries} userInfo={userInfo} logoRevisions={logoRevisions}
+                               matchedRouteIds={location.matchedRouteIds}
+                               pendingMenuKey={pendingMenuKey} onSelectPage={selectPage}
+                               onSelectAccountPage={openPage} onLogout={handleLogout}/>
+                }
+                content={
+                    <div key={location.key} className={routeInnerClassName}>
+                        <Suspense fallback={<Loading/>}>
+                            {outlet}
+                        </Suspense>
                     </div>
-                </div>
-                <div className="home-right">
-                    <div className="home-main-card">
-                        <div className="home-content">
-                            <div className="home-route">
-                                <div key={location.key} className={routeInnerClassName}>
-                                    <Suspense fallback={<Loading/>}>
-                                        {outlet}
-                                    </Suspense>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <GlobalModal/>
-            </div>
+                }
+            />
+            <GlobalModal/>
             <WebUpdateNotice token={updateToken} beginRequest={beginRequest} onSessionExpiry={handleSessionExpiry}/>
         </>
     );

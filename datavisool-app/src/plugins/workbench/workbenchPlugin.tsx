@@ -2,6 +2,7 @@
 
 import {lazy} from 'react';
 import {brandLogoChangedKey} from '@/contracts/brand.ts';
+import {homeLayoutKey} from '@/contracts/homeLayout.ts';
 import {homeRouteId, routerKey} from '@/contracts/router.ts';
 import {sessionChangedKey, sessionKey} from '@/contracts/session.ts';
 import {workbenchKey, type WorkbenchMenuEntry} from '@/contracts/workbench.ts';
@@ -17,9 +18,10 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
     const Workbench = lazy(() => import('./Workbench.tsx'));
     return {
         id: 'workbench',
-        requires: [routerKey, sessionKey],
+        requires: [homeLayoutKey, routerKey, sessionKey],
         provides: [workbenchKey],
         activate(context) {
+            const {Layout} = context.get(homeLayoutKey);
             const session = context.get(sessionKey);
             const router = context.get(routerKey);
             const menuGroups = new Set<readonly WorkbenchMenuEntry[]>();
@@ -49,7 +51,7 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                     id: homeRouteId,
                     path: '/home',
                     render: ({outlet, location}) => (
-                        <Workbench menuEntries={[...menuGroups].flat()} outlet={outlet} location={location}
+                        <Workbench Layout={Layout} menuEntries={[...menuGroups].flat()} outlet={outlet} location={location}
                                    router={router} session={session} loginPath={loginPath}
                                    canOperate={() => acceptingOperations} subscribe={subscribe} getSnapshot={() => snapshot}/>
                     ),
