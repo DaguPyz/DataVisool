@@ -1,0 +1,64 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.base, datavisool-ui.vendor, datavisool-ui.components, datavisool-ui.component-overrides;
+@import "./foundation.css";
+@import "./vendor/codemirror.css";
+@import "./vendor/foldgutter.css";
+@import "./vendor/show-hint.css";
+@import "./components/avatar.css";
+@import "./components/control.css";
+@import "./components/input.css";
+@import "./components/image-upload.css";
+@import "./components/color-mode.css";
+@import "./components/color-picker.css";
+@import "./components/colors-picker.css";
+@import "./components/number-input.css";
+@import "./components/checkbox.css";
+@import "./components/radio.css";
+@import "./components/switch.css";
+@import "./components/slider.css";
+@import "./components/range-slider.css";
+@import "./components/group-button.css";
+@import "./components/select.css";
+@import "./components/searchable-select.css";
+@import "./components/textarea.css";
+@import "./components/text-only.css";
+@import "./components/frame-layout.css";
+@import "./components/grid.css";
+@import "./components/code-editor.css";
+@import "./components/full-editor.css";
+@import "./components/button.css";
+@import "./components/loading.css";
+@import "./components/empty.css";
+@import "./components/datavisool-gui.css";
+@import "./components/control-group.css";
+@import "./components/global-message.css";
+@import "./components/global-modal.css";
+@import "./components/ui-container.css";
+@import "./components/panel.css";
+@import "./components/accordion.css";
+@import "./components/sub-accordion.css";
+@import "./components/card.css";
+@import "./components/card-panel.css";
+@import "./components/dropdown.css";
+@import "./components/menu.css";
+@import "./components/pagination.css";
+@import "./components/progress.css";
+@import "./components/upload.css";
+@import "./components/space.css";
+@import "./components/spin.css";
+@import "./components/tag.css";
+@import "./components/tabs.css";
+@import "./components/dialog.css";
+@import "./components/effects.css";
+
+@layer datavisool-ui.components {
+  .datavisool-select-list,
+  .datavisool-searchable-select-list,
+  .datavisool-textarea {
+    scrollbar-width: thin;
+    scrollbar-color: var(--datavisool-scrollbar-thumb, rgba(113, 130, 190, 0.28)) transparent;
+  }
+}

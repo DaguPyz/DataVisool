@@ -1,0 +1,145 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-textarea {
+      box-sizing: border-box;
+      display: block;
+      min-height: 112px;
+      padding: 12px 14px;
+      resize: vertical;
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: 0;
+      vertical-align: top;
+    }
+  
+    .datavisool-textarea-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 8px;
+    }
+  
+    .datavisool-textarea::placeholder {
+      color: rgba(168, 179, 207, 0.72);
+    }
+  
+    .datavisool-textarea:hover {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+    }
+  
+    .datavisool-textarea:focus,
+    .datavisool-textarea:focus-visible {
+      border-color: var(--datavisool-ui-border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-textarea[data-readonly="true"] {
+      border-style: dashed;
+    }
+  
+    .datavisool-textarea:disabled,
+    .datavisool-textarea[data-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.55;
+      resize: none;
+    }
+  
+    .datavisool-textarea-size-sm {
+      min-height: 80px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+  
+    .datavisool-textarea-size-md {
+      min-height: 112px;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+  
+    .datavisool-textarea-size-lg {
+      min-height: 144px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 15px;
+    }
+  
+    .datavisool-textarea-status-success {
+      border-color: rgba(34, 211, 166, 0.5);
+    }
+  
+    .datavisool-textarea-status-success:focus,
+    .datavisool-textarea-status-success:focus-visible {
+      border-color: var(--datavisool-ui-color-success, #22c55e);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+    }
+  
+    .datavisool-textarea-status-warning {
+      border-color: rgba(251, 191, 36, 0.55);
+    }
+  
+    .datavisool-textarea-status-warning:focus,
+    .datavisool-textarea-status-warning:focus-visible {
+      border-color: var(--datavisool-ui-color-warning, #f59e0b);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+    }
+  
+    .datavisool-textarea-status-error {
+      border-color: rgba(251, 113, 133, 0.58);
+    }
+  
+    .datavisool-textarea-status-error:focus,
+    .datavisool-textarea-status-error:focus-visible {
+      border-color: var(--datavisool-ui-destructive, #ef4444);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+    }
+  
+    .datavisool-textarea-footer {
+      display: flex;
+      min-height: 18px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  
+    .datavisool-textarea-helper {
+      min-width: 0;
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-textarea-helper-success {
+      color: var(--datavisool-ui-color-success, #22c55e);
+    }
+  
+    .datavisool-textarea-helper-warning {
+      color: var(--datavisool-ui-color-warning, #f59e0b);
+    }
+  
+    .datavisool-textarea-helper-error,
+    .datavisool-textarea-count-over {
+      color: var(--datavisool-ui-destructive, #ef4444);
+    }
+  
+    .datavisool-textarea-count {
+      flex-shrink: 0;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-variant-numeric: tabular-nums;
+    }
+  
+    .datavisool-textarea-count-over {
+      color: var(--datavisool-ui-destructive, #ef4444);
+      font-weight: 650;
+    }
+}

@@ -1,0 +1,218 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-global-message {
+      box-sizing: border-box;
+      position: fixed;
+      z-index: 9004;
+      display: flex;
+      width: min(380px, calc(100vw - 32px));
+      max-height: calc(100dvh - 32px);
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+  
+    .datavisool-global-message-topLeft {
+      top: max(20px, env(safe-area-inset-top));
+      left: max(20px, env(safe-area-inset-left));
+    }
+  
+    .datavisool-global-message-topRight {
+      top: max(20px, env(safe-area-inset-top));
+      right: max(20px, env(safe-area-inset-right));
+    }
+  
+    .datavisool-global-message-bottomLeft {
+      bottom: max(20px, env(safe-area-inset-bottom));
+      left: max(20px, env(safe-area-inset-left));
+    }
+  
+    .datavisool-global-message-bottomRight {
+      right: max(20px, env(safe-area-inset-right));
+      bottom: max(20px, env(safe-area-inset-bottom));
+    }
+  
+    .datavisool-global-message-top,
+    .datavisool-global-message-bottom {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  
+    .datavisool-global-message-top {
+      top: max(20px, env(safe-area-inset-top));
+    }
+  
+    .datavisool-global-message-bottom {
+      bottom: max(20px, env(safe-area-inset-bottom));
+    }
+  
+    .datavisool-global-message-item {
+      box-sizing: border-box;
+      --datavisool-message-status: var(--datavisool-ui-color-info, #38bdf8);
+      position: relative;
+      display: grid;
+      min-width: 0;
+      grid-template-columns: 22px minmax(0, 1fr) auto auto;
+      align-items: start;
+      gap: 10px;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      padding: 12px 10px 12px 14px;
+      pointer-events: auto;
+      transform-origin: bottom right;
+      animation: datavisool-ui-message-enter 180ms ease-out;
+    }
+  
+    .datavisool-global-message-success {
+      --datavisool-message-status: var(--datavisool-ui-color-success, #22c55e);
+    }
+  
+    .datavisool-global-message-error {
+      --datavisool-message-status: var(--datavisool-ui-destructive, #ef4444);
+    }
+  
+    .datavisool-global-message-warning {
+      --datavisool-message-status: var(--datavisool-ui-color-warning, #f59e0b);
+    }
+  
+    .datavisool-global-message-loading {
+      --datavisool-message-status: var(--datavisool-ui-primary, #3b82f6);
+    }
+  
+    .datavisool-global-message-accent {
+      box-sizing: border-box;
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--datavisool-message-status);
+      box-shadow: none;
+    }
+  
+    .datavisool-global-message-icon {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 22px;
+      height: 22px;
+      align-items: center;
+      justify-content: center;
+      color: var(--datavisool-message-status);
+      line-height: 1;
+    }
+  
+    .datavisool-global-message-spinner {
+      animation: datavisool-ui-message-spin 860ms linear infinite;
+    }
+  
+    .datavisool-global-message-body {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 4px;
+    }
+  
+    .datavisool-global-message-content {
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0;
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-global-message-description {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-global-message-action {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 1px;
+    }
+  
+    .datavisool-global-message-close {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      margin: -11px -8px -11px 0;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      cursor: pointer;
+      outline: none;
+      transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+  
+    .datavisool-global-message-close:hover,
+    .datavisool-global-message-close:focus-visible {
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-global-message-close:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-global-message-close:active {
+      transform: scale(0.96);
+    }
+  
+    .datavisool-global-message-progress {
+      box-sizing: border-box;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 3px;
+      height: 2px;
+      background: var(--datavisool-message-status);
+      transform-origin: left center;
+      animation: datavisool-ui-message-progress var(--datavisool-message-duration, 3500ms) linear forwards;
+    }
+  
+    @keyframes datavisool-ui-message-enter {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 8px, 0) scale(0.98);
+      }
+  
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+  
+    @keyframes datavisool-ui-message-progress {
+      from {
+        transform: scaleX(1);
+      }
+  
+      to {
+        transform: scaleX(0);
+      }
+    }
+  
+    @keyframes datavisool-ui-message-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+}

@@ -1,0 +1,98 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-tabs {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-tabs-nav {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+    }
+  
+    .datavisool-tabs-tab {
+      box-sizing: border-box;
+      position: relative;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 0;
+      background: transparent;
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 650;
+    }
+  
+    .datavisool-tabs-tab::after {
+      box-sizing: border-box;
+      content: "";
+      position: absolute;
+      right: 10px;
+      bottom: -1px;
+      left: 10px;
+      height: 2px;
+      border-radius: 999px;
+      background: transparent;
+    }
+  
+    .datavisool-tabs-tab:hover {
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-tabs-tab-active {
+      color: var(--datavisool-ui-primary, #3b82f6);
+    }
+  
+    .datavisool-tabs-tab-active::after {
+      background: var(--datavisool-ui-primary, #3b82f6);
+    }
+  
+    .datavisool-tabs-tab:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  
+    .datavisool-tabs-content {
+      box-sizing: border-box;
+      min-height: 0;
+      padding-top: 16px;
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-tabs {
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-tabs-nav {
+      gap: var(--datavisool-ui-space-2, 8px);
+      border-bottom-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-tabs-tab {
+      box-sizing: border-box;
+      min-height: 40px;
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      font-weight: 500;
+      transition: color 160ms ease;
+    }
+  
+    .datavisool-tabs-tab:hover {
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-tabs-tab-active {
+      color: var(--datavisool-ui-primary, #3b82f6);
+    }
+}

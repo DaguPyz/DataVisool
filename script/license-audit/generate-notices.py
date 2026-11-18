@@ -51,7 +51,10 @@ def get_npm(texts, upstream):
         for alias, node in dependencies.items():
             name, version, location = node.get('from', alias), node.get('version'), node.get('path')
             if location and version:
-                found[(name, version)] = Path(location)
+                directory = Path(location)
+                if version.startswith('link:'):
+                    version = json.loads((directory / 'package.json').read_text(encoding='utf-8'))['version']
+                found[(name, version)] = directory
             visit(node.get('dependencies', {}))
     visit(graph.get('dependencies', {}))
     result = []
@@ -156,7 +159,9 @@ def main():
     maven = get_maven(texts)
     icon_path = ROOT / 'datavisool-app/src/pages/home/ai-model-management/assets/providers/LICENSE'
     icon_notice = collect_text(icon_path.read_bytes(), 'Lobe Icons LICENSE', texts)
-    inputs = ['pnpm-lock.yaml', 'datavisool-app/package.json', 'datavisool-server/pom.xml',
+    inputs = ['pnpm-lock.yaml', 'pnpm-workspace.yaml', 'datavisool-app/package.json',
+              'datavisool-interaction-engine/package.json', 'datavisool-sdk/package.json',
+              'datavisool-ui/package.json', 'datavisool-server/pom.xml',
               'datavisool-server/datavisool-service/pom.xml', 'third-party/pinned-sources.json']
     data = {'description': 'Runtime dependency metadata collected from local packages; not a legal assessment.',
             'input_sha256': {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in inputs},

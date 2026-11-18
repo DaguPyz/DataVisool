@@ -1,0 +1,67 @@
+{
+  "license": "SEE LICENSE IN LICENSE",
+  "name": "@datavisool/sdk",
+  "version": "0.1.1",
+  "description": "Component development contracts, lifecycle and shared helpers",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./host": {
+      "types": "./dist/host.d.ts",
+      "import": "./dist/host.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig-build.json && vite build",
+    "prepublishOnly": "pnpm run build",
+    "release": "node ./scripts/publish.mjs",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@icon-park/react": "^1.4.2",
+    "nanoid": "3"
+  },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.7",
+    "vite-plugin-dts": "4.0.0-beta.1"
+  }
+}

@@ -1,0 +1,863 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+/* Keep these overrides unlayered so they outrank CodeMirror's bundled defaults. */
+  .datavisool-code-editor .CodeMirror-scroll,
+  .datavisool-code-editor .CodeMirror-sizer,
+  .datavisool-code-editor .CodeMirror-gutter,
+  .datavisool-code-editor .CodeMirror-gutters,
+  .datavisool-code-editor .CodeMirror-linenumber,
+  .datavisool-code-editor-dialog .CodeMirror-scroll,
+  .datavisool-code-editor-dialog .CodeMirror-sizer,
+  .datavisool-code-editor-dialog .CodeMirror-gutter,
+  .datavisool-code-editor-dialog .CodeMirror-gutters,
+  .datavisool-code-editor-dialog .CodeMirror-linenumber {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+
+  .datavisool-code-editor .CodeMirror pre,
+  .datavisool-code-editor-dialog .CodeMirror pre {
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+  }
+
+  .datavisool-code-editor-hints {
+    position: fixed;
+    z-index: 10002;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .datavisool-code-editor-hints .CodeMirror-hints {
+    pointer-events: auto;
+    transform: translate(
+      var(--datavisool-code-editor-hint-offset-x, 0px),
+      var(--datavisool-code-editor-hint-offset-y, 0px)
+    );
+  }
+
+  .datavisool-code-editor .CodeMirror,
+  .datavisool-code-editor-dialog .CodeMirror {
+    height: 100%;
+    min-height: inherit;
+    background: #030816;
+    color: #e6edf7;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.58;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark.CodeMirror,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark.CodeMirror {
+    background: #030816;
+    color: #e6edf7;
+  }
+  
+  .datavisool-code-editor .CodeMirror-scroll,
+  .datavisool-code-editor-dialog .CodeMirror-scroll {
+    min-height: 100%;
+    background: #030816;
+    overflow: auto !important;
+  }
+  
+  .datavisool-code-editor .CodeMirror-sizer,
+  .datavisool-code-editor-dialog .CodeMirror-sizer {
+    background: #030816;
+  }
+  
+  .datavisool-code-editor .CodeMirror-lines,
+  .datavisool-code-editor-dialog .CodeMirror-lines {
+    padding: 12px 0;
+  }
+  
+  .datavisool-code-editor .CodeMirror pre.CodeMirror-line,
+  .datavisool-code-editor .CodeMirror pre.CodeMirror-line-like,
+  .datavisool-code-editor-dialog .CodeMirror pre.CodeMirror-line,
+  .datavisool-code-editor-dialog .CodeMirror pre.CodeMirror-line-like {
+    padding: 0 14px;
+  }
+  
+  .datavisool-code-editor .CodeMirror-gutters,
+  .datavisool-code-editor-dialog .CodeMirror-gutters {
+    border-right: 1px solid rgba(86, 110, 161, 0.24);
+    background: #071021;
+    color: #7890b6;
+  }
+  
+  .datavisool-code-editor .CodeMirror-linenumber,
+  .datavisool-code-editor-dialog .CodeMirror-linenumber {
+    min-width: 36px;
+    color: #7890b6;
+    padding: 0 10px 0 12px;
+  }
+  
+  .datavisool-code-editor .CodeMirror-guttermarker,
+  .datavisool-code-editor-dialog .CodeMirror-guttermarker {
+    color: #9cc7ff;
+  }
+  
+  .datavisool-code-editor .CodeMirror-guttermarker-subtle,
+  .datavisool-code-editor-dialog .CodeMirror-guttermarker-subtle {
+    color: #7890b6;
+  }
+  
+  .datavisool-code-editor .CodeMirror-cursor,
+  .datavisool-code-editor-dialog .CodeMirror-cursor {
+    border-left-color: #38bdf8;
+  }
+  
+  .datavisool-code-editor .CodeMirror-selected,
+  .datavisool-code-editor-dialog .CodeMirror-selected {
+    background: rgba(59, 130, 255, 0.34) !important;
+  }
+  
+  .datavisool-code-editor .CodeMirror-focused .CodeMirror-selected,
+  .datavisool-code-editor-dialog .CodeMirror-focused .CodeMirror-selected {
+    background: rgba(59, 130, 255, 0.42) !important;
+  }
+  
+  .datavisool-code-editor .CodeMirror-line::selection,
+  .datavisool-code-editor .CodeMirror-line > span::selection,
+  .datavisool-code-editor .CodeMirror-line > span > span::selection,
+  .datavisool-code-editor-dialog .CodeMirror-line::selection,
+  .datavisool-code-editor-dialog .CodeMirror-line > span::selection,
+  .datavisool-code-editor-dialog .CodeMirror-line > span > span::selection {
+    background: rgba(59, 130, 255, 0.42);
+  }
+  
+  .datavisool-code-editor .CodeMirror-activeline-background,
+  .datavisool-code-editor-dialog .CodeMirror-activeline-background {
+    background: rgba(59, 130, 255, 0.1);
+  }
+  
+  .datavisool-code-editor .CodeMirror-matchingbracket,
+  .datavisool-code-editor-dialog .CodeMirror-matchingbracket {
+    outline: 1px solid rgba(56, 189, 248, 0.54);
+    background: rgba(56, 189, 248, 0.14);
+    color: inherit !important;
+  }
+  
+  .datavisool-code-editor .CodeMirror-nonmatchingbracket,
+  .datavisool-code-editor-dialog .CodeMirror-nonmatchingbracket {
+    outline: 1px solid rgba(251, 113, 133, 0.54);
+    background: rgba(251, 113, 133, 0.14);
+    color: inherit !important;
+  }
+  
+  .datavisool-code-editor .CodeMirror-placeholder,
+  .datavisool-code-editor-dialog .CodeMirror-placeholder {
+    color: rgba(168, 179, 207, 0.56);
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-keyword,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-keyword {
+    color: #c084fc;
+    font-weight: 600;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-atom,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-builtin,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-atom,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-builtin {
+    color: #67e8f9;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-number,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-number {
+    color: #fbbf24;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-string,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-string-2,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-string,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-string-2 {
+    color: #86efac;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-def,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-property,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-def,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-property {
+    color: #60a5fa;
+    font-weight: 600;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-variable,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-variable-2,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-variable-3,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-variable,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-variable-2,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-variable-3 {
+    color: #dbeafe;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-type,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-tag,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-type,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-tag {
+    color: #5eead4;
+    font-weight: 600;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-attribute,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-attribute {
+    color: #93c5fd;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-comment,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-comment {
+    color: #7184a8;
+    font-style: italic;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-meta,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-qualifier,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-meta,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-qualifier {
+    color: #f0abfc;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-bracket,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-punctuation,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-bracket,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-punctuation {
+    color: #a8b3cf;
+  }
+  
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-error,
+  .datavisool-code-editor .cm-s-datavisool-dark .cm-invalidchar,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-error,
+  .datavisool-code-editor-dialog .cm-s-datavisool-dark .cm-invalidchar {
+    color: #fb7185;
+  }
+  
+  .datavisool-code-editor .CodeMirror-hints,
+  .datavisool-code-editor-dialog .CodeMirror-hints,
+  .datavisool-code-editor-hints .CodeMirror-hints {
+    border: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+    border-radius: 10px;
+    background: var(--datavisool-ui-popover, #162238);
+    box-shadow: var(--datavisool-ui-panel-shadow, 0 8px 24px rgba(0, 0, 0, 0.24));
+    color: var(--datavisool-ui-popover-foreground, #f3f7ff);
+    overflow: hidden;
+  }
+  
+  .datavisool-code-editor .CodeMirror-hint,
+  .datavisool-code-editor-dialog .CodeMirror-hint,
+  .datavisool-code-editor-hints .CodeMirror-hint {
+    color: var(--datavisool-ui-popover-foreground, #f3f7ff);
+  }
+  
+  .datavisool-code-editor .CodeMirror-hint-active,
+  .datavisool-code-editor-dialog .CodeMirror-hint-active,
+  .datavisool-code-editor-hints .CodeMirror-hint-active {
+    background: rgba(59, 130, 255, 0.2);
+    color: var(--datavisool-ui-foreground, #f3f7ff);
+  }
+  
+@layer datavisool-ui.components {
+    .datavisool-code-editor-field {
+      min-width: 0;
+    }
+  
+    .datavisool-code-editor {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      transition: border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+    }
+  
+    .datavisool-code-editor:hover {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+    }
+  
+    .datavisool-code-editor:focus-within {
+      border-color: var(--datavisool-ui-border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-code-editor[data-readonly="true"] {
+      border-style: dashed;
+    }
+  
+    .datavisool-code-editor[data-disabled="true"] {
+      opacity: 0.55;
+    }
+  
+    .datavisool-code-editor-toolbar,
+    .datavisool-code-editor-status,
+    .datavisool-code-editor-modal-header,
+    .datavisool-code-editor-modal-footer {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+  
+    .datavisool-code-editor-toolbar {
+      box-sizing: border-box;
+      min-height: 44px;
+      border-bottom: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      padding: 0 8px 0 12px;
+    }
+  
+    .datavisool-code-editor-meta {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 8px;
+    }
+  
+    .datavisool-code-editor-lang,
+    .datavisool-code-editor-chip {
+      display: inline-flex;
+      min-height: 22px;
+      align-items: center;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+  
+    .datavisool-code-editor-lang {
+      box-sizing: border-box;
+      border: 1px solid rgba(59, 130, 246, 0.28);
+      background: rgba(59, 130, 246, 0.12);
+      color: #9cc7ff;
+    }
+  
+    .datavisool-code-editor-chip {
+      box-sizing: border-box;
+      border: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+    }
+  
+    .datavisool-code-editor-action {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      cursor: pointer;
+      outline: none;
+      transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+  
+    .datavisool-code-editor-action:hover:not(:disabled),
+    .datavisool-code-editor-action:focus-visible {
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-code-editor-action:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-code-editor-action:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+  
+    .datavisool-code-editor-action:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+  
+    .datavisool-code-editor-surface {
+      box-sizing: border-box;
+      min-height: 160px;
+      min-width: 0;
+      overflow: hidden;
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+      color-scheme: dark;
+    }
+  
+    .datavisool-code-editor-surface[data-disabled="true"] {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-code-editor-cm,
+    .datavisool-code-editor .cm-editor,
+    .datavisool-code-editor-dialog .cm-editor {
+      height: 100%;
+      min-height: inherit;
+    }
+  
+    .datavisool-code-editor .cm-editor,
+    .datavisool-code-editor-dialog .cm-editor {
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.58;
+      outline: none;
+    }
+  
+    .datavisool-code-editor .cm-focused,
+    .datavisool-code-editor-dialog .cm-focused {
+      outline: none;
+    }
+  
+    .datavisool-code-editor .cm-scroller,
+    .datavisool-code-editor-dialog .cm-scroller {
+      font-family: inherit;
+      overflow: auto;
+    }
+  
+    .datavisool-code-editor .cm-content,
+    .datavisool-code-editor-dialog .cm-content {
+      min-height: 100%;
+      caret-color: var(--datavisool-ui-color-info, #38bdf8);
+      padding: 12px 14px;
+    }
+  
+    .datavisool-code-editor .cm-line,
+    .datavisool-code-editor-dialog .cm-line {
+      padding: 0 2px;
+    }
+  
+    .datavisool-code-editor .cm-gutters,
+    .datavisool-code-editor-dialog .cm-gutters {
+      border-right: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-sidebar, #0b1222) !important;
+      color: var(--datavisool-ui-text-tertiary, #7c8aa5);
+    }
+  
+    .datavisool-code-editor .cm-gutter,
+    .datavisool-code-editor-dialog .cm-gutter,
+    .datavisool-code-editor .cm-gutterElement,
+    .datavisool-code-editor-dialog .cm-gutterElement {
+      background: transparent !important;
+    }
+  
+    .datavisool-code-editor .cm-lineNumbers .cm-gutterElement,
+    .datavisool-code-editor-dialog .cm-lineNumbers .cm-gutterElement {
+      min-width: 36px;
+      padding: 0 10px 0 12px;
+    }
+  
+    .datavisool-code-editor .cm-activeLine,
+    .datavisool-code-editor-dialog .cm-activeLine {
+      background: rgba(59, 130, 255, 0.1);
+    }
+  
+    .datavisool-code-editor .cm-activeLineGutter,
+    .datavisool-code-editor-dialog .cm-activeLineGutter {
+      background: rgba(59, 130, 255, 0.18) !important;
+      color: #d7e7ff;
+    }
+  
+    .datavisool-code-editor .cm-selectionBackground,
+    .datavisool-code-editor .cm-focused .cm-selectionBackground,
+    .datavisool-code-editor-dialog .cm-selectionBackground,
+    .datavisool-code-editor-dialog .cm-focused .cm-selectionBackground {
+      background: rgba(59, 130, 255, 0.34);
+    }
+  
+    .datavisool-code-editor .cm-matchingBracket,
+    .datavisool-code-editor .cm-nonmatchingBracket,
+    .datavisool-code-editor-dialog .cm-matchingBracket,
+    .datavisool-code-editor-dialog .cm-nonmatchingBracket {
+      outline: 1px solid rgba(56, 189, 248, 0.54);
+      background: rgba(56, 189, 248, 0.14);
+    }
+  
+    .datavisool-code-editor .cm-tooltip,
+    .datavisool-code-editor-dialog .cm-tooltip {
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      color: var(--datavisool-ui-popover-foreground, #f3f7ff);
+      overflow: hidden;
+    }
+  
+    .datavisool-code-editor .cm-tooltip-autocomplete ul li[aria-selected],
+    .datavisool-code-editor-dialog .cm-tooltip-autocomplete ul li[aria-selected] {
+      background: rgba(59, 130, 255, 0.2);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-code-editor .cm-placeholder,
+    .datavisool-code-editor-dialog .cm-placeholder {
+      color: rgba(168, 179, 207, 0.56);
+    }
+  
+    .datavisool-code-editor .CodeMirror,
+    .datavisool-code-editor-dialog .CodeMirror {
+      height: 100%;
+      min-height: inherit;
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.58;
+    }
+  
+    .datavisool-code-editor .cm-s-datavisool-dark.CodeMirror,
+    .datavisool-code-editor-dialog .cm-s-datavisool-dark.CodeMirror {
+      background: var(--datavisool-ui-bg-canvas, #0a1020);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-code-editor .CodeMirror-scroll,
+    .datavisool-code-editor-dialog .CodeMirror-scroll {
+      min-height: 100%;
+      overflow: auto !important;
+    }
+  
+    .datavisool-code-editor .CodeMirror-lines,
+    .datavisool-code-editor-dialog .CodeMirror-lines {
+      padding: 12px 0;
+    }
+  
+    .datavisool-code-editor .CodeMirror pre.CodeMirror-line,
+    .datavisool-code-editor .CodeMirror pre.CodeMirror-line-like,
+    .datavisool-code-editor-dialog .CodeMirror pre.CodeMirror-line,
+    .datavisool-code-editor-dialog .CodeMirror pre.CodeMirror-line-like {
+      padding: 0 14px;
+    }
+  
+    .datavisool-code-editor .CodeMirror-gutters,
+    .datavisool-code-editor-dialog .CodeMirror-gutters {
+      border-right: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-sidebar, #0b1222);
+      color: var(--datavisool-ui-text-tertiary, #7c8aa5);
+    }
+  
+    .datavisool-code-editor .CodeMirror-linenumber,
+    .datavisool-code-editor-dialog .CodeMirror-linenumber {
+      min-width: 36px;
+      color: var(--datavisool-ui-text-tertiary, #7c8aa5);
+      padding: 0 10px 0 12px;
+    }
+  
+    .datavisool-code-editor .CodeMirror-cursor,
+    .datavisool-code-editor-dialog .CodeMirror-cursor {
+      border-left-color: #38bdf8;
+    }
+  
+    .datavisool-code-editor .CodeMirror-selected,
+    .datavisool-code-editor-dialog .CodeMirror-selected {
+      background: rgba(59, 130, 255, 0.34) !important;
+    }
+  
+    .datavisool-code-editor .CodeMirror-activeline-background,
+    .datavisool-code-editor-dialog .CodeMirror-activeline-background {
+      background: rgba(59, 130, 255, 0.1);
+    }
+  
+    .datavisool-code-editor .CodeMirror-matchingbracket,
+    .datavisool-code-editor-dialog .CodeMirror-matchingbracket {
+      outline: 1px solid rgba(56, 189, 248, 0.54);
+      background: rgba(56, 189, 248, 0.14);
+      color: inherit !important;
+    }
+  
+    .datavisool-code-editor .CodeMirror-nonmatchingbracket,
+    .datavisool-code-editor-dialog .CodeMirror-nonmatchingbracket {
+      outline: 1px solid rgba(251, 113, 133, 0.54);
+      background: rgba(251, 113, 133, 0.14);
+      color: inherit !important;
+    }
+  
+    .datavisool-code-editor .CodeMirror-placeholder,
+    .datavisool-code-editor-dialog .CodeMirror-placeholder {
+      color: rgba(168, 179, 207, 0.56);
+    }
+  
+    .datavisool-code-editor .CodeMirror-hints,
+    .datavisool-code-editor-dialog .CodeMirror-hints,
+    .datavisool-code-editor-hints .CodeMirror-hints {
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      color: var(--datavisool-ui-popover-foreground, #f3f7ff);
+      overflow: hidden;
+    }
+  
+    .datavisool-code-editor .CodeMirror-hint-active,
+    .datavisool-code-editor-dialog .CodeMirror-hint-active,
+    .datavisool-code-editor-hints .CodeMirror-hint-active {
+      background: rgba(59, 130, 255, 0.2);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-code-editor-status {
+      box-sizing: border-box;
+      min-height: 32px;
+      border-top: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 0 12px;
+    }
+  
+    .datavisool-code-editor-status span {
+      white-space: nowrap;
+    }
+  
+    .datavisool-code-editor-dialog {
+      box-sizing: border-box;
+      position: fixed;
+      z-index: 10001;
+      inset: 0;
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 32px);
+    }
+  
+    .datavisool-code-editor-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(1, 5, 15, 0.78);
+      backdrop-filter: blur(14px);
+    }
+  
+    .datavisool-code-editor-modal {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      width: min(1120px, 100%);
+      height: min(780px, 100%);
+      min-height: min(560px, calc(100dvh - 32px));
+      min-width: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-xl, 16px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+    }
+  
+    .datavisool-code-editor-modal-header,
+    .datavisool-code-editor-modal-footer {
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      border-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      padding: 12px 16px;
+    }
+  
+    .datavisool-code-editor-modal-header {
+      border-bottom: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-code-editor-modal-footer {
+      border-top: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-code-editor-modal-heading {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 4px;
+    }
+  
+    .datavisool-code-editor-modal-heading h2 {
+      margin: 0;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-code-editor-modal-heading span {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+  
+    .datavisool-code-editor-surface-full {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+  
+    .datavisool-code-editor-modal-actions {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 8px;
+    }
+  
+    @media (max-width: 640px) {
+      .datavisool-code-editor-dialog {
+        align-items: stretch;
+        padding: 10px;
+      }
+  
+    .datavisool-code-editor-modal {
+        height: calc(100dvh - 20px);
+        min-height: 0;
+        border-radius: var(--datavisool-ui-radius-lg, 12px);
+      }
+  
+      .datavisool-code-editor-modal-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+  
+      .datavisool-code-editor-modal-footer > .datavisool-code-editor-status {
+        width: 100%;
+      }
+  
+      .datavisool-code-editor-modal-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+  
+      .datavisool-full-editor-modal {
+        width: 100%;
+        height: calc(100dvh - 20px);
+      }
+  
+      .datavisool-full-editor-heading h2,
+      .datavisool-full-editor-heading span {
+        max-width: calc(100vw - 96px);
+      }
+  
+      .datavisool-full-editor-footer {
+        min-height: auto;
+      }
+  
+      .datavisool-full-editor-status {
+        justify-content: flex-start;
+      }
+  
+      .datavisool-full-editor-actions .datavisool-button {
+        min-width: 0;
+        flex: 1 1 0;
+      }
+  
+      .datavisool-loading-indicator {
+        max-width: calc(100vw - 48px);
+        border-radius: 14px;
+      }
+  
+      .datavisool-loading-variant-screen {
+        padding: 16px;
+      }
+  
+      .datavisool-global-message {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        transform: none;
+      }
+  
+      .datavisool-global-message-topLeft,
+      .datavisool-global-message-topRight,
+      .datavisool-global-message-top {
+        top: max(12px, env(safe-area-inset-top));
+      }
+  
+      .datavisool-global-message-bottomLeft,
+      .datavisool-global-message-bottomRight,
+      .datavisool-global-message-bottom {
+        bottom: max(12px, env(safe-area-inset-bottom));
+      }
+  
+      .datavisool-global-message-item {
+        grid-template-columns: 22px minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+  
+      .datavisool-global-message-action {
+        grid-column: 2 / -1;
+        justify-content: flex-start;
+      }
+  
+      .datavisool-global-modal {
+        align-items: flex-end;
+        padding: 12px;
+      }
+  
+      .datavisool-global-modal-placement-top {
+        align-items: flex-start;
+        padding-top: max(12px, env(safe-area-inset-top));
+      }
+  
+    .datavisool-global-modal-card {
+        width: 100%;
+        max-height: calc(100dvh - 24px);
+        border-radius: var(--datavisool-ui-radius-lg, 12px);
+      }
+  
+      .datavisool-global-modal-header {
+        grid-template-columns: 38px minmax(0, 1fr) 32px;
+        gap: 10px;
+        padding: 20px 20px 8px;
+      }
+  
+      .datavisool-global-modal-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+      }
+  
+      .datavisool-global-modal-body {
+        padding: 12px 20px 20px;
+      }
+  
+      .datavisool-global-modal-footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+        padding: 0 20px 20px;
+      }
+  
+      .datavisool-global-modal-footer .datavisool-button {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-code-editor,
+      .datavisool-code-editor-action,
+      .datavisool-global-message-item,
+      .datavisool-global-message-close,
+      .datavisool-global-message-spinner,
+      .datavisool-global-message-progress,
+      .datavisool-global-modal-mask,
+      .datavisool-global-modal-card,
+      .datavisool-global-modal-close,
+      .datavisool-global-modal-spinner,
+      .datavisool-loading-orbit::before,
+      .datavisool-loading-spinner {
+        animation: none;
+        transition: none;
+      }
+    }
+}

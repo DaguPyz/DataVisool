@@ -1,0 +1,85 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-card {
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(24, 30, 47, 0.96), rgba(19, 24, 38, 0.94));
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-card-bordered {
+      box-sizing: border-box;
+      border: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+    }
+  
+    .datavisool-card-head {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 52px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+    }
+  
+    .datavisool-card-head-title {
+      box-sizing: border-box;
+      min-width: 0;
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+      font-size: 16px;
+      font-weight: 650;
+      line-height: 1.4;
+    }
+  
+    .datavisool-card-extra {
+      flex: 0 0 auto;
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-card-body {
+      box-sizing: border-box;
+      padding: 20px;
+      color: var(--datavisool-ui-color-text-secondary, #aab7d1);
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-card {
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-card-bordered {
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+    }
+  
+    .datavisool-card-head {
+      box-sizing: border-box;
+      min-height: 56px;
+      padding: 0 var(--datavisool-ui-space-6, 24px);
+      border-bottom-color: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+  
+    .datavisool-card-head-title {
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-size: 18px;
+      font-weight: 600;
+    }
+  
+    .datavisool-card-extra,
+    .datavisool-card-body {
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+    }
+  
+    .datavisool-card-body {
+      box-sizing: border-box;
+      padding: var(--datavisool-ui-space-6, 24px);
+    }
+}

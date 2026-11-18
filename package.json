@@ -6,6 +6,12 @@
   "main": "index.js",
   "scripts": {
     "test": "pnpm -F datavisool-app test",
+    "build:packages": "pnpm -r --filter \"datavisool-app^...\" run build",
+    "check:packages": "node script/packages/check-package-boundaries.mjs",
+    "test:package-artifacts": "pnpm run build:packages && node script/packages/verify-package-artifacts.mjs",
+    "release:datavisool-ui": "node datavisool-ui/scripts/publish.mjs",
+    "release:datavisool-sdk": "node datavisool-sdk/scripts/publish.mjs",
+    "release:datavisool-interaction-engine": "node datavisool-interaction-engine/scripts/publish.mjs",
     "verify:shared:both": "node script/verification/verify-shared-consumers.mjs"
   },
   "keywords": [],

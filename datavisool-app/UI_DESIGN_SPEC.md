@@ -1,7 +1,7 @@
 <!-- Licensed under the DataVisool License. See the LICENSE file distributed with this software. -->
 # DataVisool Web UI 风格规范
 
-本规范基于 `设计稿/` 目录中的项目列表、控制台、资源管理、设置页与新建弹框视觉稿制定。后续新增页面优先复用 `datavisool-app/src/style/AppTheme.less` 中的 `--datavisool-*` token；基础组件使用 npm 包 `@datavisool/ui`，同一主题文件将应用 token 映射到组件库的 `--datavisool-ui-*` 变量。
+本规范基于 `设计稿/` 目录中的项目列表、控制台、资源管理、设置页与新建弹框视觉稿制定。后续新增页面优先复用 `datavisool-app/src/style/AppTheme.less` 中的 `--datavisool-*` token。基础组件来自工作区包 `@datavisool/ui`，同一主题文件将应用 token 映射到组件库的 `--datavisool-ui-*` 变量。
 
 ## 1. 风格定位
 
@@ -92,7 +92,7 @@ DataVisool Web 是面向桌面端的可视化设计与资源管理工具，界�
 
 ## 6. 自研组件库约定
 
-* 主应用依赖 npm 包 `@datavisool/ui`，从包入口导入组件，并在应用入口引入 `@datavisool/ui/style.css`。
+* 主应用从工作区包 `@datavisool/ui` 的公开入口导入组件，并在应用入口引入 `@datavisool/ui/style.css`。
 * 可复用组件的更新通过组件库发布及依赖升级接入，新增组件必须从项目真实场景抽象，不引入第三方 UI 生成器约定。
 * 组件 class 拼接可以使用包入口导出的 `cn()`。
 * 组件库通过 `DataVisoolUIProvider` 接收应用的 `locale` 和 `translate`，保持语言切换有效。

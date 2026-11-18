@@ -1,0 +1,165 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-colors-picker {
+      box-sizing: border-box;
+      display: flex;
+      width: fit-content;
+      max-width: 100%;
+      min-width: min(260px, 100%);
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: none;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      padding: 8px;
+      transition: border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+    }
+  
+    .datavisool-colors-picker:hover:not(.datavisool-colors-picker-disabled) {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+    }
+  
+    .datavisool-colors-picker-preview {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      height: 12px;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: 999px;
+      background: rgba(168, 179, 207, 0.16);
+      overflow: hidden;
+      box-shadow: none;
+    }
+  
+    .datavisool-colors-picker-preview-segment {
+      min-width: 0;
+      flex: 1 1 0;
+    }
+  
+    .datavisool-colors-picker-preview-empty {
+      width: 100%;
+      background: repeating-linear-gradient(45deg, rgba(168, 179, 207, 0.1) 0 6px, rgba(168, 179, 207, 0.22) 6px 12px);
+    }
+  
+    .datavisool-colors-picker-list {
+      display: flex;
+      max-width: 100%;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+  
+    .datavisool-colors-picker-item {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-control-bg, rgba(255, 255, 255, 0.03));
+      padding: 5px;
+      transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+  
+    .datavisool-colors-picker-item:hover {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+    }
+  
+    .datavisool-colors-picker-index {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: 999px;
+      background: rgba(59, 130, 255, 0.12);
+      color: var(--datavisool-ui-color-info, #38bdf8);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      line-height: 1;
+    }
+  
+    .datavisool-colors-picker-remove,
+    .datavisool-colors-picker-add {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-colors-picker-remove {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+    }
+  
+    .datavisool-colors-picker-add {
+      border-style: dashed;
+    }
+  
+    .datavisool-colors-picker-remove:hover:not(:disabled),
+    .datavisool-colors-picker-add:hover:not(:disabled) {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-colors-picker-remove:active:not(:disabled),
+    .datavisool-colors-picker-add:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  
+    .datavisool-colors-picker-remove:focus-visible,
+    .datavisool-colors-picker-add:focus-visible {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-colors-picker-remove:disabled,
+    .datavisool-colors-picker-add:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+    }
+  
+    .datavisool-colors-picker-disabled {
+      opacity: 0.55;
+    }
+  
+    .datavisool-colors-picker-disabled .datavisool-colors-picker-item,
+    .datavisool-colors-picker-disabled .datavisool-colors-picker-remove,
+    .datavisool-colors-picker-disabled .datavisool-colors-picker-add {
+      cursor: not-allowed;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-colors-picker,
+      .datavisool-colors-picker-item,
+      .datavisool-colors-picker-remove,
+      .datavisool-colors-picker-add {
+        transition: none;
+      }
+    }
+}

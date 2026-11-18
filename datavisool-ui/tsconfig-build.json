@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/main.ts",
+    "src/components",
+    "src/lib",
+    "src/styles",
+    "src/feedback",
+    "src/feedback.ts",
+    "src/basic.ts",
+    "src/schema.ts",
+    "src/code-editor.ts"
+  ],
+  "exclude": [
+    "src/demo",
+    "node_modules",
+    "dist"
+  ]
+}

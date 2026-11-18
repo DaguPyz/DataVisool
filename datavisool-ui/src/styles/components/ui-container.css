@@ -1,0 +1,233 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-field {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-field-label {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      min-height: 22px;
+      align-items: center;
+      gap: 8px;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.35;
+    }
+  
+    .datavisool-field-label-main {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 6px;
+    }
+  
+    .datavisool-field-label-text {
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-field-required {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-height: 18px;
+      flex-shrink: 0;
+      align-items: center;
+      border: 1px solid rgba(251, 113, 133, 0.32);
+      border-radius: 999px;
+      background: rgba(251, 113, 133, 0.1);
+      color: var(--datavisool-ui-destructive, #ef4444);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0 6px;
+    }
+  
+    .datavisool-field-tip {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      border-radius: 999px;
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      cursor: help;
+      outline: none;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+  
+    .datavisool-field-tip:hover,
+    .datavisool-field-tip:focus-visible {
+      border-color: var(--datavisool-ui-border-strong, rgba(255, 255, 255, 0.12));
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-field-tip:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-field-tip-content {
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 70;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      display: none;
+      width: max-content;
+      max-width: min(280px, calc(100vw - 32px));
+      transform: translateX(-50%);
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-md, 10px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      padding: 8px 10px;
+      text-align: left;
+    }
+  
+    .datavisool-field-tip:hover .datavisool-field-tip-content,
+    .datavisool-field-tip:focus-visible .datavisool-field-tip-content {
+      display: block;
+    }
+  
+    .datavisool-field-label-extra {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 0;
+      margin-left: auto;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+  
+    .datavisool-field-content {
+      box-sizing: border-box;
+      min-width: 0;
+    }
+  
+    .datavisool-field-helper {
+      box-sizing: border-box;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-field-helper-success {
+      color: var(--datavisool-ui-color-success, #22c55e);
+    }
+  
+    .datavisool-field-helper-warning {
+      color: var(--datavisool-ui-color-warning, #f59e0b);
+    }
+  
+    .datavisool-field-helper-error {
+      color: var(--datavisool-ui-destructive, #ef4444);
+    }
+  
+    .datavisool-field-status-success .datavisool-field-label {
+      color: var(--datavisool-ui-color-success, #22c55e);
+    }
+  
+    .datavisool-field-status-warning .datavisool-field-label {
+      color: var(--datavisool-ui-color-warning, #f59e0b);
+    }
+  
+    .datavisool-field-status-error .datavisool-field-label {
+      color: var(--datavisool-ui-destructive, #ef4444);
+    }
+  
+    .datavisool-field-horizontal,
+    .datavisool-field-inline {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: start;
+      column-gap: 12px;
+      row-gap: 6px;
+    }
+  
+    .datavisool-field-horizontal .datavisool-field-label,
+    .datavisool-field-inline .datavisool-field-label {
+      box-sizing: border-box;
+      flex: 0 0 min(38%, 140px);
+      min-height: 40px;
+      padding-top: 9px;
+    }
+  
+    .datavisool-field-horizontal .datavisool-field-content,
+    .datavisool-field-inline .datavisool-field-content {
+      flex: 1 1 0;
+    }
+  
+    .datavisool-field-horizontal .datavisool-field-helper,
+    .datavisool-field-inline .datavisool-field-helper {
+      flex: 1 0 calc(100% - 152px);
+      margin-left: min(calc(38% + 12px), 152px);
+    }
+  
+    @media (max-width: 640px) {
+      .datavisool-field-horizontal,
+      .datavisool-field-inline {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+  
+      .datavisool-field-horizontal .datavisool-field-label,
+      .datavisool-field-inline .datavisool-field-label {
+        box-sizing: border-box;
+        flex-basis: auto;
+        min-height: 22px;
+        padding-top: 0;
+      }
+  
+      .datavisool-field-horizontal .datavisool-field-content,
+      .datavisool-field-inline .datavisool-field-content {
+        box-sizing: border-box;
+        flex-basis: auto;
+        width: 100%;
+      }
+  
+      .datavisool-field-horizontal .datavisool-field-helper,
+      .datavisool-field-inline .datavisool-field-helper {
+        flex-basis: auto;
+        margin-left: 0;
+      }
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-field-tip {
+        transition: none;
+      }
+    }
+}

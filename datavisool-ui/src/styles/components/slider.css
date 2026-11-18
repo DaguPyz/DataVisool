@@ -1,0 +1,223 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-slider-field {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      min-width: min(240px, 100%);
+      flex-direction: column;
+      gap: 6px;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+    }
+  
+    .datavisool-slider-main {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      min-height: 40px;
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .datavisool-slider-affix {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 13px;
+      line-height: 1;
+    }
+  
+    .datavisool-slider-value {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 42px;
+      min-height: 28px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 8px;
+      background: #111a2e;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 650;
+      line-height: 1;
+      padding: 0 8px;
+    }
+  
+    .datavisool-slider-control {
+      box-sizing: border-box;
+      --datavisool-slider-track-height: 3px;
+      --datavisool-slider-thumb-size: 24px;
+      --datavisool-slider-percent: 0%;
+      flex: 1;
+      position: relative;
+      display: block;
+      width: 100%;
+      min-width: min(180px, 100%);
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  
+    .datavisool-slider-rail,
+    .datavisool-slider-fill {
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: var(--datavisool-slider-track-height);
+      border: 0;
+      border-radius: 999px;
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+  
+    .datavisool-slider-rail {
+      background: rgba(170, 183, 209, 0.32);
+    }
+  
+    .datavisool-slider-fill {
+      width: var(--datavisool-slider-percent);
+      background: #3b82f6;
+      will-change: width;
+    }
+  
+    .datavisool-slider-thumb {
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      left: var(--datavisool-slider-percent);
+      width: var(--datavisool-slider-thumb-size);
+      height: var(--datavisool-slider-thumb-size);
+      border: 0;
+      border-radius: 999px;
+      background: #3b82f6;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      will-change: left;
+    }
+  
+    .datavisool-slider-dragging .datavisool-slider-fill,
+    .datavisool-slider-dragging .datavisool-slider-thumb {
+      transition: none;
+    }
+  
+    .datavisool-slider-control:hover .datavisool-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+  
+    .datavisool-slider-control:active .datavisool-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.24);
+    }
+  
+    .datavisool-slider-control:focus-visible .datavisool-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.28);
+    }
+  
+    .datavisool-slider-size-sm .datavisool-slider-main {
+      min-height: 36px;
+      gap: 8px;
+    }
+  
+    .datavisool-slider-size-sm .datavisool-slider-control {
+      --datavisool-slider-track-height: 2px;
+      --datavisool-slider-thumb-size: 18px;
+      height: 26px;
+    }
+  
+    .datavisool-slider-size-sm .datavisool-slider-value {
+      min-width: 36px;
+      min-height: 24px;
+      border-radius: 7px;
+      font-size: 11px;
+    }
+  
+    .datavisool-slider-size-lg .datavisool-slider-main {
+      min-height: 52px;
+      gap: 12px;
+    }
+  
+    .datavisool-slider-size-lg .datavisool-slider-control {
+      --datavisool-slider-track-height: 4px;
+      --datavisool-slider-thumb-size: 28px;
+      height: 38px;
+    }
+  
+    .datavisool-slider-size-lg .datavisool-slider-value {
+      min-width: 48px;
+      min-height: 32px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+  
+    .datavisool-slider-status-success .datavisool-slider-fill,
+    .datavisool-slider-status-success .datavisool-slider-thumb {
+      background: #22c55e;
+    }
+  
+    .datavisool-slider-status-warning .datavisool-slider-fill,
+    .datavisool-slider-status-warning .datavisool-slider-thumb {
+      background: #f59e0b;
+    }
+  
+    .datavisool-slider-status-error .datavisool-slider-fill,
+    .datavisool-slider-status-error .datavisool-slider-thumb {
+      background: #ef4444;
+    }
+  
+    .datavisool-slider-status-success .datavisool-slider-value,
+    .datavisool-slider-helper-success {
+      color: #22c55e;
+    }
+  
+    .datavisool-slider-status-warning .datavisool-slider-value,
+    .datavisool-slider-helper-warning {
+      color: #f59e0b;
+    }
+  
+    .datavisool-slider-status-error .datavisool-slider-value,
+    .datavisool-slider-helper-error {
+      color: #ef4444;
+    }
+  
+    .datavisool-slider-disabled {
+      opacity: 0.5;
+    }
+  
+    .datavisool-slider-disabled .datavisool-slider-control {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-slider-readonly .datavisool-slider-control {
+      cursor: default;
+    }
+  
+    .datavisool-slider-readonly .datavisool-slider-value {
+      border-style: dashed;
+    }
+  
+    .datavisool-slider-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-slider-thumb {
+        transition: none;
+      }
+    }
+}

@@ -1,0 +1,169 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-dropdown-trigger {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 0;
+    }
+  
+    .datavisool-dropdown-popup {
+      box-sizing: border-box;
+      position: fixed;
+      z-index: 1200;
+      min-width: 168px;
+      border: 1px solid rgba(102, 126, 180, 0.44);
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(16, 27, 58, 0.98), rgba(6, 12, 29, 0.98));
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.36), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      letter-spacing: 0;
+      padding: 6px;
+      backdrop-filter: blur(14px);
+      transform-origin: top right;
+      animation: datavisool-ui-dropdown-in 140ms ease-out;
+    }
+  
+    .datavisool-dropdown-placement-topLeft,
+    .datavisool-dropdown-placement-topRight {
+      transform-origin: bottom right;
+    }
+  
+    .datavisool-dropdown-menu {
+      box-sizing: border-box;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 2px;
+    }
+  
+    .datavisool-dropdown-item {
+      box-sizing: border-box;
+      display: flex;
+      width: 100%;
+      min-height: 38px;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      outline: none;
+      background: transparent;
+      color: rgba(230, 236, 251, 0.88);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 560;
+      line-height: 1.35;
+      padding: 0 10px;
+      text-align: left;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+  
+    .datavisool-dropdown-item:hover:not(:disabled),
+    .datavisool-dropdown-item:focus-visible {
+      border-color: rgba(95, 147, 255, 0.34);
+      background: rgba(69, 102, 178, 0.22);
+      color: #ffffff;
+    }
+  
+    .datavisool-dropdown-item:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  
+    .datavisool-dropdown-item:focus-visible {
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+    }
+  
+    .datavisool-dropdown-item:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+  
+    .datavisool-dropdown-item-danger {
+      color: rgba(255, 151, 161, 0.95);
+    }
+  
+    .datavisool-dropdown-item-danger:hover:not(:disabled),
+    .datavisool-dropdown-item-danger:focus-visible {
+      border-color: rgba(251, 113, 133, 0.36);
+      background: rgba(251, 113, 133, 0.14);
+      color: #ffd9de;
+    }
+  
+    .datavisool-dropdown-item-icon {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      align-items: center;
+      justify-content: center;
+      color: currentColor;
+    }
+  
+    .datavisool-dropdown-item-icon svg {
+      box-sizing: border-box;
+      display: block;
+      width: 18px;
+      height: 18px;
+    }
+  
+    .datavisool-dropdown-item-label {
+      box-sizing: border-box;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-dropdown-divider {
+      box-sizing: border-box;
+      height: 1px;
+      margin: 5px 6px;
+      background: rgba(116, 137, 184, 0.24);
+    }
+  
+    @keyframes datavisool-ui-dropdown-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+      }
+  
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-dropdown-popup {
+      border-color: var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+      box-shadow: var(--datavisool-ui-shadow-float, 0 12px 32px rgba(0, 0, 0, 0.32));
+      backdrop-filter: none;
+    }
+  
+    .datavisool-dropdown-item {
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      font-weight: 500;
+    }
+  
+    .datavisool-dropdown-item:hover:not(:disabled),
+    .datavisool-dropdown-item:focus-visible {
+      border-color: transparent;
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      box-shadow: var(--datavisool-ui-shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-dropdown-divider {
+      background: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+}
