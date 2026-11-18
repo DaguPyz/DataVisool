@@ -8,6 +8,7 @@ import {createI18nPlugin} from '@/plugins/i18n/i18nPlugin.ts';
 import {createLegacyRoutesPlugin} from '@/plugins/legacy-routes/legacyRoutesPlugin.ts';
 import {createLoginPlugin} from '@/plugins/login/loginPlugin.tsx';
 import {createNavigationPlugin} from '@/plugins/navigation/navigationPlugin.tsx';
+import {createProjectListPlugin} from '@/plugins/project-list/projectListPlugin.tsx';
 import {createRouterPlugin} from '@/plugins/router/routerPlugin.tsx';
 import {createSessionPlugin} from '@/plugins/session/sessionPlugin.ts';
 import {createUiPlugin} from '@/plugins/ui/uiPlugin.tsx';
@@ -30,6 +31,7 @@ export function createAppPlugins(): readonly Plugin[] {
         createNavigationPlugin(),
         createWorkbenchPlugin({homePath, loginPath: '/login'}),
         createConsolePlugin(),
+        createProjectListPlugin(),
         createLegacyRoutesPlugin(),
     ];
 }

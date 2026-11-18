@@ -50,8 +50,8 @@ export interface RouterService {
     getLocation(): RouteLocation | undefined;
     /** Resolve a registered route ID to a browser path after assembly. Pass decoded parameter values. */
     pathFor(routeId: string, params?: Readonly<Record<string, string | null>>): string;
-    /** Navigate to an absolute application path. */
-    navigate(to: string, options?: {readonly replace?: boolean}): Promise<void>;
+    /** Navigate to an absolute application path with optional browser history state. */
+    navigate(to: string, options?: {readonly replace?: boolean; readonly state?: unknown}): Promise<void>;
 }
 
 declare module '../../plugin.js' {

@@ -1,20 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, test, vi} from "vitest";
-import ProjectItem from "@/pages/home/project-list/ProjectItem.tsx";
-
-vi.mock("react-router-dom", async () => {
-    const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
-    return {...actual, useNavigate: () => vi.fn()};
-});
-
-vi.mock("@/api/engineering/BaseApi.ts", () => ({
-    default: {updateProject: vi.fn()},
-}));
-
-vi.mock("@/i18n/miniI18n.ts", () => ({
-    tx: (value: string) => value,
-}));
+import ProjectItem from "@/plugins/project-list/ProjectItem.tsx";
 
 vi.mock("@datavisool/ui", () => ({
     Dropdown: ({children, menu}: any) => (
@@ -35,7 +22,9 @@ describe("ProjectItem double click", () => {
 
     test("enters edit on card double click and ignores interactive elements", () => {
         const {container} = render(
-            <ProjectItem id="project-1" name="测试项目" doOperate={doOperate}/>,
+            <ProjectItem id="project-1" name="测试项目" doOperate={doOperate}
+                         canOperate={() => true} navigate={async () => {}}
+                         renameProject={async () => true} translate={text => text}/>,
         );
         const card = container.querySelector(".project-list-item")!;
 

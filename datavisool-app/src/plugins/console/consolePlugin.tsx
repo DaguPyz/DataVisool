@@ -6,9 +6,9 @@ import type {Plugin} from '@datavisool/sdk/plugin';
 import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
 import type {IProjectInfoManager} from '@datavisool/sdk/types';
 import {createProject} from '@/api/engineering/createProject.ts';
-import {redirectExpiredSession} from '@/api/ReponseHandler.ts';
+import {createSessionRequestOptions} from '@/api/sessionRequestOptions.ts';
 import {createI18nBinding} from '@/i18n/i18nBinding.ts';
-import AuthFetchUtil, {type AuthRequestInit} from '@/util/AuthFetchUtil.ts';
+import AuthFetchUtil from '@/util/AuthFetchUtil.ts';
 
 const ConsoleDashboard = lazy(() => import('./ConsoleDashboard.tsx'));
 
@@ -23,22 +23,10 @@ export function createConsolePlugin(): Plugin {
         provides: [],
         activate(context) {
             const i18n = createI18nBinding(context);
-            const {router, session} = context;
+            const {router} = context;
+            const requestOptions = createSessionRequestOptions(context);
             const pendingCreations = new Set<Promise<string | null>>();
             let acceptingOperations = true;
-            let loginRedirect: number | undefined;
-
-            const requestOptions = (signal?: AbortSignal): AuthRequestInit => {
-                const token = session.getUserInfo()?.token ?? null;
-                return {
-                    token,
-                    signal,
-                    onSessionExpiry() {
-                        if (signal?.aborted || (session.getUserInfo()?.token ?? null) !== token || loginRedirect !== undefined) return;
-                        loginRedirect = redirectExpiredSession(() => session.removeUser());
-                    },
-                };
-            };
             const post = <T,>(path: string, data: unknown, signal: AbortSignal): Promise<T> =>
                 AuthFetchUtil.post<T>(path, data, requestOptions(signal));
             const submitProject = async (project: IProjectInfoManager): Promise<string | null> => {
@@ -62,7 +50,6 @@ export function createConsolePlugin(): Plugin {
             });
             context.onDispose(() => {
                 acceptingOperations = false;
-                if (loginRedirect !== undefined) window.clearTimeout(loginRedirect);
             });
 
             const routeId = 'app:console';

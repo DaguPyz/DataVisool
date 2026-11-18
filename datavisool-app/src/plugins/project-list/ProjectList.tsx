@@ -4,22 +4,29 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import React, {memo, useCallback, useEffect, useRef} from 'react';
-import "@/pages/home/project-list/ProjectList.less";
-import {Button, Input, Pagination} from "@datavisool/ui";
+import React, {memo, useCallback, useEffect, useRef, useSyncExternalStore} from 'react';
+import {Button, globalMessage, Input, Pagination} from "@datavisool/ui";
+import type {RouterService} from "@datavisool/sdk/plugin/contracts/router";
 import {NewProjectDialog, type INewProjectInfo} from "@/shared/project/NewProjectDialog.tsx";
-import {globalMessage} from "@datavisool/ui";
-import DelProjectDialog from "@/pages/home/project-list/DelProjectDialog.tsx";
-import CloneProjectDialog from "@/pages/home/project-list/CloneProjectDialog.tsx";
-import ProjectItem from "@/pages/home/project-list/ProjectItem.tsx";
-import {tx} from "@/i18n/miniI18n.ts";
+import type {I18nBinding} from "@/i18n/i18nBinding.ts";
+import type {AuthRequestInit} from "@/util/AuthFetchUtil.ts";
 import {Plus, Search} from "@icon-park/react";
 import baseApi from "@/api/engineering/BaseApi.ts";
-import {IPage, IProjectInfoManager} from "@datavisool/sdk/types";
-import {useNavigate} from "react-router-dom";
+import type {IPage, IProjectInfoManager} from "@datavisool/sdk/types";
 import {withDesktopWebviewUserAgent} from "@/util/WebviewUserAgentUtil.ts";
 import {openDesktopWebview} from "@/util/TauriCompatUtil.ts";
-import projectCoverDashboard from "@/pages/home/project-list/assets/project-cover-dashboard.webp";
+import DelProjectDialog from "./DelProjectDialog.tsx";
+import CloneProjectDialog from "./CloneProjectDialog.tsx";
+import ProjectItem from "./ProjectItem.tsx";
+import projectCoverDashboard from "./assets/project-cover-dashboard.webp";
+import "./ProjectList.less";
+
+interface ProjectListProps extends I18nBinding {
+    readonly canOperate: () => boolean;
+    readonly navigate: RouterService['navigate'];
+    readonly requestOptions: (signal?: AbortSignal) => AuthRequestInit;
+    readonly trackWrite: <T>(request: Promise<T>) => Promise<T>;
+}
 
 type ProjectCardVariant = "analytics" | "mimo" | "map";
 
@@ -51,8 +58,9 @@ const formatProjectDate = (value?: unknown) => {
     return `${year}/${month}/${day}`;
 }
 
-export const ProjectList = memo(() => {
-    const navigate = useNavigate();
+const ProjectList = memo(({i18n, subscribeLocale, canOperate, navigate, requestOptions, trackWrite}: ProjectListProps) => {
+    useSyncExternalStore(subscribeLocale, i18n.getLocale);
+    const tx = i18n.translate;
     const [addDialog, setAddDialog] = React.useState(false);
     const [delDialog, setDelDialog] = React.useState(false);
     const [cloneDialog, setCloneDialog] = React.useState(false);
@@ -60,6 +68,8 @@ export const ProjectList = memo(() => {
     const delIdRef = useRef<string>("");
     const cloneIdRef = useRef<string>("");
     const latestQuery = useRef({current: 1, size: PROJECT_PAGE_SIZE, searchValue: ""});
+    const mounted = useRef(false);
+    const pendingRead = useRef<AbortController>();
     const [pageData, setPageData] = React.useState<IPage<IProjectInfoManager>>({
         records: [],
         total: 0,
@@ -68,43 +78,56 @@ export const ProjectList = memo(() => {
     });
 
     const getProjectPageList = useCallback(async (params = latestQuery.current) => {
+        if (!mounted.current || !canOperate()) return;
+        pendingRead.current?.abort();
+        const request = new AbortController();
+        pendingRead.current = request;
         const query = {...params};
         latestQuery.current = query;
-        while (true) {
-            const data = await baseApi.getProjectInfoPageList(query);
-            if (query !== latestQuery.current) return;
-            const lastPage = Math.max(1, Math.ceil(data.total / query.size));
-            if (query.current <= lastPage) {
-                setPageData(data);
-                return;
+        try {
+            while (!request.signal.aborted) {
+                const data = await baseApi.getProjectInfoPageList(query, requestOptions(request.signal));
+                if (request.signal.aborted) return;
+                const lastPage = Math.max(1, Math.ceil(data.total / query.size));
+                if (query.current <= lastPage) {
+                    setPageData(data);
+                    return;
+                }
+                // 删除可能让当前页消失，按最新总数重新读取最后一个有效页。
+                query.current = lastPage;
             }
-            // 删除可能让当前页消失，按最新总数重新读取最后一个有效页。
-            query.current = lastPage;
+        } finally {
+            if (pendingRead.current === request) pendingRead.current = undefined;
         }
-    }, []);
+    }, [canOperate, requestOptions]);
 
 
-    const toggleNewProVisible = () => setAddDialog(!addDialog);
+    const toggleNewProVisible = () => {
+        if (canOperate()) setAddDialog(!addDialog);
+    };
 
     const onOk = async ({name, des, width, height}: INewProjectInfo) => {
-        const id = await baseApi.createProject({
+        if (!canOperate()) return;
+        const id = await trackWrite(baseApi.createProject({
             name, des,
             dataJson: JSON.stringify({canvasManager: {width, height}}),
-        });
+        }, requestOptions()));
+        if (!mounted.current) return;
         if (!isProjectId(id)) {
             globalMessage.messageApi?.error(tx('创建失败'));
             return;
         }
         setAddDialog(false);
-        navigate(`/designer?id=${id}`);
+        await navigate(`/designer?id=${id}`);
     }
 
     const onCancel = () => setAddDialog(false);
 
     const operateHandler = (id: string, type: string) => {
+        if (!canOperate()) return;
         switch (type) {
             case 'edit':
-                navigate(`/designer?id=${id}`);
+                void navigate(`/designer?id=${id}`);
                 break;
             case 'show':
                 void openDesktopWebview(`preview-${id}`, withDesktopWebviewUserAgent({
@@ -128,23 +151,30 @@ export const ProjectList = memo(() => {
 
     const cancelDel = () => setDelDialog(false);
 
-    const confirmClone = () => {
-        baseApi.copyProject(cloneIdRef.current).then((id) => {
-            if (id !== "") {
-                setCloneDialog(false);
-                getProjectPageList();
-                globalMessage.messageApi?.success(tx('克隆成功'));
-            } else {
+    const confirmClone = async () => {
+        if (!canOperate()) return;
+        try {
+            const id = await trackWrite(baseApi.copyProject(cloneIdRef.current, requestOptions()));
+            if (!mounted.current) return;
+            if (!id) {
                 globalMessage.messageApi?.error(tx('克隆失败'));
+                return;
             }
-        });
-    }
+            setCloneDialog(false);
+            void getProjectPageList();
+            globalMessage.messageApi?.success(tx('克隆成功'));
+        } catch {
+            if (mounted.current) globalMessage.messageApi?.error(tx('克隆失败'));
+        }
+    };
 
     const cancelClone = () => setCloneDialog(false);
 
     const confirmDel = async () => {
+        if (!canOperate()) return;
         try {
-            const deleted = await baseApi.deleteProject(delIdRef.current);
+            const deleted = await trackWrite(baseApi.deleteProject(delIdRef.current, requestOptions()));
+            if (!mounted.current) return;
             if (!deleted) {
                 globalMessage.messageApi?.error(tx('删除失败'));
                 return;
@@ -152,7 +182,7 @@ export const ProjectList = memo(() => {
             setDelDialog(false);
             await getProjectPageList();
         } catch {
-            globalMessage.messageApi?.error(tx('删除失败'));
+            if (mounted.current) globalMessage.messageApi?.error(tx('删除失败'));
         }
     }
 
@@ -165,8 +195,16 @@ export const ProjectList = memo(() => {
     }
 
     useEffect(() => {
-        getProjectPageList();
+        mounted.current = true;
+        void getProjectPageList();
+        return () => {
+            mounted.current = false;
+            pendingRead.current?.abort();
+        };
     }, [getProjectPageList]);
+
+    const renameProject = (id: string, name: string) =>
+        trackWrite(baseApi.updateProject({id, name}, requestOptions()));
 
     return (
         <div className='project-list-container'>
@@ -199,7 +237,8 @@ export const ProjectList = memo(() => {
                                          updatedAt={formatProjectDate(item.updateTime || item.createTime)}
                                          variant={variant}
                                          cover={item.cover || projectCoverAssets[index % projectCoverAssets.length]}
-                                         doOperate={operateHandler}/>
+                                         doOperate={operateHandler} canOperate={canOperate} navigate={navigate}
+                                         renameProject={renameProject} translate={tx}/>
                         )
                     }) : (
                         <div className="project-list-empty">暂无项目</div>
@@ -221,7 +260,7 @@ export const ProjectList = memo(() => {
             </div>
             <NewProjectDialog onOk={onOk} onCancel={onCancel} visible={addDialog}/>
             <DelProjectDialog visible={delDialog} onOk={confirmDel} onCancel={cancelDel}/>
-            <CloneProjectDialog onOk={() => confirmClone()} onCancel={cancelClone}
+            <CloneProjectDialog onOk={confirmClone} onCancel={cancelClone}
                                 visible={cloneDialog}/>
         </div>
     );

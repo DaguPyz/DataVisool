@@ -2,7 +2,7 @@
 
 import {
     Api, Box, Brain, Cube, DatabaseSetting, DataOne, DataServer, FileCodeOne,
-    FolderClose, FontSize, Help, Send, Setting as SettingsIcon, User, VideoOne,
+    FontSize, Help, Send, Setting as SettingsIcon, User, VideoOne,
 } from '@icon-park/react';
 import {lazy} from 'react';
 import type {BrandLogo} from '@datavisool/sdk/plugin/contracts/brand';
@@ -11,7 +11,6 @@ import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
 import {RoleType} from '@datavisool/sdk/plugin/contracts/session';
 import type {I18nBinding} from '@/i18n/i18nBinding.ts';
 
-const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));
 const DataBaseList = lazy(() => import('@/pages/home/database/DataBaseList.tsx'));
 const ApiManagement = lazy(() => import('@/pages/home/api-management/ApiManagement.tsx'));
 const AiModelManagement = lazy(() => import('@/pages/home/ai-model-management/AiModelManagement.tsx'));
@@ -45,10 +44,6 @@ interface LegacyWorkbenchPage {
 
 export function createLegacyWorkbenchPages(i18n: I18nBinding, onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {
     return [
-        {
-            route: {id: 'app:projects', path: 'server', render: () => <ProjectList/>},
-            menu: {label: '项目列表', order: 20, icon: <FolderClose {...iconProps}/>},
-        },
         {
             route: {id: 'app:database', path: 'database', render: () => <DataBaseList/>},
             menu: {label: '数据库管理', order: 10, icon: <DatabaseSetting {...iconProps}/>, group: dataSources},

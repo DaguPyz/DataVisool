@@ -9,7 +9,7 @@ import type {ComponentDocumentInfo} from "@/designer/ai-driven/ComponentAiSelect
 
 import {URLUtil} from "@datavisool/sdk";
 import {IImageData} from "../../comps/builtin/base-image/BaseImageComponent.tsx";
-import AuthFetchUtil from "../../util/AuthFetchUtil.ts";
+import AuthFetchUtil, {type AuthRequestInit} from "../../util/AuthFetchUtil.ts";
 import {IPage, IPageParam, IProject, IProjectInfoManager, IProjectMeta} from "@datavisool/sdk/types";
 import {AbstractApi} from "./AbstractApi.ts";
 import {createProject} from "./createProject.ts";
@@ -18,12 +18,12 @@ import ProjectDataCodecUtil from "../../util/ProjectDataCodecUtil.ts";
 
 export class BaseApi extends AbstractApi {
 
-    async createProject(project: IProjectInfoManager): Promise<string | null> {
-        return createProject(project);
+    async createProject(project: IProjectInfoManager, options?: AuthRequestInit): Promise<string | null> {
+        return createProject(project, options);
     }
 
-    async copyProject(id: string): Promise<string> {
-        return await AuthFetchUtil.get<string>(`/api/project/copy/${id}`);
+    async copyProject(id: string, options?: AuthRequestInit): Promise<string> {
+        return await AuthFetchUtil.get<string>(`/api/project/copy/${id}`, options);
     }
 
     async getProjectAiMemory(projectId: string): Promise<IProjectAiMemory | null> {
@@ -36,8 +36,8 @@ export class BaseApi extends AbstractApi {
         return data || null;
     }
 
-    async deleteProject(id: string): Promise<boolean> {
-        return await AuthFetchUtil.get<boolean>(`/api/project/del/${id}`);
+    async deleteProject(id: string, options?: AuthRequestInit): Promise<boolean> {
+        return await AuthFetchUtil.get<boolean>(`/api/project/del/${id}`, options);
     }
 
     async getProjectData(id: string): Promise<IProject | null> {
@@ -65,13 +65,13 @@ export class BaseApi extends AbstractApi {
     /**
      * 获取项目分页列表
      */
-    public async getProjectInfoPageList(pageParam: IPageParam): Promise<IPage<IProjectInfoManager>> {
-        const data = await AuthFetchUtil.post<IPage<IProjectInfoManager>>('/api/project/pageList', pageParam);
+    public async getProjectInfoPageList(pageParam: IPageParam, options?: AuthRequestInit): Promise<IPage<IProjectInfoManager>> {
+        const data = await AuthFetchUtil.post<IPage<IProjectInfoManager>>('/api/project/pageList', pageParam, options);
         return data || {records: [], total: 0, current: 1, size: 10};
     }
 
-    public async updateProject(data: IProjectInfoManager): Promise<boolean> {
-        return await AuthFetchUtil.post<boolean>('/api/project/update', data);
+    public async updateProject(data: IProjectInfoManager, options?: AuthRequestInit): Promise<boolean> {
+        return await AuthFetchUtil.post<boolean>('/api/project/update', data, options);
     }
 
     async getImageSourceList(): Promise<IImageData[]> {

@@ -4,14 +4,12 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import "@/pages/home/project-list/ProjectItem.less";
+import "./ProjectItem.less";
 import {CopyOne, DataServer, Delete, Edit, EditOne, FileText, MapDraw, MoreOne, PreviewOpen, Setting} from "@icon-park/react";
-import {type MouseEvent, useEffect, useState} from "react";
-import baseApi from "@/api/engineering/BaseApi.ts";
-import {useNavigate} from "react-router-dom";
+import {type MouseEvent, useEffect, useRef, useState} from "react";
+import type {RouterService} from "@datavisool/sdk/plugin/contracts/router";
 import {globalMessage} from "@datavisool/ui";
 import {Dropdown, DropdownMenuItem} from "@datavisool/ui";
-import {tx} from "@/i18n/miniI18n.ts";
 import {PROJECT_NAME_MAX_LENGTH} from "@/shared/project/project-name.ts";
 
 export interface ProjectItemProps {
@@ -22,14 +20,24 @@ export interface ProjectItemProps {
     updatedAt?: string;
     variant?: "analytics" | "mimo" | "map";
     doOperate: (id: string, type: string) => void;
+    canOperate: () => boolean;
+    navigate: RouterService['navigate'];
+    renameProject: (id: string, name: string) => Promise<boolean>;
+    translate: (source: string) => string;
 }
 
 export default function ProjectItem(props: ProjectItemProps) {
-    const {cover, description, id, updatedAt, variant = "analytics", doOperate} = props;
+    const {cover, description, id, updatedAt, variant = "analytics", doOperate,
+        canOperate, navigate, renameProject, translate: tx} = props;
     const [displayName, setDisplayName] = useState(props.name);
     const [renameValue, setRenameValue] = useState<string | null>(null);
     const [savingName, setSavingName] = useState(false);
-    const navigate = useNavigate();
+    const mounted = useRef(false);
+
+    useEffect(() => {
+        mounted.current = true;
+        return () => { mounted.current = false; };
+    }, []);
 
     useEffect(() => {
         setDisplayName(props.name);
@@ -54,7 +62,7 @@ export default function ProjectItem(props: ProjectItemProps) {
             label: '重命名',
             icon: <Edit/>,
             disabled: savingName,
-            onClick: () => setRenameValue(displayName)
+            onClick: () => { if (canOperate()) setRenameValue(displayName); }
         },
         {
             key: '4',
@@ -72,12 +80,12 @@ export default function ProjectItem(props: ProjectItemProps) {
             key: '6',
             label: '设置',
             icon: <Setting/>,
-            onClick: () => navigate(`/home/projectSetting/${id}`, {state: {projectId: id, title: displayName}})
+            onClick: () => void navigate(`/home/projectSetting/${id}`, {state: {projectId: id, title: displayName}})
         }
     ];
 
     const updateName = async () => {
-        if (renameValue === null) return;
+        if (renameValue === null || !canOperate()) return;
         setRenameValue(null);
         if (!renameValue.trim()) {
             globalMessage.messageApi?.error(tx("请输入项目名称"));
@@ -86,7 +94,8 @@ export default function ProjectItem(props: ProjectItemProps) {
         if (renameValue === displayName) return;
 
         setSavingName(true);
-        const saved = await baseApi.updateProject({id, name: renameValue}).catch(() => false);
+        const saved = await renameProject(id, renameValue).catch(() => false);
+        if (!mounted.current) return;
         setSavingName(false);
         if (saved) {
             setDisplayName(renameValue);
