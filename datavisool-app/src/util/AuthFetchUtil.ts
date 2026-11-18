@@ -9,7 +9,10 @@ import AuthTools from "@/util/AuthTools.ts";
 import {globalMessage} from "@datavisool/ui";
 import responseHandler from "@/api/ReponseHandler.ts";
 
-export interface AuthRequestInit extends FetchRequestInit {}
+export interface AuthRequestInit extends FetchRequestInit {
+    /** A caller with a session capability supplies its token, including null for no session. */
+    token?: string | null;
+}
 
 export class AuthRequestError extends Error {
     constructor(public readonly code: number, message: string) {
@@ -96,9 +99,8 @@ export default class AuthFetchUtil {
         }
     }
 
-    private static addToken(options?: RequestInit): RequestInit {
-        options = options || {};
-        const token = AuthTools.getToken();
+    private static addToken(options: AuthRequestInit = {}): AuthRequestInit {
+        const token = options.token === undefined ? AuthTools.getToken() : options.token;
         options.headers = options.headers || {};
         (options.headers as any)['Authorization'] = `Bearer ${token}`;
         return options;

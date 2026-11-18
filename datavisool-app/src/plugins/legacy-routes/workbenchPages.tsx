@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {
-    Api, Box, Brain, Cube, DashboardOne, DatabaseSetting, DataOne, DataServer, FileCodeOne,
+    Api, Box, Brain, Cube, DatabaseSetting, DataOne, DataServer, FileCodeOne,
     FolderClose, FontSize, Help, Send, Setting as SettingsIcon, User, VideoOne,
 } from '@icon-park/react';
 import {lazy} from 'react';
@@ -11,7 +11,6 @@ import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
 import {RoleType} from '@datavisool/sdk/plugin/contracts/session';
 import type {I18nBinding} from '@/i18n/i18nBinding.ts';
 
-const ConsoleDashboard = lazy(() => import('@/pages/home/console/ConsoleDashboard.tsx'));
 const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));
 const DataBaseList = lazy(() => import('@/pages/home/database/DataBaseList.tsx'));
 const ApiManagement = lazy(() => import('@/pages/home/api-management/ApiManagement.tsx'));
@@ -46,10 +45,6 @@ interface LegacyWorkbenchPage {
 
 export function createLegacyWorkbenchPages(i18n: I18nBinding, onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {
     return [
-        {
-            route: {id: 'app:console', path: 'console', render: () => <ConsoleDashboard/>},
-            menu: {label: '控制台', order: 10, icon: <DashboardOne {...iconProps}/>},
-        },
         {
             route: {id: 'app:projects', path: 'server', render: () => <ProjectList/>},
             menu: {label: '项目列表', order: 20, icon: <FolderClose {...iconProps}/>},

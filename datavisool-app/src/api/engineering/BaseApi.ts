@@ -12,13 +12,14 @@ import {IImageData} from "../../comps/builtin/base-image/BaseImageComponent.tsx"
 import AuthFetchUtil from "../../util/AuthFetchUtil.ts";
 import {IPage, IPageParam, IProject, IProjectInfoManager, IProjectMeta} from "@datavisool/sdk/types";
 import {AbstractApi} from "./AbstractApi.ts";
+import {createProject} from "./createProject.ts";
 import ProjectUtil from "../../util/ProjectUtil.ts";
 import ProjectDataCodecUtil from "../../util/ProjectDataCodecUtil.ts";
 
 export class BaseApi extends AbstractApi {
 
     async createProject(project: IProjectInfoManager): Promise<string | null> {
-        return await AuthFetchUtil.post<string | null>('/api/project/create', project);
+        return createProject(project);
     }
 
     async copyProject(id: string): Promise<string> {

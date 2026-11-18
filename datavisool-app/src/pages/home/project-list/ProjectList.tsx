@@ -7,7 +7,7 @@
 import React, {memo, useCallback, useEffect, useRef} from 'react';
 import "@/pages/home/project-list/ProjectList.less";
 import {Button, Input, Pagination} from "@datavisool/ui";
-import {INewProjectInfo, NewProjectDialog} from "@/pages/home/project-list/NewProjectDialog.tsx";
+import {NewProjectDialog, type INewProjectInfo} from "@/shared/project/NewProjectDialog.tsx";
 import {globalMessage} from "@datavisool/ui";
 import DelProjectDialog from "@/pages/home/project-list/DelProjectDialog.tsx";
 import CloneProjectDialog from "@/pages/home/project-list/CloneProjectDialog.tsx";

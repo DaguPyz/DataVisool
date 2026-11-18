@@ -5,7 +5,7 @@
  */
 
 import {CountUp} from "countup.js";
-import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore} from "react";
 import {
     Api,
     ArrowRight,
@@ -24,13 +24,19 @@ import {
     VideoOne
 } from "@icon-park/react";
 import {Button, globalMessage} from "@datavisool/ui";
-import {useNavigate} from "react-router-dom";
-import styles from "@/pages/home/console/ConsoleDashboard.module.less";
-import AuthFetchUtil from "@/util/AuthFetchUtil.ts";
-import baseApi from "@/api/engineering/BaseApi.ts";
-import NewProjectDialog, {INewProjectInfo} from "@/pages/home/project-list/NewProjectDialog.tsx";
-import {tx} from "@/i18n/miniI18n.ts";
-import {useLocaleVersion} from "@/i18n/useLocaleVersion.ts";
+import type {IProjectInfoManager} from "@datavisool/sdk/types";
+import type {I18nBinding} from "@/i18n/i18nBinding.ts";
+import NewProjectDialog, {type INewProjectInfo} from "@/shared/project/NewProjectDialog.tsx";
+import styles from "./ConsoleDashboard.module.less";
+
+interface ConsoleDashboardProps extends I18nBinding {
+    readonly post: <T>(path: string, data: unknown, signal: AbortSignal) => Promise<T>;
+    readonly createProject: (project: IProjectInfoManager) => Promise<string | null>;
+    readonly canOperate: () => boolean;
+    readonly navigate: (path: string) => Promise<void>;
+}
+
+type Translate = I18nBinding['i18n']['translate'];
 
 type KpiVariant = "primary" | "teal" | "purple" | "orange";
 type ResourceGroupKey = "creative" | "service";
@@ -212,11 +218,11 @@ function getDisplayName(record: DashboardRecord, fallback: string): string {
     return record.name?.trim() || record.componentName?.trim() || fallback;
 }
 
-function getReleaseDescription(record: ReleaseRecord): string {
+function getReleaseDescription(record: ReleaseRecord, tx: Translate): string {
     return record.description?.trim() || record.des?.trim() || tx("未填写项目描述");
 }
 
-function formatExpiration(value?: number | null): string {
+function formatExpiration(value: number | null | undefined, tx: Translate): string {
     return value && value > 0 ? `${value} ${tx("天")}` : tx("永久");
 }
 
@@ -270,7 +276,7 @@ function TrendBarChart(props: {points: TrendPoint[]; label: string; variant: Kpi
     });
 
     return (
-        <div className={styles.kpiTrendChart} data-variant={variant} role="img" aria-label={`${label} · ${tx("最近 2 周")}`}>
+        <div className={styles.kpiTrendChart} data-variant={variant} role="img" aria-label={label}>
             <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" preserveAspectRatio="none">
                 <line className={styles.kpiTrendBaseline} x1={paddingX} x2={width - paddingX} y1={baselineY} y2={baselineY}/>
                 {bars.map((point) => (
@@ -291,23 +297,30 @@ function TrendBarChart(props: {points: TrendPoint[]; label: string; variant: Kpi
     );
 }
 
-function getTrendSummary(points: TrendPoint[]): string {
+function getTrendSummary(points: TrendPoint[], tx: Translate): string {
     const changeCount = points.reduce((total, point) => total + point.value, 0);
     return changeCount > 0
         ? `${tx("近 2 周")} · ${changeCount} ${tx("项更新")}`
         : tx("近 2 周无变动");
 }
 
-export default function ConsoleDashboard() {
-    const localeVersion = useLocaleVersion();
-    const navigate = useNavigate();
+export default function ConsoleDashboard({i18n, subscribeLocale, post, createProject, canOperate, navigate}: ConsoleDashboardProps) {
+    const locale = useSyncExternalStore(subscribeLocale, i18n.getLocale);
+    const tx = i18n.translate;
     const [dashboardData, setDashboardData] = useState<DashboardData>(createEmptyDashboardData);
     const [projectDialogVisible, setProjectDialogVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [hasLoadError, setHasLoadError] = useState(false);
     const creatingProjectRef = useRef(false);
+    const pageLifetime = useRef<AbortController>();
+    const pendingRead = useRef<AbortController>();
 
     const loadDashboardData = useCallback(async () => {
+        if (!canOperate() || !pageLifetime.current || pageLifetime.current.signal.aborted) return;
+        pendingRead.current?.abort();
+        const request = new AbortController();
+        pendingRead.current = request;
+        const {signal} = request;
         setIsLoading(true);
         setHasLoadError(false);
         try {
@@ -323,17 +336,18 @@ export default function ConsoleDashboard() {
                 apisRes,
                 releasesRes
             ] = await Promise.allSettled([
-                AuthFetchUtil.post<DashboardPage<ProjectRecord> | null>("/api/project/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/font/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/video/page", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/model/page", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/dynamicScript/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/aiModel/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/remote/component/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/commonDatabase/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ResourceRecord> | null>("/api/commonApi/pageList", {current: 1, size: 50}),
-                AuthFetchUtil.post<DashboardPage<ReleaseRecord> | null>("/api/release/pageList", {current: 1, size: 50})
+                post<DashboardPage<ProjectRecord> | null>("/api/project/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/font/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/video/page", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/model/page", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/dynamicScript/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/aiModel/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/remote/component/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/commonDatabase/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ResourceRecord> | null>("/api/commonApi/pageList", {current: 1, size: 50}, signal),
+                post<DashboardPage<ReleaseRecord> | null>("/api/release/pageList", {current: 1, size: 50}, signal)
             ]);
+            if (signal.aborted) return;
             const getCollection = <T extends DashboardRecord>(result: PromiseSettledResult<DashboardPage<T> | null>): DashboardCollection<T> => (
                 result.status === "fulfilled" ? toCollection(result.value) : createEmptyCollection<T>()
             );
@@ -365,15 +379,24 @@ export default function ConsoleDashboard() {
             });
             setHasLoadError(hasFailedRequest);
         } catch (error) {
-            console.error("Failed to fetch dashboard data", error);
-            setHasLoadError(true);
+            if (!signal.aborted) {
+                console.error("Failed to fetch dashboard data", error);
+                setHasLoadError(true);
+            }
         } finally {
-            setIsLoading(false);
+            if (pendingRead.current === request) pendingRead.current = undefined;
+            if (!signal.aborted) setIsLoading(false);
         }
-    }, []);
+    }, [canOperate, post]);
 
     useEffect(() => {
+        const lifetime = new AbortController();
+        pageLifetime.current = lifetime;
         void loadDashboardData();
+        return () => {
+            lifetime.abort();
+            pendingRead.current?.abort();
+        };
     }, [loadDashboardData]);
 
     const allRecords = useMemo(() => [
@@ -418,7 +441,7 @@ export default function ConsoleDashboard() {
     const biweeklyUpdateCount = useMemo(() => countRecentChanges(allRecords), [allRecords]);
 
     const kpis = useMemo<KpiItem[]>(() => {
-        void localeVersion;
+        void locale;
         const projectTrend = getDailyBuckets(dashboardData.projects.records);
         const resourceTrend = getDailyBuckets(resourceRecords);
         const releaseTrend = getDailyBuckets(dashboardData.releases.records);
@@ -430,7 +453,7 @@ export default function ConsoleDashboard() {
             label: tx("项目总数"),
             value: counts.projects,
             description: tx("当前环境下可用项目总数"),
-            trendSummary: getTrendSummary(projectTrend),
+            trendSummary: getTrendSummary(projectTrend, tx),
             icon: <FolderClose theme="outline" size={20} fill="currentColor"/>,
             variant: "primary",
             trend: projectTrend
@@ -440,7 +463,7 @@ export default function ConsoleDashboard() {
             label: tx("资源总量"),
             value: resourceTotal,
             description: tx("字体、视频、3D 模型、动态脚本及服务资源总数"),
-            trendSummary: getTrendSummary(resourceTrend),
+            trendSummary: getTrendSummary(resourceTrend, tx),
             icon: <Box theme="outline" size={20} fill="currentColor"/>,
             variant: "teal",
             trend: resourceTrend
@@ -450,7 +473,7 @@ export default function ConsoleDashboard() {
             label: tx("已发布版本"),
             value: counts.releases,
             description: tx("发布管理中已发布的版本记录"),
-            trendSummary: getTrendSummary(releaseTrend),
+            trendSummary: getTrendSummary(releaseTrend, tx),
             icon: <Send theme="outline" size={20} fill="currentColor"/>,
             variant: "purple",
             trend: releaseTrend
@@ -460,16 +483,16 @@ export default function ConsoleDashboard() {
             label: tx("近 2 周更新"),
             value: biweeklyUpdateCount,
             description: tx("最近 2 周内项目与资源的变更次数"),
-            trendSummary: getTrendSummary(updateTrend),
+            trendSummary: getTrendSummary(updateTrend, tx),
             icon: <History theme="outline" size={20} fill="currentColor"/>,
             variant: "orange",
             trend: updateTrend
         }
         ];
-    }, [allRecords, biweeklyUpdateCount, counts, dashboardData, localeVersion, resourceRecords, resourceTotal]);
+    }, [allRecords, biweeklyUpdateCount, counts, dashboardData, locale, resourceRecords, resourceTotal, tx]);
 
     const resourceBreakdown = useMemo<ResourceBreakdownItem[]>(() => {
-        void localeVersion;
+        void locale;
         const items = [
             {key: "fonts", label: tx("字体"), value: counts.fonts, group: "creative" as const, route: "/home/font"},
             {key: "videos", label: tx("视频"), value: counts.videos, group: "creative" as const, route: "/home/videoResource"},
@@ -484,10 +507,10 @@ export default function ConsoleDashboard() {
             ...item,
             percent: resourceTotal > 0 ? Math.round(item.value / resourceTotal * 1000) / 10 : 0
         }));
-    }, [counts, localeVersion, resourceTotal]);
+    }, [counts, locale, resourceTotal, tx]);
 
     const resourceGroups = useMemo<ResourceGroup[]>(() => {
-        void localeVersion;
+        void locale;
         return [
             {
                 key: "creative",
@@ -500,10 +523,10 @@ export default function ConsoleDashboard() {
                 items: resourceBreakdown.filter((item) => item.group === "service")
             }
         ];
-    }, [localeVersion, resourceBreakdown]);
+    }, [locale, resourceBreakdown, tx]);
 
     const recentActivities = useMemo<ActivityItem[]>(() => {
-        void localeVersion;
+        void locale;
         const createActivity = (
             record: DashboardRecord,
             type: ActivityType,
@@ -540,7 +563,7 @@ export default function ConsoleDashboard() {
             .filter((activity): activity is ActivityItem => activity !== null)
             .sort((left, right) => right.timestamp - left.timestamp)
             .slice(0, 5);
-    }, [dashboardData, localeVersion]);
+    }, [dashboardData, locale, tx]);
 
     const recentReleases = useMemo(() => dashboardData.releases.records
         .map((record, index) => ({record, index, timestamp: getRecordTimestamp(record)}))
@@ -562,28 +585,32 @@ export default function ConsoleDashboard() {
     };
 
     const handleCreateProject = useCallback(async (data: INewProjectInfo) => {
-        if (creatingProjectRef.current) return;
+        const signal = pageLifetime.current?.signal;
+        if (!signal || signal.aborted || !canOperate() || creatingProjectRef.current) return;
         creatingProjectRef.current = true;
         try {
-            const id = await baseApi.createProject({
+            const id = await createProject({
                 name: data.name,
                 des: data.des,
                 dataJson: JSON.stringify({canvasManager: {width: data.width, height: data.height}})
             });
+            if (signal.aborted) return;
             if (!id || !String(id).trim()) {
                 globalMessage.messageApi?.error(tx("创建失败"));
                 return;
             }
             setProjectDialogVisible(false);
             await loadDashboardData();
-            navigate(`/designer?id=${id}`);
+            if (!signal.aborted) await navigate(`/designer?id=${id}`);
         } catch (error) {
-            console.error("ConsoleDashboard.createProject failed", error);
-            globalMessage.messageApi?.error(tx("创建失败"));
+            if (!signal.aborted) {
+                console.error("ConsoleDashboard.createProject failed", error);
+                globalMessage.messageApi?.error(tx("创建失败"));
+            }
         } finally {
             creatingProjectRef.current = false;
         }
-    }, [loadDashboardData, navigate]);
+    }, [canOperate, createProject, loadDashboardData, navigate, tx]);
 
     return (
         <div className={styles.dashboard} aria-busy={isLoading}>
@@ -634,7 +661,7 @@ export default function ConsoleDashboard() {
                                 <strong className={styles.kpiValue}><AnimatedNumber value={item.value}/></strong>
                                 <span className={styles.kpiTrendSummary}>{item.trendSummary}</span>
                             </div>
-                            <TrendBarChart points={item.trend} label={item.label} variant={item.variant}/>
+                            <TrendBarChart points={item.trend} label={`${item.label} · ${tx("最近 2 周")}`} variant={item.variant}/>
                         </div>
                     </article>
                 ))}
@@ -757,9 +784,9 @@ export default function ConsoleDashboard() {
                             ) : recentReleases.map(({record, index, timestamp}) => (
                                 <tr key={`${record.id ?? record.name ?? "release"}-${index}`}>
                                     <td className={styles.releaseProjectName} data-datavisool-i18n-skip={record.name?.trim() || record.componentName?.trim() ? "true" : undefined}>{getDisplayName(record, tx("未命名发布"))}</td>
-                                    <td className={styles.releaseDescription} title={getReleaseDescription(record)} data-datavisool-i18n-skip={record.description?.trim() || record.des?.trim() ? "true" : undefined}>{getReleaseDescription(record)}</td>
+                                    <td className={styles.releaseDescription} title={getReleaseDescription(record, tx)} data-datavisool-i18n-skip={record.description?.trim() || record.des?.trim() ? "true" : undefined}>{getReleaseDescription(record, tx)}</td>
                                     <td>{formatDateTime(timestamp)}</td>
-                                    <td>{formatExpiration(record.expirationDate)}</td>
+                                    <td>{formatExpiration(record.expirationDate, tx)}</td>
                                     <td>
                                         <span className={styles.releaseStatus} data-state={record.state === undefined || record.state === null ? "unknown" : isReleaseActive(record.state) ? "published" : "disabled"}>
                                             {record.state === undefined || record.state === null ? "—" : isReleaseActive(record.state) ? tx("已发布") : tx("已停用")}

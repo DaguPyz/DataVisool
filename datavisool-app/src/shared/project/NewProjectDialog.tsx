@@ -5,13 +5,11 @@
  */
 
 import React, {MouseEvent, useEffect, useRef, useState} from 'react';
-import "@/pages/home/project-list/NewProjectDialog.less";
+import "./NewProjectDialog.less";
 import {ArrowRight, Edit} from '@icon-park/react';
-import {tx} from "@/i18n/miniI18n.ts";
-import {useLocaleVersion} from "@/i18n/useLocaleVersion.ts";
 import newProjectVisual from './assets/new-project-visual.webp';
-import {Button, Dialog, globalMessage, Input, NumberInput, TextArea} from "@datavisool/ui";
-import {PROJECT_NAME_MAX_LENGTH} from "@/pages/home/project-list/project-name.ts";
+import {Button, Dialog, globalMessage, Input, NumberInput, TextArea, useDataVisoolUI, type DataVisoolUITranslate} from "@datavisool/ui";
+import {PROJECT_NAME_MAX_LENGTH} from "./project-name.ts";
 
 export interface INewProjectInfo {
     name: string;
@@ -27,7 +25,9 @@ interface AddNewScreenDialogProps {
     visible?: boolean;
 }
 
-const createDefaultData = (): INewProjectInfo => ({
+const identityTranslate: DataVisoolUITranslate = (text) => text;
+
+const createDefaultData = (tx: DataVisoolUITranslate): INewProjectInfo => ({
     name: tx('未命名项目'),
     des: '',
     width: 1920,
@@ -35,9 +35,9 @@ const createDefaultData = (): INewProjectInfo => ({
 });
 
 export const NewProjectDialog: React.FC<AddNewScreenDialogProps> = (props) => {
-    const localeVersion = useLocaleVersion();
+    const {locale, translate: tx = identityTranslate} = useDataVisoolUI();
     const defaultNameRef = useRef(tx('未命名项目'));
-    const [data, setData] = useState(createDefaultData);
+    const [data, setData] = useState(() => createDefaultData(tx));
     const [nameError, setNameError] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const submittingRef = useRef(false);
@@ -51,14 +51,14 @@ export const NewProjectDialog: React.FC<AddNewScreenDialogProps> = (props) => {
                 : current
         ));
         defaultNameRef.current = nextDefaultName;
-    }, [localeVersion]);
+    }, [locale, tx]);
 
     useEffect(() => {
         if (!visible) {
-            setData(createDefaultData());
+            setData(createDefaultData(tx));
             setNameError(false);
         }
-    }, [visible]);
+    }, [visible, tx]);
 
     const onOk = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();

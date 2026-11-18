@@ -155,6 +155,23 @@ test('十个数据接口均携带登录凭据和分页参数', async ({page}) =>
     }
 });
 
+test('应用停用时取消控制台的统计请求', async ({page}) => {
+    const statsEndpoint = '/api/project/pageList';
+    const sent = page.waitForRequest(request => new URL(request.url()).pathname === statsEndpoint);
+    await prepareDashboard(page, {handler: async (_route, path) => path === statsEndpoint});
+    const request = await sent;
+    const failed = page.waitForEvent('requestfailed', {predicate: candidate => candidate === request});
+
+    await page.evaluate(async () => {
+        const appModule = '/src/bootstrap/startApplication.ts';
+        const {startApplication} = await import(/* @vite-ignore */ appModule);
+        await (await startApplication()).stop();
+    });
+
+    expect((await failed).failure()?.errorText).toBe('net::ERR_ABORTED');
+    await expect(dashboard(page)).toHaveCount(0);
+});
+
 test('两周统计包含边界日期并排除更早和无效时间', async ({page}) => {
     const data = Object.fromEntries(Object.keys(sampleData()).map((key) => [key, {total: 0, records: []}])) as DashboardData;
     data['/api/project/pageList'] = {total: 4, records: [
@@ -328,6 +345,37 @@ test('新建项目防止重复提交，并支持键盘打开和取消', async ({
     }
     await expect(page).toHaveURL(/\/designer\?id=new-project-id$/);
     expect(createCount).toBe(1);
+});
+
+test('离开控制台后，已提交的新建项目完成时不把用户拉回设计器', async ({page}) => {
+    const createEndpoint = '/api/project/create';
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    await prepareDashboard(page, {handler: async (route, path) => {
+        if (path !== createEndpoint) return false;
+        await pending;
+        await route.fulfill({json: {code: 200, msg: '成功', data: 'new-project-id'}});
+        return true;
+    }});
+    await loaded(page);
+    await page.getByRole('button', {name: '新建项目', exact: true}).click();
+    const sent = page.waitForRequest(request => new URL(request.url()).pathname === createEndpoint);
+    const response = page.waitForResponse(result => new URL(result.url()).pathname === createEndpoint);
+    try {
+        await page.locator('.new-project-dialog').getByRole('button', {name: '创建项目'}).click();
+        await sent;
+        await page.evaluate(async () => {
+            const appModule = '/src/bootstrap/startApplication.ts';
+            const {startApplication} = await import(/* @vite-ignore */ appModule);
+            await (await startApplication()).get('router').navigate('/home/server');
+        });
+        await expect(dashboard(page)).toHaveCount(0);
+    } finally {
+        release();
+    }
+    expect(await (await response).finished()).toBeNull();
+    await expect(page).toHaveURL('/home/server');
+    await expect(page.locator('.new-project-dialog')).toBeHidden();
 });
 
 test('窄屏可横向查看发布表格并打开新建项目表单', async ({page}, testInfo) => {

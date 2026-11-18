@@ -9,7 +9,7 @@ import {Button, Input} from '@datavisool/ui';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import './SubProject.less';
 import {Delete, Plus, Search} from "@icon-park/react";
-import NewProjectDialog, {INewProjectInfo} from "@/pages/home/project-list/NewProjectDialog.tsx";
+import NewProjectDialog, {type INewProjectInfo} from "@/shared/project/NewProjectDialog.tsx";
 import baseApi from "@/api/engineering/BaseApi.ts";
 import {globalMessage} from "@datavisool/ui";
 import {globalModal} from "@datavisool/ui";

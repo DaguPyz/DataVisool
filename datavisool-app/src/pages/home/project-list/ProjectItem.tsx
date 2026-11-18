@@ -12,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {globalMessage} from "@datavisool/ui";
 import {Dropdown, DropdownMenuItem} from "@datavisool/ui";
 import {tx} from "@/i18n/miniI18n.ts";
-import {PROJECT_NAME_MAX_LENGTH} from "@/pages/home/project-list/project-name.ts";
+import {PROJECT_NAME_MAX_LENGTH} from "@/shared/project/project-name.ts";
 
 export interface ProjectItemProps {
     id: string;

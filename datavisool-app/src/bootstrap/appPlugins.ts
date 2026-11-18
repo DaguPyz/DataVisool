@@ -1,5 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
+import {createConsolePlugin} from '@/plugins/console/consolePlugin.tsx';
 import {createDocsPlugin} from '@/plugins/docs/docsPlugin.tsx';
 import {createErrorUiPlugin} from '@/plugins/error-ui/errorUiPlugin.ts';
 import {createHomeLayoutPlugin} from '@/plugins/home-layout/homeLayoutPlugin.ts';
@@ -28,6 +29,7 @@ export function createAppPlugins(): readonly Plugin[] {
         createHomeLayoutPlugin(),
         createNavigationPlugin(),
         createWorkbenchPlugin({homePath, loginPath: '/login'}),
+        createConsolePlugin(),
         createLegacyRoutesPlugin(),
     ];
 }

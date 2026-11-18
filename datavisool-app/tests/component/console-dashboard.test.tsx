@@ -1,25 +1,29 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import {beforeEach, describe, expect, test, vi} from "vitest";
-import ConsoleDashboard from "@/pages/home/console/ConsoleDashboard.tsx";
+import type {ComponentProps} from "react";
+import ConsoleDashboard from "@/plugins/console/ConsoleDashboard.tsx";
 
 const mocks = vi.hoisted(() => ({
     post: vi.fn(),
     navigate: vi.fn(),
     createProject: vi.fn(),
     error: vi.fn(),
-    role: "ROLE_SYSTEM_ADMIN",
 }));
 
-vi.mock("@/util/AuthFetchUtil.ts", () => ({default: {post: mocks.post}}));
-vi.mock("@/api/engineering/BaseApi.ts", () => ({default: {createProject: mocks.createProject}}));
-vi.mock("@/util/AuthTools.ts", () => ({
-    default: {getUserInfo: () => ({roles: [mocks.role]})},
-    RoleType: {SYSTEM_ADMIN: "ROLE_SYSTEM_ADMIN"},
-}));
-vi.mock("react-router-dom", () => ({useNavigate: () => mocks.navigate}));
-vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
-vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
+const props: ComponentProps<typeof ConsoleDashboard> = {
+    i18n: {
+        availableLocales: ["zh-CN", "en-US"],
+        getLocale: () => "zh-CN",
+        translate: (value) => value,
+        setLocale: (value) => value,
+    },
+    subscribeLocale: () => () => {},
+    post: mocks.post,
+    navigate: mocks.navigate,
+    createProject: mocks.createProject,
+    canOperate: () => true,
+};
 vi.mock("countup.js", () => ({
     CountUp: class {
         constructor(private element: HTMLElement, private value: number) {}
@@ -33,7 +37,7 @@ vi.mock("@datavisool/ui", () => ({
     ),
     globalMessage: {messageApi: {error: mocks.error}},
 }));
-vi.mock("@/pages/home/project-list/NewProjectDialog.tsx", () => ({
+vi.mock("@/shared/project/NewProjectDialog.tsx", () => ({
     default: ({visible, onOk, onCancel}: any) => visible ? (
         <div role="dialog">
             <button type="button" onClick={() => onOk({name: "新项目", des: "项目说明", width: 1280, height: 720})}>创建项目</button>
@@ -66,14 +70,13 @@ function createPages() {
 describe("ConsoleDashboard", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        mocks.role = "ROLE_SYSTEM_ADMIN";
         const pages = createPages();
         mocks.post.mockImplementation(async (url: keyof typeof pages) => pages[url]);
         mocks.createProject.mockResolvedValue("new-project-id");
     });
 
     test("aggregates service resources and shows the five latest updates from Web array dates", async () => {
-        const {container} = render(<ConsoleDashboard/>);
+        const {container} = render(<ConsoleDashboard {...props}/>);
         await waitFor(() => expect(container.firstElementChild).toHaveAttribute("aria-busy", "false"));
 
         expect(mocks.post).toHaveBeenCalledTimes(10);
@@ -93,7 +96,7 @@ describe("ConsoleDashboard", () => {
     });
 
     test("resource, recent update and release actions navigate to their management pages", async () => {
-        const {container} = render(<ConsoleDashboard/>);
+        const {container} = render(<ConsoleDashboard {...props}/>);
         await waitFor(() => expect(container.firstElementChild).toHaveAttribute("aria-busy", "false"));
 
         fireEvent.click(screen.getByRole("button", {name: "查看 数据库"}));
@@ -108,13 +111,12 @@ describe("ConsoleDashboard", () => {
         expect(mocks.navigate).toHaveBeenLastCalledWith("/home/releaseManagement");
     });
 
-    test("regular users load their AI models and can open model management", async () => {
-        mocks.role = "ROLE_USER";
-        const {container} = render(<ConsoleDashboard/>);
+    test("loads AI models and can open model management", async () => {
+        const {container} = render(<ConsoleDashboard {...props}/>);
         await waitFor(() => expect(container.firstElementChild).toHaveAttribute("aria-busy", "false"));
 
         expect(mocks.post).toHaveBeenCalledTimes(10);
-        expect(mocks.post).toHaveBeenCalledWith("/api/aiModel/pageList", {current: 1, size: 50});
+        expect(mocks.post).toHaveBeenCalledWith("/api/aiModel/pageList", {current: 1, size: 50}, expect.any(AbortSignal));
         fireEvent.click(screen.getByRole("button", {name: "查看 AI模型"}));
         expect(mocks.navigate).toHaveBeenLastCalledWith("/home/aiModel");
         expect(screen.getByLabelText("资源总量 44 项")).toBeInTheDocument();
@@ -126,7 +128,7 @@ describe("ConsoleDashboard", () => {
         mocks.post.mockImplementation(async (url: keyof typeof pages) => (
             url === "/api/commonDatabase/pageList" ? null : pages[url]
         ));
-        render(<ConsoleDashboard/>);
+        render(<ConsoleDashboard {...props}/>);
         expect(await screen.findByRole("alert")).toHaveTextContent("部分数据加载失败");
         expect(screen.getByLabelText("资源总量 36 项")).toBeInTheDocument();
 
@@ -137,7 +139,7 @@ describe("ConsoleDashboard", () => {
     });
 
     test("creates a project with the selected canvas dimensions and opens its designer", async () => {
-        const {container} = render(<ConsoleDashboard/>);
+        const {container} = render(<ConsoleDashboard {...props}/>);
         await waitFor(() => expect(container.firstElementChild).toHaveAttribute("aria-busy", "false"));
         fireEvent.click(screen.getByRole("button", {name: "新建项目"}));
         fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", {name: "创建项目"}));

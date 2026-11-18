@@ -8,16 +8,16 @@ import AuthTools from "@/util/AuthTools.ts";
 import {globalMessage} from "@datavisool/ui";
 import {HttpResponse} from "../util/FetchUtil.ts";
 
-const unLoginHandler = () => {
-    AuthTools.removeUser();
-    //获取地址栏路由
+export function redirectExpiredSession(removeUser: () => void): number | undefined {
+    removeUser();
     if (!window.location.pathname.includes('/login')) {
-        const timer = setTimeout(() => {
-            clearTimeout(timer);
+        return window.setTimeout(() => {
             window.location.href = '/login';
-        }, 2000)
+        }, 2000);
     }
 }
+
+const unLoginHandler = () => redirectExpiredSession(() => AuthTools.removeUser());
 
 export interface ResponseHandlerOptions {
     suppressErrorMessage?: boolean | ((response: HttpResponse) => boolean);
