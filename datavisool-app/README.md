@@ -20,8 +20,8 @@
 - **状态管理**：MobX (用于管理设计器复杂的全局状态)
 - **UI 组件库**：
     - `antd`: 通用 UI 组件
-    - `@datavisool/ui@0.1.0`: 从 npm 安装的共享 UI 组件库
-- **组件 SDK**：`@datavisool/sdk@0.1.0`，与 Desktop 共用类型、组件接口和工具
+    - `@datavisool/ui`（工作区共享 UI 组件库）
+- **组件 SDK**：`@datavisool/sdk`，由 Web 工作区维护，提供与 Desktop 共用的类型、组件接口和工具
 - **图表渲染**：ECharts, @antv/g2plot
 - **画布交互**：`@datavisool/interaction-engine`
 - **本地存储**：localforage (IndexedDB)
@@ -35,6 +35,10 @@
 | 包名 (Package) | 目录 | 说明 |
 | :--- | :--- | :--- |
 | **datavisool-app** | `/datavisool-app` | **主应用核心**。包含设计器主体、画布、蓝图系统及运行时逻辑。 |
+| `datavisool-cli` | `/datavisool-cli` | 自定义组件脚手架 |
+| `@datavisool/interaction-engine` | `/datavisool-interaction-engine` | 画布交互引擎 |
+| `@datavisool/sdk` | `/datavisool-sdk` | 组件契约和共享工具 |
+| `@datavisool/ui` | `/datavisool-ui` | 共享 React 组件库 |
 
 Web 专用的登录、权限及其他共享 SDK 未提供的能力由 App 自行维护。
 
@@ -113,6 +117,6 @@ Web 专用的登录、权限及其他共享 SDK 未提供的能力由 App 自行
    pnpm --filter datavisool-app verify:shared
    ```
 
-   只运行共享包相关的前端测试，可使用 `pnpm --filter datavisool-app test:shared`。两项命令不能替代 Desktop 测试或真实项目验证。
+   在仓库根目录运行 `pnpm check:packages` 和 `pnpm test:package-artifacts`，分别检查共享包边界与发布产物。双端验证可使用 `pnpm verify:shared:both /path/to/DataVisool-Desktop`。
 
    生产部署不再单独发布前端静态站点。前端产物会在 `datavisool-service` Maven 打包阶段自动并入后端 jar，由同一个服务对外提供。

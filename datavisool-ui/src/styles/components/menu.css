@@ -1,0 +1,341 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-menu {
+      box-sizing: border-box;
+      position: relative;
+      width: 100%;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      letter-spacing: 0;
+    }
+  
+    .datavisool-menu-active-indicator {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 8px;
+      opacity: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(168px 86px at 13% 76%, rgba(0, 136, 255, 0.38), transparent 68%),
+        radial-gradient(152px 88px at 92% 18%, rgba(174, 67, 255, 0.34), transparent 72%),
+        linear-gradient(105deg, rgba(16, 86, 199, 0.78), rgba(24, 57, 139, 0.66) 49%, rgba(39, 34, 91, 0.62));
+      box-shadow:
+        inset 0 0 0 1px rgba(88, 152, 255, 0.14),
+        inset 0 0 26px rgba(10, 76, 182, 0.30),
+        0 10px 26px rgba(0, 111, 255, 0.22),
+        0 0 28px rgba(149, 68, 255, 0.18);
+      transform: translate3d(0, 0, 0);
+    }
+  
+    .datavisool-menu-active-indicator.is-visible {
+      opacity: 1;
+    }
+  
+    .datavisool-menu-active-indicator.is-ready {
+      transition:
+        top 420ms cubic-bezier(0.4, 0, 0.2, 1),
+        left 420ms cubic-bezier(0.4, 0, 0.2, 1),
+        width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+        height 420ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  
+    .datavisool-menu-active-indicator::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        radial-gradient(88px 54px at 8% 86%, rgba(0, 172, 255, 0.46), transparent 72%),
+        radial-gradient(92px 56px at 94% 13%, rgba(202, 87, 255, 0.42), transparent 70%),
+        radial-gradient(circle at 72% 34%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1.8px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.10), transparent 42%);
+      opacity: 0.88;
+    }
+  
+    .datavisool-menu-active-indicator::after {
+      box-sizing: border-box;
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(229, 247, 255, 0.92) 0 1px, transparent 2.2px),
+        radial-gradient(circle at 95% 13%, rgba(249, 224, 255, 0.88) 0 1px, transparent 2.2px),
+        radial-gradient(circle at 5% 82%, rgba(134, 219, 255, 0.78) 0 0.9px, transparent 2px),
+        linear-gradient(90deg, transparent 0%, rgba(23, 170, 255, 0) 5%, rgba(23, 170, 255, 0.92) 22%, rgba(104, 132, 255, 0.42) 43%, transparent 76%) top left / 68% 1px no-repeat,
+        linear-gradient(90deg, transparent 0%, rgba(193, 84, 255, 0) 18%, rgba(193, 84, 255, 0.88) 66%, transparent 100%) top right / 48% 1px no-repeat,
+        linear-gradient(90deg, transparent 0%, rgba(31, 190, 255, 0) 8%, rgba(31, 190, 255, 0.86) 34%, rgba(80, 128, 255, 0.34) 58%, transparent 92%) bottom left / 58% 1px no-repeat,
+        linear-gradient(90deg, transparent 0%, rgba(180, 80, 255, 0) 26%, rgba(180, 80, 255, 0.70) 64%, transparent 100%) bottom right / 38% 1px no-repeat,
+        linear-gradient(180deg, transparent 0%, rgba(23, 170, 255, 0) 8%, rgba(23, 170, 255, 0.84) 36%, rgba(74, 133, 255, 0.28) 62%, transparent 100%) left bottom / 1px 72% no-repeat,
+        linear-gradient(180deg, transparent 0%, rgba(193, 84, 255, 0) 10%, rgba(193, 84, 255, 0.76) 32%, rgba(118, 101, 255, 0.24) 58%, transparent 100%) right top / 1px 64% no-repeat;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+  
+    .datavisool-menu-list {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 5px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  
+    .datavisool-menu-submenu-children {
+      display: grid;
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition: grid-template-rows 220ms ease, opacity 180ms ease;
+    }
+  
+    .datavisool-menu-submenu-children[hidden] {
+      display: none;
+    }
+  
+    .datavisool-menu-submenu-children .datavisool-menu-list {
+      box-sizing: border-box;
+      gap: 2px;
+      overflow: hidden;
+      padding: 0 0 3px;
+    }
+  
+    .datavisool-menu-node {
+      box-sizing: border-box;
+      min-width: 0;
+    }
+  
+    .datavisool-menu-item {
+      box-sizing: border-box;
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      height: 49px;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      outline: none;
+      background: transparent;
+      color: rgba(235, 241, 255, 0.78);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 20px;
+      padding: 0 16px;
+      padding-left: var(--datavisool-menu-indent, 16px);
+      text-align: left;
+      transition: color 260ms cubic-bezier(0.22, 1, 0.36, 1), background 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1), transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  
+    .datavisool-menu-submenu-children .datavisool-menu-item {
+      box-sizing: border-box;
+      height: 38px;
+      color: rgba(222, 232, 255, 0.70);
+    }
+  
+    .datavisool-menu-item:hover:not(:disabled) {
+      background: rgba(31, 68, 136, 0.22);
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-menu-item:focus-visible {
+      border-color: rgba(95, 147, 255, 0.46);
+      box-shadow: var(--datavisool-ui-control-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.14));
+      color: #ffffff;
+    }
+  
+    .datavisool-menu-item:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  
+    .datavisool-menu-selected > .datavisool-menu-item {
+      color: var(--datavisool-ui-color-text-primary, #f3f7ff);
+      background: transparent;
+      font-weight: 600;
+    }
+  
+    .datavisool-menu-selected > .datavisool-menu-item:hover:not(:disabled) {
+      background: transparent;
+    }
+  
+    .datavisool-menu-child-selected > .datavisool-menu-submenu-trigger {
+      color: #ffffff;
+    }
+  
+    .datavisool-menu-item:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+  
+    .datavisool-menu-danger > .datavisool-menu-item {
+      color: rgba(255, 151, 161, 0.95);
+    }
+  
+    .datavisool-menu-danger > .datavisool-menu-item:hover:not(:disabled),
+    .datavisool-menu-danger > .datavisool-menu-item:focus-visible {
+      border-color: rgba(251, 113, 133, 0.36);
+      background: rgba(251, 113, 133, 0.14);
+      color: #ffd9de;
+    }
+  
+    .datavisool-menu-item-icon {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      align-items: center;
+      justify-content: center;
+      color: rgba(229, 238, 255, 0.82);
+      transition: color 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  
+    .datavisool-menu-item:hover:not(:disabled) .datavisool-menu-item-icon,
+    .datavisool-menu-selected > .datavisool-menu-item .datavisool-menu-item-icon,
+    .datavisool-menu-child-selected > .datavisool-menu-submenu-trigger .datavisool-menu-item-icon {
+      color: #ffffff;
+    }
+  
+    .datavisool-menu-item-icon svg,
+    .datavisool-menu-item-icon .i-icon {
+      box-sizing: border-box;
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+  
+    .datavisool-menu-item-label {
+      box-sizing: border-box;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-menu-submenu-arrow {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+      align-items: center;
+      justify-content: center;
+      color: rgba(226, 235, 255, 0.72);
+      transition: color 180ms ease, transform 180ms ease;
+    }
+  
+    .datavisool-menu-open > .datavisool-menu-submenu-trigger .datavisool-menu-submenu-arrow {
+      transform: rotate(180deg);
+    }
+  
+    .datavisool-menu-divider {
+      box-sizing: border-box;
+      height: 1px;
+      margin: 5px 8px;
+      background: rgba(116, 137, 184, 0.24);
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-menu-item,
+      .datavisool-menu-active-indicator,
+      .datavisool-menu-submenu-arrow {
+        transition: none;
+      }
+    }
+}
+
+@layer datavisool-ui.component-overrides {
+  .datavisool-menu-active-indicator {
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      background: rgba(59, 130, 246, 0.14);
+      box-shadow: none;
+    }
+  
+    .datavisool-menu-active-indicator.is-ready {
+      transition: top 200ms ease-out, left 200ms ease-out, width 200ms ease-out, height 200ms ease-out, opacity 160ms ease-out;
+    }
+  
+    .datavisool-menu-active-indicator::before {
+      box-sizing: border-box;
+      inset: 10px auto 10px 0;
+      width: 2px;
+      border-radius: 999px;
+      background: var(--datavisool-ui-primary, #3b82f6);
+      opacity: 1;
+    }
+  
+    .datavisool-menu-active-indicator::after {
+      display: none;
+    }
+  
+    .datavisool-menu-list {
+      gap: var(--datavisool-ui-space-1, 4px);
+    }
+  
+    .datavisool-menu-item {
+      box-sizing: border-box;
+      height: 44px;
+      gap: var(--datavisool-ui-space-3, 12px);
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      color: var(--datavisool-ui-text-secondary, #aab7d1);
+      line-height: 20px;
+      transition-duration: 160ms;
+    }
+  
+    .datavisool-menu-submenu-children .datavisool-menu-item {
+      box-sizing: border-box;
+      height: 40px;
+      color: var(--datavisool-ui-text-tertiary, #7c8aa5);
+    }
+  
+    .datavisool-menu-item:hover:not(:disabled) {
+      background: var(--datavisool-ui-bg-hover, #1a2740);
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-menu-selected > .datavisool-menu-item,
+    .datavisool-menu-selected > .datavisool-menu-item:hover:not(:disabled),
+    .datavisool-menu-child-selected > .datavisool-menu-submenu-trigger {
+      background: transparent;
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+      font-weight: 600;
+    }
+  
+    .datavisool-menu-item:focus-visible {
+      border-color: var(--datavisool-ui-border-focus, rgba(59, 130, 246, 0.45));
+      box-shadow: var(--datavisool-ui-shadow-focus, 0 0 0 3px rgba(59, 130, 246, 0.14));
+      color: var(--datavisool-ui-text-primary, #f3f7ff);
+    }
+  
+    .datavisool-menu-item-icon,
+    .datavisool-menu-submenu-arrow {
+      color: currentColor;
+      transition-duration: 160ms;
+    }
+  
+    .datavisool-menu-item:hover:not(:disabled) .datavisool-menu-item-icon,
+    .datavisool-menu-selected > .datavisool-menu-item .datavisool-menu-item-icon,
+    .datavisool-menu-child-selected > .datavisool-menu-submenu-trigger .datavisool-menu-item-icon {
+      color: currentColor;
+    }
+  
+    .datavisool-menu-divider {
+      background: var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+    }
+}

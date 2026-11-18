@@ -1,0 +1,203 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-empty {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      letter-spacing: 0;
+      padding: 24px 20px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+  
+    .datavisool-empty-variant-panel {
+      box-sizing: border-box;
+      border: 1px solid var(--datavisool-ui-border-default, rgba(255, 255, 255, 0.08));
+      border-radius: var(--datavisool-ui-radius-lg, 12px);
+      background: var(--datavisool-ui-bg-surface-1, #111a2e);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    }
+  
+    .datavisool-empty-variant-compact {
+      box-sizing: border-box;
+      gap: 10px;
+      padding: 12px;
+    }
+  
+    .datavisool-empty-visual {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 76px;
+      height: 64px;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      color: var(--datavisool-ui-primary, #3b82f6);
+    }
+  
+    .datavisool-empty-size-sm .datavisool-empty-visual {
+      box-sizing: border-box;
+      width: 56px;
+      height: 48px;
+    }
+  
+    .datavisool-empty-size-lg .datavisool-empty-visual {
+      box-sizing: border-box;
+      width: 96px;
+      height: 82px;
+    }
+  
+    .datavisool-empty-image {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  
+    .datavisool-empty-visual svg {
+      box-sizing: border-box;
+      width: 44px;
+      height: 44px;
+    }
+  
+    .datavisool-empty-size-sm .datavisool-empty-visual svg {
+      box-sizing: border-box;
+      width: 34px;
+      height: 34px;
+    }
+  
+    .datavisool-empty-size-lg .datavisool-empty-visual svg {
+      box-sizing: border-box;
+      width: 54px;
+      height: 54px;
+    }
+  
+    .datavisool-empty-default-visual {
+      box-sizing: border-box;
+      position: relative;
+      display: block;
+      width: 64px;
+      height: 52px;
+    }
+  
+    .datavisool-empty-size-sm .datavisool-empty-default-visual {
+      box-sizing: border-box;
+      width: 48px;
+      height: 40px;
+    }
+  
+    .datavisool-empty-size-lg .datavisool-empty-default-visual {
+      box-sizing: border-box;
+      width: 80px;
+      height: 64px;
+    }
+  
+    .datavisool-empty-default-card {
+      box-sizing: border-box;
+      position: absolute;
+      display: block;
+      border: 1px solid var(--datavisool-ui-border-subtle, rgba(255, 255, 255, 0.06));
+      border-radius: var(--datavisool-ui-radius-sm, 8px);
+      background: var(--datavisool-ui-bg-surface-2, #162238);
+    }
+  
+    .datavisool-empty-default-card-back {
+      inset: 3px 10px 9px 6px;
+      opacity: 0.54;
+    }
+  
+    .datavisool-empty-default-card-front {
+      box-sizing: border-box;
+      inset: 9px 2px 1px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+      padding: 0 10px;
+    }
+  
+    .datavisool-empty-default-card-front span {
+      box-sizing: border-box;
+      display: block;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(142, 164, 215, 0.58);
+    }
+  
+    .datavisool-empty-default-card-front span:nth-child(1) {
+      box-sizing: border-box;
+      width: 70%;
+      background: rgba(59, 130, 255, 0.66);
+    }
+  
+    .datavisool-empty-default-card-front span:nth-child(2) {
+      box-sizing: border-box;
+      width: 100%;
+    }
+  
+    .datavisool-empty-default-card-front span:nth-child(3) {
+      box-sizing: border-box;
+      width: 52%;
+    }
+  
+    .datavisool-empty-copy {
+      box-sizing: border-box;
+      display: flex;
+      max-width: min(100%, 420px);
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    .datavisool-empty-title {
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-empty-size-sm .datavisool-empty-title {
+      font-size: 13px;
+    }
+  
+    .datavisool-empty-size-lg .datavisool-empty-title {
+      font-size: 17px;
+    }
+  
+    .datavisool-empty-description {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-empty-size-sm .datavisool-empty-description {
+      font-size: 12px;
+    }
+  
+    .datavisool-empty-size-lg .datavisool-empty-description {
+      font-size: 14px;
+    }
+  
+    .datavisool-empty-actions {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 0;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+}

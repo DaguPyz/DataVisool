@@ -1,0 +1,414 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-select-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    .datavisool-select-shell {
+      box-sizing: border-box;
+      position: relative;
+      display: inline-flex;
+      width: fit-content;
+      min-width: min(180px, 100%);
+      max-width: 100%;
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: #111a2e;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      overflow: visible;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-select-block .datavisool-select-shell {
+      width: 100%;
+    }
+  
+    .datavisool-select-shell:hover:not([data-disabled="true"]) {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+    }
+  
+    .datavisool-select-shell.datavisool-select-open,
+    .datavisool-select-shell:focus-within {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  
+    .datavisool-select-shell[data-readonly="true"] {
+      border-style: dashed;
+    }
+  
+    .datavisool-select-trigger {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 0;
+      border-radius: inherit;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: 0;
+      outline: none;
+      padding: 0 12px 0 14px;
+      text-align: left;
+    }
+  
+    .datavisool-select-trigger:disabled {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-select-value {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-select-prefix {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      line-height: 1;
+    }
+  
+    .datavisool-select-prefix svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+  
+    .datavisool-select-placeholder {
+      color: #7c8aa5;
+      font-weight: 400;
+    }
+  
+    .datavisool-select-count {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(59, 130, 246, 0.42);
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.18);
+      color: #f3f7ff;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      line-height: 1;
+    }
+  
+    .datavisool-select-clear {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: rgba(170, 183, 209, 0.12);
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+  
+    .datavisool-select-clear:hover {
+      background: rgba(170, 183, 209, 0.2);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+    }
+  
+    .datavisool-select-clear:active {
+      transform: scale(0.94);
+    }
+  
+    .datavisool-select-chevron {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      transition: color 160ms ease, transform 180ms ease;
+    }
+  
+    .datavisool-select-open .datavisool-select-chevron {
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      transform: rotate(180deg);
+    }
+  
+    .datavisool-select-panel {
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 50;
+      top: calc(100% + 8px);
+      left: 0;
+      display: flex;
+      width: max-content;
+      min-width: 240px;
+      max-width: min(560px, calc(100vw - 32px));
+      max-height: 280px;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: #111a2e;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      padding: 8px;
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+  
+    .datavisool-select-search {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid rgba(86, 110, 161, 0.42);
+      border-radius: 10px;
+      background: #0a1020;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.2;
+      outline: none;
+      padding: 0 12px;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+  
+    .datavisool-select-search::placeholder {
+      color: #7c8aa5;
+    }
+  
+    .datavisool-select-search:focus {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  
+    .datavisool-select-list {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 0;
+      max-height: 224px;
+      flex: 1 1 auto;
+      flex-direction: column;
+      gap: 4px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding-right: 2px;
+    }
+  
+    .datavisool-select-option {
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      width: 100%;
+      min-height: 40px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      cursor: pointer;
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.3;
+      letter-spacing: 0;
+      outline: none;
+      padding: 8px 10px;
+      text-align: left;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-select-option:hover:not(:disabled),
+    .datavisool-select-option-active:not(:disabled) {
+      border-color: rgba(59, 130, 246, 0.34);
+      background: #1a2740;
+    }
+  
+    .datavisool-select-option-selected {
+      border-color: rgba(59, 130, 246, 0.48);
+      background: #1d3155;
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+    }
+  
+    .datavisool-select-option:disabled {
+      cursor: not-allowed;
+      opacity: 0.44;
+    }
+  
+    .datavisool-select-option-main {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      flex-direction: column;
+      gap: 2px;
+    }
+  
+    .datavisool-select-option-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-select-option-description {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-select-option-check {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      color: #3b82f6;
+    }
+  
+    .datavisool-select-empty {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 0 10px;
+      text-align: center;
+    }
+  
+    .datavisool-select-loading-icon {
+      animation: datavisool-ui-button-spin 800ms linear infinite;
+    }
+  
+    .datavisool-select-size-sm .datavisool-select-shell {
+      min-width: min(150px, 100%);
+      border-radius: 10px;
+    }
+  
+    .datavisool-select-size-sm .datavisool-select-trigger {
+      min-height: 34px;
+      padding: 0 10px 0 12px;
+      font-size: 13px;
+    }
+  
+    .datavisool-select-size-sm .datavisool-select-panel {
+      border-radius: 10px;
+    }
+  
+    .datavisool-select-size-lg .datavisool-select-shell {
+      min-width: min(220px, 100%);
+      border-radius: 10px;
+    }
+  
+    .datavisool-select-size-lg .datavisool-select-trigger {
+      min-height: 48px;
+      padding: 0 14px 0 16px;
+      font-size: 15px;
+    }
+  
+    .datavisool-select-size-md .datavisool-select-trigger {
+      min-height: 40px;
+    }
+  
+    .datavisool-select-status-success .datavisool-select-shell {
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+  
+    .datavisool-select-status-success .datavisool-select-shell:focus-within,
+    .datavisool-select-status-success .datavisool-select-shell.datavisool-select-open {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+    }
+  
+    .datavisool-select-status-warning .datavisool-select-shell {
+      border-color: rgba(245, 158, 11, 0.55);
+    }
+  
+    .datavisool-select-status-warning .datavisool-select-shell:focus-within,
+    .datavisool-select-status-warning .datavisool-select-shell.datavisool-select-open {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
+    }
+  
+    .datavisool-select-status-error .datavisool-select-shell {
+      border-color: rgba(239, 68, 68, 0.58);
+    }
+  
+    .datavisool-select-status-error .datavisool-select-shell:focus-within,
+    .datavisool-select-status-error .datavisool-select-shell.datavisool-select-open {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+    }
+  
+    .datavisool-select-disabled {
+      opacity: 0.55;
+    }
+  
+    .datavisool-select-disabled .datavisool-select-shell,
+    .datavisool-select-disabled .datavisool-select-trigger {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-select-readonly .datavisool-select-trigger {
+      cursor: default;
+    }
+  
+    .datavisool-select-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-select-helper-success {
+      color: #22c55e;
+    }
+  
+    .datavisool-select-helper-warning {
+      color: #f59e0b;
+    }
+  
+    .datavisool-select-helper-error {
+      color: #ef4444;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-select-shell,
+      .datavisool-select-chevron,
+      .datavisool-select-search,
+      .datavisool-select-option {
+        transition: none;
+      }
+    }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "datavisool-cli",
+  "version": "0.2.0",
+  "description": "",
+  "main": "bin/index.js",
+  "type": "commonjs",
+  "bin": {
+    "datavisool-cli": "bin/index.js"
+  },
+  "files": [
+    "bin",
+    "config",
+    "page",
+    "template/index.html",
+    "template/package.json",
+    "template/src",
+    "template/tsconfig.json",
+    "template/tsconfig.node.json",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "cli": "node ./bin/index.js",
+    "debug": "node --inspect-brk ./bin/index.js",
+    "template:build": "cd template && node ../bin/index.js build",
+    "debug:template:build": "cd template && node --inspect-brk ../bin/index.js build",
+    "debug:template:dev": "cd template && node --inspect-brk ../bin/index.js dev",
+    "pack:local": "pnpm pack --pack-destination /private/tmp/datavisool-cli-local"
+  },
+  "author": "DAGU",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^8.0.0",
+    "vite": "^4.5.3",
+    "@vitejs/plugin-react": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.0.0"
+  }
+}

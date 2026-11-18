@@ -99,6 +99,10 @@ pnpm -F datavisool-app dev
 | 目录 | 内容 |
 | --- | --- |
 | [`datavisool-app`](datavisool-app/) | React 应用、可视化设计器和前端测试 |
+| [`datavisool-cli`](datavisool-cli/) | 自定义组件脚手架、预览和 ZIP 打包 |
+| [`datavisool-interaction-engine`](datavisool-interaction-engine/) | 画布拖拽、缩放、选区和吸附 |
+| [`datavisool-sdk`](datavisool-sdk/) | 组件契约、类型与公共工具 |
+| [`datavisool-ui`](datavisool-ui/) | 共享 React UI 组件库 |
 | [`datavisool-server`](datavisool-server/) | Spring Boot 服务、接口与资源管理 |
 | [`docs/zh-cn`](docs/zh-cn/) | 中文使用、部署和开发文档 |
 | [`script/build`](script/build/) | Web 发布包构建脚本 |

@@ -1,0 +1,365 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+@layer datavisool-ui.components {
+  .datavisool-searchable-select-field {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    .datavisool-searchable-select {
+      box-sizing: border-box;
+      position: relative;
+      display: grid;
+      width: fit-content;
+      min-width: min(320px, 100%);
+      max-width: 100%;
+      grid-template-columns: minmax(128px, 1fr) minmax(128px, 0.9fr);
+      border: 1px solid var(--datavisool-ui-control-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: #111a2e;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      overflow: visible;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-searchable-select-block .datavisool-searchable-select {
+      width: 100%;
+    }
+  
+    .datavisool-searchable-select:hover:not([data-disabled="true"]) {
+      border-color: var(--datavisool-ui-control-border-hover, rgba(255, 255, 255, 0.12));
+    }
+  
+    .datavisool-searchable-select:focus-within,
+    .datavisool-searchable-select-open {
+      border-color: var(--datavisool-ui-primary, #3b82f6);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+    }
+  
+    .datavisool-searchable-select-search {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      border-right: 1px solid rgba(86, 110, 161, 0.38);
+    }
+  
+    .datavisool-searchable-select-input {
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      min-height: 40px;
+      border: 0;
+      border-radius: 10px 0 0 10px;
+      outline: none;
+      background: transparent;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      padding: 0 14px;
+    }
+  
+    .datavisool-searchable-select-input::placeholder {
+      color: #7c8aa5;
+    }
+  
+    .datavisool-searchable-select-input::-webkit-search-cancel-button {
+      appearance: none;
+    }
+  
+    .datavisool-searchable-select-trigger {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 100%;
+      min-width: 0;
+      min-height: 40px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 0;
+      border-radius: 0 10px 10px 0;
+      outline: none;
+      background: #162238;
+      color: inherit;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: 0;
+      padding: 0 12px 0 14px;
+      text-align: left;
+      transition: background 160ms ease, color 160ms ease;
+    }
+  
+    .datavisool-searchable-select-trigger:hover:not(:disabled) {
+      background: #1a2740;
+    }
+  
+    .datavisool-searchable-select-trigger:disabled,
+    .datavisool-searchable-select-input:disabled {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-searchable-select-value {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-searchable-select-placeholder {
+      color: #7c8aa5;
+      font-weight: 400;
+    }
+  
+    .datavisool-searchable-select-chevron {
+      flex-shrink: 0;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      transition: color 160ms ease, transform 180ms ease;
+    }
+  
+    .datavisool-searchable-select-open .datavisool-searchable-select-chevron {
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      transform: rotate(180deg);
+    }
+  
+    .datavisool-searchable-select-panel {
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 52;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      min-width: 260px;
+      max-width: min(420px, calc(100vw - 32px));
+      border: 1px solid var(--datavisool-ui-panel-border, rgba(255, 255, 255, 0.08));
+      border-radius: 10px;
+      background: #111a2e;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+      padding: 8px;
+      backdrop-filter: blur(8px);
+    }
+  
+    .datavisool-searchable-select-list {
+      box-sizing: border-box;
+      display: flex;
+      max-height: 240px;
+      flex-direction: column;
+      gap: 4px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding-right: 2px;
+    }
+  
+    .datavisool-searchable-select-option {
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      width: 100%;
+      min-height: 40px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--datavisool-ui-foreground, #f3f7ff);
+      cursor: pointer;
+      font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+      font-size: 14px;
+      line-height: 1.3;
+      letter-spacing: 0;
+      outline: none;
+      padding: 8px 10px;
+      text-align: left;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, opacity 160ms ease;
+    }
+  
+    .datavisool-searchable-select-option:hover:not(:disabled),
+    .datavisool-searchable-select-option-active:not(:disabled) {
+      border-color: rgba(59, 130, 246, 0.34);
+      background: #1a2740;
+    }
+  
+    .datavisool-searchable-select-option-selected {
+      border-color: rgba(59, 130, 246, 0.48);
+      background: #1d3155;
+      color: var(--datavisool-ui-primary-foreground, #ffffff);
+    }
+  
+    .datavisool-searchable-select-option:disabled {
+      cursor: not-allowed;
+      opacity: 0.44;
+    }
+  
+    .datavisool-searchable-select-option-main {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      flex-direction: column;
+      gap: 2px;
+    }
+  
+    .datavisool-searchable-select-option-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .datavisool-searchable-select-option-description {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-searchable-select-option-check {
+      box-sizing: border-box;
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      color: #3b82f6;
+    }
+  
+    .datavisool-searchable-select-empty {
+      box-sizing: border-box;
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 0 10px;
+      text-align: center;
+    }
+  
+    .datavisool-searchable-select-loading-icon {
+      animation: datavisool-ui-button-spin 800ms linear infinite;
+    }
+  
+    .datavisool-searchable-select-size-sm .datavisool-searchable-select {
+      min-width: min(280px, 100%);
+      border-radius: 10px;
+    }
+  
+    .datavisool-searchable-select-size-sm .datavisool-searchable-select-input,
+    .datavisool-searchable-select-size-sm .datavisool-searchable-select-trigger {
+      min-height: 34px;
+      font-size: 13px;
+    }
+  
+    .datavisool-searchable-select-size-lg .datavisool-searchable-select {
+      min-width: min(380px, 100%);
+      border-radius: 10px;
+    }
+  
+    .datavisool-searchable-select-size-lg .datavisool-searchable-select-input,
+    .datavisool-searchable-select-size-lg .datavisool-searchable-select-trigger {
+      min-height: 48px;
+      font-size: 15px;
+    }
+  
+    .datavisool-searchable-select-status-success .datavisool-searchable-select {
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+  
+    .datavisool-searchable-select-status-success .datavisool-searchable-select:focus-within,
+    .datavisool-searchable-select-status-success .datavisool-searchable-select-open {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+    }
+  
+    .datavisool-searchable-select-status-warning .datavisool-searchable-select {
+      border-color: rgba(245, 158, 11, 0.55);
+    }
+  
+    .datavisool-searchable-select-status-warning .datavisool-searchable-select:focus-within,
+    .datavisool-searchable-select-status-warning .datavisool-searchable-select-open {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
+    }
+  
+    .datavisool-searchable-select-status-error .datavisool-searchable-select {
+      border-color: rgba(239, 68, 68, 0.58);
+    }
+  
+    .datavisool-searchable-select-status-error .datavisool-searchable-select:focus-within,
+    .datavisool-searchable-select-status-error .datavisool-searchable-select-open {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+    }
+  
+    .datavisool-searchable-select-disabled {
+      opacity: 0.55;
+    }
+  
+    .datavisool-searchable-select-disabled .datavisool-searchable-select,
+    .datavisool-searchable-select-disabled .datavisool-searchable-select-input,
+    .datavisool-searchable-select-disabled .datavisool-searchable-select-trigger {
+      cursor: not-allowed;
+    }
+  
+    .datavisool-searchable-select-helper {
+      color: var(--datavisool-ui-muted-foreground, #aab7d1);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  
+    .datavisool-searchable-select-helper-success {
+      color: #22c55e;
+    }
+  
+    .datavisool-searchable-select-helper-warning {
+      color: #f59e0b;
+    }
+  
+    .datavisool-searchable-select-helper-error {
+      color: #ef4444;
+    }
+  
+    @media (max-width: 560px) {
+      .datavisool-searchable-select {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+  
+      .datavisool-searchable-select-search {
+        border-right: 0;
+        border-bottom: 1px solid rgba(86, 110, 161, 0.38);
+      }
+  
+      .datavisool-searchable-select-input {
+        border-radius: 10px 10px 0 0;
+      }
+  
+      .datavisool-searchable-select-trigger {
+        border-radius: 0 0 10px 10px;
+      }
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .datavisool-searchable-select,
+      .datavisool-searchable-select-trigger,
+      .datavisool-searchable-select-chevron,
+      .datavisool-searchable-select-option {
+        transition: none;
+      }
+    }
+}

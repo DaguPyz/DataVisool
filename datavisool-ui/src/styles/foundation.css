@@ -1,0 +1,53 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+/* Defaults apply to the library's own component roots. */
+@layer datavisool-ui.base {
+  :where(
+    .datavisool-field,
+    .datavisool-button,
+    .datavisool-avatar,
+    .datavisool-card,
+    .datavisool-card-panel,
+    .datavisool-frame-layout,
+    .datavisool-grid,
+    .datavisool-space,
+    .datavisool-loading,
+    .datavisool-loading-host,
+    .datavisool-global-message,
+    .datavisool-global-modal,
+    .datavisool-panel,
+    .datavisool-accordion,
+    .datavisool-sub-accordion,
+    .datavisool-menu,
+    .datavisool-tabs,
+    .datavisool-progress,
+    .datavisool-tag,
+    .datavisool-image-upload,
+    .datavisool-colors-picker,
+    .datavisool-color-mode,
+    .datavisool-color-picker,
+    .datavisool-color-picker-panel,
+    .datavisool-control-group,
+    .datavisool-empty,
+    .datavisool-group-button,
+    .datavisool-spin,
+    .datavisool-upload-dragger,
+    .datavisool-text-only,
+    .datavisool-gui,
+    .datavisool-code-editor,
+    .datavisool-code-editor-dialog,
+    .datavisool-code-editor-hints,
+    .datavisool-full-editor,
+    .datavisool-select-panel,
+    .datavisool-searchable-select-panel,
+    .datavisool-dropdown-popup,
+    .datavisool-card-panel-tip-content,
+    .datavisool-control,
+    .datavisool-dialog
+  ) {
+    color: var(--datavisool-ui-foreground, #f3f7ff);
+    font-family: var(--datavisool-ui-font-family, "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+  }
+}

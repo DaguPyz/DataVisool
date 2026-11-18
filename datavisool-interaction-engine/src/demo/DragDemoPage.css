@@ -1,0 +1,249 @@
+/*
+ * Copyright © 2023–2026 xiaopujun. All rights reserved.
+ * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
+ */
+.datavisool-drag-demo {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    color: #e9f2ff;
+    background: #0e1420;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.datavisool-drag-demo__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(137, 171, 218, 0.18);
+    background: #141d2c;
+}
+
+.datavisool-drag-demo__toolbar strong {
+    margin-right: 8px;
+    font-size: 15px;
+    line-height: 22px;
+}
+
+.datavisool-drag-demo__toolbar button {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(139, 183, 238, 0.28);
+    border-radius: 6px;
+    color: #dceaff;
+    background: #1b2a41;
+    cursor: pointer;
+}
+
+.datavisool-drag-demo__toolbar button:hover {
+    border-color: #58c8ff;
+    color: #ffffff;
+}
+
+.datavisool-drag-demo__control {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(233, 242, 255, 0.68);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.datavisool-drag-demo__control input {
+    width: 64px;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid rgba(139, 183, 238, 0.24);
+    border-radius: 6px;
+    color: #dceaff;
+    background: #0e1828;
+}
+
+.datavisool-drag-demo__hint {
+    color: rgba(233, 242, 255, 0.52);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.datavisool-drag-demo__stats {
+    margin-left: auto;
+    color: rgba(233, 242, 255, 0.7);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.datavisool-drag-demo__stage {
+    position: relative;
+    overflow: auto;
+    padding: 24px;
+}
+
+.datavisool-drag-demo__canvas {
+    position: relative;
+    width: 1800px;
+    height: 1100px;
+    border: 1px solid rgba(137, 171, 218, 0.18);
+    border-radius: 8px;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        #0a101b;
+    background-size: 40px 40px;
+    touch-action: none;
+    user-select: none;
+}
+
+.datavisool-drag-demo__layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(112, 167, 255, 0.44);
+    border-radius: 6px;
+    color: rgba(236, 246, 255, 0.88);
+    background: rgba(32, 74, 120, 0.76);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    font-size: 12px;
+    line-height: 18px;
+    will-change: transform;
+    cursor: grab;
+}
+
+.datavisool-drag-demo__layer.is-selected {
+    border-color: #67e8f9;
+    background: rgba(26, 118, 151, 0.9);
+    box-shadow:
+        0 0 0 2px rgba(103, 232, 249, 0.22),
+        0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.datavisool-drag-demo__layer.is-locked {
+    color: rgba(255, 255, 255, 0.42);
+    border-style: dashed;
+    background: rgba(56, 63, 76, 0.78);
+    cursor: not-allowed;
+}
+
+.datavisool-interaction-selection-box {
+    z-index: 10000;
+    border: 1px solid #67e8f9;
+    background: rgba(103, 232, 249, 0.14);
+    box-shadow: 0 0 0 1px rgba(103, 232, 249, 0.22) inset;
+}
+
+.datavisool-interaction-snap-guide {
+    filter: drop-shadow(0 0 4px rgba(255, 223, 110, 0.55));
+}
+
+.datavisool-interaction-snap-guide--x {
+    border-left: 1px solid #5087f6;
+}
+
+.datavisool-interaction-snap-guide--y {
+    border-top: 1px solid #5087f6;
+}
+
+.datavisool-interaction-snap-guide__label {
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.datavisool-interaction-resize-box {
+    border: 1px solid #67e8f9;
+    box-shadow:
+        0 0 0 1px rgba(103, 232, 249, 0.2),
+        0 0 18px rgba(103, 232, 249, 0.18);
+}
+
+.datavisool-interaction-resize-handle {
+    width: 9px;
+    height: 9px;
+    border: 1px solid #8eeeff;
+    border-radius: 2px;
+    background: #0e1420;
+    box-shadow: 0 0 0 1px rgba(14, 20, 32, 0.88);
+}
+
+.datavisool-interaction-resize-handle--n,
+.datavisool-interaction-resize-handle--s {
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+}
+
+.datavisool-interaction-resize-handle--e,
+.datavisool-interaction-resize-handle--w {
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: ew-resize;
+}
+
+.datavisool-interaction-resize-handle--n {
+    top: -5px;
+}
+
+.datavisool-interaction-resize-handle--s {
+    bottom: -5px;
+}
+
+.datavisool-interaction-resize-handle--e {
+    right: -5px;
+}
+
+.datavisool-interaction-resize-handle--w {
+    left: -5px;
+}
+
+.datavisool-interaction-resize-handle--ne {
+    top: -5px;
+    right: -5px;
+    cursor: nesw-resize;
+}
+
+.datavisool-interaction-resize-handle--nw {
+    top: -5px;
+    left: -5px;
+    cursor: nwse-resize;
+}
+
+.datavisool-interaction-resize-handle--se {
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+}
+
+.datavisool-interaction-resize-handle--sw {
+    bottom: -5px;
+    left: -5px;
+    cursor: nesw-resize;
+}
+
+.datavisool-interaction-rotate-handle {
+    top: -34px;
+    left: 50%;
+    width: 13px;
+    height: 13px;
+    border: 2px solid #8eeeff;
+    border-radius: 50%;
+    background: #0e1420;
+    box-shadow:
+        0 0 0 1px rgba(14, 20, 32, 0.88),
+        0 0 12px rgba(103, 232, 249, 0.36);
+    transform: translateX(-50%);
+    cursor: grab;
+}
+
+.datavisool-interaction-rotate-handle::after {
+    position: absolute;
+    top: 13px;
+    left: 50%;
+    width: 1px;
+    height: 19px;
+    background: #67e8f9;
+    content: "";
+    transform: translateX(-50%);
+}
