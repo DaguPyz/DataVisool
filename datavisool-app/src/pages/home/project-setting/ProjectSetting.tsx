@@ -8,9 +8,9 @@ import "@/pages/home/project-setting/ProjectSetting.less";
 import {Tabs} from "@datavisool/ui";
 import type {TabsProps} from "@datavisool/ui";
 import {useLocation} from "react-router-dom";
-import DynamicScriptList from "@/pages/home/dynamic-script/DynamicScriptList.tsx";
+import type {DynamicScriptsService} from "@datavisool/sdk/plugin/contracts/dynamicScripts";
 
-export default function ProjectSetting() {
+export default function ProjectSetting({ScriptList}: DynamicScriptsService) {
 
     const location = useLocation();
     const {projectId, title} = location.state;
@@ -19,7 +19,7 @@ export default function ProjectSetting() {
         {
             key: '1',
             label: '动态脚本',
-            children: <DynamicScriptList title={'项目动态脚本'} projectId={projectId} variant="resource"/>,
+            children: <ScriptList key={projectId} title={'项目动态脚本'} projectId={projectId} variant="resource"/>,
         },
     ];
     return (

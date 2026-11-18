@@ -1,10 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {Dialog} from "@datavisool/ui";
+import {Dialog, useDataVisoolUI} from "@datavisool/ui";
 import {Close} from "@icon-park/react";
 import {useCallback, useEffect, useId, useRef} from "react";
 import CircuitBackground from "@/comps/common-component/circuit-background/CircuitBackground";
-import {tx} from "@/i18n/miniI18n.ts";
-import {useLocaleVersion} from "@/i18n/useLocaleVersion.ts";
 import styles from "./ContactAuthorModal.module.less";
 
 type Props = {
@@ -17,7 +15,7 @@ type Props = {
 };
 
 export default function ContactAuthorModal({ open, onClose, qrImgSrc, title, hint, zIndex }: Props) {
-    useLocaleVersion();
+    const {translate} = useDataVisoolUI();
     const titleId = useId();
     const hintId = useId();
     const dialogRef = useRef<HTMLElement | null>(null);
@@ -98,7 +96,7 @@ export default function ContactAuthorModal({ open, onClose, qrImgSrc, title, hin
                     <div id={hintId} className={styles.wechatPanelHint}>{hint ?? '技术支持 / 交流反馈'}</div>
                 </div>
                 <button type="button" data-contact-close className={styles.wechatClose}
-                        aria-label={tx('关闭')} onClick={onClose}>
+                        aria-label={translate?.('关闭') ?? '关闭'} onClick={onClose}>
                     <Close size={18} aria-hidden="true"/>
                 </button>
                 <div className={styles.wechatQrWrap}>

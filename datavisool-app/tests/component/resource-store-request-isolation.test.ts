@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import aiModelStore from "@/pages/home/ai-model-management/AiModelManagementStore.ts";
+import {AiModelManagementStore} from "@/plugins/ai-model-management/AiModelManagementStore.ts";
 
 const mocks = vi.hoisted(() => ({
     userId: "user-a" as string | null,
@@ -9,10 +9,21 @@ const mocks = vi.hoisted(() => ({
     success: vi.fn(),
 }));
 
-vi.mock("@/util/AuthFetchUtil.ts", () => ({default: {post: mocks.post, get: mocks.get}}));
-vi.mock("@/util/AuthTools.ts", () => ({default: {getUserId: () => mocks.userId}}));
 vi.mock("@datavisool/ui", () => ({globalMessage: {messageApi: {success: mocks.success}}}));
-vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
+
+const aiModelStore = new AiModelManagementStore({
+    session: {
+        getUserInfo: () => mocks.userId ? {id: mocks.userId, name: '', username: '', token: '', roles: []} : null,
+        setUserInfo() {}, removeUser() {}, logout: async () => true,
+    },
+    i18n: {availableLocales: ['zh-CN'], getLocale: () => 'zh-CN', setLocale: locale => locale, translate: value => value},
+    subscribeLocale: () => () => {},
+    canOperate: () => true,
+    requestOptions: () => ({}),
+    trackWrite: promise => promise,
+    get: mocks.get,
+    post: mocks.post,
+});
 
 function deferred<T>() {
     let resolve!: (value: T) => void;

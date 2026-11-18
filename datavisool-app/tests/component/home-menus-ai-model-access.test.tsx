@@ -4,11 +4,12 @@ import {Suspense} from "react";
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
 import type {RouteLocation} from "@datavisool/sdk/plugin/contracts/router";
 import {RoleType} from "@datavisool/sdk/plugin/contracts/session";
-import {createLegacyWorkbenchPages} from "@/plugins/legacy-routes/workbenchPages.tsx";
+import {createAiModelManagementPlugin} from "@/plugins/ai-model-management/aiModelManagementPlugin.tsx";
 import {createNavigationPlugin} from "@/plugins/navigation/navigationPlugin.tsx";
+import {createSettingsPlugin} from "@/plugins/settings/settingsPlugin.tsx";
+import {createUserManagementPlugin} from "@/plugins/user-management/userManagementPlugin.tsx";
 import type {Plugin} from "@datavisool/sdk/plugin";
 import {Visloom} from "@/visloom/index.ts";
-import {createI18nBinding} from "@/i18n/i18nBinding.ts";
 import {createI18nPlugin} from "@/plugins/i18n/i18nPlugin.ts";
 
 const mocks = vi.hoisted(() => ({navigate: vi.fn(async () => {})}));
@@ -29,11 +30,11 @@ async function renderMenus(role: RoleType) {
     const services: Plugin = {
         id: "fixture-services",
         requires: [],
-        provides: ['router', 'session'],
+        provides: ['router', 'session', 'workbench'],
         activate(context) {
             context.provide('router', {
                 Link: () => null,
-                registerRoutes: () => { throw new Error("No fixture routes"); },
+                registerRoutes: () => ({prepare() {}, dispose() {}}),
                 createView: () => null,
                 getLocation: () => location,
                 pathFor: routeId => "/fixture/" + routeId,
@@ -42,24 +43,13 @@ async function renderMenus(role: RoleType) {
             context.provide('session', {
                 getUserInfo: () => userInfo, setUserInfo() {}, removeUser() {}, logout: async () => true,
             });
+            context.provide('workbench', {registerAccountEntries: () => ({prepare() {}, dispose() {}})});
             context.onStop({withdraw() { location = undefined; }});
         },
     };
-    const menuContributor: Plugin = {
-        id: "fixture-menus",
-        requires: ['i18n', 'navigation'],
-        provides: [],
-        activate(context) {
-            const entries = createLegacyWorkbenchPages(createI18nBinding(context), () => {}).flatMap(({route, menu}) =>
-                menu ? [{routeId: route.id, ...menu}] : [],
-            );
-            const registration = context.navigation.registerMenuEntries(entries);
-            context.onStop(registration);
-            context.onDispose(registration.dispose);
-        },
-    };
     const runtime = new Visloom();
-    await runtime.start([services, createI18nPlugin(), createNavigationPlugin(), menuContributor]);
+    await runtime.start([services, createI18nPlugin(), createNavigationPlugin(), createAiModelManagementPlugin(),
+        createUserManagementPlugin(), createSettingsPlugin()]);
     runtimes.push(runtime);
     location = {key: "fixture", pathname: "/home/console", hash: "", search: "", matchedRouteIds: ["app:console"]};
     const {Navigation} = runtime.get('navigation');

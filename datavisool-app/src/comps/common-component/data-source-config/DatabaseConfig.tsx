@@ -8,7 +8,7 @@ import type {WebDatabaseConfig as IDatabase} from "@/types/WebDataSourceTypes.ts
 import {type Control, FieldChangeData, globalMessage, ISelectOption, DatavisoolGUI} from "@datavisool/ui";
 import {useEffect, useRef, useState} from "react";
 import AuthFetchUtil from "@/util/AuthFetchUtil.ts";
-import {IDataSource} from "@/pages/home/database/DataBaseStore.ts";
+import type {IDataSource} from "@/api/DatabaseTypes.ts";
 import {Base64Util} from "@datavisool/sdk";
 import {ObjectUtil} from "@datavisool/sdk";
 import DataUtil from "@/util/DataUtil.ts";

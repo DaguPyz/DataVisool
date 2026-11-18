@@ -5,8 +5,27 @@
  */
 
 import type {IPage, IPageParam} from "@datavisool/sdk/types";
-import type {IAiModel} from "@/pages/home/ai-model-management/AiModelManagementStore.ts";
 import AuthFetchUtil, {type AuthRequestInit} from "@/util/AuthFetchUtil.ts";
+
+export interface IAiModel {
+    id?: string;
+    key?: string;
+    name?: string;
+    provider?: string;
+    providerLabel?: string;
+    providerFamily?: string;
+    baseUrl?: string;
+    apiKey?: string;
+    hasApiKey?: boolean;
+    clearApiKey?: number;
+    description?: string;
+    temperature?: number;
+    maxTokens?: number;
+    enabled?: number;
+    isDefault?: number;
+    createTime?: string | number[];
+    updateTime?: string | number[];
+}
 
 export interface IAiModelCatalogModel {
     modelName?: string;

@@ -157,7 +157,7 @@ def main():
         upstream.setdefault((item['package'], item['version']), []).append(item)
     npm = get_npm(texts, upstream)
     maven = get_maven(texts)
-    icon_path = ROOT / 'datavisool-app/src/pages/home/ai-model-management/assets/providers/LICENSE'
+    icon_path = ROOT / 'datavisool-app/src/plugins/ai-model-management/assets/providers/LICENSE'
     icon_notice = collect_text(icon_path.read_bytes(), 'Lobe Icons LICENSE', texts)
     inputs = ['pnpm-lock.yaml', 'pnpm-workspace.yaml', 'datavisool-app/package.json',
               'datavisool-interaction-engine/package.json', 'datavisool-sdk/package.json',

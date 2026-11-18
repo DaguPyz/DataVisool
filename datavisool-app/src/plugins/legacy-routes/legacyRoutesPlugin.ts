@@ -1,41 +1,26 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {brandLogoChangedKey} from '@datavisool/sdk/plugin/contracts/brand';
-import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
 import {bindLegacySession} from '@/util/AuthTools.ts';
 import {createI18nBinding} from '@/i18n/i18nBinding.ts';
 import {bindLegacyI18n} from '@/i18n/miniI18n.ts';
 import type {Plugin} from '@datavisool/sdk/plugin';
 import legacyRoutes from './legacyRoutes.tsx';
-import {createLegacyWorkbenchPages} from './workbenchPages.tsx';
+import {createLegacyWorkbenchRoutes} from './workbenchPages.tsx';
 
 export function createLegacyRoutesPlugin(): Plugin {
     return {
         id: 'legacy-routes',
-        requires: ['i18n', 'navigation', 'router', 'session', 'workbench'],
+        requires: ['dynamicScripts', 'i18n', 'router', 'session', 'workbench'],
         provides: [],
         activate(context) {
             const i18n = createI18nBinding(context);
             context.onDispose(bindLegacyI18n(i18n));
-            const pages = createLegacyWorkbenchPages(i18n, logo => {
-                void context.emit(brandLogoChangedKey, logo).catch(error => console.error('Brand update notification failed.', error));
-            });
             const routes = context.router.registerRoutes([
                 ...legacyRoutes,
-                ...pages.map(({route}) => ({...route, parentId: homeRouteId})),
+                ...createLegacyWorkbenchRoutes(context.dynamicScripts),
             ]);
             context.onStop(routes);
             context.onDispose(routes.dispose);
-            const menus = context.navigation.registerMenuEntries(pages.flatMap(({route, menu}) =>
-                menu ? [{routeId: route.id, ...menu}] : [],
-            ));
-            context.onStop(menus);
-            context.onDispose(menus.dispose);
-            const account = context.workbench.registerAccountEntries(pages.flatMap(({route, accountMenuLabel}) =>
-                accountMenuLabel ? [{routeId: route.id, label: accountMenuLabel}] : [],
-            ));
-            context.onStop(account);
-            context.onDispose(account.dispose);
             context.onDispose(bindLegacySession(() => context.session));
         },
     };

@@ -9,7 +9,7 @@ export interface I18nBinding {
 }
 
 /** Pass the capability and its Visloom subscription to code outside a plugin's activate callback. */
-export function createI18nBinding(context: PluginContext): I18nBinding {
+export function createI18nBinding(context: Pick<PluginContext, 'i18n' | 'on'>): I18nBinding {
     return {
         i18n: context.i18n,
         subscribeLocale: listener => context.on(localeChangedKey, ({locale}) => listener(locale)),

@@ -39,6 +39,10 @@
       "types": "./dist/plugin/contracts/brand.d.ts",
       "import": "./dist/plugin/contracts/brand.js"
     },
+    "./plugin/contracts/dynamicScripts": {
+      "types": "./dist/plugin/contracts/dynamicScripts.d.ts",
+      "import": "./dist/plugin/contracts/dynamicScripts.js"
+    },
     "./plugin/contracts/errorUi": {
       "types": "./dist/plugin/contracts/errorUi.d.ts",
       "import": "./dist/plugin/contracts/errorUi.js"

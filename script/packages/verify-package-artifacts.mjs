@@ -77,6 +77,7 @@ import {AbstractController, AbstractDesignerController, BPExecutor, ObjectUtil} 
 import type {MenuInfo, MenuToConfigMappingType} from '@datavisool/sdk/core';
 import type {ConfigureObjectFragments} from '@datavisool/sdk/utils';
 import type {PluginContext} from '@datavisool/sdk/plugin';
+import type {DynamicScriptsService} from '@datavisool/sdk/plugin/contracts/dynamicScripts';
 import {localeChangedKey, type I18nService} from '@datavisool/sdk/plugin/contracts/i18n';
 import type {IDesignerManager, ComponentAiFeatureInfo, StructuredSourceConfig} from '@datavisool/sdk/types';
 import {DesignerScene} from '@datavisool/sdk/types';
@@ -90,6 +91,7 @@ export {AbstractController, AbstractDesignerController, BPExecutor, ObjectUtil, 
 export type {MenuInfo, MenuToConfigMappingType, ConfigureObjectFragments, IDesignerManager, ComponentAiFeatureInfo, StructuredSourceConfig, DatavisoolGUIProps};
 export {InteractionEngine, DATAVISOOL_INTERACTION_ENGINE_PACKAGE};
 export const getI18n = (context: PluginContext): I18nService => context.i18n;
+export const getDynamicScripts = (context: PluginContext): DynamicScriptsService => context.dynamicScripts;
 export {localeChangedKey};
 `);
     run(process.execPath, [appRequire.resolve('typescript/bin/tsc'), '--noEmit', '-p', 'tsconfig.json']);

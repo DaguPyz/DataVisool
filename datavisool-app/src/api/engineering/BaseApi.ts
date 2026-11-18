@@ -119,11 +119,12 @@ export class BaseApi extends AbstractApi {
         return data || [];
     }
 
-    public async uploadRemoteComponent(file: File, id?: string): Promise<boolean> {
+    public async uploadRemoteComponent(file: File, id?: string, options?: AuthRequestInit): Promise<boolean> {
         const formData = new FormData();
         formData.append('componentFile', file);
         id && formData.append('id', id);
         return await AuthFetchUtil.post<boolean>('/api/remote/component/upload', formData, {
+            ...options,
             headers: {'Content-Type': 'multipart/form-data'},
             loadingText: '正在上传服务器组件...'
         });

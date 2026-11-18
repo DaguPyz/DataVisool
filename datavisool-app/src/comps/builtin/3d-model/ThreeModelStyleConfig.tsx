@@ -5,19 +5,27 @@ import { ThreeModelController } from "./ThreeModelController";
 import { Dialog, FieldChangeData, DatavisoolGUI } from "@datavisool/ui";
 import { Control } from "@datavisool/ui";
 import { Cube } from "@icon-park/react";
-import threeDModelResourceStore from "../../../pages/home/model-resource/ThreeDModelResourceStore";
-import { observer } from "mobx-react";
+import type {IPage} from "@datavisool/sdk/types";
+import {modelResourcePagePath, type IThreeDModelResource} from "@/api/ModelResourceApi.ts";
+import AuthFetchUtil from "@/util/AuthFetchUtil.ts";
 import './ThreeModelStyleConfig.less';
 
 // 模型选择器弹窗内容组件
-const ModelSelectorContent = observer(({ onSelect }: { onSelect: (url: string, format: string) => void }) => {
+function ModelSelectorContent({onSelect}: {onSelect: (url: string, format: string) => void}) {
+    const [records, setRecords] = useState<IThreeDModelResource[]>([]);
     useEffect(() => {
-        threeDModelResourceStore.getList({ size: 100 }); // 获取前100个模型
+        const controller = new AbortController();
+        const {signal} = controller;
+        AuthFetchUtil.post<IPage<IThreeDModelResource>>(modelResourcePagePath, {
+            current: 1, size: 100, searchValue: null,
+        }, {signal}).then(result => {
+            if (!signal.aborted) setRecords(result?.records ?? []);
+        });
+        return () => controller.abort();
     }, []);
 
-    const { records } = threeDModelResourceStore.pageData;
-
-    const handleSelect = (item: any) => {
+    const handleSelect = (item: IThreeDModelResource) => {
+        if (!item.url) return;
         let format = 'glb';
         if (item.name?.endsWith('.fbx')) format = 'fbx';
         else if (item.name?.endsWith('.obj')) format = 'obj';
@@ -26,7 +34,7 @@ const ModelSelectorContent = observer(({ onSelect }: { onSelect: (url: string, f
         onSelect(item.url, format);
     };
 
-    const formatSize = (size: number) => {
+    const formatSize = (size?: number) => {
         if (!size) return 'Unknown';
         if (size < 1024) return size + ' B';
         if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
@@ -36,7 +44,7 @@ const ModelSelectorContent = observer(({ onSelect }: { onSelect: (url: string, f
     return (
         <div className="model-list-container">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-                {records.map((item: any) => {
+                {records.map(item => {
                     const ext = item.name?.split('.').pop()?.toUpperCase() || 'UNKNOWN';
                     // 根据文件类型选择图标颜色 (保持与主色调协调)
                     let iconColor = '#1d8cf8'; // Info Blue
@@ -60,7 +68,7 @@ const ModelSelectorContent = observer(({ onSelect }: { onSelect: (url: string, f
             </div>
         </div>
     );
-});
+}
 
 const ThreeModelStyleConfig: React.FC<ConfigType<ThreeModelController>> = ({ controller }) => {
     const { style } = controller.getConfig()!;
