@@ -5,7 +5,7 @@
     "pnpm-workspace.yaml": "0cc4b59ad516bc04a9a69717144501507656ac7c718da5dc2b9cd158f21b758d",
     "datavisool-app/package.json": "e4f1fc0e01df4c965ab3d2d0e7090e65e3e819e5f762fa6adfb93ca232513aba",
     "datavisool-interaction-engine/package.json": "5a08b974800599d2feaf719bdc1096b264f9fa124718eb13af06aef7f10f36a1",
-    "datavisool-sdk/package.json": "f76c51f26f0c8fcca88707a1e385421c3c96d80812cd61d27990e054571f54e1",
+    "datavisool-sdk/package.json": "258f8ac5b4461057386d97d8972ffc6813789801195ce2860c09a6b8ff6fb489",
     "datavisool-ui/package.json": "b7ccaefd355863655fe05773b25c4daf7fc95bec9cb1d708aad0bdf87cce46af",
     "datavisool-server/pom.xml": "83a0d38a03a66eb5f63be6478c960eac82fa9adf1ecaca4acba93e1596c9e60a",
     "datavisool-server/datavisool-service/pom.xml": "45e8a60095714c22db6f5de1463c85dc1db51b0eaf52a347d52bd68284ef83bc",

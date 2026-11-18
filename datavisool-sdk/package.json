@@ -47,6 +47,10 @@
       "types": "./dist/plugin/contracts/homeLayout.d.ts",
       "import": "./dist/plugin/contracts/homeLayout.js"
     },
+    "./plugin/contracts/i18n": {
+      "types": "./dist/plugin/contracts/i18n.d.ts",
+      "import": "./dist/plugin/contracts/i18n.js"
+    },
     "./plugin/contracts/navigation": {
       "types": "./dist/plugin/contracts/navigation.d.ts",
       "import": "./dist/plugin/contracts/navigation.js"

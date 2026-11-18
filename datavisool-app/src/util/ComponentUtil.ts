@@ -5,16 +5,10 @@
  */
 
 import {ComponentUtil as SharedComponentUtil} from '@datavisool/sdk/react';
-import {createElement, forwardRef, type ClassType, type ReactNode, type Ref} from 'react';
-import {DataVisoolUIProvider} from '@datavisool/ui';
-import {getLocale, tx} from '@/i18n/miniI18n';
-import {useLocaleVersion} from '@/i18n/useLocaleVersion';
+import {createElement, forwardRef, type ClassType, type Ref} from 'react';
+import {LocalizedUiProvider} from '@/i18n/LocalizedUiProvider.tsx';
+import {getLegacyI18nBinding} from '@/i18n/miniI18n';
 import RenderErrorBoundary from './RenderErrorBoundary.tsx';
-
-function HostComponentUIProvider({children}: {children: ReactNode}) {
-    useLocaleVersion();
-    return createElement(DataVisoolUIProvider, {locale: getLocale(), translate: tx, children});
-}
 
 function acceptsComponentRef(template: unknown): boolean {
     const visited = new Set<object>();
@@ -59,13 +53,15 @@ export default class ComponentUtil {
     public static async createAndRender<I, P = any>(container: HTMLElement, Template: ClassType<P, any, any>, props?: P): Promise<I | null> {
         if (!container) throw new Error('create react node failed, container is null');
         const acceptsRef = acceptsComponentRef(Template);
+        const binding = getLegacyI18nBinding();
         const render = (componentProps: P, ref?: Ref<I>) => createElement(RenderErrorBoundary, {
             onError: () => {
                 // The SDK waits for a ref callback for class and forwardRef components.
                 if (typeof ref === 'function') ref(null);
                 else if (ref) (ref as {current: I | null}).current = null;
             },
-            children: createElement(HostComponentUIProvider, {
+            children: createElement(LocalizedUiProvider, {
+                binding,
                 children: createElement(Template, {...componentProps, ...(ref ? {ref} : {})}),
             }),
         });

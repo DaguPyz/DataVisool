@@ -3,6 +3,8 @@
 import {brandLogoChangedKey} from '@datavisool/sdk/plugin/contracts/brand';
 import {homeRouteId} from '@datavisool/sdk/plugin/contracts/router';
 import {bindLegacySession} from '@/util/AuthTools.ts';
+import {createI18nBinding} from '@/i18n/i18nBinding.ts';
+import {bindLegacyI18n} from '@/i18n/miniI18n.ts';
 import type {Plugin} from '@datavisool/sdk/plugin';
 import legacyRoutes from './legacyRoutes.tsx';
 import {createLegacyWorkbenchPages} from './workbenchPages.tsx';
@@ -10,10 +12,12 @@ import {createLegacyWorkbenchPages} from './workbenchPages.tsx';
 export function createLegacyRoutesPlugin(): Plugin {
     return {
         id: 'legacy-routes',
-        requires: ['navigation', 'router', 'session', 'workbench'],
+        requires: ['i18n', 'navigation', 'router', 'session', 'workbench'],
         provides: [],
         activate(context) {
-            const pages = createLegacyWorkbenchPages(logo => {
+            const i18n = createI18nBinding(context);
+            context.onDispose(bindLegacyI18n(i18n));
+            const pages = createLegacyWorkbenchPages(i18n, logo => {
                 void context.emit(brandLogoChangedKey, logo).catch(error => console.error('Brand update notification failed.', error));
             });
             const routes = context.router.registerRoutes([

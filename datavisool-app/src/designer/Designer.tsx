@@ -28,6 +28,9 @@ import AuthTools from "@/util/AuthTools.ts";
 import shortcutStore from "@/designer/operate-provider/hot-key/ShortcutStore.ts";
 import DesignerWorkspaceShell from "@/designer/workspace/DesignerWorkspaceShell.tsx";
 import footerStore from "@/designer/footer/FooterStore.ts";
+import componentListStore from "@/designer/left/compoent-lib/ComponentListStore.ts";
+import rightStore from "@/designer/right/RightStore.ts";
+import {subscribeLocaleChange} from "@/i18n/miniI18n.ts";
 
 
 /*****************事件处理*****************/
@@ -104,6 +107,11 @@ const Designer = observer((props: { id: string }) => {
     const [reloadAttempt, setReloadAttempt] = useState(0);
     const navigate = useNavigate();
     const loadFailed = failedLoad?.id === props.id && failedLoad.attempt === reloadAttempt;
+
+    useEffect(() => subscribeLocaleChange(() => {
+        componentListStore.doInit();
+        rightStore.refreshLocale();
+    }), []);
 
     useEffect(() => {
         void shortcutStore.initialize(AuthTools.getUserId() ?? 'anonymous').catch((error) => {

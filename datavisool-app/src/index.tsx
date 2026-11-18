@@ -7,7 +7,7 @@
 import '@datavisool/ui/style.css';
 import './index.less';
 import './theme/default.less';
-import {getLocale} from '@/i18n/miniI18n.ts';
+import {readInitialLocale} from '@/i18n/localePreference.ts';
 import {showStartupError, startApplication} from './bootstrap/startApplication.ts';
 
-void startApplication().catch(error => showStartupError(error, getLocale()));
+void startApplication().catch(error => showStartupError(error, readInitialLocale()));

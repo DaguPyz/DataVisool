@@ -3,8 +3,12 @@ import {act, waitFor} from '@testing-library/react';
 import {Component, createElement, forwardRef, memo, useImperativeHandle} from 'react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {useDataVisoolUI} from '@datavisool/ui';
-import {getLocale, setLocale} from '@/i18n/miniI18n';
+import {bindLegacyI18n} from '@/i18n/miniI18n';
+import {createI18nBinding} from '@/i18n/i18nBinding.ts';
+import {LOCALE_STORAGE_KEY} from '@/i18n/localePreference.ts';
+import {createI18nPlugin} from '@/plugins/i18n/i18nPlugin.ts';
 import ComponentUtil from '@/util/ComponentUtil';
+import {Visloom} from '@/visloom/index.ts';
 
 describe('ComponentUtil shared SDK adapter', () => {
     let container: HTMLDivElement;
@@ -89,19 +93,31 @@ describe('ComponentUtil shared SDK adapter', () => {
     });
 
     it('provides and updates the shared UI locale inside a separate component root', async () => {
-        const original = getLocale();
+        const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
+        localStorage.setItem(LOCALE_STORAGE_KEY, 'zh-CN');
+        const runtime = new Visloom();
+        await runtime.start([createI18nPlugin(), {
+            id: 'fixture-design-host',
+            requires: ['i18n'],
+            provides: [],
+            activate(context) {
+                context.onDispose(bindLegacyI18n(createI18nBinding(context)));
+            },
+        }]);
         const Consumer = () => {
             const context = useDataVisoolUI();
             return createElement('span', null, `${context.locale}: ${context.translate?.('保存')}`);
         };
         try {
-            act(() => { setLocale('zh-CN'); });
             await act(async () => { await ComponentUtil.createAndRender(container, Consumer as never); });
             expect(container.textContent).toBe('zh-CN: 保存');
-            act(() => { setLocale('en-US'); });
+            await act(async () => { runtime.get('i18n').setLocale('en-US'); });
             expect(container.textContent).toBe('en-US: Save');
         } finally {
-            act(() => { setLocale(original); });
+            act(() => ComponentUtil.unmount(container));
+            await runtime.stop();
+            if (storedLocale === null) localStorage.removeItem(LOCALE_STORAGE_KEY);
+            else localStorage.setItem(LOCALE_STORAGE_KEY, storedLocale);
         }
     });
 

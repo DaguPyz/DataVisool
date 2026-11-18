@@ -5,20 +5,22 @@ import {createRoot, type Root} from 'react-dom/client';
 import {GlobalMessage, GlobalModal, Loading} from '@datavisool/ui';
 import type {RootProvidersProps} from '@datavisool/sdk/plugin/contracts/ui';
 import type {Plugin} from '@datavisool/sdk/plugin';
+import {createI18nBinding, type I18nBinding} from '@/i18n/i18nBinding.ts';
 
 interface UiPluginOptions {
-    readonly RootProviders: ComponentType<RootProvidersProps>;
+    readonly RootProviders: ComponentType<RootProvidersProps & I18nBinding>;
     readonly homePath: string;
 }
 
 export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plugin {
     return {
         id: 'ui',
-        requires: ['errorUi', 'router'],
+        requires: ['errorUi', 'i18n', 'router'],
         provides: ['ui'],
         activate(context) {
             const {ErrorBoundary} = context.errorUi;
             const router = context.router;
+            const i18n = createI18nBinding(context);
             let active = true;
             let mountAttempted = false;
             let root: Root | undefined;
@@ -42,7 +44,7 @@ export function createUiPlugin({RootProviders, homePath}: UiPluginOptions): Plug
                     const routerView = router.createView();
                     root = createRoot(container);
                     root.render(
-                        <RootProviders renderContent={() => (
+                        <RootProviders {...i18n} renderContent={() => (
                             <Suspense fallback={<Loading/>}>
                                 <ErrorBoundary homePath={homePath}>
                                     {routerView}

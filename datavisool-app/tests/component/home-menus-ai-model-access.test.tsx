@@ -8,10 +8,10 @@ import {createLegacyWorkbenchPages} from "@/plugins/legacy-routes/workbenchPages
 import {createNavigationPlugin} from "@/plugins/navigation/navigationPlugin.tsx";
 import type {Plugin} from "@datavisool/sdk/plugin";
 import {Visloom} from "@/visloom/index.ts";
+import {createI18nBinding} from "@/i18n/i18nBinding.ts";
+import {createI18nPlugin} from "@/plugins/i18n/i18nPlugin.ts";
 
 const mocks = vi.hoisted(() => ({navigate: vi.fn(async () => {})}));
-vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
-vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
 vi.mock("@datavisool/ui", () => ({
     globalMessage: {},
     Menu: ({items, onClick}: any) => (
@@ -47,10 +47,10 @@ async function renderMenus(role: RoleType) {
     };
     const menuContributor: Plugin = {
         id: "fixture-menus",
-        requires: ['navigation'],
+        requires: ['i18n', 'navigation'],
         provides: [],
         activate(context) {
-            const entries = createLegacyWorkbenchPages(() => {}).flatMap(({route, menu}) =>
+            const entries = createLegacyWorkbenchPages(createI18nBinding(context), () => {}).flatMap(({route, menu}) =>
                 menu ? [{routeId: route.id, ...menu}] : [],
             );
             const registration = context.navigation.registerMenuEntries(entries);
@@ -59,7 +59,7 @@ async function renderMenus(role: RoleType) {
         },
     };
     const runtime = new Visloom();
-    await runtime.start([services, createNavigationPlugin(), menuContributor]);
+    await runtime.start([services, createI18nPlugin(), createNavigationPlugin(), menuContributor]);
     runtimes.push(runtime);
     location = {key: "fixture", pathname: "/home/console", hash: "", search: "", matchedRouteIds: ["app:console"]};
     const {Navigation} = runtime.get('navigation');

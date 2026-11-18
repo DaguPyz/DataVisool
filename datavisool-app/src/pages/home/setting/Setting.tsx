@@ -5,7 +5,7 @@
  */
 
 import {Avatar, Button, Card, Input, Menu, Select, Tag} from "@datavisool/ui";
-import {KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore} from "react";
 import {
     Check,
     Close,
@@ -29,8 +29,7 @@ import AuthFetchUtil from "@/util/AuthFetchUtil.ts";
 import {openExternalUrl} from "@/util/TauriCompatUtil.ts";
 import defaultBrand from "@/images/datavisool-brand.png";
 import defaultLogo from "@/images/datavisool-logo.webp";
-import {getLocale, LocaleCode, setLocale, tx} from "@/i18n/miniI18n.ts";
-import {useLocaleVersion} from "@/i18n/useLocaleVersion.ts";
+import type {I18nBinding} from "@/i18n/i18nBinding.ts";
 import {HybridCryptoUtil} from "@/util/HybridCryptoUtil.ts";
 import settingsGearArt from "@/pages/home/setting/assets/settings-gear-art.webp";
 import settingsHexBadge from "@/pages/home/setting/assets/settings-hex-badge.webp";
@@ -47,31 +46,25 @@ type AccountUserInfo = Partial<IUserInfo> & {
 type AccountFieldKey = 'name' | 'phone' | 'email' | 'password';
 type SettingSectionKey = 'account' | 'general' | 'brand' | 'about';
 
-export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (logo: BrandLogo) => void}) {
-    useLocaleVersion();
+export default function Setting({i18n, subscribeLocale, onBrandLogoChanged}: I18nBinding & {onBrandLogoChanged?: (logo: BrandLogo) => void}) {
+    const locale = useSyncExternalStore(subscribeLocale, i18n.getLocale);
+    const tx = i18n.translate;
     const [activeKey, setActiveKey] = useState<SettingSectionKey>('account');
     const [userInfo, setUserInfo] = useState<AccountUserInfo | null>(AuthTools.getUserInfo());
     const [savingAccountField, setSavingAccountField] = useState<AccountFieldKey | null>(null);
     const accountSaveInFlight = useRef(false);
     const [mainLogo, setMainLogo] = useState<string>('/static/logo/main-logo.png');
     const [logo, setLogo] = useState<string>('/static/logo/logo.png');
-    const locale = getLocale();
-
-    const languageOptions = useMemo<Array<{ label: string; value: LocaleCode }>>(() => ([
-        {label: tx('简体中文'), value: 'zh-CN'},
-        {label: 'English', value: 'en-US'}
-    ]), [locale]);
-
-    const changeLocale = useCallback((nextLocale: LocaleCode) => {
-        if (nextLocale === getLocale()) return;
-        setLocale(nextLocale);
-        globalMessage.success(tx('语言设置已更新'));
-    }, []);
+    const languageOptions = useMemo(() => i18n.availableLocales.map(value => ({
+        label: value === 'zh-CN' ? tx('简体中文') : 'English',
+        value,
+    })), [i18n, locale, tx]);
 
     const handleLocaleChange = useCallback((nextValue: string | number | Array<string | number>) => {
-        if (Array.isArray(nextValue)) return;
-        changeLocale(nextValue as LocaleCode);
-    }, [changeLocale]);
+        const nextLocale = i18n.availableLocales.find(value => value === nextValue);
+        if (!nextLocale || nextLocale === i18n.getLocale()) return;
+        if (i18n.setLocale(nextLocale) === nextLocale) globalMessage.success(tx('语言设置已更新'));
+    }, [i18n, tx]);
 
     const syncAuthUserInfo = useCallback((nextUser: AccountUserInfo) => {
         const currentAuthInfo = AuthTools.getUserInfo();
@@ -104,7 +97,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
             setUserInfo(authUserInfo);
             globalMessage.error(tx('获取用户信息失败'));
         }
-    }, []);
+    }, [tx]);
 
     const updateAccountField = useCallback(async (fieldKey: AccountFieldKey, value: string) => {
         if (accountSaveInFlight.current) return false;
@@ -153,7 +146,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
             accountSaveInFlight.current = false;
             setSavingAccountField(null);
         }
-    }, [syncAuthUserInfo, userInfo]);
+    }, [syncAuthUserInfo, tx, userInfo]);
 
     const uploadMainLogo = useCallback((file: File) => {
         const formData = new FormData();
@@ -165,7 +158,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
                 globalMessage.success(tx('已保存'));
             } else if (res !== null) globalMessage.error(tx('保存失败'));
         }).catch(() => globalMessage.error(tx('保存失败')));
-    }, [onBrandLogoChanged]);
+    }, [onBrandLogoChanged, tx]);
 
     const uploadLogoIcon = useCallback((file: File) => {
         const formData = new FormData();
@@ -177,7 +170,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
                 globalMessage.success(tx('已保存'));
             } else if (res !== null) globalMessage.error(tx('保存失败'));
         }).catch(() => globalMessage.error(tx('保存失败')));
-    }, [onBrandLogoChanged]);
+    }, [onBrandLogoChanged, tx]);
 
     const chooseBrandImage = useCallback((onFile: (file: File) => void) => {
         const input = document.createElement('input');
@@ -195,7 +188,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
         {key: 'general', icon: <SettingIcon size={20}/>, label: tx('通用')},
         {key: 'brand', icon: <Picture size={20}/>, label: tx('品牌')},
         {key: 'about', icon: <Help size={20}/>, label: tx('关于')}
-    ]), [locale]);
+    ]), [locale, tx]);
 
     useEffect(() => {
         void loadAccountUserInfo();
@@ -276,6 +269,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
                                         {accountRows.map((row) => (
                                             <AccountEditableField
                                                 key={row.key}
+                                                tx={tx}
                                                 label={row.label}
                                                 value={row.value}
                                                 placeholder={row.placeholder}
@@ -291,6 +285,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
                                     <div className={styles.accountSectionTitle}>{tx('安全设置')}</div>
                                     <div className={styles.accountFieldGrid}>
                                         <AccountEditableField
+                                            tx={tx}
                                             label={tx('密码')}
                                             value="******"
                                             displayValue="******"
@@ -460,6 +455,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
         logo,
         updateAccountField,
         locale,
+        tx,
         uploadLogoIcon,
         uploadMainLogo,
         userInfo
@@ -503,6 +499,7 @@ export default function Setting({onBrandLogoChanged}: {onBrandLogoChanged?: (log
 }
 
 interface AccountEditableFieldProps {
+    tx: (source: string) => string;
     label: string;
     value: string;
     displayValue?: string;
@@ -516,7 +513,7 @@ interface AccountEditableFieldProps {
 }
 
 function AccountEditableField(props: AccountEditableFieldProps) {
-    const {label, value, displayValue, editValue, placeholder, type, icon, wide, loading, onSave} = props;
+    const {tx, label, value, displayValue, editValue, placeholder, type, icon, wide, loading, onSave} = props;
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState(editValue ?? value);
     const shownValue = displayValue ?? value;

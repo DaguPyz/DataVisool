@@ -10,11 +10,9 @@ import './DateTimePickerComponent.less';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import isoWeek from 'dayjs/plugin/isoWeek';
-import 'dayjs/locale/zh-cn';
 
 dayjs.extend(customParseFormat);
 dayjs.extend(isoWeek);
-dayjs.locale('zh-cn');
 
 // 组件样式接口定义
 export interface DateTimePickerComponentStyle {

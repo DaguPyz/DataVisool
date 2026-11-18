@@ -6,10 +6,9 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {globalMessage, Menu, type MenuItemType} from '@datavisool/ui';
+import {useDataVisoolUITranslate} from '@datavisool/ui/basic';
 import type {NavigationMenuEntry, NavigationProps} from '@datavisool/sdk/plugin/contracts/navigation';
 import type {RouteLocation} from '@datavisool/sdk/plugin/contracts/router';
-import {tx} from '@/i18n/miniI18n.ts';
-import {useLocaleVersion} from '@/i18n/useLocaleVersion.ts';
 import './NavigationMenu.less';
 
 interface NavigationMenuProps extends NavigationProps {
@@ -21,7 +20,7 @@ interface NavigationMenuProps extends NavigationProps {
 
 const routeKey = (routeId: string) => `route:${routeId}`;
 
-function buildMenu(entries: readonly NavigationMenuEntry[]) {
+function buildMenu(entries: readonly NavigationMenuEntry[], tx: (text: string) => string) {
     const topLevel: Array<{order: number; item: MenuItemType}> = [];
     const childrenByGroup = new Map<string, MenuItemType[]>();
     const parentByRouteId = new Map<string, string>();
@@ -47,8 +46,8 @@ function buildMenu(entries: readonly NavigationMenuEntry[]) {
 }
 
 export default function NavigationMenu({entries, location, navigate, canNavigate, runTransition}: NavigationMenuProps) {
-    useLocaleVersion();
-    const {items, parentByRouteId} = buildMenu(entries);
+    const tx = useDataVisoolUITranslate();
+    const {items, parentByRouteId} = buildMenu(entries, tx);
     const entriesByKey = new Map(entries.map(entry => [routeKey(entry.routeId), entry]));
     const currentPage = location?.matchedRouteIds.slice().reverse().find(id => entriesByKey.has(routeKey(id)));
     const pending = useRef<symbol>();

@@ -7,10 +7,9 @@
 import {useState, type ReactNode} from 'react';
 import {Down, Logout, User} from '@icon-park/react';
 import {Avatar, Dropdown, type DropdownMenuItem} from '@datavisool/ui';
+import {useDataVisoolUITranslate} from '@datavisool/ui/basic';
 import {RoleType, type IUserInfo} from '@datavisool/sdk/plugin/contracts/session';
 import type {WorkbenchAccountEntry} from '@datavisool/sdk/plugin/contracts/workbench';
-import {tx} from '@/i18n/miniI18n.ts';
-import {useLocaleVersion} from '@/i18n/useLocaleVersion.ts';
 import defaultLogo from '@/images/datavisool-logo.webp';
 import type {WorkbenchSnapshot} from './Workbench.tsx';
 import defaultMainLogo from './assets/default-main-logo.png';
@@ -28,7 +27,7 @@ interface WorkbenchSidebarProps {
 export function WorkbenchSidebar({
     navigation, accountEntries, userInfo, logoRevisions, onSelectAccountPage, onLogout,
 }: WorkbenchSidebarProps) {
-    useLocaleVersion();
+    const tx = useDataVisoolUITranslate();
     const roles = userInfo?.roles ?? [];
 
     const mainLogo = '/static/logo/main-logo.png' + (logoRevisions.main ? `?${logoRevisions.main}` : '');

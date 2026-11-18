@@ -76,6 +76,8 @@ try {
 import {AbstractController, AbstractDesignerController, BPExecutor, ObjectUtil} from '@datavisool/sdk';
 import type {MenuInfo, MenuToConfigMappingType} from '@datavisool/sdk/core';
 import type {ConfigureObjectFragments} from '@datavisool/sdk/utils';
+import type {PluginContext} from '@datavisool/sdk/plugin';
+import {localeChangedKey, type I18nService} from '@datavisool/sdk/plugin/contracts/i18n';
 import type {IDesignerManager, ComponentAiFeatureInfo, StructuredSourceConfig} from '@datavisool/sdk/types';
 import {DesignerScene} from '@datavisool/sdk/types';
 import {RenderErrorBoundary} from '@datavisool/ui/feedback';
@@ -87,6 +89,8 @@ import {InteractionEngine, DATAVISOOL_INTERACTION_ENGINE_PACKAGE} from '@datavis
 export {AbstractController, AbstractDesignerController, BPExecutor, ObjectUtil, DesignerScene, RenderErrorBoundary, Button, CodeEditor, DatavisoolGUI, DatavisoolGUIUtil};
 export type {MenuInfo, MenuToConfigMappingType, ConfigureObjectFragments, IDesignerManager, ComponentAiFeatureInfo, StructuredSourceConfig, DatavisoolGUIProps};
 export {InteractionEngine, DATAVISOOL_INTERACTION_ENGINE_PACKAGE};
+export const getI18n = (context: PluginContext): I18nService => context.i18n;
+export {localeChangedKey};
 `);
     run(process.execPath, [appRequire.resolve('typescript/bin/tsc'), '--noEmit', '-p', 'tsconfig.json']);
     const cli = path.join(staging, 'node_modules/datavisool-cli/bin/index.js');

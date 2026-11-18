@@ -9,7 +9,6 @@ import type {MenuInfo} from "@datavisool/sdk/core";
 import statusListStore from "./status-list/StatusListStore.ts";
 import DesignerLoader from "@/designer/loader/DesignerLoader.ts";
 import {ColorFilter, SettingOne, Theme} from "@icon-park/react";
-import {subscribeLocaleChange} from "@/i18n/miniI18n.ts";
 import designerLeftStore, {nextPanelOpenOrder} from "@/designer/left/DesignerLeftStore.ts";
 
 const NARROW_VIEWPORT_WIDTH = 959;
@@ -54,11 +53,12 @@ class RightStore {
             consumeMenuFocusRestore: action,
             activeConfig: action,
         })
-        subscribeLocaleChange(() => {
-            if (this.activeElem.id && this.activeElem.type)
-                this.activeConfig(this.activeElem.id, this.activeElem.type);
-        });
     }
+
+    refreshLocale = () => {
+        if (this.activeElem.id && this.activeElem.type)
+            this.activeConfig(this.activeElem.id, this.activeElem.type);
+    };
 
     /**
      * 当前选中的组件

@@ -9,6 +9,7 @@ import type {BrandLogo} from '@datavisool/sdk/plugin/contracts/brand';
 import type {NavigationMenuEntry, NavigationMenuGroup} from '@datavisool/sdk/plugin/contracts/navigation';
 import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
 import {RoleType} from '@datavisool/sdk/plugin/contracts/session';
+import type {I18nBinding} from '@/i18n/i18nBinding.ts';
 
 const ConsoleDashboard = lazy(() => import('@/pages/home/console/ConsoleDashboard.tsx'));
 const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));
@@ -43,7 +44,7 @@ interface LegacyWorkbenchPage {
     readonly accountMenuLabel?: string;
 }
 
-export function createLegacyWorkbenchPages(onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {
+export function createLegacyWorkbenchPages(i18n: I18nBinding, onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {
     return [
         {
             route: {id: 'app:console', path: 'console', render: () => <ConsoleDashboard/>},
@@ -97,7 +98,7 @@ export function createLegacyWorkbenchPages(onBrandLogoChanged: (logo: BrandLogo)
             menu: {label: '动态脚本', order: 20, icon: <FileCodeOne {...iconProps}/>, group: resources},
         },
         {
-            route: {id: 'app:settings', path: 'setting', render: () => <Setting onBrandLogoChanged={onBrandLogoChanged}/>},
+            route: {id: 'app:settings', path: 'setting', render: () => <Setting {...i18n} onBrandLogoChanged={onBrandLogoChanged}/>},
             menu: {label: '设置', order: 90, icon: <SettingsIcon {...iconProps}/>, roles: systemAdmins},
             accountMenuLabel: '账号设置',
         },

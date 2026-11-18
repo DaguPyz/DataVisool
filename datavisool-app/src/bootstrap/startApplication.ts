@@ -1,6 +1,5 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
-import {startDomTranslator} from '@/i18n/miniI18n.ts';
 import logo from '@/images/datavisool-logo.webp';
 import {setFavicon} from '@/util/LogoUtil.ts';
 import {createAppPlugins} from './appPlugins.ts';
@@ -19,7 +18,6 @@ export function startApplication(): Promise<Visloom> {
         try {
             const ui = runtime.get('ui');
             setFavicon('/static/logo/logo.png', logo);
-            startDomTranslator();
             ui.mount(container);
         } catch (error) {
             try {

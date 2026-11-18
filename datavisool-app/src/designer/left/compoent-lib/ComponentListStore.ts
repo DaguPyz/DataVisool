@@ -7,7 +7,6 @@
 import {action, makeObservable, observable} from "mobx";
 import {BaseInfoType} from "@datavisool/sdk/types";
 import DesignerLoader from "@/designer/loader/DesignerLoader.ts";
-import {subscribeLocaleChange} from "@/i18n/miniI18n.ts";
 
 class ComponentListStore {
     constructor() {
@@ -21,7 +20,6 @@ class ComponentListStore {
             setSearch: action,
             doInit: action
         })
-        subscribeLocaleChange(() => this.doInit());
     }
 
     /**
