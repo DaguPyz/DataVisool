@@ -3,9 +3,10 @@
 import {lazy} from 'react';
 import {brandLogoChangedKey} from '@/contracts/brand.ts';
 import {homeLayoutKey} from '@/contracts/homeLayout.ts';
+import {navigationKey} from '@/contracts/navigation.ts';
 import {homeRouteId, routerKey} from '@/contracts/router.ts';
 import {sessionChangedKey, sessionKey} from '@/contracts/session.ts';
-import {workbenchKey, type WorkbenchMenuEntry} from '@/contracts/workbench.ts';
+import {workbenchKey, type WorkbenchAccountEntry} from '@/contracts/workbench.ts';
 import type {Plugin} from '@/visloom/index.ts';
 import type {WorkbenchSnapshot} from './Workbench.tsx';
 
@@ -18,13 +19,14 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
     const Workbench = lazy(() => import('./Workbench.tsx'));
     return {
         id: 'workbench',
-        requires: [homeLayoutKey, routerKey, sessionKey],
+        requires: [homeLayoutKey, navigationKey, routerKey, sessionKey],
         provides: [workbenchKey],
         activate(context) {
             const {Layout} = context.get(homeLayoutKey);
+            const {Navigation} = context.get(navigationKey);
             const session = context.get(sessionKey);
             const router = context.get(routerKey);
-            const menuGroups = new Set<readonly WorkbenchMenuEntry[]>();
+            const accountGroups = new Set<readonly WorkbenchAccountEntry[]>();
             const listeners = new Set<() => void>();
             let active = true;
             let acceptingOperations = true;
@@ -51,7 +53,8 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                     id: homeRouteId,
                     path: '/home',
                     render: ({outlet, location}) => (
-                        <Workbench Layout={Layout} menuEntries={[...menuGroups].flat()} outlet={outlet} location={location}
+                        <Workbench Layout={Layout} Navigation={Navigation} accountEntries={[...accountGroups].flat()}
+                                   outlet={outlet} location={location}
                                    router={router} session={session} loginPath={loginPath}
                                    canOperate={() => acceptingOperations} subscribe={subscribe} getSnapshot={() => snapshot}/>
                     ),
@@ -79,25 +82,25 @@ export function createWorkbenchPlugin({homePath, loginPath}: WorkbenchPluginOpti
                 acceptingOperations = false;
                 requests.abort();
                 listeners.clear();
-                menuGroups.clear();
+                accountGroups.clear();
             });
 
             context.provide(workbenchKey, {
-                registerMenuEntries(entries) {
-                    if (!active || router.getLocation()) throw new Error('Register workbench menus before mounting the UI.');
+                registerAccountEntries(entries) {
+                    if (!active || router.getLocation()) throw new Error('Register account entries before mounting the UI.');
                     const group = [...entries];
-                    if (group.length) menuGroups.add(group);
+                    if (group.length) accountGroups.add(group);
                     return {
                         prepare(scope) {
-                            if (scope === 'plugin' && router.getLocation() && menuGroups.has(group)) {
-                                throw new Error('Registered workbench menus stop with the mounted application.');
+                            if (scope === 'plugin' && router.getLocation() && accountGroups.has(group)) {
+                                throw new Error('Registered account entries stop with the mounted application.');
                             }
                         },
                         dispose() {
-                            if (router.getLocation() && menuGroups.has(group)) {
-                                throw new Error('Unmount the workbench before removing registered menus.');
+                            if (router.getLocation() && accountGroups.has(group)) {
+                                throw new Error('Unmount the workbench before removing registered account entries.');
                             }
-                            menuGroups.delete(group);
+                            accountGroups.delete(group);
                         },
                     };
                 },

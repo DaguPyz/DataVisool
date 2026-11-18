@@ -6,9 +6,9 @@ import {
 } from '@icon-park/react';
 import {lazy} from 'react';
 import type {BrandLogo} from '@/contracts/brand.ts';
+import type {NavigationMenuEntry, NavigationMenuGroup} from '@/contracts/navigation.ts';
 import type {RouteDefinition} from '@/contracts/router.ts';
 import {RoleType} from '@/contracts/session.ts';
-import type {WorkbenchMenuEntry, WorkbenchMenuGroup} from '@/contracts/workbench.ts';
 
 const ConsoleDashboard = lazy(() => import('@/pages/home/console/ConsoleDashboard.tsx'));
 const ProjectList = lazy(() => import('@/pages/home/project-list/ProjectList.tsx'));
@@ -29,16 +29,18 @@ const MoreInfo = lazy(() => import('@/pages/home/more-info/MoreInfo.tsx'));
 const ProjectSetting = lazy(() => import('@/pages/home/project-setting/ProjectSetting.tsx'));
 
 const iconProps = {theme: 'outline', size: 18, fill: 'currentColor'} as const;
-const dataSources: WorkbenchMenuGroup = {
+const dataSources: NavigationMenuGroup = {
     key: 'datasource', label: '数据源管理', order: 30, icon: <DataOne {...iconProps}/>,
 };
-const resources: WorkbenchMenuGroup = {
+const resources: NavigationMenuGroup = {
     key: 'resourceManagement', label: '资源管理', order: 40, icon: <Box {...iconProps}/>,
 };
 const systemAdmins = [RoleType.SYSTEM_ADMIN] as const;
 
-interface LegacyWorkbenchPage extends Omit<WorkbenchMenuEntry, 'routeId'> {
+interface LegacyWorkbenchPage {
     readonly route: RouteDefinition;
+    readonly menu?: Omit<NavigationMenuEntry, 'routeId'>;
+    readonly accountMenuLabel?: string;
 }
 
 export function createLegacyWorkbenchPages(onBrandLogoChanged: (logo: BrandLogo) => void): readonly LegacyWorkbenchPage[] {

@@ -44,6 +44,24 @@ test('替换布局提供者后，原有菜单和第三方子路由仍可用', as
     await expect(alternateLayout.getByRole('heading', {name: '控制台', exact: true})).toBeVisible();
 });
 
+test('替换导航提供者后仍接收原有菜单和第三方菜单', async ({page}) => {
+    await serveFixture(page);
+    await page.goto('/home/reports/42?navigation=alternate');
+    const sidebar = page.locator('.home-left');
+    const menus = sidebar.getByRole('navigation', {name: 'Alternate menu'});
+    await expect(sidebar.getByRole('img', {name: '品牌主图'})).toBeVisible();
+    await expect(sidebar.getByRole('button', {name: '账号菜单'})).toBeVisible();
+    await expect(menus.getByRole('button', {name: 'Reports'})).toHaveAttribute('aria-current', 'page');
+    await expect(menus.getByRole('button', {name: '用户管理'})).toHaveCount(0);
+    await expect(page.getByRole('heading', {name: 'Report 42'})).toBeVisible();
+
+    const consoleMenu = menus.getByRole('button', {name: '控制台', exact: true});
+    await consoleMenu.click();
+    await expect(page).toHaveURL('/home/console');
+    await expect(consoleMenu).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByRole('heading', {name: '控制台', exact: true})).toBeVisible();
+});
+
 test('导航服务和浏览器后退都会发布已匹配的路由', async ({page}) => {
     await serveFixture(page);
     await page.goto('/home/reports');

@@ -1,45 +1,90 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {fireEvent, render, screen} from "@testing-library/react";
-import {beforeEach, describe, expect, test, vi} from "vitest";
-import {RoleType} from "@/contracts/session.ts";
+import {cleanup, fireEvent, render, screen} from "@testing-library/react";
+import {Suspense} from "react";
+import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
+import {navigationKey} from "@/contracts/navigation.ts";
+import {routerKey, type RouteLocation} from "@/contracts/router.ts";
+import {RoleType, sessionKey} from "@/contracts/session.ts";
 import {createLegacyWorkbenchPages} from "@/plugins/legacy-routes/workbenchPages.tsx";
-import {HomeMenus} from "@/plugins/workbench/HomeMenus.tsx";
+import {createNavigationPlugin} from "@/plugins/navigation/navigationPlugin.tsx";
+import {type Plugin, Visloom} from "@/visloom/index.ts";
 
-const mocks = vi.hoisted(() => ({selectPage: vi.fn()}));
+const mocks = vi.hoisted(() => ({navigate: vi.fn(async () => {})}));
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
 vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
 vi.mock("@datavisool/ui", () => ({
+    globalMessage: {},
     Menu: ({items, onClick}: any) => (
         <nav>{items.map((item: any) => (
             <button key={item.key} onClick={() => onClick({key: item.key})}>{item.label}</button>
         ))}</nav>
     ),
-    Avatar: ({children}: any) => <span>{children}</span>,
-    Dropdown: ({children}: any) => children,
 }));
 
-function renderMenus(role: RoleType) {
+const runtimes: Visloom[] = [];
+
+async function renderMenus(role: RoleType) {
     const userInfo = {id: "2", name: "Tester", username: "tester", token: "fixture-token", roles: [role]};
-    const entries = createLegacyWorkbenchPages(() => {}).map(({route, menu, accountMenuLabel}) =>
-        ({routeId: route.id, menu, accountMenuLabel}));
-    return render(<HomeMenus entries={entries} userInfo={userInfo} logoRevisions={{}} matchedRouteIds={['app:console']}
-                             onSelectPage={mocks.selectPage} onSelectAccountPage={() => {}} onLogout={async () => {}}/>);
+    let location: RouteLocation | undefined;
+    const services: Plugin = {
+        id: "fixture-services",
+        requires: [],
+        provides: [routerKey, sessionKey],
+        activate(context) {
+            context.provide(routerKey, {
+                Link: () => null,
+                registerRoutes: () => { throw new Error("No fixture routes"); },
+                createView: () => null,
+                getLocation: () => location,
+                pathFor: routeId => "/fixture/" + routeId,
+                navigate: mocks.navigate,
+            });
+            context.provide(sessionKey, {
+                getUserInfo: () => userInfo, setUserInfo() {}, removeUser() {}, logout: async () => true,
+            });
+            context.onStop({withdraw() { location = undefined; }});
+        },
+    };
+    const menuContributor: Plugin = {
+        id: "fixture-menus",
+        requires: [navigationKey],
+        provides: [],
+        activate(context) {
+            const entries = createLegacyWorkbenchPages(() => {}).flatMap(({route, menu}) =>
+                menu ? [{routeId: route.id, ...menu}] : [],
+            );
+            const registration = context.get(navigationKey).registerMenuEntries(entries);
+            context.onStop(registration);
+            context.onDispose(registration.dispose);
+        },
+    };
+    const runtime = new Visloom();
+    await runtime.start([services, createNavigationPlugin(), menuContributor]);
+    runtimes.push(runtime);
+    location = {key: "fixture", pathname: "/home/console", hash: "", search: "", matchedRouteIds: ["app:console"]};
+    const {Navigation} = runtime.get(navigationKey);
+    render(<Suspense fallback={null}><Navigation/></Suspense>);
 }
 
 describe("AI model menu access", () => {
     beforeEach(() => vi.clearAllMocks());
-
-    test.each([RoleType.USER, RoleType.ADMIN])("%s can open model management", (role) => {
-        renderMenus(role);
-        expect(screen.queryByRole("button", {name: "用户管理"})).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", {name: "设置", exact: true})).not.toBeInTheDocument();
-        fireEvent.click(screen.getByRole("button", {name: "AI模型管理"}));
-        expect(mocks.selectPage).toHaveBeenCalledWith("app:ai-models");
+    afterEach(async () => {
+        cleanup();
+        for (const runtime of runtimes.splice(0)) await runtime.stop();
     });
 
-    test("system administrators still have model, user and settings menus", () => {
-        renderMenus(RoleType.SYSTEM_ADMIN);
-        expect(screen.getByRole("button", {name: "AI模型管理"})).toBeInTheDocument();
+    test.each([RoleType.USER, RoleType.ADMIN])("%s can open model management", async (role) => {
+        await renderMenus(role);
+        const modelMenu = await screen.findByRole("button", {name: "AI模型管理"});
+        expect(screen.queryByRole("button", {name: "用户管理"})).not.toBeInTheDocument();
+        expect(screen.queryByRole("button", {name: "设置", exact: true})).not.toBeInTheDocument();
+        fireEvent.click(modelMenu);
+        expect(mocks.navigate).toHaveBeenCalledWith("/fixture/app:ai-models");
+    });
+
+    test("system administrators still have model, user and settings menus", async () => {
+        await renderMenus(RoleType.SYSTEM_ADMIN);
+        expect(await screen.findByRole("button", {name: "AI模型管理"})).toBeInTheDocument();
         expect(screen.getByRole("button", {name: "用户管理"})).toBeInTheDocument();
         expect(screen.getByRole("button", {name: "设置", exact: true})).toBeInTheDocument();
     });

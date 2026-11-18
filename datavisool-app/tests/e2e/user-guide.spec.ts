@@ -96,6 +96,12 @@ test('插件专题通过目录和搜索展示生成的能力、路由和规则',
     await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
     await expect(page).toHaveURL(topic);
     await expect(article.getByRole('row', {name: /workbench.*app\/home-layout.*app\/workbench/})).toBeVisible();
+    await article.getByRole('link', {name: 'navigation', exact: true}).click();
+    await expect(page).toHaveURL(topic + '/navigation');
+    await expect(article.getByRole('row', {name: /提供.*app\/navigation.*workbench/})).toBeVisible();
+    await expect(article.locator('pre code').filter({hasText: 'interface NavigationService'})).toContainText('registerMenuEntries');
+
+    await chapters.getByRole('link', {name: '插件开发', exact: true}).click();
     await article.getByRole('link', {name: 'home-layout', exact: true}).click();
     await expect(page).toHaveURL(topic + '/home-layout');
     await expect(article.getByRole('row', {name: /提供.*app\/home-layout.*workbench/})).toBeVisible();

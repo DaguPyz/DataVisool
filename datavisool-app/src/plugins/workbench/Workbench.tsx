@@ -8,11 +8,12 @@ import {memo, Suspense, useCallback, useEffect, useRef, useState, useSyncExterna
 import {GlobalModal, Loading, globalMessage} from '@datavisool/ui';
 import type {BrandLogo} from '@/contracts/brand.ts';
 import type {HomeLayoutService} from '@/contracts/homeLayout.ts';
+import type {NavigationService} from '@/contracts/navigation.ts';
 import type {RouteLocation, RouterService} from '@/contracts/router.ts';
 import {RoleType, type SessionService} from '@/contracts/session.ts';
-import type {WorkbenchMenuEntry} from '@/contracts/workbench.ts';
+import type {WorkbenchAccountEntry} from '@/contracts/workbench.ts';
 import {tx} from '@/i18n/miniI18n.ts';
-import {HomeMenus} from './HomeMenus.tsx';
+import {WorkbenchSidebar} from './WorkbenchSidebar.tsx';
 import {useWorkbenchRequests, type WorkbenchRequest} from './useWorkbenchRequests.ts';
 import WebUpdateNotice from './WebUpdateNotice.tsx';
 import './WorkbenchTransition.less';
@@ -24,7 +25,8 @@ export interface WorkbenchSnapshot {
 
 interface WorkbenchProps {
     readonly Layout: HomeLayoutService['Layout'];
-    readonly menuEntries: readonly WorkbenchMenuEntry[];
+    readonly Navigation: NavigationService['Navigation'];
+    readonly accountEntries: readonly WorkbenchAccountEntry[];
     readonly outlet: ReactNode;
     readonly location: RouteLocation;
     readonly router: Pick<RouterService, 'navigate' | 'pathFor'>;
@@ -36,22 +38,21 @@ interface WorkbenchProps {
 }
 
 const Workbench = memo(({
-    Layout, menuEntries, outlet, location, router, session, loginPath, canOperate, subscribe, getSnapshot,
+    Layout, Navigation, accountEntries, outlet, location, router, session, loginPath, canOperate, subscribe, getSnapshot,
 }: WorkbenchProps) => {
     const {signal, logoRevisions} = useSyncExternalStore(subscribe, getSnapshot);
     const userInfo = session.getUserInfo();
     const updateToken = userInfo?.roles?.includes(RoleType.SYSTEM_ADMIN) ? userInfo.token : undefined;
     const beginRequest = useWorkbenchRequests(signal, canOperate);
     const logoutRequest = useRef<WorkbenchRequest>();
-    const navigateTimer = useRef<number>();
+    const cancelPendingTransition = useRef<() => void>();
     const leaveTimer = useRef<number>();
     const enterTimer = useRef<number>();
-    const [pendingMenuKey, setPendingMenuKey] = useState<string>();
     const [routeStage, setRouteStage] = useState<'idle' | 'leaving' | 'entering'>('idle');
 
     useEffect(() => {
         const clearTimers = () => {
-            window.clearTimeout(navigateTimer.current);
+            cancelPendingTransition.current?.();
             window.clearTimeout(leaveTimer.current);
             window.clearTimeout(enterTimer.current);
         };
@@ -63,9 +64,8 @@ const Workbench = memo(({
     }, [signal]);
 
     useEffect(() => {
-        window.clearTimeout(navigateTimer.current);
+        cancelPendingTransition.current?.();
         window.clearTimeout(leaveTimer.current);
-        setPendingMenuKey(undefined);
         if (signal.aborted) return;
         setRouteStage('entering');
         const timeout = window.setTimeout(() => setRouteStage(prev => prev === 'entering' ? 'idle' : prev), 420);
@@ -73,21 +73,31 @@ const Workbench = memo(({
         return () => window.clearTimeout(timeout);
     }, [location.key, signal]);
 
-    const openPage = (routeId: string) => {
+    const openAccountPage = (routeId: string) => {
         if (canOperate() && !signal.aborted) void router.navigate(router.pathFor(routeId));
     };
 
-    const selectPage = (routeId: string) => {
+    const runTransition = async (navigate: () => Promise<void>) => {
         if (!canOperate() || signal.aborted) return;
-        window.clearTimeout(navigateTimer.current);
+        cancelPendingTransition.current?.();
         window.clearTimeout(leaveTimer.current);
-        setPendingMenuKey(routeId);
         setRouteStage('leaving');
-        navigateTimer.current = window.setTimeout(() => openPage(routeId), 260);
         leaveTimer.current = window.setTimeout(() => {
-            setPendingMenuKey(undefined);
             setRouteStage(prev => prev === 'leaving' ? 'idle' : prev);
         }, 340);
+
+        const ready = await new Promise<boolean>(resolve => {
+            const timer = window.setTimeout(() => {
+                cancelPendingTransition.current = undefined;
+                resolve(true);
+            }, 260);
+            cancelPendingTransition.current = () => {
+                window.clearTimeout(timer);
+                cancelPendingTransition.current = undefined;
+                resolve(false);
+            };
+        });
+        if (ready && canOperate() && !signal.aborted) await navigate();
     };
 
     const handleLogout = async () => {
@@ -117,10 +127,11 @@ const Workbench = memo(({
         <>
             <Layout
                 navigation={
-                    <HomeMenus entries={menuEntries} userInfo={userInfo} logoRevisions={logoRevisions}
-                               matchedRouteIds={location.matchedRouteIds}
-                               pendingMenuKey={pendingMenuKey} onSelectPage={selectPage}
-                               onSelectAccountPage={openPage} onLogout={handleLogout}/>
+                    <WorkbenchSidebar
+                        navigation={<Navigation runTransition={runTransition}/>}
+                        accountEntries={accountEntries} userInfo={userInfo} logoRevisions={logoRevisions}
+                        onSelectAccountPage={openAccountPage} onLogout={handleLogout}
+                    />
                 }
                 content={
                     <div key={location.key} className={routeInnerClassName}>

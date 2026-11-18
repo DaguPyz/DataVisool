@@ -1,6 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 
 import {brandLogoChangedKey} from '@/contracts/brand.ts';
+import {navigationKey} from '@/contracts/navigation.ts';
 import {homeRouteId, routerKey} from '@/contracts/router.ts';
 import {sessionKey} from '@/contracts/session.ts';
 import {workbenchKey} from '@/contracts/workbench.ts';
@@ -12,7 +13,7 @@ import {createLegacyWorkbenchPages} from './workbenchPages.tsx';
 export function createLegacyRoutesPlugin(): Plugin {
     return {
         id: 'legacy-routes',
-        requires: [routerKey, sessionKey, workbenchKey],
+        requires: [navigationKey, routerKey, sessionKey, workbenchKey],
         provides: [],
         activate(context) {
             const pages = createLegacyWorkbenchPages(logo => {
@@ -24,11 +25,16 @@ export function createLegacyRoutesPlugin(): Plugin {
             ]);
             context.onStop(routes);
             context.onDispose(routes.dispose);
-            const menus = context.get(workbenchKey).registerMenuEntries(pages.flatMap(({route, menu, accountMenuLabel}) =>
-                menu || accountMenuLabel ? [{routeId: route.id, menu, accountMenuLabel}] : [],
+            const menus = context.get(navigationKey).registerMenuEntries(pages.flatMap(({route, menu}) =>
+                menu ? [{routeId: route.id, ...menu}] : [],
             ));
             context.onStop(menus);
             context.onDispose(menus.dispose);
+            const account = context.get(workbenchKey).registerAccountEntries(pages.flatMap(({route, accountMenuLabel}) =>
+                accountMenuLabel ? [{routeId: route.id, label: accountMenuLabel}] : [],
+            ));
+            context.onStop(account);
+            context.onDispose(account.dispose);
             context.onDispose(bindLegacySession(() => context.get(sessionKey)));
         },
     };
