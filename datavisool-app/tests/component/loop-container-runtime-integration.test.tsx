@@ -4,7 +4,7 @@ import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {DesignerMode} from '@datavisool/sdk/types';
 
-vi.mock('@/designer/manager/DesignerManager.ts', () => ({
+vi.mock('@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts', () => ({
     default: class MockDesignerManager {
         public scene: unknown;
         public variableOwner: unknown;
@@ -14,14 +14,18 @@ vi.mock('@/designer/manager/DesignerManager.ts', () => ({
         public layerManager = {controllers: {}, layerConfigs: {}};
         public globalFilterManger = {getFilterStyle: () => ({})};
         public bpExecutor = {triggerComponentEvent: vi.fn()};
+        public runtimeContext: any;
         constructor(scene: unknown) { this.scene = scene; }
+        attachRuntimeContext(runtimeContext: any) { this.runtimeContext = runtimeContext; }
+        isRuntimeEffectActive() { return true; }
+        getRuntimeGeneration() { return 1; }
         init() {}
         getData() { return {}; }
-        destroy() {}
+        destroy() { this.runtimeContext?.unregisterManager(this); }
     },
 }));
 vi.mock('@/util/ComponentUtil.ts', () => ({default: {release: vi.fn(), unmount: vi.fn()}}));
-vi.mock('@/designer/left/layer-list/CanvasRender.ts', async () => {
+vi.mock('@/plugins/designer-runtime/internal/designer/left/layer-list/CanvasRender.ts', async () => {
     const ReactModule = await import('react');
     return {
         default: {
@@ -31,8 +35,8 @@ vi.mock('@/designer/left/layer-list/CanvasRender.ts', async () => {
     };
 });
 
-import LoopContainer from '@/comps/loop-container/LoopContainer';
-import LoopContainerController from '@/comps/loop-container/LoopContainerController';
+import LoopContainer from '@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainer';
+import LoopContainerController from '@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 

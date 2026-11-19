@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import type {IProjectAiMemory} from "./ProjectAiMemory.ts";
-import type {ComponentDocumentInfo} from "@/designer/ai-driven/ComponentAiSelectionDocRegistry.ts";
+import type {ComponentDocumentInfo} from "@/shared/components/ComponentDocumentationTypes.ts";
 /*
  * Copyright © 2023-2026 xiaopujun
  * All rights reserved.
@@ -40,8 +40,8 @@ export class BaseApi extends AbstractApi {
         return await AuthFetchUtil.get<boolean>(`/api/project/del/${id}`, options);
     }
 
-    async getProjectData(id: string): Promise<IProject | null> {
-        const data = await AuthFetchUtil.get<{ id: string, name: string, dataJson: string } | null>(`/api/project/getProjectData/${id}`);
+    async getProjectData(id: string, options?: AuthRequestInit): Promise<IProject | null> {
+        const data = await AuthFetchUtil.get<{ id: string, name: string, dataJson: string } | null>(`/api/project/getProjectData/${id}`, options);
         if (data !== null) {
             const {id, name, dataJson} = data;
             const decoded = ProjectDataCodecUtil.decompressIfNeeded(dataJson);
@@ -51,8 +51,8 @@ export class BaseApi extends AbstractApi {
         return null;
     }
 
-    async getProjectMeta(id: string): Promise<IProjectMeta | null> {
-        const data = await AuthFetchUtil.get<{ id: string, name: string, pid: string | null, dataJson: string } | null>(`/api/project/getProjectInfo/${id}`);
+    async getProjectMeta(id: string, options?: AuthRequestInit): Promise<IProjectMeta | null> {
+        const data = await AuthFetchUtil.get<{ id: string, name: string, pid: string | null, dataJson: string } | null>(`/api/project/getProjectInfo/${id}`, options);
         if (data !== null) {
             const {id, name, pid, dataJson} = data;
             const decoded = ProjectDataCodecUtil.decompressIfNeeded(dataJson);
@@ -114,8 +114,8 @@ export class BaseApi extends AbstractApi {
     /**
      * 获取远程组件列表
      */
-    public async getAllRemoteComponents(): Promise<{ id: string, url: string, documentInfo?: ComponentDocumentInfo }[]> {
-        const data = await AuthFetchUtil.get<{ id: string, url: string, documentInfo?: ComponentDocumentInfo }[]>('/api/remote/component/list');
+    public async getAllRemoteComponents(options?: AuthRequestInit): Promise<{ id: string, url: string, documentInfo?: ComponentDocumentInfo }[]> {
+        const data = await AuthFetchUtil.get<{ id: string, url: string, documentInfo?: ComponentDocumentInfo }[]>('/api/remote/component/list', options);
         return data || [];
     }
 
@@ -150,8 +150,8 @@ export class BaseApi extends AbstractApi {
         return await AuthFetchUtil.post<string>('/api/project/createSubProject', subProject);
     }
 
-    public async getSubProjectList(id: string): Promise<{ id: string, name: string }[]> {
-        const data = await AuthFetchUtil.get<{ id: string, name: string }[]>(`/api/project/getSubProjectList/${id}`);
+    public async getSubProjectList(id: string, options?: AuthRequestInit): Promise<{ id: string, name: string }[]> {
+        const data = await AuthFetchUtil.get<{ id: string, name: string }[]>(`/api/project/getSubProjectList/${id}`, options);
         return data || [];
     }
 

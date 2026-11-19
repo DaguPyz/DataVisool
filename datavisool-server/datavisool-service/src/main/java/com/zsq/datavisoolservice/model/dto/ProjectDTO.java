@@ -29,6 +29,7 @@ public class ProjectDTO implements Serializable {
     private String dataJson;
     private String cover;
     private Long userId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long pid;
     private MultipartFile file;
 }

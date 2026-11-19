@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import React, {useState} from 'react';
-import {ConfigType} from '@/designer/right/ConfigContent.tsx';
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import MapLibreGisController from '@/comps/maplibre-gis/MapLibreGisController.ts';
 import {globalMessage} from "@datavisool/ui";
 import {MapLibreButton as Button, MapLibreField as Field, MapLibreNumberInput as InputNumber} from '@/comps/maplibre-gis/comm/MapLibreGisConfigUI.tsx';

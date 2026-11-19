@@ -15,29 +15,30 @@ vi.hoisted(() => {
             configurable: true,
         });
 });
-import {serializeFrontendEffectError} from "@/frontend-effect/FrontendEffectClientError.ts";
-import {runApplyComponentPatchTool} from "@/frontend-effect/tools/ApplyComponentPatchTool.ts";
-import {runApplyComponentStylePatchTool} from "@/frontend-effect/tools/ApplyComponentStylePatchTool.ts";
-import {runGetComponentDataContractTool} from "@/frontend-effect/tools/GetComponentDataContractTool.ts";
-import {normalizeComponentSelectionPayload} from "@/frontend-effect/tools/PreviewInteractionTools.ts";
-import {runRenderDraftTool} from "@/frontend-effect/tools/RenderDraftTool.ts";
-import {runUserInputTool} from "@/frontend-effect/tools/UserInputTool.ts";
+import {serializeFrontendEffectError} from "@/plugins/editor-ai/frontend-effect/FrontendEffectClientError.ts";
+import {runApplyComponentPatchTool} from "@/plugins/editor-ai/frontend-effect/tools/ApplyComponentPatchTool.ts";
+import {runApplyComponentStylePatchTool} from "@/plugins/editor-ai/frontend-effect/tools/ApplyComponentStylePatchTool.ts";
+import {runGetComponentDataContractTool} from "@/plugins/editor-ai/frontend-effect/tools/GetComponentDataContractTool.ts";
+import {normalizeComponentSelectionPayload} from "@/plugins/editor-ai/frontend-effect/tools/PreviewInteractionTools.ts";
+import {runRenderDraftTool} from "@/plugins/editor-ai/frontend-effect/tools/RenderDraftTool.ts";
+import {runUserInputTool} from "@/plugins/editor-ai/frontend-effect/tools/UserInputTool.ts";
+import {CanvasOperationJournal} from "@/plugins/editor-ai/frontend-effect/CanvasOperationJournal.ts";
 
 describe("frontend tool raw input diagnostics", () => {
     test("preserves the actual arrays and reports their type separately from their count", async () => {
-        const patchError = await runApplyComponentPatchTool({patches: []}).catch(serializeFrontendEffectError);
+        const patchError = await runApplyComponentPatchTool({patches: []}, {} as any, new CanvasOperationJournal()).catch(serializeFrontendEffectError);
         expect(patchError).toMatchObject({
             fieldPath: "patches", actualValue: [], actualType: "array", actualCount: 0,
             expectedValue: {type: "array", minItems: 1},
         });
 
-        const styleError = capture(() => runApplyComponentStylePatchTool({patches: []}));
+        const styleError = capture(() => runApplyComponentStylePatchTool({patches: []}, {} as any));
         expect(styleError).toMatchObject({
             fieldPath: "patches", actualValue: [], actualType: "array", actualCount: 0,
             expectedValue: {type: "array", minItems: 1},
         });
 
-        const draftError = capture(() => runRenderDraftTool({components: []}));
+        const draftError = await captureAsync(() => runRenderDraftTool({components: []}, {} as any, new CanvasOperationJournal()));
         expect(draftError).toMatchObject({
             fieldPath: "components", actualValue: [], actualType: "array", actualCount: 0,
             expectedValue: {type: "array", minItems: 1},
@@ -49,7 +50,7 @@ describe("frontend tool raw input diagnostics", () => {
             expectedValue: {type: "array", minItems: 1, maxItems: 30},
         });
 
-        const questionsError = capture(() => runUserInputTool("补充输入", {questions: []}));
+        const questionsError = await captureAsync(() => runUserInputTool("补充输入", {questions: []}, {} as any));
         expect(questionsError).toMatchObject({
             fieldPath: "questions", actualValue: [], actualType: "array", actualCount: 0,
             expectedValue: {type: "array", minItems: 1, maxItems: 3},
@@ -58,7 +59,7 @@ describe("frontend tool raw input diagnostics", () => {
 
     test("keeps data contract componentIds and count as distinct diagnostics", () => {
         const ids = ["one", "two", "three", "four", "five"];
-        const error = capture(() => runGetComponentDataContractTool({componentIds: ids}));
+        const error = capture(() => runGetComponentDataContractTool({componentIds: ids}, {} as any, {} as any));
         expect(error).toMatchObject({
             fieldPath: "componentIds", actualValue: ids, actualType: "array", actualCount: 5,
             expectedValue: {type: "array", minItems: 1, maxItems: 4},
@@ -69,6 +70,15 @@ describe("frontend tool raw input diagnostics", () => {
 function capture(action: () => unknown): Record<string, unknown> {
     try {
         action();
+    } catch (error) {
+        return serializeFrontendEffectError(error);
+    }
+    throw new Error("Expected the tool input to be rejected");
+}
+
+async function captureAsync(action: () => Promise<unknown>): Promise<Record<string, unknown>> {
+    try {
+        await action();
     } catch (error) {
         return serializeFrontendEffectError(error);
     }

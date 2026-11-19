@@ -1,9 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {render, waitFor} from "@testing-library/react";
-import LoopContainer from "@/comps/loop-container/LoopContainer.tsx";
-import ScreenReferenceComponent from "@/comps/builtin/screen-reference/ScreenReferenceComponent.tsx";
-import GlobalFilterConfigImpl from "@/designer/header/items/global-filter/GlobalFilterConfigImpl.tsx";
+import LoopContainer from "@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainer.tsx";
+import ScreenReferenceComponent from "@/plugins/designer-runtime/internal/builtin/screen-reference/ScreenReferenceComponent.tsx";
+import GlobalFilterConfigImpl from "@/plugins/editor-project/global-filter/GlobalFilterConfigImpl.tsx";
+import {EditorWorkspaceContext} from '@/shared/designer/EditorWorkspaceContext.ts';
 import {DesignerMode} from "@datavisool/sdk/types";
 
 const filterStyle = {
@@ -29,17 +30,17 @@ vi.mock("@datavisool/ui", () => ({
     globalMessage: {messageApi: {error: vi.fn()}}
 }));
 
-vi.mock("@/designer/left/layer-list/CanvasRender.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/left/layer-list/CanvasRender.ts", () => ({
     default: {
         buildCanvasComponents: vi.fn(() => [])
     }
 }));
 
-vi.mock("@/designer/loader/DesignerLoader.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/loader/DesignerLoader.ts", () => ({
     default: class {}
 }));
 
-vi.mock("@/designer/loader/ViewDesignerLoader.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/loader/ViewDesignerLoader.ts", () => ({
     default: class {
         designerManager = screenReferenceManager;
         simpleLoad = vi.fn(async () => undefined);
@@ -114,7 +115,14 @@ describe("global filter rendering", () => {
     });
 
     it("applies the current filter to the dialog preview image", () => {
-        const {container} = render(<GlobalFilterConfigImpl/>);
+        const scene = {
+            version: 1,
+            readFilterConfig: () => window.DATAVISOOL_ENV.currentManager.globalFilterManger.config,
+            updateFilterConfig: () => true,
+        };
+        const {container} = render(<EditorWorkspaceContext.Provider value={{readScene: () => scene} as any}>
+            <GlobalFilterConfigImpl onClose={vi.fn()} canEdit={() => true}/>
+        </EditorWorkspaceContext.Provider>);
 
         const preview = container.querySelector<HTMLImageElement>(".global-filter-visual img");
         expect(preview?.style.filter).toBe(filterStyle.filter);

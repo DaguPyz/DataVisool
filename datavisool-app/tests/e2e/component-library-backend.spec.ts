@@ -1,6 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {execFileSync} from 'node:child_process';
 import {expect, test, type Page} from '@playwright/test';
+import {localMysqlEnabled} from './editor-dock/support';
 
 const backend=process.env.DATAVISOOL_SERVER_DEV_TARGET || '';
 const username=process.env.DATAVISOOL_E2E_USERNAME || '';
@@ -8,8 +9,11 @@ const password=process.env.DATAVISOOL_E2E_PASSWORD || '';
 const database=process.env.DATAVISOOL_TEST_MYSQL_DATABASE || '';
 const container=process.env.DATAVISOOL_TEST_MYSQL_CONTAINER || '';
 const mysqlPassword=process.env.DATAVISOOL_TEST_MYSQL_PASSWORD || '';
-const enabled=process.env.DATAVISOOL_E2E_ALLOW_WRITES==='isolated' && /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(backend) && !!username && !!password && !!mysqlPassword && /^datavisool_component_test_[a-z0-9_]+$/.test(database) && /^datavisool-component-e2e-[a-z0-9-]+$/.test(container);
-test.skip(!enabled,'需要本机组件库专用隔离后端、测试数据库和测试账号');
+const componentMysqlUser=process.env.DATAVISOOL_TEST_COMPONENT_MYSQL_USER || '';
+const componentMysqlPassword=process.env.DATAVISOOL_TEST_COMPONENT_MYSQL_PASSWORD || '';
+const dockerEnabled=process.env.DATAVISOOL_E2E_ALLOW_WRITES==='isolated' && /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(backend) && !!username && !!password && !!mysqlPassword && /^datavisool_component_test_[a-z0-9_]+$/.test(database) && /^datavisool-component-e2e-[a-z0-9-]+$/.test(container);
+const localEnabled=localMysqlEnabled && /^[A-Za-z0-9_]+$/.test(componentMysqlUser) && !!componentMysqlPassword;
+test.skip(!(dockerEnabled || localEnabled),'需要组件库专用隔离后端和测试库；本机 MySQL 还需专用组件清理账号');
 test.use({headless:true, trace:'off', screenshot:'off',video:'off'});
 test.setTimeout(90000);
 
@@ -35,11 +39,19 @@ async function catalog(p:Page):Promise<Item[]> {return p.evaluate(()=>Object.val
 async function shown(p:Page){return items(p).evaluateAll(nodes=>nodes.map(e=>e.getAttribute('data-type')));}
 async function layers(p:Page):Promise<Array<{id:string;type:string;x:number;y:number}>> {return p.evaluate(()=>Object.values((window as any).DATAVISOOL_ENV.currentManager.layerManager.layerConfigs));}
 async function clickCat(p:Page,name:string){await cat(p,name).scrollIntoViewIfNeeded(); await cat(p,name).click();}
-async function picture(p:Page,name:string){await p.emulateMedia({reducedMotion:'reduce'}); await p.screenshot({path:`../测试报告/编辑器组件库/${name}.png`,animations:'disabled'});}
+async function picture(p:Page,name:string){await p.emulateMedia({reducedMotion:'reduce'}); const path=!dockerEnabled&&localEnabled?test.info().outputPath(`${name}.png`):`../测试报告/编辑器组件库/${name}.png`; await p.screenshot({path,animations:'disabled'});}
 
 test.beforeEach(async({page})=>{
-    if (!enabled) throw new Error('禁止在非隔离环境清理测试组件');
-    execFileSync('docker',['exec','-e','MYSQL_PWD',container,'mysql','-uroot',database,'-e',"DELETE FROM remote_component WHERE component_name IN ('e2e-remote-text.js','e2e-custom-category.js','e2e-custom-subcategory.js')"],{env:{...process.env,MYSQL_PWD:mysqlPassword}});
+    const cleanupSql="DELETE FROM remote_component WHERE component_name IN ('e2e-remote-text.js','e2e-custom-category.js','e2e-custom-subcategory.js')";
+    if (dockerEnabled) {
+        execFileSync('docker',['exec','-e','MYSQL_PWD',container,'mysql','-uroot',database,'-e',cleanupSql],{env:{...process.env,MYSQL_PWD:mysqlPassword}});
+    } else if (localEnabled) {
+        const mysqlBinary=process.env.DATAVISOOL_TEST_MYSQL_BINARY || 'mysql';
+        const mysqlPort=process.env.DATAVISOOL_TEST_MYSQL_PORT!;
+        execFileSync(mysqlBinary,['--protocol=TCP','--host=127.0.0.1','--port',mysqlPort,'--user',componentMysqlUser,database,'-e',cleanupSql],{env:{...process.env,MYSQL_PWD:componentMysqlPassword}});
+    } else {
+        throw new Error('禁止在非隔离环境清理测试组件');
+    }
     await page.route('**/*',route=>{const u=new URL(route.request().url()); return ['127.0.0.1','localhost'].includes(u.hostname)?route.continue():route.abort();});
 });
 

@@ -32,11 +32,12 @@ vi.mock('pixi.js', () => ({
     },
 }));
 
-vi.mock('@/designer/blueprint/util/BpCanvasUtil.ts', () => ({
+vi.mock('@/plugins/editor-blueprint/util/BpCanvasUtil.ts', () => ({
     default: {
         calculateControlPoint: vi.fn(() => ({firstCP: {x: 250, y: 200}, secondCP: {x: 350, y: 200}})),
         reDrawLine: vi.fn(),
         reRenderAllLine: vi.fn(),
+        createLine: vi.fn(),
     },
     bpLineConfig: {
         connectingColor: '#8c55ff',
@@ -50,54 +51,41 @@ vi.mock('@/designer/blueprint/util/BpCanvasUtil.ts', () => ({
         selectedColor: '#4aa8ff',
         selectedWidth: 2.6,
     },
-}));
-
-vi.mock('@/designer/operate-provider/undo-redo/BPHistoryRecordOperateProxy', () => ({
-    default: {doAddLine: pixiHarness.addLine},
     syncBpAnchorColorsFromLines: vi.fn(),
 }));
 
-import LineLayer from '@/designer/blueprint/line/LineLayer.tsx';
-
-let restoreEnv: PropertyDescriptor | undefined;
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
+import LineLayer from '@/plugins/editor-blueprint/line/LineLayer.tsx';
+import {createBlueprintSessionFixture} from './support/blueprintSessionFixture.ts';
 
 describe('blueprint line layer lifecycle', () => {
+    let fixture: ReturnType<typeof createBlueprintSessionFixture> | undefined;
+    const createSession = () => {
+        fixture = createBlueprintSessionFixture();
+        vi.spyOn(fixture.session, 'addLine').mockImplementation(line => { pixiHarness.addLine(line); return true; });
+        return fixture.session;
+    };
+
     afterEach(() => {
         cleanup();
+        fixture?.dispose();
+        fixture = undefined;
         vi.restoreAllMocks();
         vi.unstubAllGlobals();
         pixiHarness.resolveInit = null;
         pixiHarness.webgpuUnavailable = false;
         pixiHarness.destroy.mockClear();
         pixiHarness.addLine.mockClear();
-        if (restoreEnv)
-            Object.defineProperty(window, 'DATAVISOOL_ENV', restoreEnv);
-        else
-            delete (window as Window & {DATAVISOOL_ENV?: unknown}).DATAVISOOL_ENV;
-        restoreEnv = undefined;
     });
 
     test('does not attach a late Pixi canvas or document listeners after closing during init', async () => {
-        restoreEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
-        const bluePrintManager = {
-            canvasOffset: {x: 0, y: 0},
-            currentPageManager: {pageId: 'page-1', bpLines: {}, bpNodeLayoutMap: {}},
-            currPageNodeControllers: {},
-            lineInstances: {},
-            pixiApp: null as unknown,
-        };
-        Object.defineProperty(window, 'DATAVISOOL_ENV', {
-            configurable: true,
-            value: {currentManager: {bluePrintManager}},
-        });
+        const session = createSession();
 
         const addEventListener = vi.spyOn(document, 'addEventListener');
         const removeEventListener = vi.spyOn(document, 'removeEventListener');
-        const {container, unmount} = render(
-            <div className="blue-print-canvas">
-                <LineLayer metrics={{left: 0, top: 0, width: 800, height: 600, resolution: 1}}/>
-            </div>
-        );
+        const {container, unmount} = render(<EditorBlueprintSessionProvider value={session}>
+            <div className="blue-print-canvas"><LineLayer metrics={{left: 0, top: 0, width: 800, height: 600, resolution: 1}}/></div>
+        </EditorBlueprintSessionProvider>);
         expect(pixiHarness.resolveInit).toBeTypeOf('function');
 
         unmount();
@@ -112,25 +100,42 @@ describe('blueprint line layer lifecycle', () => {
         expect(mouseListenerAdds).toHaveLength(0);
         expect(mouseListenerRemoves).toHaveLength(3);
         expect(container.querySelector('canvas')).toBeNull();
-        expect(bluePrintManager.pixiApp).toBeNull();
+        expect(session.pixiApp).toBeNull();
         expect(pixiHarness.destroy).toHaveBeenCalledOnce();
+    });
+
+    test('releases pending initialization when the session stops before React unmounts', async () => {
+        const session = createSession();
+        const add = vi.spyOn(document, 'addEventListener');
+        const {container, unmount} = render(<EditorBlueprintSessionProvider value={session}>
+            <div className="blue-print-canvas"><LineLayer metrics={{left: 0, top: 0, width: 800, height: 600, resolution: 1}}/></div>
+        </EditorBlueprintSessionProvider>);
+        act(() => session.dispose());
+        await act(async () => { pixiHarness.resolveInit?.(); await Promise.resolve(); });
+        expect(container.querySelector('canvas')).toBeNull();
+        expect(add.mock.calls.filter(([type]) => ['mousedown', 'mousemove', 'mouseup'].includes(String(type)))).toHaveLength(0);
+        expect(pixiHarness.destroy).toHaveBeenCalledTimes(1);
+        unmount();
+        expect(pixiHarness.destroy).toHaveBeenCalledTimes(1);
+    });
+
+    test('detaches active document listeners and destroys the renderer once when its session stops', async () => {
+        const session = createSession();
+        const remove = vi.spyOn(document, 'removeEventListener');
+        const {unmount} = render(<EditorBlueprintSessionProvider value={session}>
+            <div className="blue-print-canvas"><LineLayer metrics={{left: 0, top: 0, width: 800, height: 600, resolution: 1}}/></div>
+        </EditorBlueprintSessionProvider>);
+        await act(async () => { pixiHarness.resolveInit?.(); await Promise.resolve(); });
+        act(() => session.dispose());
+        expect(remove.mock.calls.filter(([type]) => ['mousedown', 'mousemove', 'mouseup'].includes(String(type)))).toHaveLength(3);
+        expect(pixiHarness.destroy).toHaveBeenCalledTimes(1);
+        unmount();
+        expect(pixiHarness.destroy).toHaveBeenCalledTimes(1);
     });
 
     test('can connect anchors when the WebGPU renderer module is unavailable', async () => {
         pixiHarness.webgpuUnavailable = true;
-        restoreEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
-        Object.defineProperty(window, 'DATAVISOOL_ENV', {
-            configurable: true,
-            value: {currentManager: {bluePrintManager: {
-                canvasOffset: {x: 0, y: 0},
-                currentPageManager: {pageId: 'page-1', bpLines: {}, bpNodeLayoutMap: {}},
-                currPageNodeControllers: {},
-                lineInstances: {},
-                selectedLines: [],
-                isRepeatLine: () => false,
-                pixiApp: null,
-            }}},
-        });
+        const session = createSession();
         vi.stubGlobal('AudioContext', class {
             state = 'running';
             sampleRate = 48000;
@@ -144,13 +149,13 @@ describe('blueprint line layer lifecycle', () => {
             }});
             close = () => Promise.resolve();
         });
-        const {container} = render(
+        const {container} = render(<EditorBlueprintSessionProvider value={session}>
             <div className="blue-print-canvas">
                 <div className="ap-circle" id="source:execute:1"/>
                 <div className="ap-circle" id="target:execute:0"/>
                 <LineLayer metrics={{left: 0, top: 0, width: 800, height: 600, resolution: 1}}/>
             </div>
-        );
+        </EditorBlueprintSessionProvider>);
         const viewport = container.querySelector('.blue-print-canvas')!;
         const source = document.getElementById('source:execute:1')!;
         const target = document.getElementById('target:execute:0')!;

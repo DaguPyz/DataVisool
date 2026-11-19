@@ -11,7 +11,7 @@ vi.mock("axios", () => ({default: Object.assign(request, {isCancel: () => false}
 
 import responseHandler from "@/api/ReponseHandler.ts";
 import AuthFetchUtil from "@/util/AuthFetchUtil.ts";
-import {showProjectImportSuccess} from "@/util/ProjectImportResult.ts";
+import {showProjectImportSuccess} from '@/plugins/editor-project/ProjectImportResult.ts';
 
 describe("project import notices", () => {
     beforeEach(() => vi.clearAllMocks());

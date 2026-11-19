@@ -4,7 +4,7 @@ import {DesignerMode} from '@datavisool/sdk/types';
 const getProjectData = vi.hoisted(() => vi.fn());
 
 vi.mock('@/api/engineering/BaseApi.ts', () => ({default: {getProjectData}}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({
+vi.mock('@/plugins/designer-runtime/internal/designer/loader/DesignerLoader.ts', () => ({
     default: class {
         mode: unknown;
         projectInfo: {id?: string; name?: string} = {};
@@ -12,7 +12,7 @@ vi.mock('@/designer/loader/DesignerLoader.ts', () => ({
     },
 }));
 
-import ViewDesignerLoader from '@/designer/loader/ViewDesignerLoader.ts';
+import ViewDesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/ViewDesignerLoader.ts';
 
 describe('preview project loading', () => {
     beforeEach(() => getProjectData.mockReset());

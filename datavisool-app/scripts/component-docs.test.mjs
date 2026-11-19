@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:fs';
+import {cpSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {appRoot, describeDocument, generateComponentDocs} from './component-docs.mjs';
@@ -58,4 +58,35 @@ test('数据能力必须明确且不能同时声明支持与不支持', () => {
     assert.throws(() => describeDocument(content.replace(declaration, ''), 'BaseText.md'), /完整规格/);
     assert.throws(() => describeDocument(content.replace(declaration,
         declaration + '\n该组件不支持通过 `dataPatch` 修改数据。'), 'BaseText.md'), /完整规格/);
+});
+
+test('运行时私有组件与通用组件一起发布规格，组件版本不依赖仓库绝对路径', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'datavisool-runtime-docs-'));
+    const sourceRoot = join(dir, 'components');
+    const runtimeRoot = join(dir, 'runtime', 'builtin');
+    mkdirSync(sourceRoot, {recursive: true});
+    mkdirSync(runtimeRoot, {recursive: true});
+    try {
+        writeFileSync(join(sourceRoot, 'BaseText.md'), readFileSync(join(appRoot, 'src/comps/builtin/base-text/BaseText.md')));
+        writeFileSync(join(sourceRoot, 'BaseTextDefinition.ts'), 'compKey: "BaseText"');
+        writeFileSync(join(runtimeRoot, 'BaseColorBlock.md'), readFileSync(join(appRoot, 'src/comps/builtin/base-color-block/BaseColorBlock.md')));
+        const definition = join(runtimeRoot, 'BaseColorBlockDefinition.ts');
+        writeFileSync(definition, 'compKey: "BaseColorBlock"');
+        const options = {sourceRoot, additionalSourceRoots: [runtimeRoot], outputRoot: join(dir, 'docs'), summaryFile: join(dir, 'summary.json')};
+        const before = generateComponentDocs(options);
+        assert.deepEqual(before.documents.map(doc => doc.componentType), ['BaseColorBlock', 'BaseText']);
+        assert.equal(before.documents[0].path, 'components/BaseColorBlock/BaseColorBlock.md');
+
+        writeFileSync(definition, 'compKey: "BaseColorBlock"\n// runtime component changed');
+        const changed = generateComponentDocs(options);
+        assert.notEqual(changed.documents[0].componentVersion, before.documents[0].componentVersion);
+        assert.equal(changed.documents[1].componentVersion, before.documents[1].componentVersion);
+
+        const relocatedSource = join(dir, 'a-different-checkout', 'components');
+        const relocatedRuntime = join(dir, 'a-different-checkout', 'runtime', 'builtin');
+        cpSync(sourceRoot, relocatedSource, {recursive: true});
+        cpSync(runtimeRoot, relocatedRuntime, {recursive: true});
+        const relocated = generateComponentDocs({...options, sourceRoot: relocatedSource, additionalSourceRoots: [relocatedRuntime]});
+        assert.equal(relocated.corpusVersion, changed.corpusVersion);
+    } finally {rmSync(dir, {recursive: true});}
 });

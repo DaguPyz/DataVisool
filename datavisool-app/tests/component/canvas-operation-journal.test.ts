@@ -1,20 +1,13 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, test, vi} from "vitest";
-import {
-    runGetCanvasOperationStatusTool,
-    runIdempotentCanvasOperation,
-} from "@/frontend-effect/CanvasOperationJournal.ts";
+import {createCanvasOperationJournal} from "@/plugins/editor-ai/frontend-effect/CanvasOperationJournal.ts";
+import {useMemoryLocalStorage} from './support/localStorageFixture.ts';
+
+useMemoryLocalStorage();
 
 describe("CanvasOperationJournal", () => {
     test("keeps a failed partial result failed on resume and returns the original receipt", async () => {
-        const storage = new Map<string, string>();
-        Object.defineProperty(window, "localStorage", {
-            configurable: true,
-            value: {
-                getItem: (key: string) => storage.get(key) ?? null,
-                setItem: (key: string, value: string) => storage.set(key, value),
-            },
-        });
+        const journal = createCanvasOperationJournal();
         const operationId = `partial-${crypto.randomUUID()}`;
         const payload = {operationId, operationFingerprint: "fingerprint-1"};
         const result = {
@@ -24,13 +17,14 @@ describe("CanvasOperationJournal", () => {
         };
         const execute = vi.fn(() => result);
 
-        await expect(runIdempotentCanvasOperation(payload, execute))
+        await expect(journal.run(payload, execute))
             .resolves.toEqual(result);
-        await expect(runIdempotentCanvasOperation(payload, execute))
+        const resumed = createCanvasOperationJournal();
+        await expect(resumed.run(payload, execute))
             .resolves.toEqual(result);
 
         expect(execute).toHaveBeenCalledTimes(1);
-        expect(runGetCanvasOperationStatusTool({operationId})).toMatchObject({
+        expect(resumed.readStatus({operationId})).toMatchObject({
             status: "failed",
             result,
         });

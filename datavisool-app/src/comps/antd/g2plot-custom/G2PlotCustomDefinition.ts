@@ -15,7 +15,7 @@ import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 
 const G2PlotCustomConfig = React.lazy(() => import("./G2PlotCustomConfig.tsx"));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 class G2PlotCustomDefinition extends AntdCommonDefinition<G2PlotCustomController, G2PlotCustomProps> {
 

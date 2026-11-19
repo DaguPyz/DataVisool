@@ -1,40 +1,40 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, it, vi} from "vitest";
-import GlobalFilterManger from "@/designer/manager/GlobalFilterManger.ts";
+import GlobalFilterManger from "@/plugins/designer-runtime/internal/designer/manager/GlobalFilterManger.ts";
 import {DesignerMode, DesignerScene} from "@datavisool/sdk/types";
 
-vi.mock("@/designer/header/items/canvas/CanvasManager.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/header/items/canvas/CanvasManager.ts", () => ({
     default: class {
         init = vi.fn();
         getData = vi.fn(() => ({}));
         destroy = vi.fn();
     }
 }));
-vi.mock("@/designer/header/items/theme/ThemeManager.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/header/items/theme/ThemeManager.ts", () => ({
     default: class {
         init = vi.fn();
         getData = vi.fn(() => ({}));
         destroy = vi.fn();
     }
 }));
-vi.mock("@/designer/blueprint/manager/BluePrintManager.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/blueprint/manager/BluePrintManager.ts", () => ({
     default: class {
         init = vi.fn();
         getData = vi.fn(() => []);
         destroy = vi.fn();
     }
 }));
-vi.mock("@/designer/manager/LayerManager.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/manager/LayerManager.ts", () => ({
     default: class {
         init = vi.fn();
         getData = vi.fn(() => ({}));
         destroy = vi.fn();
     }
 }));
-vi.mock("@/designer/blueprint/core/BPExecutor.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor.ts", () => ({
     default: class {}
 }));
-vi.mock("@/designer/manager/GlobalVariableManager.ts", () => ({
+vi.mock("@/plugins/designer-runtime/internal/designer/manager/GlobalVariableManager.ts", () => ({
     default: class {
         init = vi.fn();
         getData = vi.fn(() => ({}));
@@ -92,7 +92,7 @@ describe("GlobalFilterManger", () => {
     });
 
     it("设计器读取和保存时保留桌面端工程字段", async () => {
-        const {default: DesignerManager} = await import("@/designer/manager/DesignerManager.ts");
+        const {default: DesignerManager} = await import("@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts");
         const manager = new DesignerManager(DesignerScene.DEFAULT);
         manager.init({
             globalFilterManger: {

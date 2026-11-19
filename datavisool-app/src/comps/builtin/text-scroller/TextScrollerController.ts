@@ -8,7 +8,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import TextScrollerComponent, {TextScrollerComponentProps, TextScrollerComponentRef} from "./TextScrollerComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import {IThemeItem} from "@datavisool/sdk/types";
 

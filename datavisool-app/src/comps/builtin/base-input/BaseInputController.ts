@@ -10,7 +10,7 @@ import AbstractDesignerController from "../../../framework/core/AbstractDesigner
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import BaseInputComponent, {BaseInputComponentProps, BaseInputComponentRef} from "./BaseInputComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 
 export class BaseInputController extends AbstractDesignerController<BaseInputComponentRef, BaseInputComponentProps> {
 

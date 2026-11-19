@@ -1,6 +1,5 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {runInAction} from 'mobx';
 
 const saveMocks = vi.hoisted(() => ({
     updateProject: vi.fn(),
@@ -18,24 +17,18 @@ vi.mock('@datavisool/ui', () => ({
     Input: () => null,
     TextArea: () => null,
 }));
-vi.mock('@/designer/operate-provider/EventOperateStore', () => ({default: {}}));
-vi.mock('@/designer/operate-provider/undo-redo/HistoryOperator', () => ({historyOperator: {}}));
-vi.mock('@/designer/operate-provider/undo-redo/HistoryRecordOperateProxy', () => ({default: {}}));
-vi.mock('@/designer/operate-provider/undo-redo/core', () => ({default: {}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {}}));
-vi.mock('@/designer/left/layer-list/LayerListStore.ts', () => ({default: {}}));
+vi.mock('@/plugins/editor-canvas/state/EventOperateStore', () => ({default: {}}));
+vi.mock('@/plugins/editor-canvas/history/HistoryOperator', () => ({historyOperator: {}}));
+vi.mock('@/plugins/editor-canvas/history/HistoryRecordOperateProxy', () => ({default: {}}));
+vi.mock('@/plugins/editor-canvas/history/core', () => ({default: {}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/store/RuntimeStore.ts', () => ({default: {}}));
 vi.mock('@/util/AuthFetchUtil.ts', () => ({default: {}}));
 vi.mock('@/util/CoordinateUtil.ts', () => ({default: {}}));
-vi.mock('@/designer/manager/ManagerStore.ts', () => ({default: {currentFinalManager: null}}));
-vi.mock('@/designer/header/DesignerHeaderStore.ts', () => ({default: {}}));
-vi.mock('@/designer/right/RightStore.ts', () => ({default: {}}));
-vi.mock('@/designer/left/DesignerLeftStore.ts', () => ({default: {}}));
 vi.mock('@/util/ExportRiskUtil.ts', () => ({default: {}}));
 vi.mock('@/util/ExportSecretUtil.ts', () => ({default: {}, ExportSecretMode: {}}));
 vi.mock('@/util/HybridCryptoUtil.ts', () => ({HybridCryptoUtil: {}}));
-vi.mock('@/designer/left/layer-list/util/LayerUtil.ts', () => ({default: {}}));
-vi.mock('@/designer/operate-provider/undo-redo/BPHistoryRecordOperateProxy', () => ({default: {}}));
-vi.mock('@/designer/operate-provider/selection/SelectionCommands.ts', () => ({
+vi.mock('@/plugins/editor-canvas/layers/LayerUtil.ts', () => ({default: {}}));
+vi.mock('@/plugins/editor-canvas/selection/SelectionCommands.ts', () => ({
     canManageSelectedObjects: vi.fn(() => false),
     deleteLayersByIds: vi.fn(),
     resolveSelectedCommandTargetIds: vi.fn(() => []),
@@ -48,9 +41,8 @@ vi.mock('@/designer/operate-provider/selection/SelectionCommands.ts', () => ({
 
 import ProjectUtil from '@/util/ProjectUtil.ts';
 import ProjectDataCodecUtil from '@/util/ProjectDataCodecUtil.ts';
-import {doSave, getSaveData} from '@/designer/operate-provider/hot-key/HotKeyImpl.ts';
-import managerStore from '@/designer/manager/ManagerStore.ts';
-import footerStore from '@/designer/footer/FooterStore.ts';
+import {createProjectActions, getSaveData} from '@/plugins/editor-project/projectActions.ts';
+import {createProjectSaveStatusStore} from '@/plugins/editor-project/projectSaveStatus.ts';
 import type {IDesignerManager} from '@datavisool/sdk/types';
 
 const createProjectData = (): IDesignerManager => ({
@@ -68,29 +60,30 @@ const createProjectData = (): IDesignerManager => ({
     } as any,
 });
 
+const createActions = (hasSnapshot = true, saveStatus = createProjectSaveStatusStore()) => createProjectActions('project-1', {
+    loaded: true,
+    load: async () => {},
+    getProjectId: () => hasSnapshot ? 'project-1' : undefined,
+    getSnapshot: () => hasSnapshot ? {id: 'project-1', data: createProjectData()} : undefined,
+    readRemoteComponentPaths: () => ({}),
+    renderCanvas: () => ({filterStyle: {}, content: null}),
+    close() {},
+}, write => write(), saveStatus, {isActive: () => true, open: () => true, close: () => {}});
+
 describe('single-artboard V1 persistence regression', () => {
     beforeEach(() => {
         saveMocks.updateProject.mockReset();
         saveMocks.showSaveError.mockReset();
-        footerStore.resetSaveState();
         window.DATAVISOOL_ENV = {definitions: {}, remoteScripts: {}} as any;
     });
 
     afterEach(() => {
-        runInAction(() => {
-            managerStore.currentFinalManager = null;
-        });
         delete (window as any).DATAVISOOL_ENV;
     });
 
     it('serializes the manager document as the original V1 shape when saving', () => {
         const data = createProjectData();
-        const manager = {id: 'project-1', getData: vi.fn(() => data)};
-        runInAction(() => {
-            managerStore.currentFinalManager = manager as any;
-        });
-
-        const saveData = getSaveData();
+        const saveData = getSaveData({getSnapshot: () => ({id: 'project-1', data})});
 
         expect(saveData?.id).toBe('project-1');
         const stored = JSON.parse(ProjectDataCodecUtil.decompressIfNeeded(saveData!.dataJson));
@@ -117,14 +110,28 @@ describe('single-artboard V1 persistence regression', () => {
         configs.video = {base: {id: 'video', type: 'BaseVideo'}, style: {src: '/static/videos/clip.mp4?version=1#t=3'}};
         configs.model = {base: {id: 'model', type: 'ThreeModel'}, style: {source: {url: '/static/models/package/scene.glb?version=1'}}};
         configs.remote = {base: {id: 'remote', type: 'CustomChart'}};
-        window.DATAVISOOL_ENV.definitions = {CustomChart: {getBaseInfo: () => ({source: 'remote'})}} as any;
-        window.DATAVISOOL_ENV.remoteScripts = {CustomChart: {script: '/static/components/package/index.js?version=1'}};
-
-        const dependency = ProjectUtil.calculateProjectDependencyByProject('project-1', 'Example', data);
+        const dependency = ProjectUtil.calculateProjectDependencyByProject('project-1', 'Example', data, {
+            CustomChart: '/static/components/package/index.js?version=1',
+        });
         expect(dependency.images).toEqual(['photo.png']);
         expect(dependency.videos).toEqual(['clip.mp4']);
         expect(dependency.models).toEqual(['package/scene.glb']);
         expect(dependency.components).toEqual(['package/index.js']);
+    });
+
+    it('calculates detached project dependencies from explicit inputs without reading the active editor', () => {
+        const data = createProjectData();
+        (data.layerManager.elemConfigs as any).remote = {base: {id: 'remote', type: 'CustomChart'}};
+        Object.defineProperty(window, 'DATAVISOOL_ENV', {
+            configurable: true,
+            get() { throw new Error('The active editor must not be read'); },
+        });
+        const dependency = ProjectUtil.calculateProjectDependencyByProject('other-project', 'Detached', data, {
+            CustomChart: '/static/components/other/chart.js',
+        });
+        expect(dependency).toMatchObject({id: 'other-project', name: 'Detached', components: ['other/chart.js']});
+        expect(JSON.parse(dependency.projectJson)).toEqual(data);
+        expect(ProjectUtil.calculateProjectDependencyByProject('other-project', 'Detached', data).components).toEqual([]);
     });
 
     it('includes local video posters in both export and release image dependencies', async () => {
@@ -205,50 +212,70 @@ describe('single-artboard V1 persistence regression', () => {
 
     it('returns false and reports an error when the save request rejects', async () => {
         saveMocks.updateProject.mockRejectedValueOnce(new Error('network unavailable'));
-        const manager = {id: 'project-1', getData: vi.fn(createProjectData)};
-        runInAction(() => {
-            managerStore.currentFinalManager = manager as any;
-        });
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const saveStatus = createProjectSaveStatusStore();
 
-        await expect(doSave()).resolves.toBe(false);
+        await expect(createActions(true, saveStatus).save()).resolves.toBe(false);
 
         expect(saveMocks.updateProject).toHaveBeenCalledTimes(1);
         expect(saveMocks.showSaveError).toHaveBeenCalledWith('保存失败');
-        expect(footerStore.saveState).toBe('failed');
-        expect(footerStore.saving).toBe(false);
+        expect(saveStatus.read()).toMatchObject({saveState:'failed', saving:false});
         consoleError.mockRestore();
     });
 
     it('shows the saved state only after the request succeeds', async () => {
         let finishSave: (result: boolean) => void = () => {};
         saveMocks.updateProject.mockReturnValueOnce(new Promise<boolean>((resolve) => { finishSave = resolve; }));
-        managerStore.currentFinalManager = {id: 'project-1', getData: createProjectData} as any;
+        const saveStatus = createProjectSaveStatusStore();
 
-        const saving = doSave();
-        expect(footerStore.saveState).toBe('saving');
-        expect(footerStore.saving).toBe(true);
+        const saving = createActions(true, saveStatus).save();
+        expect(saveStatus.read()).toMatchObject({saveState:'saving', saving:true});
         finishSave(true);
         await expect(saving).resolves.toBe(true);
-        expect(footerStore.saveState).toBe('saved');
-        expect(footerStore.latestSaveTime).not.toBe('');
-        expect(footerStore.saving).toBe(false);
+        expect(saveStatus.read()).toMatchObject({saveState:'saved', saving:false});
+        expect(saveStatus.read().latestSaveTime).not.toBe('');
+    });
+
+    it('settles save state after a pause is canceled while the request is in flight', async () => {
+        let finishSave: (result: boolean) => void = () => {};
+        let accepting = true;
+        saveMocks.updateProject.mockReturnValueOnce(new Promise<boolean>((resolve) => { finishSave = resolve; }));
+        const saveStatus = createProjectSaveStatusStore();
+        const actions = createProjectActions('project-1', {
+            loaded: true,
+            load: async () => {},
+            getProjectId: () => 'project-1',
+            getSnapshot: () => ({id: 'project-1', data: createProjectData()}),
+            readRemoteComponentPaths: () => ({}),
+            renderCanvas: () => ({filterStyle: {}, content: null}),
+            close() {},
+        } as any, write => write(), saveStatus, {
+            isActive: () => accepting,
+            open: () => true,
+            close: () => {},
+        });
+
+        const saving = actions.save();
+        expect(saveStatus.read()).toMatchObject({saveState:'saving', saving:true});
+        accepting = false;
+        expect(saveStatus.read()).toMatchObject({saveState:'saving', saving:true});
+        accepting = true;
+        finishSave(true);
+        await expect(saving).resolves.toBe(true);
+        expect(saveStatus.read()).toMatchObject({saveState:'saved', saving:false});
     });
 
     it('leaves the save status failed when the server rejects the update', async () => {
         saveMocks.updateProject.mockResolvedValueOnce(false);
-        managerStore.currentFinalManager = {id: 'project-1', getData: createProjectData} as any;
-        await expect(doSave()).resolves.toBe(false);
-        expect(footerStore.saveState).toBe('failed');
-        expect(footerStore.latestSaveTime).toBe('');
-        expect(footerStore.saving).toBe(false);
+        const saveStatus = createProjectSaveStatusStore();
+        await expect(createActions(true, saveStatus).save()).resolves.toBe(false);
+        expect(saveStatus.read()).toMatchObject({saveState:'failed', latestSaveTime:'', saving:false});
     });
 
     it('finishes saving when no project data is available', async () => {
-        managerStore.currentFinalManager = null;
-        await expect(doSave()).resolves.toBe(false);
+        const saveStatus = createProjectSaveStatusStore();
+        await expect(createActions(false, saveStatus).save()).resolves.toBe(false);
         expect(saveMocks.updateProject).not.toHaveBeenCalled();
-        expect(footerStore.saveState).toBe('failed');
-        expect(footerStore.saving).toBe(false);
+        expect(saveStatus.read()).toMatchObject({saveState:'failed', saving:false});
     });
 });

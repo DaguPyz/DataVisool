@@ -14,7 +14,7 @@ import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {EventInfo} from "@datavisool/sdk/types";
 
 const AntdLiquidConfig = React.lazy(() => import("./AntdLiquidConfig"));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 
 class AntdLiquidDefinition extends AbstractDesignerDefinition<AntdLiquidController, AntdLiquidProps> {

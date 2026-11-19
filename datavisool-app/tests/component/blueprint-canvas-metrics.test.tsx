@@ -2,12 +2,12 @@
 import {afterEach, describe, expect, test, vi} from 'vitest';
 import {act, cleanup, render} from '@testing-library/react';
 import {useRef} from 'react';
-import {getBPCanvasGridStyle, syncBPCanvasGrid} from '@/designer/blueprint/workspace/BPCanvasGrid.ts';
-import {useBPCanvasMetrics} from '@/designer/blueprint/workspace/useBPCanvasMetrics.ts';
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
+import {getBPCanvasGridStyle, syncBPCanvasGrid} from '@/plugins/editor-blueprint/workspace/BPCanvasGrid.ts';
+import {useBPCanvasMetrics} from '@/plugins/editor-blueprint/workspace/useBPCanvasMetrics.ts';
 
 let resizeObserverCallback: ResizeObserverCallback | null = null;
 let viewportRect = {left: 361, top: 50, width: 900, height: 600};
-let restoreEnv: PropertyDescriptor | undefined;
 let restoreBoundingClientRect: PropertyDescriptor | undefined;
 
 class TestResizeObserver {
@@ -20,8 +20,9 @@ class TestResizeObserver {
     disconnect = vi.fn();
 }
 
-const bluePrintManager = {
+const session = {
     canvasOffset: {x: -1, y: -1},
+    setCanvasOffset(offset: {x: number; y: number}) { this.canvasOffset = offset; },
 };
 
 function MetricsHarness({onMetricsChange, exposeRefresh}: {
@@ -34,7 +35,7 @@ function MetricsHarness({onMetricsChange, exposeRefresh}: {
     return <div ref={viewportRef} className="bp-metrics-test"/>;
 }
 
-import type {BPCanvasMetrics} from '@/designer/blueprint/workspace/useBPCanvasMetrics.ts';
+import type {BPCanvasMetrics} from '@/plugins/editor-blueprint/workspace/useBPCanvasMetrics.ts';
 
 describe('blueprint canvas metrics and grid', () => {
     afterEach(() => {
@@ -43,22 +44,13 @@ describe('blueprint canvas metrics and grid', () => {
         vi.restoreAllMocks();
         resizeObserverCallback = null;
         viewportRect = {left: 361, top: 50, width: 900, height: 600};
-        if (restoreEnv)
-            Object.defineProperty(window, 'DATAVISOOL_ENV', restoreEnv);
-        else
-            delete (window as Window & {DATAVISOOL_ENV?: unknown}).DATAVISOOL_ENV;
-        restoreEnv = undefined;
         if (restoreBoundingClientRect)
             Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', restoreBoundingClientRect);
         restoreBoundingClientRect = undefined;
     });
 
     function setupMetricsHarness() {
-        restoreEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
-        Object.defineProperty(window, 'DATAVISOOL_ENV', {
-            configurable: true,
-            value: {currentManager: {bluePrintManager}},
-        });
+        session.canvasOffset = {x: -1, y: -1};
         vi.stubGlobal('ResizeObserver', TestResizeObserver);
 
         restoreBoundingClientRect = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'getBoundingClientRect');
@@ -82,13 +74,15 @@ describe('blueprint canvas metrics and grid', () => {
 
         const onMetricsChange = vi.fn();
         let refresh: () => BPCanvasMetrics | null = () => null;
-        render(<MetricsHarness onMetricsChange={onMetricsChange} exposeRefresh={(next) => { refresh = next; }}/>);
+        render(<EditorBlueprintSessionProvider value={session as any}>
+            <MetricsHarness onMetricsChange={onMetricsChange} exposeRefresh={(next) => { refresh = next; }}/>
+        </EditorBlueprintSessionProvider>);
         return {onMetricsChange, refresh: () => refresh()};
     }
 
     test('measures the actual viewport origin and updates renderer metrics on resize', () => {
         const {onMetricsChange} = setupMetricsHarness();
-        expect(bluePrintManager.canvasOffset).toEqual({x: 361, y: 50});
+        expect(session.canvasOffset).toEqual({x: 361, y: 50});
         expect(onMetricsChange).toHaveBeenLastCalledWith({
             left: 361,
             top: 50,
@@ -110,7 +104,7 @@ describe('blueprint canvas metrics and grid', () => {
 
         act(() => refresh());
 
-        expect(bluePrintManager.canvasOffset).toEqual({x: 42, y: 81});
+        expect(session.canvasOffset).toEqual({x: 42, y: 81});
         expect(onMetricsChange).toHaveBeenCalledTimes(previousCallCount + 1);
         expect(onMetricsChange).toHaveBeenLastCalledWith(expect.objectContaining({left: 42, top: 81}), expect.objectContaining({left: 361, top: 50}));
     });
@@ -118,14 +112,14 @@ describe('blueprint canvas metrics and grid', () => {
     test('disconnects resize observation so late callbacks cannot update a closed view', () => {
         const {onMetricsChange} = setupMetricsHarness();
         const lateResize = resizeObserverCallback;
-        const oldOffset = {...bluePrintManager.canvasOffset};
+        const oldOffset = {...session.canvasOffset};
         const callCount = onMetricsChange.mock.calls.length;
         cleanup();
         viewportRect = {left: 1, top: 2, width: 300, height: 200};
 
         act(() => lateResize?.([], {} as ResizeObserver));
 
-        expect(bluePrintManager.canvasOffset).toEqual(oldOffset);
+        expect(session.canvasOffset).toEqual(oldOffset);
         expect(onMetricsChange).toHaveBeenCalledTimes(callCount);
     });
 

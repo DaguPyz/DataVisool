@@ -19,6 +19,10 @@ pnpm -F datavisool-app exec playwright install chromium
 
 `pnpm -F datavisool-app test:plugin-sdk` 验证独立插件通过 SDK 共享服务类型、由 Visloom 激活和停用。
 
+可用 `DATAVISOOL_E2E_WORKERS` 指定正整数形式的浏览器工作进程数，未设置时沿用 Playwright 默认值。双端共享验证同样读取此配置，例如 `DATAVISOOL_E2E_WORKERS=1 pnpm run verify:shared:both /path/to/DataVisool-Desktop` 会串行执行 Web 浏览器用例。
+
+主编辑器输入的模拟接口检查位于 `editor-clipboard.spec.ts` 和 `editor-input-lifecycle.spec.ts`，覆盖原生复制粘贴、逐次撤销、输入框编辑、切换项目后的监听及按住临时抓手时停用快捷键。插件暂停、取消停用和晚到视图效果的纯生命周期检查可在仓库根目录运行 `node --test datavisool-app/scripts/editor-input-lifecycle.test.mjs`；这部分不需要后端或浏览器。 宿主配置面板的部分登记、乱序撤回和运行时停止检查可在 SDK 构建后运行 `node --test datavisool-app/scripts/host-config-panels.test.mjs`。
+
 控制台用例位于 `tests/e2e/console-dashboard.spec.ts`，可用 `pnpm -F datavisool-app exec playwright test tests/e2e/console-dashboard.spec.ts` 单独运行。测试拦截接口并使用虚构数据，不读写真实项目；它验证前端表现及请求，不代替真实后端联调。布局用例会保存浏览器截图到 `test-results/`。
 
 `tests/e2e/console-backend.spec.ts` 使用真实后端创建并逻辑删除一个测试项目，要求独立且初始无项目的测试数据库；除登录测试的三个环境变量外，还需设置 `DATAVISOOL_E2E_ALLOW_WRITES=isolated`，未设置时跳过。请勿指向现有业务数据库。
@@ -66,3 +70,7 @@ pnpm exec playwright test 'tests/e2e/editor-(dock-inventory|dock-i18n|resource-l
 编辑器底部辅助工具、缩放与项目状态的用例位于 `tests/e2e/editor-footer-backend.spec.ts`。在 `datavisool-app` 下运行 `pnpm exec playwright test tests/e2e/editor-footer-backend.spec.ts --workers=1`；测试强制使用无头 Chromium。需要设置本机独立后端 `DATAVISOOL_SERVER_DEV_TARGET`、`DATAVISOOL_E2E_USERNAME`、`DATAVISOOL_E2E_PASSWORD`、`DATAVISOOL_E2E_ALLOW_WRITES=isolated`，以及以 `datavisool_dock_test_` 开头的独立 MySQL 测试库名 `DATAVISOOL_TEST_MYSQL_DATABASE` 和以 `datavisool-dock-e2e-` 开头的专用容器名 `DATAVISOOL_TEST_MYSQL_CONTAINER`。用例会创建并保存测试项目、子项目和组件；仅在隔离环境运行并在结束后清理环境。页面截图及结果见编辑器底部工具栏测试报告。
 
 编辑器顶部工具栏真实后端用例位于 `tests/e2e/editor-toolbar-backend.spec.ts`，在 `datavisool-app` 下运行 `pnpm exec playwright test tests/e2e/editor-toolbar-backend.spec.ts --workers=1`。必须使用本机独立后端 `DATAVISOOL_SERVER_DEV_TARGET`、隔离账号 `DATAVISOOL_E2E_USERNAME` 和 `DATAVISOOL_E2E_PASSWORD`、`DATAVISOOL_E2E_ALLOW_WRITES=isolated`，以及以 `datavisool_dock_test_` 开头的独立 MySQL 测试库 `DATAVISOOL_TEST_MYSQL_DATABASE` 和以 `datavisool-dock-e2e-` 开头的专用容器 `DATAVISOOL_TEST_MYSQL_CONTAINER`。测试强制无头运行，会创建项目、组件、蓝图页面及主题，并修改隔离账号的快捷键后恢复；部分保存失败场景使用模拟响应。也可为顶部工具栏用例使用独立本机 MySQL：设置 `DATAVISOOL_TEST_MYSQL_LOCAL=isolated`、`DATAVISOOL_TEST_MYSQL_PORT`、以 `datavisool_dock_test_toolbar_` 开头的库名，以及以 `/private/tmp/datavisool-toolbar-local-` 开头的专用目录 `DATAVISOOL_TEST_RESOURCE_ROOT`，后端必须连接该实例。不得连接业务数据，测试结束后需清理隔离环境。测试结果和截图见编辑器顶部工具栏测试报告。
+
+上述本机 MySQL 配置也适用于 `editor-publish-backend.spec.ts` 和 `editor-project-transfer-backend.spec.ts`。项目包往返用例会在 Playwright 输出目录保存实际下载的 ZIP，并导入隔离库中的另一个测试项目。本机 MySQL 模式的截图也保存在 Playwright 输出目录。数据库变量用例另需设置 `DATAVISOOL_TEST_MYSQL_PASSWORD`，可通过 `DATAVISOOL_TEST_MYSQL_USER` 和 `DATAVISOOL_TEST_MYSQL_BINARY` 指定只读测试账号和客户端。本机百条视频用例使用单独的 `DATAVISOOL_TEST_VIDEO_MYSQL_USER`、`DATAVISOOL_TEST_VIDEO_MYSQL_PASSWORD`，该账号只需隔离库 `video` 表的 `SELECT`、`INSERT`、`DELETE` 权限。运行 AI 画布用例时，将后端的 `DATAVISOOL_COMPONENT_DOCS_ROOT` 指向构建生成的组件文档目录，使用 `--workers=1` 避免同一账号的模型配置互相影响。
+
+`editor-scene-isolation-backend.spec.ts` 和 `editor-canvas-repair-backend.spec.ts` 也使用上述隔离环境，分别验证场景数据与异步草稿隔离，以及损坏图层链路的修复、撤销重做和保存重开。`component-library-backend.spec.ts` 除原有 Docker 配置外也支持此本机环境；还需单独设置 `DATAVISOOL_TEST_COMPONENT_MYSQL_USER` 和 `DATAVISOOL_TEST_COMPONENT_MYSQL_PASSWORD`，供每项测试清理三个固定 E2E 组件记录，账号只需隔离库 `remote_component` 表的 `SELECT`、`DELETE` 权限。此账号与变量数据库数据源的只读账号分开配置，本机模式截图保存在 Playwright 输出目录。

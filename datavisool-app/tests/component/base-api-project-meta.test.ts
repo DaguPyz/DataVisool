@@ -26,7 +26,7 @@ describe('BaseApi.getProjectMeta', () => {
         const api = new BaseApi()
         const result = await api.getProjectMeta('child-1')
 
-        expect(AuthFetchUtil.get).toHaveBeenCalledWith('/api/project/getProjectInfo/child-1')
+        expect(AuthFetchUtil.get).toHaveBeenCalledWith('/api/project/getProjectInfo/child-1', undefined)
         expect(result).toEqual({
             id: 'child-1',
             name: '子项目',

@@ -1,22 +1,26 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import loopContainerSampleDataStore from '@/designer/store/LoopContainerSampleDataStore.ts';
 import {resolveInitialStaticData} from '@/comps/common-component/data-source-config/StaticDataConfigUtil.ts';
 
-vi.mock('@/comps/loop-container/LoopContainer.tsx', () => ({
+vi.mock('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainer.tsx', () => ({
     default: () => null,
 }));
 
-vi.mock('@/designer/manager/DesignerManager.ts', () => {
+vi.mock('@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts', () => {
     class MockDesignerManager {
         public scene: any;
         public layerManager = {controllers: {}};
         public canvasManager = {canvasConfig: {}};
         public bpExecutor = {triggerComponentEvent: vi.fn()};
+        public runtimeContext: any;
 
         constructor(scene: any) {
             this.scene = scene;
         }
+        attachRuntimeContext(runtimeContext: any) { this.runtimeContext = runtimeContext; }
+        isRuntimeEffectActive() { return true; }
+        getRuntimeGeneration() { return 1; }
+        destroy() { this.runtimeContext?.unregisterManager(this); }
     }
 
     return {
@@ -26,13 +30,12 @@ vi.mock('@/designer/manager/DesignerManager.ts', () => {
 
 describe('LoopContainer sample data flow', () => {
     afterEach(() => {
-        loopContainerSampleDataStore.reset();
         vi.restoreAllMocks();
         vi.useRealTimers();
     });
 
     it('uses current spacing fields and does not interpret the old gap field', async () => {
-        const {default: LoopContainerController} = await import('@/comps/loop-container/LoopContainerController.ts');
+        const {default: LoopContainerController} = await import('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController.ts');
         const controller = new LoopContainerController();
         controller.config = {style: {gap: 19, horizontalGap: 4, verticalGap: 7}} as any;
         expect(controller.getConfig()?.style).toMatchObject({horizontalGap: 4, verticalGap: 7});
@@ -41,7 +44,7 @@ describe('LoopContainer sample data flow', () => {
     });
 
     it('stores the current loop sample per container without mutating controller data', async () => {
-        const {default: LoopContainerController} = await import('@/comps/loop-container/LoopContainerController.ts');
+        const {default: LoopContainerController} = await import('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController.ts');
         const controller = new LoopContainerController();
         controller.config = {
             base: {id: 'loop-a', type: 'LoopContainer'},
@@ -54,12 +57,12 @@ describe('LoopContainer sample data flow', () => {
         const result = controller.seedEditSampleData();
 
         expect(result).toBe(true);
-        expect(loopContainerSampleDataStore.getSampleData('loop-a')).toEqual({name: 'row-1'});
+        expect(controller.readEditSampleData()).toEqual({name: 'row-1'});
         expect(controller.config.data.value).toEqual([{name: 'row-1'}, {name: 'row-2'}]);
     });
 
     it('keeps nested loop samples isolated by container id', async () => {
-        const {default: LoopContainerController} = await import('@/comps/loop-container/LoopContainerController.ts');
+        const {default: LoopContainerController} = await import('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController.ts');
 
         const controllerA = new LoopContainerController();
         controllerA.config = {
@@ -81,18 +84,18 @@ describe('LoopContainer sample data flow', () => {
         } as any;
         controllerB.seedEditSampleData();
 
-        const sampleA = loopContainerSampleDataStore.getSampleData<any>('loop-a');
-        const sampleB = loopContainerSampleDataStore.getSampleData<any>('loop-b');
+        const sampleA = controllerA.readEditSampleData<any>();
+        const sampleB = controllerB.readEditSampleData<any>();
 
         expect(sampleA).toEqual({name: 'row-a'});
         expect(sampleB).toEqual({name: 'row-b'});
 
         sampleA.name = 'mutated';
-        expect(loopContainerSampleDataStore.getSampleData('loop-a')).toEqual({name: 'row-a'});
+        expect(controllerA.readEditSampleData()).toEqual({name: 'row-a'});
     });
 
     it('clears the stored sample when the loop data is empty', async () => {
-        const {default: LoopContainerController} = await import('@/comps/loop-container/LoopContainerController.ts');
+        const {default: LoopContainerController} = await import('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController.ts');
         const controller = new LoopContainerController();
         controller.config = {
             base: {id: 'loop-empty', type: 'LoopContainer'},
@@ -105,7 +108,7 @@ describe('LoopContainer sample data flow', () => {
         const result = controller.seedEditSampleData();
 
         expect(result).toBe(false);
-        expect(loopContainerSampleDataStore.getSampleData('loop-empty')).toBeUndefined();
+        expect(controller.readEditSampleData()).toBeUndefined();
     });
 
     it('prefills static drafts from the stored sample when the config has no value yet', () => {
@@ -152,7 +155,7 @@ describe('LoopContainer sample data flow', () => {
             ...(window as any).DATAVISOOL_ENV,
             mode: '0',
         };
-        const {default: LoopContainerController} = await import('@/comps/loop-container/LoopContainerController.ts');
+        const {default: LoopContainerController} = await import('@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainerController.ts');
         const controller = new LoopContainerController();
         const changeData = vi.fn();
 

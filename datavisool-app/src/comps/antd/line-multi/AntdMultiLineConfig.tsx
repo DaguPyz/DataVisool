@@ -6,7 +6,7 @@
 
 import React from "react";
 import {ShapeAttrs} from "@antv/g-base";
-import {ConfigType} from "@/designer/right/ConfigContent.tsx";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import AntdCommonLineController from "@/comps/antd-common/line/AntdCommonLineController.ts";
 import {LineOptions, ShapeStyle} from "@antv/g2plot";
 import {AntdCartesianCoordinateSys} from "@/comps/antd-common/config/AntdFragment.tsx";

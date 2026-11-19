@@ -2,89 +2,111 @@
 import type {ReactNode, MouseEventHandler} from 'react';
 import {act, cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
+import type {DesignerProjectSession} from '@datavisool/sdk/plugin/contracts/designerRuntime';
 
-const selection = vi.hoisted(() => ({targetIds: ['a'], setTargetIds: vi.fn()}));
-vi.mock('@/designer/operate-provider/EventOperateStore', () => ({default: selection}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: {}}}));
-vi.mock('@/designer/right/status-list/StatusListStore.ts', () => ({default: {init: vi.fn()}}));
-vi.mock('@/designer/right/ConfigContent', () => ({default: () => <div role="region" aria-label="组件属性"/>}));
-vi.mock('@/designer/operate-provider/hot-key/HotKeyConfig', () => ({hotkeyConfigs: {}}));
-vi.mock('@/designer/left/layer-list/util/LayerUtil', () => ({default: {findTopGroupLayer: (ids: string[]) => ids}}));
-vi.mock('@/designer/left/layer-list/CanvasRender.ts', () => ({default: {buildCanvasComponents: () => <div data-testid="canvas-layer">A</div>}}));
-vi.mock('@/designer/manager/ManagerStore.ts', () => ({default: {currentManager: {}}}));
-vi.mock('@/designer/canvas/DesignerRuler', () => ({default: ({children}: {children: ReactNode}) => <>{children}</>}));
-vi.mock('@/designer/canvas/DesignerDragScaleContainer', () => ({default: ({children, onDoubleClick}: {children: ReactNode; onDoubleClick: MouseEventHandler}) => <div onDoubleClick={onDoubleClick}>{children}</div>}));
-vi.mock('@/designer/operate-provider/interaction/DesignerInteractionEngine.tsx', () => ({default: ({children}: {children: ReactNode}) => <>{children}</>}));
-vi.mock('@/designer/canvas/AiLayerDraftCanvas.tsx', () => ({default: () => null}));
-vi.mock('@/designer/workspace/artboard/ArtboardOverlay.tsx', () => ({default: () => null}));
-vi.mock('@/designer/operate-provider/canvas-context-menu/CanvasContextMenu.tsx', () => ({default: () => null}));
-vi.mock('@/designer/operate-provider/hot-key/HotKey', () => ({default: () => null}));
-vi.mock('@/designer/left/layer-list/search-layer/SearchLayer.tsx', () => ({default: () => null}));
+const selection = vi.hoisted(() => ({targetIds: ['a']}));
+vi.mock('@/plugins/editor-inspector/ConfigContent', () => ({default: () => <div role="region" aria-label="组件属性"/>}));
+vi.mock('@/plugins/editor-shortcuts/HotKeyConfig', () => ({createHotkeyConfigs: () => ({})}));
+vi.mock('@/plugins/editor-canvas/layers/LayerUtil', () => ({default: {findTopGroupLayer: (ids: string[]) => ids}}));
+vi.mock('@/plugins/editor-canvas/DesignerRuler', () => ({default: ({children}: {children: ReactNode}) => <>{children}</>}));
+vi.mock('@/plugins/editor-canvas/DesignerDragScaleContainer', () => ({default: ({children, onDoubleClick}: {children: ReactNode; onDoubleClick: MouseEventHandler}) => <div onDoubleClick={onDoubleClick}>{children}</div>}));
+vi.mock('@/plugins/editor-canvas/interaction/DesignerInteractionEngine.tsx', () => ({default: ({children}: {children: ReactNode}) => <>{children}</>}));
+vi.mock('@/plugins/editor-ai/AiLayerDraftCanvas.tsx', () => ({default: () => null}));
+vi.mock('@/plugins/editor-canvas/ArtboardOverlay.tsx', () => ({default: () => null}));
+vi.mock('@/plugins/editor-canvas/context-menu/CanvasContextMenu.tsx', () => ({default: () => null}));
+vi.mock('@/plugins/editor-shortcuts/HotKey', () => ({default: () => null}));
+vi.mock('@/plugins/editor-layers/search-layer/SearchLayer.tsx', () => ({default: () => null}));
 
-import DesignerCanvas from '@/designer/canvas/DesignerCanvas.tsx';
-import DesignerRight from '@/designer/right/DesignerRight.tsx';
-import designerLeftStore from '@/designer/left/DesignerLeftStore.ts';
-import rightStore from '@/designer/right/RightStore.ts';
+vi.mock('@/shared/designer/EditorProjectContext.ts', () => ({useEditorProject: () => ({saveThrottled() {}})}));
+
+import DesignerCanvas from '@/plugins/editor-canvas/DesignerCanvas.tsx';
+import {EditorCanvasActivationProvider} from '@/plugins/editor-canvas/EditorCanvasActivationContext.tsx';
+import {applyCanvasDoubleClick} from '@/plugins/editor-inspector/InspectorSelection.ts';
+import DesignerRight from '@/plugins/editor-inspector/DesignerRight.tsx';
+import {createInspectorStore} from '@/plugins/editor-inspector/InspectorStore.ts';
+import {createInspectorTarget, createInspectorTestDomain} from './support/inspectorDomainFixture.ts';
+
+const target = createInspectorTarget('a', 'rect', 'A');
+const {domain} = createInspectorTestDomain([target]);
+const inspectorStore = createInspectorStore();
+const closePanel = (restoreFocus: boolean) => inspectorStore.setContentVisible(false, restoreFocus);
+
+const project = {
+    loaded: true,
+    load: async () => {},
+    close() {},
+    getProjectId: () => undefined,
+    getSnapshot: () => undefined,
+    readRemoteComponentPaths: () => ({}),
+    renderCanvas: () => ({filterStyle: {}, content: <div data-testid="canvas-layer">A</div>}),
+} as unknown as DesignerProjectSession;
+
+const activation = {
+    sceneStore: {revision: 0, readLayerConfigs: () => ({a: {id: 'a', type: 'rect'}})},
+    readWorkspace: () => undefined,
+    readAuxiliaryBorder: () => false,
+    readScene: () => ({version: 1}),
+    canEdit: () => true,
+} as never;
 
 describe('canvas double-click activation', () => {
-    const previousEnvironment = window.DATAVISOOL_ENV;
-
     beforeEach(() => {
         vi.stubGlobal('innerWidth', 900);
         selection.targetIds = ['a'];
-        window.DATAVISOOL_ENV = {currentManager: {layerManager: {layerConfigs: {a: {id: 'a', type: 'rect'}}}}} as typeof window.DATAVISOOL_ENV;
-        rightStore.activeConfig(null, '');
-        designerLeftStore.closePanel(false);
+        inspectorStore.clearTarget();
+        inspectorStore.setPanelOrderProvider(() => 1);
     });
 
     afterEach(() => {
         cleanup();
-        designerLeftStore.closePanel(false);
-        rightStore.activeConfig(null, '');
-        window.DATAVISOOL_ENV = previousEnvironment;
+        inspectorStore.clearTarget();
         vi.unstubAllGlobals();
     });
 
     const doubleClickLayer = async () => {
-        render(<><DesignerCanvas/><DesignerRight/></>);
+        const canvas = {
+            readSelection: () => ({ids: selection.targetIds, source: 'canvas' as const}),
+            renameLayer() { return false; },
+            updateBaseTextContent() { return false; },
+        };
+        const inspect = (id: string | null) => applyCanvasDoubleClick(id, domain, inspectorStore);
+        render(<EditorCanvasActivationProvider value={activation}><><DesignerCanvas input={{isActive: () => false, isActiveWithExactModifiers: () => false, subscribePressedState: () => () => {}}} project={project} canvas={canvas} onLayerDoubleClick={inspect}/><DesignerRight domain={domain} closePanel={closePanel} store={inspectorStore} trackTask={task => task}/></></EditorCanvasActivationProvider>);
         const layer = await screen.findByTestId('canvas-layer');
         act(() => fireEvent.doubleClick(layer));
     };
 
     test('opens properties for the same layer selected from the narrow layer list', async () => {
-        designerLeftStore.setActiveModule('layer-list');
-        rightStore.activeConfig('a', 'rect', 'layer-list');
-        expect(rightStore.panelOpen).toBe(false);
-        expect(designerLeftStore.panelOpen).toBe(true);
+        inspectorStore.activateTarget(target, 'layer-list');
+        expect(inspectorStore.panelOpen).toBe(false);
 
         await doubleClickLayer();
 
         expect(screen.getByRole('region', {name: '组件属性'})).toBeInTheDocument();
-        expect(rightStore.activeElem.id).toBe('a');
-        expect(designerLeftStore.panelOpen).toBe(false);
+        expect(inspectorStore.activeElem.id).toBe('a');
+        expect(inspectorStore.panelOpen).toBe(true);
     });
 
     test('reopens manually closed properties without changing the active configuration menu', async () => {
         vi.stubGlobal('innerWidth', 1440);
-        rightStore.activeConfig('a', 'rect');
-        rightStore.setActiveMenu('filter');
-        rightStore.setContentVisible(false, false);
+        inspectorStore.activateTarget(target);
+        inspectorStore.setActiveMenu('filter');
+        inspectorStore.setContentVisible(false, false);
 
         await doubleClickLayer();
 
         expect(screen.getByRole('region', {name: '组件属性'})).toBeInTheDocument();
-        expect(rightStore.activeMenu).toBe('filter');
+        expect(inspectorStore.activeMenu).toBe('filter');
     });
 
     test('keeps an already open editor mounted when the same component is double-clicked', async () => {
-        rightStore.activeConfig('a', 'rect');
-        rightStore.setActiveMenu('theme');
-        const revision = rightStore.configRevision;
+        inspectorStore.activateTarget(target);
+        inspectorStore.setActiveMenu('theme');
+        const revision = inspectorStore.configRevision;
 
         await doubleClickLayer();
 
-        expect(rightStore.configRevision).toBe(revision);
-        expect(rightStore.activeMenu).toBe('theme');
+        expect(inspectorStore.configRevision).toBe(revision);
+        expect(inspectorStore.activeMenu).toBe('theme');
         expect(screen.getByRole('region', {name: '组件属性'})).toBeInTheDocument();
     });
 });

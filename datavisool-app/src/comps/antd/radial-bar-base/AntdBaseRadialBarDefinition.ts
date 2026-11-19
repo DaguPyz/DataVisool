@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import {getDefaultMenuList} from "@/designer/right/util";
+import {getDefaultMenuList} from "@/comps/configMenus.ts";
 import baseRadialBarImg from './base-radial-bar.webp';
 import AntdBaseRadialBarController, {AntdRadialBarProps} from "./AntdBaseRadialBarController.ts";
 import {AntdCommonDefinition} from "@/comps/antd-common/AntdCommonDefinition";
@@ -13,10 +13,10 @@ import {ClazzTemplate} from "@datavisool/sdk/types";
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 
-const AnimationConfig = React.lazy(() => import("@/comps/common-component/animation-config/AnimationConfig"));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
 const AntdRadialBarConfig = React.lazy(() => import("./AntdBaseRadialBarStyleConfig.tsx"));
 const AntdRadialBarFieldMapping = React.lazy(() => import("./AntdBaseRadialBarStyleConfig.tsx").then((module) => ({default: module.AntdRadialBarFieldMapping})));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 class AntdBaseRadialBarDefinition extends AntdCommonDefinition<AntdBaseRadialBarController, AntdRadialBarProps> {
 

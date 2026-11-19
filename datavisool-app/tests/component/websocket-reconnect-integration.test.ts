@@ -2,7 +2,7 @@
 import {createRequire} from 'node:module';
 import {waitFor} from '@testing-library/react';
 import {expect, it, vi} from 'vitest';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('receives data again after a local WebSocket server disconnects', async () => {
     const localRequire = createRequire(import.meta.url);

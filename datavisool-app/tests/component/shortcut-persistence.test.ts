@@ -5,9 +5,9 @@ import {
     LocalForageShortcutPersistence,
     parseShortcutPreferencesV1,
     SHORTCUT_STORAGE_OPTIONS,
-} from '@/designer/operate-provider/hot-key/ShortcutPersistence.ts';
-import {codeBinding} from '@/designer/operate-provider/hot-key/ShortcutRegistry.ts';
-import {SHORTCUT_ACTION_IDS, type ShortcutPreferencesV1} from '@/designer/operate-provider/hot-key/ShortcutTypes.ts';
+} from '@/plugins/editor-shortcuts/core/ShortcutPersistence.ts';
+import {codeBinding} from '@/plugins/editor-shortcuts/core/ShortcutRegistry.ts';
+import {SHORTCUT_ACTION_IDS, type ShortcutPreferencesV1} from '@datavisool/sdk/plugin/contracts/editorShortcuts';
 
 describe('ShortcutPersistence', () => {
     it('使用独立数据库和按用户隔离的键', () => {

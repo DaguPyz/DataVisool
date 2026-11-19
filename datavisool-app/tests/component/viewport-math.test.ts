@@ -8,7 +8,7 @@ import {
     visibleWorldBounds,
     worldToScreen,
     zoomAtPoint,
-} from '@/designer/workspace/viewport/ViewportMath.ts';
+} from '@/plugins/editor-canvas/viewport/ViewportMath.ts';
 
 describe('workspace viewport coordinates', () => {
     test('round trips screen, world and artboard local coordinates', () => {

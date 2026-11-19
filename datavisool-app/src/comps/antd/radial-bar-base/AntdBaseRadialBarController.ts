@@ -8,7 +8,7 @@ import {WritableRadialBarOptions} from "@/comps/antd-common/types";
 import {RadialBar} from "@antv/g2plot";
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {AntdLineProps} from "@/comps/antd-common/line/AntdCommonLineController.ts";
 import {ShapeAttrs} from "@antv/g-base";
 import {ComponentBaseProps} from "@datavisool/sdk/types";

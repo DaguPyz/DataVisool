@@ -34,20 +34,22 @@ export interface DataSourceConfigProps {
   staticDataSeedKey?: string;
   saveUnchangedStaticData?: boolean;
   range?: DataConfigType["sourceType"][];
-  apiTestBefore?: (config: APIConfig) => APIConfig;
-  apiTestAfter?: (data: any) => void;
-  commonApiTestBefore?: (config: ICommonApi) => ICommonApi;
-  commonApiTestAfter?: (data: any) => void;
-  databaseTestBefore?: (config: IDatabase) => IDatabase;
-  databaseTestAfter?: (data: any) => void;
-  globalVariableTestBefore?: (
+  globalVariableOptions: readonly {label: string; value: string}[];
+  readGlobalVariableValue: (id: string) => unknown;
+  apiTestBefore: (config: APIConfig) => APIConfig;
+  apiTestAfter: (data: any) => void;
+  commonApiTestBefore: (config: ICommonApi) => ICommonApi;
+  commonApiTestAfter: (data: any) => void;
+  databaseTestBefore: (config: IDatabase) => IDatabase;
+  databaseTestAfter: (data: any) => void;
+  globalVariableTestBefore: (
     config: IGlobalVariableDataConfigType
   ) => IGlobalVariableDataConfigType;
-  globalVariableTestAfter?: (data: any) => void;
-  wsTestBefore?: (config: IWebSocketConfig) => IWebSocketConfig;
-  wsTestAfter?: (data: any) => void;
-  mqttTestBefore?: (config: IMQTTConfig) => IMQTTConfig;
-  mqttTestAfter?: (data: any) => void;
+  globalVariableTestAfter: (data: any) => void;
+  wsTestBefore: (config: IWebSocketConfig) => IWebSocketConfig;
+  wsTestAfter: (data: any) => void;
+  mqttTestBefore: (config: IMQTTConfig) => IMQTTConfig;
+  mqttTestAfter: (data: any) => void;
 }
 
 const DataSourceConfig = (props: DataSourceConfigProps) => {
@@ -192,6 +194,9 @@ const DataSourceConfig = (props: DataSourceConfigProps) => {
     globalVariable: (
       <GlobalVariableConfig
         data={config.globalVariable!}
+        options={props.globalVariableOptions}
+        readValue={props.readGlobalVariableValue}
+        doTestBefore={props.globalVariableTestBefore}
         doTestAfter={props.globalVariableTestAfter}
         onSave={(data: IGlobalVariableDataConfigType, testResult) =>
           saveNormalizedConfig(

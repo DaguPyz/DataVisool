@@ -6,26 +6,21 @@
 
 import {useState} from 'react';
 import ThemeItem from "@/comps/common-component/theme-config/theme-item/ThemeItem";
-import {observer} from "mobx-react";
-import {IThemeItem, ThemeColors} from "@datavisool/sdk/types";
+import type {IThemeItem} from '@datavisool/sdk/types';
 
 interface ThemeListProps {
-    data?: IThemeItem[];
+    data: readonly IThemeItem[];
     onSelected?: (data: IThemeItem, index: number) => void;
     showOperator?: boolean;
-    onDel?: (id: string, index: number) => void;
+    onDel?: (id: string, index: number) => boolean;
 }
 
-const ThemeList = observer((props: ThemeListProps) => {
-    const {onSelected, showOperator, onDel} = props;
+const ThemeList = ({data, onSelected, showOperator, onDel}: ThemeListProps) => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const _onDel = (id: string, index: number) => {
-        const {themeConfig, updateThemeConfig} = window.DATAVISOOL_ENV.currentManager.themeManager!;
-        const newThemes = themeConfig!.filter((_, i) => i !== index);
-        updateThemeConfig(newThemes);
+        if (!onDel?.(id, index)) return;
         setActiveIndex(current => current === index ? null : current !== null && current > index ? current - 1 : current);
-        onDel && onDel(id, index);
     }
 
 
@@ -34,16 +29,6 @@ const ThemeList = observer((props: ThemeListProps) => {
         setActiveIndex(current => current === index ? null : index);
     }
 
-    const {themeConfig} = window.DATAVISOOL_ENV.currentManager.themeManager!;
-    const themeList = [];
-    for (let i = 0; i < themeConfig!.length; i++) {
-        themeList.push(<ThemeItem key={i} id={themeConfig![i].id} selected={i === activeIndex}
-                                  name={themeConfig![i].name}
-                                  showOperator={showOperator}
-                                  onDel={(id) => _onDel(id, i)}
-                                  onSelected={(data) => _onSelected(data, i)}
-                                  colors={themeConfig![i].colors as ThemeColors}/>)
-    }
     return (
         <div className={'datavisool-theme-list'} style={{
             width: '100%',
@@ -51,9 +36,12 @@ const ThemeList = observer((props: ThemeListProps) => {
             flexDirection: 'column',
             gap: 20
         }}>
-            {themeList}
+            {data.map((theme, index) => <ThemeItem
+                key={index} id={theme.id} selected={index === activeIndex} name={theme.name} colors={theme.colors}
+                showOperator={showOperator} onDel={id => _onDel(id, index)} onSelected={item => _onSelected(item, index)}/>)
+            }
         </div>
     );
-});
+};
 
 export default ThemeList;

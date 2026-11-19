@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import {getAiDrivenRuntimeSettings, saveAiDrivenRuntimeSettings} from "@/api/AiDrivenSettingsApi.ts";
+import {getAiDrivenRuntimeSettings, saveAiDrivenRuntimeSettings} from "@/plugins/editor-ai/api/AiDrivenSettingsApi.ts";
 
 const fetch = vi.hoisted(() => ({getOrThrow: vi.fn(), post: vi.fn()}));
 vi.mock("@/util/AuthFetchUtil.ts", () => ({default: fetch}));

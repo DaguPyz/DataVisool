@@ -449,6 +449,20 @@ public class AiAgentResumeTest {
     }
 
     @Test
+    public void suppliedWorkspaceScopeCannotOverridePersistedToolScope() {
+        var context = service.executionContext("run-1", "2");
+        var catalog = new AiAgentToolCatalog(service, null);
+        var arguments = Map.of(
+                "agentScope", Map.of("workspaceScope", Map.of("rootId", "another-project", "activeId", "another-project", "nested", false, "loopPath", List.of())),
+                "plan", List.of(Map.of("step", "回答问题", "status", "completed")));
+        var error = assertThrows(AiAgentErrorFeedback.Failure.class, () -> catalog.execute(
+                ToolExecutionRequest.builder().id("foreign-scope-plan").name("update_plan")
+                        .arguments(JSON.toJSONString(arguments)).build(), context));
+        assertEquals(403, error.getCode());
+        assertTrue(service.checkCompletion(context).passed());
+    }
+
+    @Test
     public void noPlanStillWaitsForActualFrontendReceipt() {
         var context = service.executionContext("run-1", "2");
         jdbc.update("insert into ai_agent_operation(operation_id, project_id, thread_id, turn_id, run_id, operation_type, status, request_json, created_at, updated_at) values('pending-write','10','thread-1','turn-1','run-1','patch_canvas_components','pending','{}',1,1)");
@@ -749,7 +763,9 @@ public class AiAgentResumeTest {
     @Test
     public void resumesTheSameTurnWithANewRunAndPreservesCheckpointUsageAndCanvasFacts() {
         appliedCanvasFact();
-        AiAgentService.TaskView result = resume(request(null));
+        Map<String, Object> requestedScope = new LinkedHashMap<>(stableWorkspaceScope());
+        requestedScope.put("untrustedRequestField", "must-not-replace-persisted-scope");
+        AiAgentService.TaskView result = resume(request(null, requestedScope));
         assertEquals("turn-1", result.turnId());
         assertNotEquals("run-1", result.runId());
         assertEquals("queued", result.turnStatus());
@@ -762,10 +778,40 @@ public class AiAgentResumeTest {
         assertNull(turns.selectById("turn-1").getEndedAt());
         AiAgentService.AgentExecutionContext context = service.executionContext(result.runId(), "2");
         assertEquals("current-manager", context.canvasSnapshot().get("managerId"));
+        assertEquals(stableWorkspaceScope(), context.canvasSnapshot().get("workspaceScope"));
+        assertFalse(((Map<?, ?>) context.canvasSnapshot().get("workspaceScope")).containsKey("untrustedRequestField"));
         assertTrue(context.resumeMessage().contains("勿重复写入"));
         assertTrue(service.checkCompletion(context).passed());
         assertEquals(1, runtime.started.size());
         assertEquals(1, jdbc.queryForObject("select count(*) from ai_agent_turn", Integer.class).intValue());
+    }
+
+    @Test
+    public void rejectsResumeWhenTheRequestedLoopWorkspaceDiffersFromThePersistedTaskScope() {
+        Map<String, Object> changedScope = new LinkedHashMap<>(stableWorkspaceScope());
+        changedScope.put("loopPath", List.of("loop-layer-replaced"));
+        AiAgentService.AgentResumeRequest changed = request(null, changedScope);
+
+        AppException error = assertThrows(AppException.class, () -> resume(changed));
+
+        assertEquals(409, error.getCode());
+        assertEquals("interrupted", turns.selectById("turn-1").getStatus());
+        assertEquals(1, jdbc.queryForObject("select count(*) from ai_agent_run", Integer.class).intValue());
+        assertTrue(runtime.started.isEmpty());
+    }
+
+    @Test
+    public void refusesToRebindLegacyTaskWithoutPersistedWorkspaceScope() {
+        Map<String, Object> legacyContext = JSON.parseObject(turns.selectById("turn-1").getContextJson(), Map.class);
+        legacyContext.remove("canvasSnapshot");
+        jdbc.update("update ai_agent_turn set context_json=? where turn_id='turn-1'", JSON.toJSONString(legacyContext));
+
+        AppException error = assertThrows(AppException.class, () -> resume(request(null)));
+
+        assertEquals(409, error.getCode());
+        assertEquals("interrupted", turns.selectById("turn-1").getStatus());
+        assertEquals(1, jdbc.queryForObject("select count(*) from ai_agent_run", Integer.class).intValue());
+        assertTrue(runtime.started.isEmpty());
     }
 
     @Test
@@ -865,7 +911,8 @@ public class AiAgentResumeTest {
         AiAgentService.TurnView paused = service.readTurn("turn-1", "10");
         assertEquals("budget_exhausted", paused.status());
         AiAgentService.TaskView extended = resume(new AiAgentService.AgentResumeRequest("10", "thread-1", "turn-1", "session",
-                first.runId(), paused.checkpointVersion(), Map.of("maxModelCalls", 3), Map.of("managerId", "current-manager")));
+                first.runId(), paused.checkpointVersion(), Map.of("maxModelCalls", 3), Map.of("managerId", "current-manager",
+                "workspaceScope", stableWorkspaceScope())));
         executor.run(extended.runId(), "2");
         assertEquals(1, modelCalls.get());
         AiAgentService.TurnView completed = service.readTurn("turn-1", "10");
@@ -964,8 +1011,17 @@ public class AiAgentResumeTest {
     }
 
     private AiAgentService.AgentResumeRequest request(Map<String, Object> extension) {
+        return request(extension, stableWorkspaceScope());
+    }
+
+    private AiAgentService.AgentResumeRequest request(Map<String, Object> extension, Map<String, Object> workspaceScope) {
         return new AiAgentService.AgentResumeRequest("10", "thread-1", "turn-1", "new-session", "run-1", 7L, extension,
-                Map.of("managerId", "current-manager", "width", 1920, "height", 1080));
+                Map.of("managerId", "current-manager", "width", 1920, "height", 1080, "workspaceScope", workspaceScope));
+    }
+
+    private Map<String, Object> stableWorkspaceScope() {
+        return Map.of("rootId", "10", "activeId", "nested-project-1", "nested", true,
+                "loopPath", List.of("loop-layer-1"));
     }
 
     private AiAgentService createService() {
@@ -986,8 +1042,12 @@ public class AiAgentResumeTest {
 
     private void seed(String status) {
         jdbc.update("insert into ai_agent_thread(thread_id, project_id, user_id, status, current_turn_id, created_at, updated_at) values('thread-1','10','2','active','turn-1',1,1)");
+        Map<String, Object> initialSnapshot = Map.of("managerId", "old-manager", "width", 1280, "height", 720,
+                "workspaceScope", stableWorkspaceScope());
+        Map<String, Object> initialContext = Map.of("projectId", "10", "requestId", "request-1", "sessionId", "old-session",
+                "modelConfigId", "1", "runtimeModelId", "gpt-4o", "canvasSnapshot", initialSnapshot);
         jdbc.update("insert into ai_agent_turn(turn_id, thread_id, request_id, input_text, context_json, status, created_at, ended_at) values('turn-1','thread-1','request-1','创建看板',?, ?,1,2)",
-                JSON.toJSONString(Map.of("projectId", "10", "requestId", "request-1", "sessionId", "old-session", "modelConfigId", "1", "runtimeModelId", "gpt-4o")), status);
+                JSON.toJSONString(initialContext), status);
         Map<String, Object> limits = AiAgentBudget.limits(AiAgentRuntimeSettingsService.RuntimeSettings.defaults().execution());
         limits.put("tokenBudgetEnabled", true); limits.put("callBudgetEnabled", true); limits.put("durationBudgetEnabled", true);
         limits.put("maxModelCalls", 2);

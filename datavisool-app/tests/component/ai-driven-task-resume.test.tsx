@@ -1,11 +1,11 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
-import type {IAiDrivenTurn} from "@/designer/ai-driven/thread/AiDrivenThreadTypes.ts";
-import AiDrivenTurnView from "@/designer/ai-driven/thread/AiDrivenTurnView.tsx";
+import type {IAiDrivenTurn} from "@/plugins/editor-ai/thread/AiDrivenThreadTypes.ts";
+import AiDrivenTurnView from "@/plugins/editor-ai/thread/AiDrivenTurnView.tsx";
 
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
-vi.mock("@/designer/ai-driven/thread/AiDrivenItemView.tsx", () => ({default: () => null}));
+vi.mock("@/plugins/editor-ai/thread/AiDrivenItemView.tsx", () => ({default: () => null}));
 
 const turn = (status: IAiDrivenTurn["status"], overrides: Partial<IAiDrivenTurn> = {}): IAiDrivenTurn => ({
     turnId: "turn-1", projectId: "10", threadId: "thread-1", requestId: "request-1", turnSequence: 1,

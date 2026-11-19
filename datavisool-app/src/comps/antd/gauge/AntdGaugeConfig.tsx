@@ -4,7 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import AntdGaugeController from "./AntdGaugeController.ts";
 import {Indicator} from "@antv/g2plot/lib/plots/gauge/types";
 import {CSSProperties} from "react";

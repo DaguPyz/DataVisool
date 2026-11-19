@@ -8,7 +8,7 @@ import AbstractDesignerController from "@/framework/core/AbstractDesignerControl
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import {Options, Plot} from "@antv/g2plot";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {ComponentBaseProps} from "@datavisool/sdk/types";
 
 export abstract class AntdBaseDesignerController<I extends Plot<any> = Plot<Options>,

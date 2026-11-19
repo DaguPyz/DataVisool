@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, it} from 'vitest';
-import {BPWorkspaceUIStore} from '@/designer/blueprint/workspace/BPWorkspaceUIStore.ts';
+import {BPWorkspaceUIStore} from '@/plugins/editor-blueprint/state/BPWorkspaceUIStore.ts';
 
 describe('BPWorkspaceUIStore', () => {
     it('starts with the node library open and configuration panel closed', () => {

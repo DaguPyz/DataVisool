@@ -10,7 +10,7 @@ vi.stubGlobal('Worker', class {
 if (!URL.createObjectURL) {
     Object.defineProperty(URL, 'createObjectURL', {configurable: true, value: () => 'blob:viewport-test'});
 }
-const {getWheelIntent, handleWorkspaceWheel} = await import('@/designer/workspace/viewport/ViewportController.ts');
+const {getWheelIntent, handleWorkspaceWheel} = await import('@/plugins/editor-canvas/viewport/ViewportController.ts');
 
 const setMetrics = (element: HTMLElement, metrics: Partial<Record<'clientWidth' | 'clientHeight' | 'scrollWidth' | 'scrollHeight' | 'scrollLeft' | 'scrollTop', number>>) => {
     Object.entries(metrics).forEach(([key, value]) => {

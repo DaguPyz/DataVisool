@@ -1,16 +1,22 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {createRef} from 'react';
+import {createRef, type ReactNode} from 'react';
 import {act, renderHook} from '@testing-library/react';
 import {afterEach, describe, expect, it} from 'vitest';
-import contextMenuStore from '@/designer/event/ContextMenuStore';
-import {useBPPortalTheme} from '@/designer/blueprint/workspace/useBPPortalTheme';
+import {BlueprintContextMenuStore} from '@/plugins/editor-blueprint/state/BlueprintContextMenuStore.ts';
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
+import {useBPPortalTheme} from '@/plugins/editor-blueprint/workspace/useBPPortalTheme';
 
 const flushMutations = () => act(async () => { await Promise.resolve(); });
 
 describe('blueprint body portal ownership', () => {
+    let contextMenu: BlueprintContextMenuStore;
+    const createWrapper = () => ({children}: {children: ReactNode}) => (
+        <EditorBlueprintSessionProvider value={{contextMenu} as any}>{children}</EditorBlueprintSessionProvider>
+    );
+
     afterEach(() => {
         document.body.replaceChildren();
-        contextMenuStore.reset();
+        contextMenu?.reset();
     });
 
     it('themes only owned selectors and hides their popup with the still-mounted panel', async () => {
@@ -21,9 +27,10 @@ describe('blueprint body portal ownership', () => {
         panel.appendChild(trigger);
         root.appendChild(panel);
         document.body.appendChild(root);
+        contextMenu = new BlueprintContextMenuStore();
         const rootRef = createRef<HTMLElement>();
         Object.assign(rootRef, {current: root});
-        const {unmount} = renderHook(() => useBPPortalTheme(rootRef));
+        const {unmount} = renderHook(() => useBPPortalTheme(rootRef), {wrapper: createWrapper()});
 
         const ownedPopup = document.createElement('div');
         ownedPopup.className = 'datavisool-select-panel';
@@ -54,14 +61,15 @@ describe('blueprint body portal ownership', () => {
     it('dismisses a stale context menu when a modal opens above the blueprint', async () => {
         const root = document.createElement('div');
         document.body.appendChild(root);
-        const {unmount} = renderHook(() => useBPPortalTheme({current: root}));
-        act(() => contextMenuStore.requestBpMenu([100, 100]));
-        expect(contextMenuStore.bpMenuVisible).toBe(true);
+        contextMenu = new BlueprintContextMenuStore();
+        const {unmount} = renderHook(() => useBPPortalTheme({current: root}), {wrapper: createWrapper()});
+        act(() => contextMenu.requestBpMenu([100, 100]));
+        expect(contextMenu.bpMenuVisible).toBe(true);
         const modal = document.createElement('div');
         modal.className = 'datavisool-global-modal-card';
         document.body.appendChild(modal);
         await flushMutations();
-        expect(contextMenuStore.bpMenuVisible).toBe(false);
+        expect(contextMenu.bpMenuVisible).toBe(false);
         unmount();
     });
 });

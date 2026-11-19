@@ -1,48 +1,76 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import React, {StrictMode, useEffect} from 'react';
+import React, {StrictMode} from 'react';
 import {act, render, screen} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import ComponentUtil from '@/util/ComponentUtil';
-
-vi.mock('@/designer/loader/DesignerLoader', () => ({default: {bpControllerMap: {}}}));
-
-import DesignerLoader from '@/designer/loader/DesignerLoader';
-import {BPNodeContainer} from '@/designer/blueprint/node/core/node-container/BPNodeContainer';
+import {BPNodeContainer} from '@/plugins/editor-blueprint/node/BPNodeContainer';
+import {BlueprintNodeRegistryProvider} from '@/plugins/editor-blueprint/node/BlueprintNodeRegistryContext';
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
+import {createBlueprintSessionFixture} from './support/blueprintSessionFixture.ts';
 
 describe('blueprint node rendering lifecycle', () => {
-    const previousEnvironment = window.DATAVISOOL_ENV;
+    let fixture: ReturnType<typeof createBlueprintSessionFixture> | undefined;
 
     afterEach(() => {
-        window.DATAVISOOL_ENV = previousEnvironment;
+        fixture?.dispose();
+        fixture = undefined;
     });
 
-    it('releases the SDK root on removal without losing it during strict-mode remount', async () => {
-        const dispose = vi.fn();
-        const Node = () => {
-            useEffect(() => () => dispose(), []);
-            return <span>Test node</span>;
-        };
+    it('destroys editor-owned node controllers on removal and keeps config through strict-mode remount', async () => {
+        const instances: Array<{destroy: ReturnType<typeof vi.fn>; config: any}> = [];
         class TestController {
-            config: any;
+            config: any = null;
+            private listeners = new Set<() => void>();
+            destroy = vi.fn(() => {
+                this.listeners.clear();
+                this.config = null;
+            });
+
             getNodeInfo() { return {name: 'Test node', input: [], output: []}; }
             getConfig() { return this.config; }
-            create(container: HTMLElement, config: any) {
-                this.config = config;
-                return ComponentUtil.createAndRender(container, Node as never);
+            update(config: any) {
+                this.config = {...this.config, ...config};
+                this.listeners.forEach(listener => listener());
+            }
+            subscribe(listener: () => void) {
+                this.listeners.add(listener);
+                return () => { this.listeners.delete(listener); };
             }
         }
-        DesignerLoader.bpControllerMap.test = TestController as never;
-        const manager = {currPageNodeControllers: {}, currentPageManager: {bpNodeConfigMap: {}, bpAPMap: {}}};
-        window.DATAVISOOL_ENV = {currentManager: {bluePrintManager: manager}} as typeof window.DATAVISOOL_ENV;
-        const layout = {id: 'test-node', type: 'test', position: {x: 0, y: 0}};
+        const pageManager = {
+            bpNodeConfigMap: {},
+            bpAPMap: {},
+            bpNodeLayoutMap: {'test-node': {id: 'test-node', type: 'BPGlobalNode', position: {x: 0, y: 0}}},
+        };
+        const controllerDefinition = {
+            type: 'BPGlobalNode',
+            createController: () => {
+                const controller = new TestController();
+                instances.push(controller);
+                return controller;
+            },
+        };
+        const registry = {
+            get: (type: string) => type === controllerDefinition.type ? controllerDefinition : undefined,
+            list: () => [controllerDefinition],
+        };
+        const layout = pageManager.bpNodeLayoutMap['test-node'];
+        fixture = createBlueprintSessionFixture([{pageId: 'page-1', pageName: 'Page 1', ...pageManager}], registry);
+        const manager = fixture.session;
 
-        const view = render(<StrictMode><BPNodeContainer layout={layout}/></StrictMode>);
+        const view = render(<StrictMode>
+            <BlueprintNodeRegistryProvider registry={registry as never}>
+            <EditorBlueprintSessionProvider value={manager}>
+                <BPNodeContainer layout={layout}/>
+            </EditorBlueprintSessionProvider>
+            </BlueprintNodeRegistryProvider>
+        </StrictMode>);
         await screen.findByText('Test node');
-        expect(dispose).not.toHaveBeenCalled();
+        expect(instances.length).toBeGreaterThan(0);
+        expect(instances.some(controller => controller.destroy.mock.calls.length === 0)).toBe(true);
 
         await act(async () => { view.unmount(); });
-        expect(dispose).toHaveBeenCalledOnce();
-        expect(manager.currPageNodeControllers).toHaveProperty('test-node');
-        delete DesignerLoader.bpControllerMap.test;
+        for (const controller of instances) expect(controller.destroy).toHaveBeenCalledTimes(1);
+        expect(manager.currPageNodeControllers).not.toHaveProperty('test-node');
+        expect(fixture.scene.blueprints.read()!.pages[0].bpNodeConfigMap).toHaveProperty('test-node', expect.objectContaining({name: 'Test node', enabled: true}));
     });
 });

@@ -7,20 +7,35 @@
 
 import {lazy} from "react";
 import type {RouteDefinition} from '@datavisool/sdk/plugin/contracts/router';
+import type {DesignerRuntimeService} from '@datavisool/sdk/plugin/contracts/designerRuntime';
+import {DesignerMode} from '@datavisool/sdk/types';
 
-const DesignerViewPage = lazy(() => import('@/pages/preview/DesignerViewPage.tsx'));
-const DesignerReleasePage = lazy(() => import('@/pages/release/DesignerReleasePage.tsx'));
-const DesignerPage = lazy(() => import('@/pages/designer/DesignerPage.tsx'));
 const Demo = lazy(() => import('@/test/Demo'));
 const NotFound = lazy(() => import('@/pages/result/NotFound.tsx'));
 const NoAuth = lazy(() => import('@/pages/result/NoAuth.tsx'));
 
-export default [
-    {id: 'legacy:preview', path: '/preview', render: () => <DesignerViewPage/>},
-    {id: 'legacy:release', path: '/release/:id', render: () => <DesignerReleasePage/>},
-    {id: 'legacy:test', path: '/test', render: () => <Demo/>},
-    {id: 'legacy:designer', path: '/designer', render: () => <DesignerPage/>},
-    {id: 'legacy:not-found', path: '/notFound', render: () => <NotFound/>},
-    {id: 'legacy:no-auth', path: '/noAuth', render: () => <NoAuth/>},
-    {id: 'legacy:fallback', path: '/*', render: () => <NotFound/>},
-] satisfies readonly RouteDefinition[];
+export function createLegacyRoutes(runtime: DesignerRuntimeService): readonly RouteDefinition[] {
+    const Preview = lazy(async () => {
+        const [{default: Page}, createSession] = await Promise.all([
+            import('@/pages/preview/DesignerViewPage.tsx'),
+            runtime.prepare(DesignerMode.PREVIEW),
+        ]);
+        return {default: () => <Page createSession={createSession}/>};
+    });
+    const Release = lazy(async () => {
+        const [{default: Page}, createSession] = await Promise.all([
+            import('@/pages/release/DesignerReleasePage.tsx'),
+            runtime.prepare(DesignerMode.RELEASE),
+        ]);
+        return {default: () => <Page createSession={createSession}/>};
+    });
+
+    return [
+        {id: 'legacy:preview', path: '/preview', render: () => <Preview/>},
+        {id: 'legacy:release', path: '/release/:id', render: () => <Release/>},
+        {id: 'legacy:test', path: '/test', render: () => <Demo/>},
+        {id: 'legacy:not-found', path: '/notFound', render: () => <NotFound/>},
+        {id: 'legacy:no-auth', path: '/noAuth', render: () => <NoAuth/>},
+        {id: 'legacy:fallback', path: '/*', render: () => <NotFound/>},
+    ];
+}

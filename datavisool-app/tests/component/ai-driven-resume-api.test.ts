@@ -1,13 +1,14 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {beforeEach, describe, expect, test, vi} from "vitest";
-import {resumeAiDrivenTask, getAiDrivenTaskEvents} from "@/api/AiDrivenTaskApi.ts";
-import {getAiDrivenThreadEvents} from "@/api/AiDrivenThreadApi.ts";
-import {readAiDrivenTurn} from "@/api/AiDrivenTurnApi.ts";
-import terminalStore from "@/designer/ai-driven/AiDrivenProgressTerminalStore.ts";
-import {reduceAiDrivenItemEvent} from "@/designer/ai-driven/thread/AiDrivenItemEventReducer.ts";
-import type {IAiDrivenItem} from "@/designer/ai-driven/thread/AiDrivenThreadTypes.ts";
+import {resumeAiDrivenTask, getAiDrivenTaskEvents} from "@/plugins/editor-ai/api/AiDrivenTaskApi.ts";
+import {getAiDrivenThreadEvents} from "@/plugins/editor-ai/api/AiDrivenThreadApi.ts";
+import {readAiDrivenTurn} from "@/plugins/editor-ai/api/AiDrivenTurnApi.ts";
+import {AiDrivenProgressTerminalStore} from "@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts";
+import {reduceAiDrivenItemEvent} from "@/plugins/editor-ai/thread/AiDrivenItemEventReducer.ts";
+import type {IAiDrivenItem} from "@/plugins/editor-ai/thread/AiDrivenThreadTypes.ts";
 
 const mocks = vi.hoisted(() => ({post: vi.fn(), postOrThrow: vi.fn()}));
+const terminalStore = new AiDrivenProgressTerminalStore();
 vi.mock("@/util/AuthFetchUtil.ts", () => ({default: mocks}));
 
 describe("Web AI recovery protocol", () => {

@@ -4,6 +4,10 @@ import {createAiModelManagementPlugin} from '@/plugins/ai-model-management/aiMod
 import {createApiManagementPlugin} from '@/plugins/api-management/apiManagementPlugin.tsx';
 import {createConsolePlugin} from '@/plugins/console/consolePlugin.tsx';
 import {createDatabasePlugin} from '@/plugins/database/databasePlugin.tsx';
+import {createDesignerRuntimePlugin} from '@/plugins/designer-runtime/designerRuntimePlugin.ts';
+import {createEditorCanvasPlugin} from '@/plugins/editor-canvas/editorCanvasPlugin.tsx';
+import {createEditorProjectPlugin} from '@/plugins/editor-project/editorProjectPlugin.ts';
+import {createEditorShellPlugin} from '@/plugins/editor-shell/editorShellPlugin.tsx';
 import {createDocsPlugin} from '@/plugins/docs/docsPlugin.tsx';
 import {createDynamicScriptPlugin} from '@/plugins/dynamic-script/dynamicScriptPlugin.tsx';
 import {createErrorUiPlugin} from '@/plugins/error-ui/errorUiPlugin.ts';
@@ -25,6 +29,16 @@ import {createUiPlugin} from '@/plugins/ui/uiPlugin.tsx';
 import {createUserManagementPlugin} from '@/plugins/user-management/userManagementPlugin.tsx';
 import {createVideoResourcePlugin} from '@/plugins/video-resource/videoResourcePlugin.tsx';
 import {createWorkbenchPlugin} from '@/plugins/workbench/workbenchPlugin.tsx';
+import {createEditorComponentLibraryPlugin} from '@/plugins/editor-component-library/editorComponentLibraryPlugin.tsx';
+import {createEditorResourceLibraryPlugin} from '@/plugins/editor-resource-library/editorResourceLibraryPlugin.tsx';
+import {createEditorLayersPlugin} from '@/plugins/editor-layers/editorLayersPlugin.tsx';
+import {createEditorTemplateLibraryPlugin} from '@/plugins/editor-template-library/editorTemplateLibraryPlugin.tsx';
+import {createEditorVariablesPlugin} from '@/plugins/editor-variables/editorVariablesPlugin.tsx';
+import {createEditorSubprojectsPlugin} from '@/plugins/editor-subprojects/editorSubprojectsPlugin.tsx';
+import {createEditorBlueprintPlugin} from '@/plugins/editor-blueprint/editorBlueprintPlugin.tsx';
+import {createEditorInspectorPlugin} from '@/plugins/editor-inspector/editorInspectorPlugin.tsx';
+import {createEditorShortcutsPlugin} from '@/plugins/editor-shortcuts/editorShortcutsPlugin.tsx';
+import {createEditorAiPlugin} from '@/plugins/editor-ai/editorAiPlugin.tsx';
 import type {Plugin} from '@datavisool/sdk/plugin';
 import {AppProviders} from './AppProviders.tsx';
 
@@ -56,6 +70,20 @@ export function createAppPlugins(): readonly Plugin[] {
         createReleaseManagementPlugin(),
         createAiModelManagementPlugin(),
         createUserManagementPlugin(),
+        createDesignerRuntimePlugin(),
+        createEditorProjectPlugin(),
+        createEditorShellPlugin(),
+        createEditorCanvasPlugin(),
+        createEditorComponentLibraryPlugin(),
+        createEditorResourceLibraryPlugin(),
+        createEditorLayersPlugin(),
+        createEditorTemplateLibraryPlugin(),
+        createEditorVariablesPlugin(),
+        createEditorSubprojectsPlugin(),
+        createEditorBlueprintPlugin(),
+        createEditorInspectorPlugin(),
+        createEditorShortcutsPlugin(),
+        createEditorAiPlugin(),
         createLegacyRoutesPlugin(),
     ];
 }

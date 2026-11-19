@@ -1,17 +1,17 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
 import {InteractionEngine} from '@datavisool/interaction-engine';
+import {createEditorCanvasStateFixture} from './support/editorCanvasStateFixture.ts';
 
 vi.mock('@/framework/core/ScaleAction.ts', () => ({default: {doScale: vi.fn()}}));
-vi.mock('@/designer/operate-provider/EventOperateStore.ts', () => ({default: {setScale: vi.fn(), setRatio: vi.fn()}}));
-vi.mock('@/designer/operate-provider/hot-key/ShortcutStore.ts', () => ({default: {isActiveWithExactModifiers: () => false}}));
 
-import ViewportController from '@/designer/workspace/viewport/ViewportController.ts';
-import viewportStore from '@/designer/workspace/viewport/ViewportStore.ts';
-import contextMenuStore from '@/designer/event/ContextMenuStore.ts';
+import ViewportController from '@/plugins/editor-canvas/viewport/ViewportController.ts';
 
 describe('wheel input during canvas pointer gestures', () => {
     let controller: ViewportController;
+    let canvasState: ReturnType<typeof createEditorCanvasStateFixture>;
+    let viewportStore: ReturnType<typeof createEditorCanvasStateFixture>['viewportStore'];
+    let contextMenuStore: ReturnType<typeof createEditorCanvasStateFixture>['contextMenuStore'];
     let viewport: HTMLDivElement;
     let artboard: HTMLDivElement;
     let engine: InteractionEngine | undefined;
@@ -28,6 +28,9 @@ describe('wheel input during canvas pointer gestures', () => {
     };
 
     beforeEach(() => {
+        canvasState = createEditorCanvasStateFixture();
+        viewportStore = canvasState.viewportStore;
+        contextMenuStore = canvasState.contextMenuStore;
         vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
         vi.stubGlobal('requestAnimationFrame', vi.fn(() => 1));
         vi.stubGlobal('cancelAnimationFrame', vi.fn());
@@ -55,7 +58,13 @@ describe('wheel input during canvas pointer gestures', () => {
         artboard.getBoundingClientRect = () => new DOMRect(
             viewportStore.translationX, viewportStore.translationY, 1920 * viewportStore.scale, 1080 * viewportStore.scale,
         );
-        controller = new ViewportController({viewport, artboard, getArtboardBounds: () => ({x: 0, y: 0, width: 1920, height: 1080})});
+        controller = new ViewportController({
+            eventOperateStore: canvasState.eventOperateStore,
+            contextMenuStore,
+            viewportStore,
+            input: {isActive: () => false, isActiveWithExactModifiers: () => false, subscribePressedState: () => () => {}},
+            viewport, artboard, getArtboardBounds: () => ({x: 0, y: 0, width: 1920, height: 1080}),
+        });
     });
 
     afterEach(() => {

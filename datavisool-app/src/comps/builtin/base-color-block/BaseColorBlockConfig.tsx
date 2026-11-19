@@ -6,7 +6,7 @@
 
 import React from 'react';
 import {BaseColorBlockController} from "./BaseColorBlockController";
-import {ConfigType} from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";
 

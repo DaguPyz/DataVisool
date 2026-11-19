@@ -1,31 +1,24 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
-import {cleanup, render} from '@testing-library/react';
-import {getRulerStep, getVisibleRulerSpan, RULER_FONT, RULER_SIZE} from '@/designer/canvas/DesignerRulerMath.ts';
+import {act, cleanup, render} from '@testing-library/react';
+import type {ReactNode} from 'react';
+import {runInAction} from 'mobx';
+import {getRulerStep, getVisibleRulerSpan, RULER_FONT, RULER_SIZE} from '@/plugins/editor-canvas/DesignerRulerMath.ts';
+import {ViewportStore} from '@/plugins/editor-canvas/viewport/ViewportStore.ts';
+import {EditorCanvasActivationProvider} from '@/plugins/editor-canvas/EditorCanvasActivationContext.tsx';
 
-const rulerHarness = vi.hoisted(() => ({
-    camera: {translationX: 140, translationY: 80, scale: 0.5},
-    showRulers: true,
+const rulerHarness = {
     width: 600,
     height: 300,
-}));
+};
+const viewportStore = new ViewportStore();
+const activation = {viewportStore, sceneStore: {revision: 0}} as any;
 
-vi.mock('mobx-react', () => ({observer: (component: unknown) => component}));
-vi.mock('@/designer/workspace/viewport/ViewportStore.ts', () => ({
-    default: {
-        get camera() { return rulerHarness.camera; },
-        get showRulers() { return rulerHarness.showRulers; },
-    },
-}));
-vi.mock('@/designer/manager/ManagerStore.ts', () => ({
-    default: {
-        get currentManager() {
-            return {canvasManager: {canvasConfig: {width: rulerHarness.width, height: rulerHarness.height}}};
-        },
-    },
-}));
+import DesignerRuler from '@/plugins/editor-canvas/DesignerRuler.tsx';
 
-import DesignerRuler from '@/designer/canvas/DesignerRuler.tsx';
+const renderRulerView = (children?: ReactNode) => <EditorCanvasActivationProvider value={activation}>
+    <DesignerRuler canvasSize={{width: rulerHarness.width, height: rulerHarness.height}}>{children}</DesignerRuler>
+</EditorCanvasActivationProvider>;
 
 describe('artboard rulers', () => {
     const context = {
@@ -36,6 +29,8 @@ describe('artboard rulers', () => {
     };
 
     beforeEach(() => {
+        viewportStore.setCamera({translationX: 140, translationY: 80, scale: 0.5});
+        act(() => runInAction(() => { viewportStore.showRulers = true; }));
         vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
         vi.spyOn(HTMLCanvasElement.prototype, 'getContext')
             .mockReturnValue(context as unknown as CanvasRenderingContext2D);
@@ -45,8 +40,8 @@ describe('artboard rulers', () => {
         cleanup();
         vi.restoreAllMocks();
         vi.unstubAllGlobals();
-        rulerHarness.camera = {translationX: 140, translationY: 80, scale: 0.5};
-        rulerHarness.showRulers = true;
+        viewportStore.setCamera({translationX: 140, translationY: 80, scale: 0.5});
+        act(() => runInAction(() => { viewportStore.showRulers = true; }));
         rulerHarness.width = 600;
         rulerHarness.height = 300;
         Object.values(context).forEach(value => {
@@ -55,7 +50,7 @@ describe('artboard rulers', () => {
     });
 
     test('positions all four rulers outside the scaled artboard without moving editor content', () => {
-        const {container} = render(<DesignerRuler><div data-testid="editor-content"/></DesignerRuler>);
+        const {container} = render(renderRulerView(<div data-testid="editor-content"/>));
         const ruler = (side: string) => container.querySelector<HTMLCanvasElement>(`[data-ruler-side="${side}"]`)!;
 
         expect(ruler('top')).toHaveStyle({left: '140px', top: `${80 - RULER_SIZE}px`, width: '300px', height: '20px'});
@@ -68,25 +63,25 @@ describe('artboard rulers', () => {
     });
 
     test('updates dimensions after zoom and hides only the rulers when toggled off', () => {
-        const {container, rerender} = render(<DesignerRuler><span>content</span></DesignerRuler>);
-        rulerHarness.camera = {translationX: -30, translationY: 25, scale: 2};
-        rerender(<DesignerRuler><span>content</span></DesignerRuler>);
+        const {container, rerender} = render(renderRulerView(<span>content</span>));
+        act(() => viewportStore.setCamera({translationX: -30, translationY: 25, scale: 2}));
+        rerender(renderRulerView(<span>content</span>));
         expect(container.querySelector('[data-ruler-side="top"]')).toHaveStyle({left: '0px', top: '5px', width: `${window.innerWidth}px`});
         expect(container.querySelector('[data-ruler-side="right"]')).toHaveStyle({left: '1170px', height: '600px'});
 
-        rulerHarness.showRulers = false;
-        rerender(<DesignerRuler><span>content</span></DesignerRuler>);
+        act(() => runInAction(() => { viewportStore.showRulers = false; }));
+        rerender(renderRulerView(<span>content</span>));
         expect(container.querySelectorAll('[data-ruler-side]')).toHaveLength(0);
         expect(container.querySelector('.datavisool-ruler-content')?.textContent).toBe('content');
     });
 
     test('mounts the rulers when artboard dimensions become available', () => {
         rulerHarness.width = 0;
-        const {container, rerender} = render(<DesignerRuler/>);
+        const {container, rerender} = render(renderRulerView());
         expect(container.querySelectorAll('[data-ruler-side]')).toHaveLength(0);
 
         rulerHarness.width = 600;
-        rerender(<DesignerRuler/>);
+        rerender(renderRulerView());
         expect(container.querySelectorAll('[data-ruler-side]')).toHaveLength(4);
     });
 

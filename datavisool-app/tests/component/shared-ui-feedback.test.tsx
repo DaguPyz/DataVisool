@@ -3,7 +3,7 @@ import React from 'react';
 import {act, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {DataVisoolUIProvider, GlobalMessage, GlobalModal, globalMessage, globalModal, useDataVisoolUI} from '@datavisool/ui';
-import {exportComponentRuntime} from '@/global/ComponentRuntime';
+import {exportComponentRuntime} from '@/plugins/designer-runtime/internal/legacy-global/ComponentRuntime';
 
 afterEach(() => {
     act(() => { globalMessage.destroy(); globalModal.destroy(); });

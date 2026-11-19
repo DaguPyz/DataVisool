@@ -24,16 +24,63 @@ export interface HostConfigPanels {
     FilterConfig: ComponentType<FilterConfigProps>;
 }
 
-let panels: HostConfigPanels | undefined;
+type HostConfigPanel = HostConfigPanels[keyof HostConfigPanels];
+
+interface HostConfigPanelRegistration {
+    readonly token: symbol;
+    readonly component: HostConfigPanel;
+}
+
+const panelRegistrations = new Map<keyof HostConfigPanels, HostConfigPanelRegistration[]>();
+
+/** Register one host panel. The returned disposer removes only this registration. */
+export function registerHostConfigPanel<K extends keyof HostConfigPanels>(
+    key: K,
+    component: HostConfigPanels[K],
+): () => void {
+    const registration: HostConfigPanelRegistration = {token: Symbol(key), component};
+    const stack = panelRegistrations.get(key) ?? [];
+    stack.push(registration);
+    panelRegistrations.set(key, stack);
+
+    let registered = true;
+    return () => {
+        if (!registered) return;
+        registered = false;
+        const current = panelRegistrations.get(key);
+        if (!current) return;
+        const index = current.findIndex(item => item.token === registration.token);
+        if (index !== -1) current.splice(index, 1);
+        if (current.length === 0) panelRegistrations.delete(key);
+    };
+}
 
 /** Called by the editor host, never by component packages. */
-export function registerHostConfigPanels(value: HostConfigPanels): void {
-    panels = value;
+export function registerHostConfigPanels(value: Partial<HostConfigPanels>): () => void {
+    const unregister: Array<() => void> = [];
+    try {
+        for (const key of Object.keys(value) as (keyof HostConfigPanels)[]) {
+            const component = value[key];
+            if (component) unregister.push(registerHostConfigPanel(key, component as HostConfigPanels[typeof key]));
+        }
+    } catch (error) {
+        unregister.reverse().forEach(dispose => dispose());
+        throw error;
+    }
+
+    let registered = true;
+    return () => {
+        if (!registered) return;
+        registered = false;
+        unregister.slice().reverse().forEach(dispose => dispose());
+    };
 }
 
 function getPanel<K extends keyof HostConfigPanels>(key: K): HostConfigPanels[K] {
-    if (!panels) throw new Error(`Configuration panel ${key} requires the editor host.`);
-    return panels[key];
+    const stack = panelRegistrations.get(key);
+    const component = stack?.[stack.length - 1]?.component;
+    if (!component) throw new Error(`Configuration panel ${key} requires the editor host.`);
+    return component as HostConfigPanels[K];
 }
 
 export const AnimationConfig = (props: ConfigPanelProps) => createElement(getPanel('AnimationConfig'), props);

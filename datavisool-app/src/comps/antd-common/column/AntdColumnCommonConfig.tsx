@@ -13,7 +13,7 @@ import {WritableColumnOptions} from "@/comps/antd-common/types";
 import {FieldChangeData, Grid, DatavisoolGUI, DatavisoolGUIUtil, type Control} from "@datavisool/ui";
 import AntdCommonUtil from "@/comps/antd-common/AntdCommonUtil";
 import {AntdLegend} from "@/comps/antd-common/config/legend/AntdLegend.tsx";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 import {g2plotLabelSetSchema} from "@/comps/common-component/schema-fragment/SchemaFragment.ts";
 

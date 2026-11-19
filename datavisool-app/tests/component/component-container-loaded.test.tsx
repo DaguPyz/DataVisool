@@ -2,19 +2,20 @@
 import React from 'react';
 import {act, cleanup, render} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
-import {DesignerMode} from '@datavisool/sdk/types';
+import {DesignerMode, DesignerScene} from '@datavisool/sdk/types';
 
-const state = vi.hoisted(() => ({definitions: {} as Record<string, any>}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
-
-import ComponentContainer from '@/framework/core/ComponentContainer';
-import EventUtil from '@/designer/blueprint/util/EventUtil';
+import ComponentContainer from '@/plugins/designer-runtime/internal/framework/core/ComponentContainer';
+import EventUtil from '@/plugins/designer-runtime/internal/designer/blueprint/util/EventUtil';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
+const runtimes = new Set<DesignerRuntimeContext>();
 afterEach(() => {
     cleanup();
     vi.useRealTimers();
+    runtimes.forEach(runtime => runtime.dispose());
+    runtimes.clear();
     if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
     else delete (window as any).DATAVISOOL_ENV;
 });
@@ -37,16 +38,19 @@ it('does not fire loaded while the component create promise is pending', async (
         getConfig() { return this.config; }
         destroy() {}
     }
-    state.definitions.example = {getController: () => Controller, getInitConfig: () => ({base: {}})};
+    const runtime = new DesignerRuntimeContext();
+    runtimes.add(runtime);
+    runtime.registry.definitions.example = {getController: () => Controller, getInitConfig: () => ({base: {}})} as any;
     const layer = {id: 'example-1', type: 'example', name: 'Example'};
     const triggerComponentEvent = vi.fn();
-    const manager = {
-        layerManager: {layerConfigs: {'example-1': layer}, elemConfigs: {}, controllers: {}, enableEvent: false},
-        bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
-        globalVariableManager: {globalVariableInstance: {}},
-    };
-    render(<ComponentContainer layer={layer as any} designerManager={manager as any}/>);
-    EventUtil.triggerGlobalEvent(manager as any);
+    const manager = new DesignerManager(DesignerScene.DEFAULT, runtime);
+    manager.layerManager.layerConfigs = {'example-1': layer} as any;
+    manager.layerManager.elemConfigs = {} as any;
+    manager.layerManager.controllers = {} as any;
+    manager.layerManager.enableEvent = false;
+    vi.spyOn(manager.bpExecutor, 'triggerComponentEvent').mockImplementation(triggerComponentEvent);
+    render(<ComponentContainer layer={layer as any} designerManager={manager}/>);
+    EventUtil.triggerGlobalEvent(manager);
     act(() => vi.advanceTimersByTime(500));
     expect(triggerComponentEvent).not.toHaveBeenCalled();
     await act(async () => { finishCreate(); await creation; });

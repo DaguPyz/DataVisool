@@ -1,11 +1,11 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 const mocks = vi.hoisted(() => ({get: vi.fn(), post: vi.fn(), request: vi.fn()}));
 vi.mock('@/util/AuthFetchUtil.ts', () => ({default: {get: mocks.get, post: mocks.post}}));
 vi.mock('@/util/FetchUtil.ts', () => ({default: {doRequestNativeResult: mocks.request}}));
-vi.mock('@/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({
+vi.mock('@/plugins/designer-runtime/internal/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({
     default: {parseCommonApi: (config: unknown) => config, parseDatabase: (config: unknown) => config},
 }));
 vi.mock('@/util/DataUtil.ts', () => ({default: {

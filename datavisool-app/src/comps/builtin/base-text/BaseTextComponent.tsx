@@ -4,11 +4,10 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {ChangeEvent, Component, ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {ChangeEvent, ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import './BaseTextComponent.less';
 import {ComponentBaseProps} from "@datavisool/sdk/types";
 import {DesignerMode} from "@datavisool/sdk/types";
-import {ObjectUtil} from "@datavisool/sdk";
 
 export interface BaseTextComponentStyle {
     color?: string;
@@ -31,6 +30,8 @@ export interface BaseTextComponentStyle {
 
 export interface BaseTextComponentProps extends ComponentBaseProps {
     style?: BaseTextComponentStyle;
+    /** Injected by the runtime compatibility renderer; never serialized in component config. */
+    onEditBaseText?: (value: string) => boolean;
 }
 
 export interface BaseTextComponentRef {
@@ -46,10 +47,12 @@ export const BaseTextComponent = forwardRef((props: BaseTextComponentProps, ref:
     // eslint-disable-next-line @typescript-eslint/ban-types
     const eventHandlerMap = useRef<Record<string, Function>>({});
     const textRef = useRef<HTMLInputElement>(null);
+    const editBaseTextRef = useRef(props.onEditBaseText);
+    editBaseTextRef.current = props.onEditBaseText;
 
     useImperativeHandle(ref, () => ({
         updateConfig: (newConfig) => {
-            setConfig({...newConfig});
+            setConfig({...newConfig, onEditBaseText: editBaseTextRef.current});
             newConfig?.style && setStyle(newConfig.style);
         },
         setEventHandler: (eventMap) => eventHandlerMap.current = eventMap,
@@ -71,21 +74,20 @@ export const BaseTextComponent = forwardRef((props: BaseTextComponentProps, ref:
      * @param e
      */
     const changeContent = (e: ChangeEvent<HTMLInputElement>) => {
-        if (data)
-            data['value'] = e.target.value;
-        if (data?.staticData) {
-            if (typeof (data?.staticData as any) === 'string')
-                data.staticData = {value: e.target.value};
-            else
-                data.staticData = ObjectUtil.merge(data.staticData, {value: e.target.value})
-        }
-        if (!config?.base?.id || !window.DATAVISOOL_ENV.currentManager.layerManager?.layerConfigs)
-            return;
-        window.DATAVISOOL_ENV.currentManager.layerManager.layerConfigs[config.base.id].name = e.target.value;
-        if (!window.DATAVISOOL_ENV.layerInstances)
-            return;
-        const layerInstance = window.DATAVISOOL_ENV.layerInstances[config.base?.id];
-        layerInstance && (layerInstance as Component).setState({name: e.target.value});
+        const value = e.target.value;
+        if (!config?.base?.id || !editBaseTextRef.current?.(value)) return;
+        setConfig(current => {
+            if (!current.base) return current;
+            const next = {...current, base: {...current.base, name: value}};
+            if (current.data) {
+                const staticData = current.data.staticData;
+                const nextStaticData = staticData && typeof staticData === 'object' && Object.prototype.hasOwnProperty.call(staticData, 'value')
+                    ? {...staticData, value}
+                    : staticData;
+                next.data = {...current.data, value, staticData: nextStaticData};
+            }
+            return next;
+        });
     }
 
     const getContent = () => {
@@ -111,7 +113,7 @@ export const BaseTextComponent = forwardRef((props: BaseTextComponentProps, ref:
                 onBlur={() => setEdit(false)}
                 autoFocus={true}
                 type={'text'}
-                defaultValue={getContent()}/> : getContent()}
+                value={getContent() ?? ''}/> : getContent()}
         </div>
     );
 });

@@ -13,7 +13,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController";
 import {ShapeAttrs} from "@antv/g-base";
 import {CSSProperties} from "react";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 
 export interface AntdPieProps extends ComponentBaseProps {
     style?: WritablePieOptions;

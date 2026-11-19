@@ -9,7 +9,7 @@ import {RingProgress, StatisticText} from "@antv/g2plot";
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController";
 import {CSSProperties} from "react";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {ComponentBaseProps} from "@datavisool/sdk/types";
 import {IThemeItem} from "@datavisool/sdk/types";
 

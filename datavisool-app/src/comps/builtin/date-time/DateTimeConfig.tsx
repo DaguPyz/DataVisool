@@ -6,7 +6,7 @@
 
 import React from 'react';
 import {DateTimeController} from "./DateTimeController.ts";
-import {ConfigType} from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {
     AlignBottomTwo,
     AlignHorizontalCenterTwo,

@@ -2,13 +2,13 @@
 import {waitFor} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {DesignerMode} from '@datavisool/sdk/types';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 import type {WebDatabaseConfig} from '@/types/WebDataSourceTypes';
 
 const mocks = vi.hoisted(() => ({post: vi.fn(), parseDatabase: vi.fn()}));
 vi.mock('@/util/FetchUtil.ts', () => ({default: {post: mocks.post}}));
 vi.mock('@/util/AuthFetchUtil.ts', () => ({default: {post: vi.fn()}}));
-vi.mock('@/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({
+vi.mock('@/plugins/designer-runtime/internal/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({
     default: {parseDatabase: mocks.parseDatabase}
 }));
 vi.mock('@/util/DataUtil.ts', () => ({default: {applyFilterAsync: (data: unknown) => Promise.resolve(data)}}));
@@ -25,12 +25,12 @@ describe('Web database fields alongside shared SDK types', () => {
             mode: DesignerMode.RELEASE,
             projectId: 'release-1',
             releasePassword: 'test-password',
-            currentManager: {globalVariableManager: {globalVariableInstance: {
+            currentManager: {isRuntimeEffectActive: () => true, globalVariableManager: {globalVariableInstance: {
                 region: {key: 'region', getGlobalVariable: () => ({value: 'north'})}
             }}}
         } as any;
         const success = vi.fn();
-        const updater = new ComponentDataUpdater(success, vi.fn());
+        const updater = new ComponentDataUpdater(success, vi.fn(), window.DATAVISOOL_ENV.currentManager as any);
         const database: WebDatabaseConfig = {
             targetDb: 'source-1', runtimeDataSourceId: 'release-source-1', sql: 'select #{region}'
         };

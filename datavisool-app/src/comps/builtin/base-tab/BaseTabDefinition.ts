@@ -4,6 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import {BaseInfo} from '@datavisool/sdk/host';
 import React from 'react';
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
@@ -16,12 +17,11 @@ import { ClazzTemplate } from "@datavisool/sdk/types";
 import { EventInfo } from "@datavisool/sdk/types";
 
 // 懒加载配置组件
-const BaseInfo = React.lazy(() => import("../../common-component/base-info/BaseInfo"));
-const ThemeConfig = React.lazy(() => import("../../common-component/theme-config/ThemeConfig.tsx"));
-const AnimationConfig = React.lazy(() => import("../../common-component/animation-config/AnimationConfig.tsx"));
-const DataConfig = React.lazy(() => import("../../common-component/data-config/DataConfig.tsx"));
+const ThemeConfig = React.lazy(() => import("@datavisool/sdk/host").then(({ThemeConfig}) => ({default: ThemeConfig})));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 const BaseTabStyleConfig = React.lazy(() => import("./BaseTabStyleConfig.tsx").then((module) => ({ default: module.BaseTabStyleConfig })));
-const FilterConfig = React.lazy(() => import("../../common-component/filter-config/FilterConfig.tsx"));
+const FilterConfig = React.lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
 
 export default class BaseTabDefinition extends AbstractDesignerDefinition<BaseTabController, TabComponentProps> {
 

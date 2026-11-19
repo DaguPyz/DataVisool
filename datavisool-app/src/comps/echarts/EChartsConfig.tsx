@@ -7,7 +7,7 @@
 import {useRef} from 'react';
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";
-import {ConfigType} from "../../designer/right/ConfigContent.tsx";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import EChartsController from "./EChartsController.ts";
 
 

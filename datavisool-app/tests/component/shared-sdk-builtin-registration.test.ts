@@ -8,42 +8,38 @@ vi.hoisted(() => {
     }, configurable: true});
 });
 
-import DesignerLoader from '@/designer/loader/DesignerLoader';
-import {componentCategorize} from '@/designer/left/compoent-lib/ComponentCategorize';
+import DesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/DesignerLoader';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext.ts';
+import {DesignerMode} from '@datavisool/sdk/types';
 
 it('registers representative built-in components through the shared definition', () => {
-    const originalDefinitions = DesignerLoader.definitionMap;
-    const originalCategories = [...componentCategorize];
+    const runtime = new DesignerRuntimeContext();
     try {
-        DesignerLoader.definitionMap = {};
-        new DesignerLoader().scanComponents();
+        new DesignerLoader(DesignerMode.EDIT, runtime).scanComponents();
         for (const key of ['BaseText', 'BaseButton', 'AntdPie', 'AMap', 'MapLibreGis']) {
-            expect(DesignerLoader.definitionMap[key]?.getBaseInfo().compKey).toBe(key);
+            expect(runtime.registry.definitions[key]?.getBaseInfo().compKey).toBe(key);
         }
     } finally {
-        DesignerLoader.definitionMap = originalDefinitions;
-        componentCategorize.splice(0, componentCategorize.length, ...originalCategories);
+        runtime.dispose();
     }
 });
 
 it('creates chart configs with the registered type and matching name', () => {
-    const originalDefinitions = DesignerLoader.definitionMap;
-    const originalCategories = [...componentCategorize];
+    const runtime = new DesignerRuntimeContext();
     try {
-        DesignerLoader.definitionMap = {};
-        new DesignerLoader().scanComponents();
+        new DesignerLoader(DesignerMode.EDIT, runtime).scanComponents();
+        const definitions = runtime.registry.definitions;
         for (const [key, name] of [
             ['AntdGroupRose', 'Antd分组玫瑰图'],
             ['AntdWordCloud', 'Antd词云图'],
             ['AntdStepLine', '阶梯折线图'],
         ]) {
-            const definition = DesignerLoader.definitionMap[key];
+            const definition = definitions[key];
             expect(definition).toBeDefined();
             expect(definition.getInitConfig().base).toMatchObject({type: key, name});
         }
-        expect(DesignerLoader.definitionMap.AntdBaseArea.getInitConfig().style.isPercent).toBe(false);
+        expect(definitions.AntdBaseArea.getInitConfig().style.isPercent).toBe(false);
     } finally {
-        DesignerLoader.definitionMap = originalDefinitions;
-        componentCategorize.splice(0, componentCategorize.length, ...originalCategories);
+        runtime.dispose();
     }
 });

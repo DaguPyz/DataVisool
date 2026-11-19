@@ -8,7 +8,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import FlvPlayerComponent, {FlvPlayerComponentProps, FlvPlayerComponentRef} from "./FlvPlayerComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 
 export class FlvPlayerController extends AbstractDesignerController<FlvPlayerComponentRef, FlvPlayerComponentProps> {

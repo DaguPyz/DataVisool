@@ -3,10 +3,10 @@ import React from 'react';
 import {act, cleanup, render} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
 import {DesignerMode} from '@datavisool/sdk/types';
-import {markComponentPending, markComponentReady} from '@/designer/blueprint/util/ComponentLoadTracker';
+import {markComponentPending, markComponentReady} from '@/plugins/designer-runtime/internal/designer/blueprint/util/ComponentLoadTracker';
 
-vi.mock('@/designer/left/layer-list/CanvasRender.ts', () => ({default: {buildCanvasComponents: () => null}}));
-import LoopContainer from '@/comps/loop-container/LoopContainer';
+vi.mock('@/plugins/designer-runtime/internal/designer/left/layer-list/CanvasRender.ts', () => ({default: {buildCanvasComponents: () => null}}));
+import LoopContainer from '@/plugins/designer-runtime/internal/builtin/loop-container/LoopContainer';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 afterEach(() => {

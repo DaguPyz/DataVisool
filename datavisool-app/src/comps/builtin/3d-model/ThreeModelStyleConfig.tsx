@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import React, { useState, useEffect } from "react";
-import { ConfigType } from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import { ThreeModelController } from "./ThreeModelController";
 import { Dialog, FieldChangeData, DatavisoolGUI } from "@datavisool/ui";
 import { Control } from "@datavisool/ui";

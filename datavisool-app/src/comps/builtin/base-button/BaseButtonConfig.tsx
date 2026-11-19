@@ -6,7 +6,7 @@
 
 import React from 'react';
 import {BaseButtonController} from "./BaseButtonController.ts";
-import {ConfigType} from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";
 

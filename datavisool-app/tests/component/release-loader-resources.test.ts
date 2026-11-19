@@ -11,15 +11,18 @@ vi.hoisted(() => {
 });
 vi.mock('@/util/FetchUtil.ts', () => ({default: {post}}));
 vi.mock('@/util/HybridCryptoUtil.ts', () => ({HybridCryptoUtil: {encryptRequest: vi.fn()}}));
-vi.mock('@/designer/manager/DesignerManager.ts', () => ({default: class DesignerManager {}}));
-vi.mock('@/designer/left/compoent-lib/ComponentCategorize.ts', () => ({componentCategorize: []}));
+vi.mock('@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts', () => ({default: class DesignerManager {}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/loader/ComponentCategorize.ts', () => ({
+    createComponentCategories: () => [],
+    createComponentSubCategories: () => [],
+}));
 vi.mock('@/framework/core/AbstractDesignerDefinition.ts', () => ({default: class AbstractDesignerDefinition {}}));
-vi.mock('@/designer/blueprint/util/EventUtil.ts', () => ({default: {}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/blueprint/util/EventUtil.ts', () => ({default: {}}));
 vi.mock('@/api/engineering/BaseApi.ts', () => ({default: {}}));
 vi.mock('@/util/AuthFetchUtil.ts', () => ({default: {}}));
 
-import DesignerLoader from '@/designer/loader/DesignerLoader';
-import ReleaseDesignerLoader from '@/designer/loader/ReleaseDesignerLoader';
+import DesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/DesignerLoader';
+import ReleaseDesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/ReleaseDesignerLoader';
 
 const bundle = (name: string) => ({name, dataJson: JSON.stringify({projectJson: JSON.stringify({name})})});
 const deferred = <T,>() => {

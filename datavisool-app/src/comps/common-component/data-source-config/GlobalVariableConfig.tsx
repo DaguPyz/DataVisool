@@ -13,6 +13,8 @@ import DataUtil from "@/util/DataUtil.ts";
 
 export interface GlobalVariableConfigProps {
     data: IGlobalVariableDataConfigType;
+    options: readonly {label: string; value: string}[];
+    readValue: (id: string) => unknown;
     doTestBefore?: (config: IGlobalVariableDataConfigType) => IGlobalVariableDataConfigType;
     doTestAfter?: (data: any) => any;
     /**
@@ -23,22 +25,13 @@ export interface GlobalVariableConfigProps {
 }
 
 export function GlobalVariableConfig(props: GlobalVariableConfigProps) {
-    const {data, doTestAfter, onSave} = props;
+    const {data, doTestBefore, doTestAfter, onSave, options, readValue} = props;
     const dataRef = useRef<IGlobalVariableDataConfigType>(ObjectUtil.merge({
         gvId: undefined,
         filter: undefined,
     }, data));
     const gvTestResRef = useRef<string>("")
     const [count, setCount] = useState(0);
-    const {globalVariableInstance} = window.DATAVISOOL_ENV.currentManager?.globalVariableManager ?? {};
-    const options = Object.values(globalVariableInstance ?? {}).map((item) => {
-        return {
-            label: item.key,
-            value: item.id
-        }
-    })
-
-
     const schema: Control = {
         type: 'grid',
         config: {gridGap: '10px'},
@@ -48,7 +41,7 @@ export function GlobalVariableConfig(props: GlobalVariableConfigProps) {
                 type: 'select',
                 label: '全局变量',
                 value: dataRef.current?.gvId || '',
-                config: {options}
+                config: {options: [...options]}
             },
             {
                 type: 'card-panel',
@@ -120,13 +113,17 @@ export function GlobalVariableConfig(props: GlobalVariableConfigProps) {
             return;
         }
         try {
-            const {globalVariableInstance} = window.DATAVISOOL_ENV.currentManager?.globalVariableManager ?? {};
-            const gv = globalVariableInstance?.[dataRef.current?.gvId];
-            if (!gv) {
+            const testConfig = doTestBefore?.(dataRef.current) ?? dataRef.current;
+            if (!testConfig.gvId) {
+                globalMessage.messageApi?.warning('请先选择全局变量');
+                return;
+            }
+            const value = readValue(testConfig.gvId);
+            if (value === undefined) {
                 globalMessage.messageApi?.warning('全局变量不存在');
                 return;
             }
-            let gvValue = gv.value;
+            let gvValue = value;
             const filter = dataRef.current?.filter;
             gvValue = await DataUtil.applyFilterAsync(gvValue, filter);
             if (gvValue != null) {

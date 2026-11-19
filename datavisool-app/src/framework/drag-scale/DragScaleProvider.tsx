@@ -4,7 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {ScaleCore} from "@/designer/operate-provider/scale/ScaleCore";
+import {ScaleCore} from "@/framework/drag-scale/ScaleCore";
 import {IPoint} from "@datavisool/sdk/types";
 
 export interface DragScaleData {

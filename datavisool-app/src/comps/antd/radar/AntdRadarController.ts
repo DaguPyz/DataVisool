@@ -11,7 +11,7 @@ import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerCo
 import {ComponentBaseProps} from "@datavisool/sdk/types";
 import {IThemeItem} from "@datavisool/sdk/types";
 
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {AntdLineProps} from "@/comps/antd-common/line/AntdCommonLineController.ts";
 import {ShapeAttrs} from "@antv/g-base";
 

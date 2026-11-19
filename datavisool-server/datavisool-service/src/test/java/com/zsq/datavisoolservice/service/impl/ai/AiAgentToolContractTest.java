@@ -20,7 +20,7 @@ class AiAgentToolContractTest {
         Path root = Path.of("").toAbsolutePath();
         while (root != null && !Files.isDirectory(root.resolve("datavisool-app"))) root = root.getParent();
         assertNotNull(root, "必须在项目中运行，核对模型定义与浏览器实现");
-        String source = Files.readString(root.resolve("datavisool-app/src/frontend-effect/tools/GetComponentSnapshotsTool.ts"));
+        String source = Files.readString(root.resolve("datavisool-app/src/plugins/editor-ai/frontend-effect/tools/GetComponentSnapshotsTool.ts"));
         var declaration = Pattern.compile("SNAPSHOT_FIELDS = \\[(.*?)\\] as const").matcher(source);
         assertTrue(declaration.find());
         var quoted = Pattern.compile("\"([^\"]+)\"").matcher(declaration.group(1));

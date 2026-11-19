@@ -4,7 +4,8 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {MenuInfo} from "../../../designer/right/MenuType";
+import {BaseInfo} from '@datavisool/sdk/host';
+import type {MenuInfo} from "@datavisool/sdk/core";
 import FlvPlayerImg from './flv-player.webp';
 import {FlvPlayerController} from "./FlvPlayerController.ts";
 import {FlvPlayerComponentProps} from "./FlvPlayerComponent.tsx";
@@ -15,9 +16,8 @@ import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import {EventInfo} from "@datavisool/sdk/types";
 
-const BaseInfo = lazy(() => import("../../common-component/base-info/BaseInfo"));
-const AnimationConfig = lazy(() => import("../../common-component/animation-config/AnimationConfig.tsx"));
-const FilterConfig = lazy(() => import("../../common-component/filter-config/FilterConfig.tsx"));
+const AnimationConfig = lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
+const FilterConfig = lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
 const FlvPlayerConfig = lazy(() => import("./FlvPlayerConfig.tsx").then((module) => ({default: module.FlvPlayerConfig})));
 
 export default class FlvPlayerDefinition extends AbstractDesignerDefinition<FlvPlayerController, FlvPlayerComponentProps> {

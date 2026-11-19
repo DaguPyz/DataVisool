@@ -4,7 +4,7 @@ import {
     createCodeBindingFromEvent,
     createModifierBinding,
     getReservedShortcutReason,
-} from '@/designer/operate-provider/hot-key/ShortcutCapture.ts';
+} from '@/plugins/editor-shortcuts/core/ShortcutCapture.ts';
 
 describe('ShortcutCapture', () => {
     it('把 macOS Command 记录为逻辑主键并保留 Option', () => {

@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {expect, it, vi} from 'vitest';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 it('reports only the active WebSocket error and ignores callbacks after destroy', () => {
     const sockets: Array<{onerror?: (event: Event) => void; close: ReturnType<typeof vi.fn>}> = [];

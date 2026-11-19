@@ -4,11 +4,13 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import type {DesignerSessionFactory} from '@datavisool/sdk/plugin/contracts/designerRuntime';
 import {useParams} from "react-router-dom";
 import DesignerRelease from "../../designer/release/DesignerRelease.tsx";
 import {Base64Util} from "@datavisool/sdk";
 
-export default function DesignerReleasePage() {
+export default function DesignerReleasePage({createSession}: {createSession: DesignerSessionFactory}) {
     const params = useParams();
-    return <DesignerRelease id={Base64Util.fromBase64(params.id as string)}/>
+    const id = Base64Util.fromBase64(params.id as string);
+    return <DesignerRelease key={id} id={id} createSession={createSession}/>
 }

@@ -5,17 +5,17 @@
  */
 
 import React from "react";
-import {getDefaultMenuList} from "@/designer/right/util";
+import {getDefaultMenuList} from "@/comps/configMenus.ts";
 
 import AntdCommonBarController, {AntdBarProps} from "@/comps/antd-common/bar/AntdCommonBarController";
 import {AntdCommonDefinition} from "@/comps/antd-common/AntdCommonDefinition";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 
-const AnimationConfig = React.lazy(() => import("@/comps/common-component/animation-config/AnimationConfig"));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
 const AntdBarCommonStyleConfig = React.lazy(() => import("./AntdBarCommonConfig").then((module) => ({default: module.AntdBarCommonStyleConfig})));
 const AntdBarFieldMapping = React.lazy(() => import("./AntdBarCommonConfig").then((module) => ({default: module.AntdBarFieldMapping})));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 abstract class AbstractBarDefinition extends AntdCommonDefinition<AntdCommonBarController, AntdBarProps> {
 

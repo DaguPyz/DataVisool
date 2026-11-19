@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {isBPCanvasPointAvailable} from '@/designer/blueprint/workspace/BPCanvasHitTest';
+import {isBPCanvasPointAvailable} from '@/plugins/editor-blueprint/workspace/BPCanvasHitTest';
 
 describe('blueprint visible canvas hit testing', () => {
     let viewport: HTMLDivElement;

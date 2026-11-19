@@ -2,10 +2,10 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {waitFor} from '@testing-library/react';
 import {DesignerMode} from '@datavisool/sdk/types';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
-import GlobalVariable from '@/designer/left/global-variable/GlobalVariable';
-import componentDataGvParser from '@/designer/left/global-variable/parse/ComponentDataGvParser';
+import GlobalVariable from '@/plugins/designer-runtime/internal/designer/left/global-variable/GlobalVariable';
+import componentDataGvParser from '@/plugins/designer-runtime/internal/designer/left/global-variable/parse/ComponentDataGvParser';
 
 
 class TestController extends AbstractDesignerController<unknown, any> {
@@ -15,7 +15,12 @@ class TestController extends AbstractDesignerController<unknown, any> {
 }
 const makeManager = (value: unknown, id = 'shared-id') => {
     const variable = new GlobalVariable(id, 'amount', value, true, ['component']);
-    return {globalVariableManager: {globalVariableInstance: {[id]: variable}}, layerManager: {layerConfigs: {}, controllers: {}}};
+    return {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
+        globalVariableManager: {globalVariableInstance: {[id]: variable}},
+        layerManager: {layerConfigs: {}, controllers: {}},
+    };
 };
 const previousEnv = window.DATAVISOOL_ENV;
 afterEach(() => { window.DATAVISOOL_ENV = previousEnv; vi.restoreAllMocks(); });
@@ -50,6 +55,9 @@ describe('page scoped component data', () => {
         const controller = new TestController(); controller.designerManager = inner as any;
         const executor = {triggerComponentEvent: vi.fn()} as any;
         await controller.create(document.createElement('div'), {base: {id: 'component'}, data: {sourceType: 'globalVariable', globalVariable: {gvId: 'shared-id'}}}, executor);
+        controller.setRuntimeDataAdapter({
+            createUpdater: (success, fail) => new ComponentDataUpdater(success, fail, inner as any),
+        });
         const variable = inner.globalVariableManager.globalVariableInstance['shared-id'];
         variable.start({controllers: {component: controller}, manager: inner as any}, executor);
         try {

@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import React, {useMemo, useState} from 'react';
-import { ConfigType } from '@/designer/right/ConfigContent.tsx';
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import MapLibreGisController from '@/comps/maplibre-gis/MapLibreGisController.ts';
 import {globalMessage} from "@datavisool/ui";
 import { MapLibreTerrainConfig, StructuredSourceConfig } from '@datavisool/sdk/types';

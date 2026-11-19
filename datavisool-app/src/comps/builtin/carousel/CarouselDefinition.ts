@@ -8,7 +8,7 @@ import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import {EventInfo} from "@datavisool/sdk/types";
-import {MenuInfo} from "../../../designer/right/MenuType";
+import type {MenuInfo} from "@datavisool/sdk/core";
 import carouselImg from './carousel.webp';
 import {CarouselController} from "./CarouselController.ts";
 import {CarouselComponentProps} from "./CarouselComponent.tsx";

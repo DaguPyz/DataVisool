@@ -1,50 +1,25 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {cleanup, fireEvent, render, screen} from "@testing-library/react";
-import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import type {ILayerItem} from "@datavisool/sdk/types";
+import {cleanup, fireEvent, render, screen} from '@testing-library/react';
+import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
+import type {EditorCanvasService, EditorLayerNode, EditorSelectionSource} from '@datavisool/sdk/plugin/contracts/editorCanvas';
+import {normalizeSelectionIds} from '@/plugins/editor-canvas/selection/SelectionPolicy.ts';
+import {createInspectorStore} from '@/plugins/editor-inspector/InspectorStore.ts';
+import {createInspectorTarget, createInspectorTestDomain} from './support/inspectorDomainFixture.ts';
+import {EditorLayersState} from '@/plugins/editor-layers/EditorLayersState.ts';
+import LayerItem from '@/plugins/editor-layers/item/LayerItem.tsx';
+import {applySelectionChange} from '@/plugins/editor-inspector/InspectorSelection.ts';
 
-const selectionMocks = vi.hoisted(() => ({
-    targetIds: [] as string[],
-    selectionSource: "system",
-    setTargetIds: vi.fn((ids: string[], source = "system") => {
-        selectionMocks.targetIds = ids;
-        selectionMocks.selectionSource = source;
-    }),
-}));
-
-const rightMocks = vi.hoisted(() => ({
-    activeElem: {id: null as string | null},
-    activeConfig: vi.fn(),
-}));
-
-vi.mock("@/designer/operate-provider/EventOperateStore", () => ({
-    default: {
-        get targetIds() {
-            return selectionMocks.targetIds;
-        },
-        get selectionSource() {
-            return selectionMocks.selectionSource;
-        },
-        setTargetIds: selectionMocks.setTargetIds,
-        interactionRef: null,
-    },
-}));
-
-vi.mock("@/designer/operate-provider/undo-redo/HistoryRecordOperateProxy", () => ({
-    default: {doLockUpd: vi.fn(), doHideUpd: vi.fn()},
-}));
-
-vi.mock("@/designer/right/RightStore.ts", () => ({default: rightMocks}));
-
-import layerListStore, {LayerListStore} from "@/designer/left/layer-list/LayerListStore.ts";
-import LayerItem from "@/designer/left/layer-list/item/LayerItem.tsx";
-
-const createLayers = (): Record<string, ILayerItem> => ({
-    a: {id: "a", type: "rect", name: "A", order: 3, next: "b"},
-    b: {id: "b", type: "rect", name: "B", order: 2, prev: "a", next: "c", hide: true},
-    c: {id: "c", type: "rect", name: "C", order: 1, prev: "b", lock: true},
+let inspectorStore: ReturnType<typeof createInspectorStore>;
+const {domain} = createInspectorTestDomain(['a', 'b', 'c'].map(id => createInspectorTarget(id, 'rect', id.toUpperCase())));
+const makeNode = (id: string, options: Partial<EditorLayerNode> = {}): EditorLayerNode => ({
+    id,
+    type: 'rect',
+    name: id.toUpperCase(),
+    order: 0,
+    effectiveHidden: false,
+    effectiveLocked: false,
+    ...options,
 });
-
 const mouseEvent = (overrides: Partial<{ctrlKey: boolean; metaKey: boolean; shiftKey: boolean}> = {}) => ({
     ctrlKey: false,
     metaKey: false,
@@ -52,118 +27,172 @@ const mouseEvent = (overrides: Partial<{ctrlKey: boolean; metaKey: boolean; shif
     ...overrides,
 }) as any;
 
-describe("layer-list selection", () => {
-    let store: LayerListStore;
-    let layers: Record<string, ILayerItem>;
+describe('editor layers selection state', () => {
+    let state: EditorLayersState;
+    let selectedIds: string[];
+    let selectionSource: EditorSelectionSource;
+    let layers: EditorLayerNode[];
+    const canvas: Pick<EditorCanvasService, 'readSelection' | 'select' | 'closeContextMenu'> = {
+        readSelection: () => ({ids: selectedIds, source: selectionSource}),
+        closeContextMenu() {},
+        select(ids, source = 'system', interaction) {
+            selectedIds = normalizeSelectionIds(ids, Object.fromEntries(flatten(layers).map(layer => [layer.id!, layer])));
+            selectionSource = source;
+            applySelectionChange({ids: selectedIds, source, interaction}, domain, inspectorStore);
+        },
+    };
+    const select = (id: string, event: ReturnType<typeof mouseEvent>) =>
+        state.selectLayer(id, event, canvas, layers);
 
     beforeEach(() => {
-        vi.useFakeTimers();
-        vi.clearAllMocks();
-        selectionMocks.targetIds = [];
-        selectionMocks.selectionSource = "system";
-        rightMocks.activeElem.id = null;
-        layers = createLayers();
-        (window as any).DATAVISOOL_ENV = {
-            currentManager: {layerManager: {layerConfigs: layers}},
-        };
-        store = new LayerListStore();
+        inspectorStore = createInspectorStore();
+        state = new EditorLayersState();
+        state.setScene(1);
+        selectedIds = [];
+        selectionSource = 'system';
+        layers = [makeNode('a', {order: 3}), makeNode('b', {order: 2, effectiveHidden: true}), makeNode('c', {order: 1, effectiveLocked: true})];
     });
 
     afterEach(() => {
         cleanup();
-        vi.useRealTimers();
-        delete (window as any).DATAVISOOL_ENV;
+        inspectorStore.dispose();
+        state.dispose();
     });
 
-    test("single and Command/Ctrl clicks write canonical management selections", () => {
-        store.selectedChange("b", mouseEvent());
-        vi.runAllTimers();
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["b"], "layer-list");
+    test('single and Command/Ctrl clicks write canonical management selections', () => {
+        select('b', mouseEvent());
+        expect(selectedIds).toEqual(['b']);
+        expect(selectionSource).toBe('layer-list');
 
-        store.selectedChange("c", mouseEvent({metaKey: true}));
-        vi.runAllTimers();
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["b", "c"], "layer-list");
+        select('c', mouseEvent({metaKey: true}));
+        expect(selectedIds).toEqual(['b', 'c']);
 
-        store.selectedChange("b", mouseEvent({ctrlKey: true}));
-        vi.runAllTimers();
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["c"], "layer-list");
+        select('b', mouseEvent({ctrlKey: true}));
+        expect(selectedIds).toEqual(['c']);
     });
 
-    test("Shift range includes hidden and locked rows as management selections", () => {
-        store.selectedChange("a", mouseEvent());
-        vi.runAllTimers();
-
-        store.selectedChange("c", mouseEvent({shiftKey: true}));
-        vi.runAllTimers();
-
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["a", "b", "c"], "layer-list");
+    test('Shift range includes effectively hidden and locked rows', () => {
+        select('a', mouseEvent());
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['a', 'b', 'c']);
     });
 
-    test("a stale range anchor falls back to the current selection", () => {
-        store.selectedChange("a", mouseEvent());
-        vi.runAllTimers();
-        delete layers.a;
-        selectionMocks.targetIds = ["b"];
-
-        store.selectedChange("c", mouseEvent({shiftKey: true}));
-        vi.runAllTimers();
-
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["b", "c"], "layer-list");
+    test('a stale range anchor falls back to the current selection', () => {
+        select('a', mouseEvent());
+        layers = layers.filter(layer => layer.id !== 'a');
+        selectedIds = ['b'];
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['b', 'c']);
     });
 
-    test("Shift range continues past an empty group", () => {
-        layers.a.order = 4;
-        layers.a.next = "empty";
-        layers.empty = {id: "empty", type: "group", order: 3, prev: "a", next: "b"};
-        layers.b.prev = "empty";
-
-        store.selectedChange("a", mouseEvent());
-        vi.runAllTimers();
-        store.selectedChange("c", mouseEvent({shiftKey: true}));
-        vi.runAllTimers();
-
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["a", "empty", "b", "c"], "layer-list");
+    test('Shift range traverses nested and empty groups in persisted display order', () => {
+        const a = makeNode('a', {type: 'rect', order: 4, next: 'empty'});
+        const empty = makeNode('empty', {type: 'group', order: 3, children: [], next: 'b'});
+        const b = makeNode('b', {pid: 'empty', order: 2, next: 'c'});
+        const c = makeNode('c', {order: 1});
+        layers = [a, {...empty, children: [b]}, c];
+        select('a', mouseEvent());
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['a', 'empty', 'c']);
     });
 
-    test("Shift range continues when its upper endpoint is an empty group", () => {
-        layers.empty = {id: "empty", type: "group", order: 4, next: "b"};
-        layers.b.order = 3;
-        layers.b.prev = "empty";
-        layers.b.next = "c";
-        layers.c.order = 2;
-        layers.c.prev = "b";
-        delete layers.a;
-
-        store.selectedChange("empty", mouseEvent());
-        vi.runAllTimers();
-        store.selectedChange("c", mouseEvent({shiftKey: true}));
-        vi.runAllTimers();
-
-        expect(selectionMocks.setTargetIds).toHaveBeenLastCalledWith(["empty", "b", "c"], "layer-list");
+    test('Shift range retains an empty group between ordinary rows', () => {
+        const a = makeNode('a', {order: 4, next: 'empty'});
+        const empty = makeNode('empty', {type: 'group', order: 3, next: 'b'});
+        const b = makeNode('b', {order: 2, next: 'c'});
+        const c = makeNode('c', {order: 1});
+        layers = [a, empty, b, c];
+        select('a', mouseEvent());
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['a', 'empty', 'b', 'c']);
     });
 
-    test("hidden rows remain clickable, sync the property panel, and double-click enters rename", () => {
-        const selectedSpy = vi.spyOn(layerListStore, "selectedChange").mockImplementation(() => ["b"]);
-        render(<LayerItem compId="b" name="B" type="rect" hide/>);
-
-        const row = screen.getByTitle("B");
-        fireEvent.click(row);
-        expect(selectedSpy).toHaveBeenCalledTimes(1);
-        expect(rightMocks.activeConfig).toHaveBeenCalledWith("b", "rect", "layer-list");
-
-        fireEvent.doubleClick(row);
-        expect(screen.getByRole("textbox")).toHaveValue("B");
-        selectedSpy.mockRestore();
+    test('Shift range continues when its upper endpoint is an empty group', () => {
+        const empty = makeNode('empty', {type: 'group', order: 3, next: 'b'});
+        const b = makeNode('b', {order: 2, next: 'c'});
+        const c = makeNode('c', {order: 1});
+        layers = [empty, b, c];
+        select('empty', mouseEvent());
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['empty', 'b', 'c']);
     });
 
-    test("cancelling the clicked row keeps the property panel on a remaining selection", () => {
-        rightMocks.activeElem.id = "b";
-        const selectedSpy = vi.spyOn(layerListStore, "selectedChange").mockImplementation(() => ["c"]);
-        render(<LayerItem compId="b" name="B" type="rect" selected/>);
+    test('hidden rows remain clickable and can enter inline rename', () => {
+        const row = makeNode('b', {effectiveHidden: true});
+        layers = [row];
+        render(<LayerItem
+            canvas={canvas}
+            compId="b"
+            name="B"
+            type="rect"
+            hide
+            effectiveHide
+            onSelect={(id, event) => state.selectLayer(id, event, canvas, layers)}
+        />);
 
-        fireEvent.click(screen.getByTitle("B"), {metaKey: true});
+        const element = screen.getByTitle('B');
+        fireEvent.click(element);
+        expect(selectedIds).toEqual(['b']);
+        expect(inspectorStore.activeElem.id).toBe('b');
 
-        expect(rightMocks.activeConfig).toHaveBeenCalledWith("c", "rect", "layer-list");
-        selectedSpy.mockRestore();
+        fireEvent.doubleClick(element);
+        expect(screen.getByRole('textbox')).toHaveValue('B');
+    });
+
+    test('cancelling the clicked row keeps the property panel on a remaining selection', () => {
+        selectedIds = ['b', 'c'];
+        selectionSource = 'layer-list';
+        inspectorStore.activateTarget(createInspectorTarget('b'));
+        render(<LayerItem
+            canvas={canvas}
+            compId="b"
+            name="B"
+            type="rect"
+            selected
+            onSelect={(id, event) => state.selectLayer(id, event, canvas, layers)}
+        />);
+
+        fireEvent.click(screen.getByTitle('B'), {metaKey: true});
+
+        expect(selectedIds).toEqual(['c']);
+        expect(inspectorStore.activeElem.id).toBe('c');
+    });
+
+    test('ignores old-scene UI events and cancels delayed work on scene change or dispose', () => {
+        vi.useFakeTimers();
+        try {
+            state.acceptUiEvent({kind: 'reveal', sceneVersion: 0, targetId: 'child', unfoldIds: ['group']});
+            expect(state.isGroupExpanded('group')).toBe(false);
+
+            const oldSceneWork = vi.fn();
+            state.scheduleTimeout(oldSceneWork, 10);
+            state.resetScene();
+            state.setScene(2);
+            vi.advanceTimersByTime(10);
+            expect(oldSceneWork).not.toHaveBeenCalled();
+
+            const disposedWork = vi.fn();
+            state.scheduleTimeout(disposedWork, 10);
+            state.dispose();
+            vi.advanceTimersByTime(10);
+            expect(disposedWork).not.toHaveBeenCalled();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('selection state is reset when the editor scene changes', () => {
+        select('a', mouseEvent());
+        select('c', mouseEvent({shiftKey: true}));
+        state.resetScene();
+        state.setScene(2);
+        layers = [makeNode('b'), makeNode('c')];
+        selectedIds = ['b'];
+        select('c', mouseEvent({shiftKey: true}));
+        expect(selectedIds).toEqual(['b', 'c']);
     });
 });
+
+function flatten(layers: readonly EditorLayerNode[]): EditorLayerNode[] {
+    return layers.flatMap(layer => [layer, ...(layer.children ? flatten(layer.children) : [])]);
+}

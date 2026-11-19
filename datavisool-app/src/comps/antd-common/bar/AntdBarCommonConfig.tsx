@@ -10,7 +10,7 @@ import {BarOptions} from "@antv/g2plot";
 import AntdCommonBarController from "./AntdCommonBarController";
 import {FieldChangeData, Grid, ISelectOption, DatavisoolGUI, DatavisoolGUIUtil, type Control} from "@datavisool/ui";
 import {AntdLegend} from "@/comps/antd-common/config/legend/AntdLegend.tsx";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 import {g2plotLabelSetSchema} from "@/comps/common-component/schema-fragment/SchemaFragment.ts";
 

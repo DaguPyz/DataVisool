@@ -2,11 +2,11 @@
 import React from 'react';
 import {act, cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
-import {AnchorPointType, DesignerMode} from '@datavisool/sdk/types';
+import {AnchorPointType, DesignerMode, DesignerScene} from '@datavisool/sdk/types';
 
 const state = vi.hoisted(() => ({definitions: {} as Record<string, any>}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
 vi.hoisted(() => {
     if (!URL.createObjectURL) Object.defineProperty(URL, 'createObjectURL', {value: () => 'blob:host-integration', configurable: true});
     if (!globalThis.Worker) Object.defineProperty(globalThis, 'Worker', {value: class {
@@ -17,17 +17,21 @@ vi.hoisted(() => {
     }, configurable: true});
 });
 
-import ComponentContainer from '@/framework/core/ComponentContainer';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
-import BPGlobalVariableNodeController from '@/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
+import ComponentContainer from '@/plugins/designer-runtime/internal/framework/core/ComponentContainer';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext.ts';
+import BPGlobalVariableNodeController from '@/plugins/designer-runtime/internal/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
 import BaseButtonDefinition from '@/comps/builtin/base-button/BaseButtonDefinition';
 import BaseInputDefinition from '@/comps/builtin/base-input/BaseInputDefinition';
-import GlobalVariable from '@/designer/left/global-variable/GlobalVariable';
+import GlobalVariable from '@/plugins/designer-runtime/internal/designer/left/global-variable/GlobalVariable';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
+const managers = new Set<DesignerManager>();
 
 afterEach(() => {
     cleanup();
+    managers.forEach(manager => manager.destroy());
+    managers.clear();
     Object.keys(state.definitions).forEach(key => delete state.definitions[key]);
     if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
     else delete (window as any).DATAVISOOL_ENV;
@@ -37,11 +41,26 @@ const route = (source: string, event: string) =>
     `${source}:${event}:${AnchorPointType.OUTPUT}`;
 const inputAnchor = (node: string, action: string) => `${node}:${action}:${AnchorPointType.INPUT}`;
 
+function createManager(page: {bpAPMap: Record<string, string[]>; bpNodeControllers: Record<string, unknown>}) {
+    const runtime = new DesignerRuntimeContext();
+    Object.assign(runtime.registry.definitions, state.definitions);
+    const manager = new DesignerManager(DesignerScene.DEFAULT, runtime);
+    manager.init({bluePrintManager: [{
+        pageId: 'host-page', bpNodeLayoutMap: {}, bpNodeConfigMap: {},
+        bpAPMap: page.bpAPMap, bpAPLineMap: {}, bpLines: {},
+    }]}, DesignerMode.PREVIEW);
+    Object.assign(manager.bluePrintManager.bpPageMangers[0]!.bpNodeControllers, page.bpNodeControllers);
+    managers.add(manager);
+    return manager;
+}
+
+
 it('routes a real BaseInput click and valueChange through the hosted BPExecutor with loop index', async () => {
     (window as any).DATAVISOOL_ENV = {mode: DesignerMode.PREVIEW};
     state.definitions.BaseInput = new BaseInputDefinition();
     const seen: Array<{anchor: string; value: unknown; index?: number}> = [];
     const probe = {
+        destroy() {},
         isEnabled: () => true,
         execute: (taskInfo: any, value: unknown) => seen.push({anchor: taskInfo.apId, value, index: taskInfo.task.index}),
     };
@@ -52,12 +71,7 @@ it('routes a real BaseInput click and valueChange through the hosted BPExecutor 
         },
         bpNodeControllers: {probe},
     };
-    const manager: any = {
-        layerManager: {layerConfigs: {}, elemConfigs: {}, controllers: {}, enableEvent: false},
-        globalVariableManager: {globalVariableInstance: {}},
-        bluePrintManager: {bpPageMangers: [page]},
-    };
-    manager.bpExecutor = new BPExecutor(manager);
+    const manager = createManager(page);
     const layer = {id: 'input-1', type: 'BaseInput', name: 'Input', width: 180, height: 30, x: 0, y: 0, transform: {}};
 
     render(<ComponentContainer layer={layer as any} designerManager={manager} index={3}/>);
@@ -78,6 +92,7 @@ it('routes a real BaseButton click through an actual global-variable blueprint n
     const globalVariable = new GlobalVariable('global-1', 'lastAction', null, false, []);
     const observed: unknown[] = [];
     const observeNode = {
+        destroy() {},
         isEnabled: () => true,
         execute: (_taskInfo: any, value: unknown) => observed.push(value),
     };
@@ -89,12 +104,8 @@ it('routes a real BaseButton click through an actual global-variable blueprint n
         },
         bpNodeControllers: {['global-1']: globalNode, observer: observeNode},
     };
-    const manager: any = {
-        layerManager: {layerConfigs: {}, elemConfigs: {}, controllers: {}, enableEvent: false},
-        globalVariableManager: {globalVariableInstance: {'global-1': globalVariable}},
-        bluePrintManager: {bpPageMangers: [page]},
-    };
-    manager.bpExecutor = new BPExecutor(manager);
+    const manager = createManager(page);
+    manager.globalVariableManager.globalVariableInstance['global-1'] = globalVariable;
     globalVariable.start({controllers: {}, manager}, manager.bpExecutor);
     const layer = {id: 'button-1', type: 'BaseButton', name: 'Run', width: 140, height: 45, x: 0, y: 0, transform: {}};
     render(<ComponentContainer layer={layer as any} designerManager={manager} index={2}/>);

@@ -1,11 +1,16 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {act, render, screen, waitFor} from '@testing-library/react';
+import {act, render as testingRender, screen, waitFor} from '@testing-library/react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {runInAction} from 'mobx';
-import {SHORTCUT_ACTION_IDS, type ShortcutHandlerMap} from '@/designer/operate-provider/hot-key/ShortcutTypes.ts';
-import {codeBinding} from '@/designer/operate-provider/hot-key/ShortcutRegistry.ts';
-import shortcutStore from '@/designer/operate-provider/hot-key/ShortcutStore.ts';
-import HotKey from '@/designer/operate-provider/hot-key/HotKey.tsx';
+import {SHORTCUT_ACTION_IDS, type ShortcutHandlerMap} from '@datavisool/sdk/plugin/contracts/editorShortcuts';
+import {codeBinding} from '@/plugins/editor-shortcuts/core/ShortcutRegistry.ts';
+import {ShortcutStore} from '@/plugins/editor-shortcuts/core/ShortcutStore.ts';
+import {ShortcutContext} from '@/plugins/editor-shortcuts/ShortcutContext.ts';
+import {createShortcutEffects} from '@/plugins/editor-shortcuts/shortcutEffects.ts';
+import type {ReactNode} from 'react';
+const shortcutStore = new ShortcutStore();
+const render = (ui: ReactNode) => testingRender(<ShortcutContext.Provider value={{store: shortcutStore, effects: createShortcutEffects(), readCanvasInput: () => ({pointerTarget: null, contextMenuOpen: false})}}>{ui}</ShortcutContext.Provider>);
+import HotKey from '@/plugins/editor-shortcuts/HotKey.tsx';
 
 const hotkeysMock = vi.hoisted(() => {
     const bindings: Array<{key: string; callback: (event: KeyboardEvent) => boolean | void}> = [];

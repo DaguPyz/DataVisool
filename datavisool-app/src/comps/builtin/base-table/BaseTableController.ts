@@ -15,7 +15,7 @@ import BaseTableComponent, {
 } from "./BaseTableComponent";
 import {ObjectUtil} from "@datavisool/sdk";
 import {IThemeItem} from "@datavisool/sdk/types";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {DesignerMode} from "@datavisool/sdk/types";
 
 interface TableCarouselRuntime {

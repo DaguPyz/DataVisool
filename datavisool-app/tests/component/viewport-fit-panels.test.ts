@@ -1,18 +1,15 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
+import {createEditorCanvasStateFixture} from './support/editorCanvasStateFixture.ts';
 
 vi.mock('@/framework/core/ScaleAction.ts', () => ({default: {doScale: vi.fn()}}));
-vi.mock('@/designer/event/ContextMenuStore.ts', () => ({default: {}}));
-vi.mock('@/designer/operate-provider/EventOperateStore.ts', () => ({default: {setScale: vi.fn(), setRatio: vi.fn()}}));
-vi.mock('@/designer/operate-provider/hot-key/ShortcutStore.ts', () => ({
-    default: {isActiveWithExactModifiers: () => false},
-}));
 
-import ViewportController from '@/designer/workspace/viewport/ViewportController.ts';
-import viewportStore from '@/designer/workspace/viewport/ViewportStore.ts';
+import ViewportController from '@/plugins/editor-canvas/viewport/ViewportController.ts';
 
 describe('fit artboard around floating panels', () => {
     let controller: ViewportController;
+    let canvasState: ReturnType<typeof createEditorCanvasStateFixture>;
+    let viewportStore: ReturnType<typeof createEditorCanvasStateFixture>['viewportStore'];
     let viewport: HTMLDivElement;
     let artboardBounds: {x: number; y: number; width: number; height: number};
     let frameId: number;
@@ -25,6 +22,8 @@ describe('fit artboard around floating panels', () => {
     };
 
     beforeEach(() => {
+        canvasState = createEditorCanvasStateFixture();
+        viewportStore = canvasState.viewportStore;
         artboardBounds = {x: 0, y: 0, width: 1920, height: 1080};
         frameId = 0;
         frames = new Map();
@@ -44,7 +43,13 @@ describe('fit artboard around floating panels', () => {
             clientHeight: {value: 800},
         });
         viewport.getBoundingClientRect = () => new DOMRect(100, 40, 900, 800);
-        controller = new ViewportController({viewport, artboard, getArtboardBounds: () => artboardBounds});
+        controller = new ViewportController({
+            eventOperateStore: canvasState.eventOperateStore,
+            contextMenuStore: canvasState.contextMenuStore,
+            viewportStore,
+            input: {isActive: () => false, isActiveWithExactModifiers: () => false, subscribePressedState: () => () => {}},
+            viewport, artboard, getArtboardBounds: () => artboardBounds,
+        });
         nextFrame();
         nextFrame();
     });

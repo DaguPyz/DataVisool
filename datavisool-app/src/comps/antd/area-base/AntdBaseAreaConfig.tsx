@@ -12,7 +12,7 @@ import {MappingOptions} from "@antv/g2plot/lib/adaptor/geometries/base";
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController";
 
 import AntdCommonUtil from "@/comps/antd-common/AntdCommonUtil";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {FieldChangeData, DatavisoolGUI, DatavisoolGUIUtil, type Control, Grid} from "@datavisool/ui";
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 import {g2plotLabelSetSchema} from "@/comps/common-component/schema-fragment/SchemaFragment.ts";

@@ -1,7 +1,11 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {fireEvent, render, screen, within} from '@testing-library/react';
+import {fireEvent, render as testingRender, screen, within} from '@testing-library/react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {HotKeyDes} from '@/designer/footer/hotkey-des/HotKeyDes.tsx';
+import type {ReactNode} from 'react';
+import {ShortcutContext} from '@/plugins/editor-shortcuts/ShortcutContext.ts';
+import {createShortcutEffects} from '@/plugins/editor-shortcuts/shortcutEffects.ts';
+import type {ShortcutStore} from '@/plugins/editor-shortcuts/core/ShortcutStore.ts';
+import {HotKeyDes} from '@/plugins/editor-shortcuts/help/HotKeyDes.tsx';
 
 const shortcutStoreMock = vi.hoisted(() => ({
     loadState: 'ready',
@@ -18,9 +22,7 @@ const shortcutStoreMock = vi.hoisted(() => ({
     retrySave: vi.fn(async () => undefined),
 }));
 
-vi.mock('@/designer/operate-provider/hot-key/ShortcutStore.ts', () => ({
-    default: shortcutStoreMock,
-}));
+const render = (ui: ReactNode) => testingRender(<ShortcutContext.Provider value={{store: shortcutStoreMock as unknown as ShortcutStore, effects: createShortcutEffects(), readCanvasInput: () => ({pointerTarget: null, contextMenuOpen: false})}}>{ui}</ShortcutContext.Provider>);
 
 vi.mock('@datavisool/ui', () => ({
     Dialog: ({title, children}: {title: React.ReactNode; children: React.ReactNode}) => (

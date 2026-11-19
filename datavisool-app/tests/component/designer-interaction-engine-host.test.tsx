@@ -5,8 +5,11 @@ import {afterEach, describe, expect, it, vi} from 'vitest';
 
 const hostState = vi.hoisted(() => {
     let targetIds: string[] = [];
+    let selectionSource = 'canvas';
     let dsContentRef: HTMLDivElement | null = null;
     let layers: Record<string, any> = {};
+    let canvasConfig: Record<string, any> = {width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false};
+    let scene: any = {version: 1, isActive: () => true, readLayerConfigs: () => layers};
     let interactionRef: any = null;
     let prepareCanvasMenu: ((position: [number, number]) => any[]) | null = null;
     const eventOperateStore = {
@@ -14,11 +17,23 @@ const hostState = vi.hoisted(() => {
         get scale() { return 1; },
         get targetIds() { return targetIds; },
         get directSelectedIds() { return targetIds; },
+        get selectionSource() { return selectionSource; },
         get interactionRef() { return interactionRef; },
         setDsContentRef: (value: HTMLDivElement | null) => { dsContentRef = value; },
-        setTargetIds: vi.fn((ids: string[]) => { targetIds = ids; }),
+        setTargetIds: vi.fn((ids: string[], source = 'system') => { targetIds = ids; selectionSource = source; }),
         setInteractionRef: vi.fn((value: any) => { interactionRef = value; }),
         setGroupCoordinate: vi.fn(),
+        emitLayerUiEvent: vi.fn(),
+        emitInspectorChange: vi.fn(),
+        captureScene: () => scene,
+        isSceneCurrent: (candidate: any) => candidate === scene && candidate.isActive(),
+        isActive: () => true,
+        readLegacyModel: () => ({layerManager: {
+            get layerConfigs() { return layers; },
+            updateLayer: (items: Array<{id: string; x?: number; y?: number; rotate?: number}>) => {
+                items.forEach(item => { layers[item.id] = {...layers[item.id], ...item}; });
+            },
+        }}),
     };
     const historyRecordOperateProxy = {
         doDrag: vi.fn((items: Array<{id: string; x: number; y: number}>) => {
@@ -34,37 +49,68 @@ const hostState = vi.hoisted(() => {
         getCanvasMenuPrepare: () => prepareCanvasMenu,
         setLayers: (value: Record<string, any>) => { layers = value; },
         getLayers: () => layers,
-        setSelection: (ids: string[]) => { targetIds = ids; },
+        setCanvasConfig: (value: Record<string, any>) => { canvasConfig = value; },
+        getCanvasConfig: () => canvasConfig,
+        setScene: (value: any) => { scene = value; },
+        getScene: () => scene,
+        setSelection: (ids: string[]) => { targetIds = ids; selectionSource = 'canvas'; },
     };
 });
 
-vi.mock('@/designer/operate-provider/EventOperateStore.ts', () => ({default: hostState.eventOperateStore}));
-vi.mock('@/designer/operate-provider/undo-redo/HistoryRecordOperateProxy.ts', () => ({default: hostState.historyRecordOperateProxy}));
-vi.mock('@/comps/common-component/base-info/BaseInfoStore.ts', () => ({default: {updateBaseConfig: vi.fn()}}));
-vi.mock('@/designer/left/layer-list/util/LayerUtil.ts', () => ({default: {
-    togglesGroupingUnfold: vi.fn(), findLayerGroupChain: vi.fn(() => []), reRenderLayerList: vi.fn(),
+vi.mock('@/plugins/editor-canvas/state/EventOperateStore.ts', () => ({default: hostState.eventOperateStore}));
+vi.mock('@/plugins/editor-canvas/history/HistoryRecordOperateProxy.ts', () => ({default: hostState.historyRecordOperateProxy}));
+vi.mock('@/plugins/editor-canvas/layers/LayerUtil.ts', () => ({default: {
+    findLayerGroupChain: vi.fn(() => []),
 }}));
-vi.mock('@/designer/left/layer-list/LayerListStore.ts', () => ({default: {layerInstances: {}}}));
-vi.mock('@/designer/left/DesignerLeftStore.ts', () => ({default: {menu: 'canvas'}}));
-vi.mock('@/designer/right/RightStore.ts', () => ({default: {activeConfig: vi.fn()}}));
-vi.mock('@/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({default: {unbindFromGv: vi.fn()}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/left/global-variable/parse/ComponentDataGvParser.ts', () => ({default: {unbindFromGv: vi.fn()}}));
 vi.mock('@/util/TextUtil.ts', () => ({default: {copyToClipboard: vi.fn(async () => undefined)}}));
 vi.mock('@datavisool/ui', () => ({globalMessage: {messageApi: {success: vi.fn()}}}));
-vi.mock('@/designer/operate-provider/selection/SelectionDeleteCommand.ts', () => ({deleteSelectionTreeWithHistory: vi.fn()}));
 vi.mock('@/util/DomUtil.ts', () => ({default: {
     isViewInContainer: vi.fn(() => true),
     calculatesDistanceFromContainer: vi.fn(() => 0),
     updateDomStyle: (element: HTMLElement, style: Record<string, string>) => Object.assign(element.style, style),
 }}));
-vi.mock('@/designer/event/ContextMenuStore.ts', () => ({default: {
+vi.mock('@/plugins/editor-canvas/context-menu/CanvasContextMenuStore.ts', () => ({default: {
     setCanvasMenuPrepare: (value: ((position: [number, number]) => any[]) | null) => hostState.setCanvasMenuPrepare(value),
 }}));
-vi.mock('@/designer/operate-provider/hot-key/ShortcutStore.ts', () => ({default: {isActive: () => false}}));
 
-import DesignerInteractionEngine from '@/designer/operate-provider/interaction/DesignerInteractionEngine';
-import dragRollbackImpl from '@/designer/operate-provider/undo-redo/core/DragRollbackImpl';
-import {groupLeftAligned} from '@/designer/operate-provider/selection/SelectionCommands';
-import {DesignerMode} from '@datavisool/sdk/types';
+import DesignerInteractionEngine from '@/plugins/editor-canvas/interaction/DesignerInteractionEngine';
+import {DragRollbackImpl} from '@/plugins/editor-canvas/history/core/DragRollbackImpl';
+import {createSelectionCommands} from '@/plugins/editor-canvas/selection/SelectionCommands';
+import {EditorCanvasActivationProvider} from '@/plugins/editor-canvas/EditorCanvasActivationContext.tsx';
+
+const interactionInput = {isActive: () => false, isActiveWithExactModifiers: () => false, subscribePressedState: () => () => {}};
+
+function createActivation(enableAdsorption: boolean) {
+    const scene = {version: 1, isActive: () => true, readLayerConfigs: () => hostState.getLayers()};
+    hostState.setScene(scene);
+    const sceneStore = {
+        revision: 1,
+        readLayerConfigs: () => hostState.getLayers(),
+        readOptions: () => ({enableAdsorption, rasterize: false, dragStep: 1, resizeStep: 1}),
+        readCanvasConfig: () => hostState.getCanvasConfig(),
+    };
+    const selectionCommands = createSelectionCommands({
+        eventOperateStore: hostState.eventOperateStore as any,
+        historyProxy: hostState.historyRecordOperateProxy as any,
+        readScene: () => hostState.getScene(),
+        isActive: () => true,
+    });
+    return {
+        eventOperateStore: hostState.eventOperateStore,
+        contextMenuStore: {setCanvasMenuPrepare: (value: ((position: [number, number]) => any[]) | null) => hostState.setCanvasMenuPrepare(value)},
+        historyProxy: hostState.historyRecordOperateProxy,
+        sceneStore,
+        selectionCommands,
+        canEdit: () => true,
+        isActive: () => true,
+        readScene: () => hostState.getScene(),
+    } as any;
+}
+
+const renderInteraction = (activation: any) => <EditorCanvasActivationProvider value={activation}>
+    <DesignerInteractionEngine input={interactionInput}/>
+</EditorCanvasActivationProvider>;
 
 const box = (left: number, top: number, width: number, height: number) =>
     new DOMRect(left, top, width, height);
@@ -78,8 +124,6 @@ const pointer = (target: EventTarget, type: string, init: PointerEventInit = {})
     }));
 };
 
-const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
-
 afterEach(() => {
     cleanup();
     hostState.eventOperateStore.setDsContentRef(null);
@@ -88,8 +132,6 @@ afterEach(() => {
     hostState.setCanvasMenuPrepare(null);
     hostState.eventOperateStore.setGroupCoordinate.mockClear();
     hostState.historyRecordOperateProxy.doDrag.mockClear();
-    if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
-    else delete (window as any).DATAVISOOL_ENV;
     document.body.replaceChildren();
 });
 
@@ -103,11 +145,7 @@ describe('designer interaction host with the published interaction engine', () =
         hostState.setLayers(layerConfigs);
         hostState.setSelection(['first', 'second']);
 
-        const manager = {
-            layerManager: {layerConfigs, enableAdsorption: true},
-            canvasManager: {canvasConfig: {width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false}},
-        };
-        (window as any).DATAVISOOL_ENV = {mode: DesignerMode.EDIT, currentManager: manager};
+        hostState.setCanvasConfig({width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false});
 
         const workspace = document.createElement('div');
         workspace.className = 'designer-ds-container';
@@ -128,7 +166,8 @@ describe('designer interaction host with the published interaction engine', () =
             element.getBoundingClientRect = () => box(layer.x, layer.y, layer.width, layer.height);
         }
 
-        render(<DesignerInteractionEngine/>);
+        const activation = createActivation(true);
+        render(renderInteraction(activation));
         await act(async () => { await Promise.resolve(); });
 
         const first = document.getElementById('first')!;
@@ -159,17 +198,7 @@ describe('designer interaction host with the published interaction engine', () =
         hostState.setLayers(layerConfigs);
         hostState.setSelection(['first']);
 
-        const manager = {
-            layerManager: {
-                layerConfigs,
-                enableAdsorption: false,
-                updateLayer: (items: Array<{id: string; x?: number; y?: number; rotate?: number}>) => {
-                    items.forEach((item) => { layerConfigs[item.id] = {...layerConfigs[item.id], ...item}; });
-                },
-            },
-            canvasManager: {canvasConfig: {width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false}},
-        };
-        (window as any).DATAVISOOL_ENV = {mode: DesignerMode.EDIT, currentManager: manager};
+        hostState.setCanvasConfig({width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false});
 
         const workspace = document.createElement('div');
         workspace.className = 'designer-ds-container';
@@ -190,7 +219,8 @@ describe('designer interaction host with the published interaction engine', () =
         canvas.append(first);
         first.getBoundingClientRect = () => box(layerConfigs.first.x, layerConfigs.first.y, layerConfigs.first.width, layerConfigs.first.height);
 
-        const {rerender} = render(<DesignerInteractionEngine/>);
+        const activation = createActivation(false);
+        const {rerender} = render(renderInteraction(activation));
         await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 
         const prepareMenu = hostState.getCanvasMenuPrepare();
@@ -202,14 +232,14 @@ describe('designer interaction host with the published interaction engine', () =
 
         // Undo replaces a layer record in the same manager map and refreshes one id.
         await act(async () => {
-            dragRollbackImpl.undo({
+            new DragRollbackImpl(hostState.eventOperateStore as any).undo({
                 prev: [{id: 'first', x: 200, y: 150, rotate: 30}],
                 next: [{id: 'first', x: 10, y: 20, rotate: 0}],
                 selectionIds: ['first'],
             } as any);
             await Promise.resolve();
         });
-        rerender(<DesignerInteractionEngine/>);
+        rerender(renderInteraction(activation));
         await act(async () => { await Promise.resolve(); });
         act(() => { interaction.refreshOverlay(); });
 
@@ -233,7 +263,7 @@ describe('designer interaction host with the published interaction engine', () =
         // Then ask the host to refresh all geometry after another external update.
         hostState.setSelection(['first']);
         layerConfigs.first = {...layerConfigs.first, x: 350, y: 220, width: 130, height: 100, rotate: 45};
-        rerender(<DesignerInteractionEngine/>);
+        rerender(renderInteraction(activation));
         await act(async () => { await Promise.resolve(); });
         act(() => { interaction.refreshLayerGeometry(); });
 
@@ -262,19 +292,7 @@ describe('designer interaction host with the published interaction engine', () =
         hostState.setLayers(initialLayers);
         hostState.setSelection(['first', 'second']);
 
-        const layerManager: any = {
-            layerConfigs: initialLayers,
-            enableAdsorption: false,
-            reRenderLayer() {
-                this.layerConfigs = {...this.layerConfigs};
-                hostState.setLayers(this.layerConfigs);
-            },
-        };
-        const manager = {
-            layerManager,
-            canvasManager: {canvasConfig: {width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false}},
-        };
-        (window as any).DATAVISOOL_ENV = {mode: DesignerMode.EDIT, currentManager: manager};
+        hostState.setCanvasConfig({width: 500, height: 300, boxSelectionMode: 'intersect', rasterize: false});
 
         const workspace = document.createElement('div');
         workspace.className = 'designer-ds-container';
@@ -294,18 +312,20 @@ describe('designer interaction host with the published interaction engine', () =
             element.style.width = `${layer.width}px`;
             element.style.height = `${layer.height}px`;
             canvas.append(element);
-            element.getBoundingClientRect = () => box(layerManager.layerConfigs[layer.id].x, layerManager.layerConfigs[layer.id].y, layerManager.layerConfigs[layer.id].width, layerManager.layerConfigs[layer.id].height);
+            element.getBoundingClientRect = () => box(hostState.getLayers()[layer.id].x, hostState.getLayers()[layer.id].y, hostState.getLayers()[layer.id].width, hostState.getLayers()[layer.id].height);
         }
 
-        const {rerender} = render(<DesignerInteractionEngine/>);
+        const activation = createActivation(false);
+        const selectionCommands = activation.selectionCommands;
+        const {rerender} = render(renderInteraction(activation));
         await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 
-        act(() => { groupLeftAligned(); });
-        rerender(<DesignerInteractionEngine/>);
+        act(() => { selectionCommands.groupLeftAligned(); });
+        rerender(renderInteraction(activation));
         await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 
-        expect(layerManager.layerConfigs.first.x).toBe(10);
-        expect(layerManager.layerConfigs.second.x).toBe(10);
+        expect(hostState.getLayers().first.x).toBe(10);
+        expect(hostState.getLayers().second.x).toBe(10);
         expect(document.getElementById('first')?.style.transform).toBe('translate(10px, 20px) rotate(0deg)');
         expect(document.getElementById('second')?.style.transform).toBe('translate(10px, 20px) rotate(0deg)');
         expect(canvas.querySelector<HTMLElement>('.datavisool-interaction-resize-box')?.style.transform)

@@ -1,18 +1,12 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
 import type {ILayerItem} from "@datavisool/sdk/types";
+import type {DesignerEditingScene} from "@datavisool/sdk/plugin/contracts/designerRuntime";
+import type {EventOperateStore, SelectionSource} from "@/plugins/editor-canvas/state/EventOperateStore.ts";
+import type {HistoryRecordOperateProxy} from "@/plugins/editor-canvas/history/HistoryRecordOperateProxy.ts";
 
-const storeMocks = vi.hoisted(() => ({
-    targetIds: [] as string[],
-    selectionSource: "canvas" as "canvas" | "layer-list" | "search" | "context-menu" | "system",
-    setTargetIds: vi.fn(),
-    refreshOverlay: vi.fn(),
-    refreshLayerGeometry: vi.fn(),
-    focusDesignerCanvas: vi.fn(),
-}));
-
-const historyMocks = vi.hoisted(() => ({
-    doClone: vi.fn(() => ["cloneGroup", "cloneChild"]),
+const historyMocks = {
+    doClone: vi.fn(),
     doDelete: vi.fn(),
     doHideUpd: vi.fn(),
     doLockUpd: vi.fn(),
@@ -21,53 +15,10 @@ const historyMocks = vi.hoisted(() => ({
     doLayerToBottom: vi.fn(),
     doLayerMoveUp: vi.fn(),
     doLayerMoveDown: vi.fn(),
-}));
+};
 
 const externalMocks = vi.hoisted(() => ({
     copyToClipboard: vi.fn(async () => undefined),
-    bindConfigToGvById: vi.fn(),
-    unbindFromGv: vi.fn(),
-    putHistory: vi.fn(),
-}));
-
-vi.mock("@/designer/operate-provider/EventOperateStore.ts", () => ({
-    default: {
-        get targetIds() {
-            return storeMocks.targetIds;
-        },
-        get selectionSource() {
-            return storeMocks.selectionSource;
-        },
-        setTargetIds: storeMocks.setTargetIds,
-        interactionRef: {
-            refreshOverlay: storeMocks.refreshOverlay,
-            refreshLayerGeometry: storeMocks.refreshLayerGeometry,
-        },
-        focusDesignerCanvas: storeMocks.focusDesignerCanvas,
-    },
-}));
-
-vi.mock("@/designer/operate-provider/undo-redo/HistoryRecordOperateProxy.ts", () => ({
-    default: historyMocks,
-}));
-
-vi.mock("@/designer/operate-provider/undo-redo/HistoryOperator.ts", () => ({
-    historyOperator: {put: externalMocks.putHistory},
-}));
-
-vi.mock("@/designer/right/RightStore.ts", () => ({
-    default: {
-        activeElem: {id: null},
-        setContentVisible: vi.fn(),
-        activeConfig: vi.fn(),
-    },
-}));
-
-vi.mock("@/designer/left/global-variable/parse/ComponentDataGvParser.ts", () => ({
-    default: {
-        bindConfigToGvById: externalMocks.bindConfigToGvById,
-        unbindFromGv: externalMocks.unbindFromGv,
-    },
 }));
 
 vi.mock("@/util/TextUtil.ts", () => ({
@@ -78,16 +29,7 @@ vi.mock("@datavisool/ui", () => ({
     globalMessage: {messageApi: {success: vi.fn()}},
 }));
 
-import {
-    doClone,
-    doCopy,
-    doDelete,
-    doHide,
-    doLock,
-    groupLeftAligned,
-    resolveSelectedCommandTargetIds,
-    selectAll,
-} from "@/designer/operate-provider/selection/SelectionCommands.ts";
+import {createSelectionCommands} from "@/plugins/editor-canvas/selection/SelectionCommands.ts";
 
 const createLayers = (): Record<string, ILayerItem> => ({
     group: {id: "group", type: "group", order: 1},
@@ -100,119 +42,154 @@ const createLayers = (): Record<string, ILayerItem> => ({
 
 describe("SelectionCommands", () => {
     let layers: Record<string, ILayerItem>;
+    let selection: {ids: string[]; source: SelectionSource};
+    let scene: DesignerEditingScene;
+    let commands: ReturnType<typeof createSelectionCommands>;
+    let deletedLayerSnapshots: ILayerItem[];
     const reRenderLayer = vi.fn();
-    const delNodeEveryPage = vi.fn();
-    const delItem = vi.fn((ids: string[]) => ids.forEach((id) => delete layers[id]));
+    const identity = {};
+    const sceneChange = {
+        sceneIdentity: identity,
+        sceneVersion: 1,
+        pageIds: [],
+        rollback: vi.fn(() => true),
+        undo: vi.fn(() => true),
+        redo: vi.fn(() => true),
+    };
+    const eventOperateStore = {
+        get targetIds() { return selection.ids; },
+        get selectionSource() { return selection.source; },
+        setTargetIds: vi.fn((ids: readonly string[], source: SelectionSource = "system") => {
+            selection = {ids: [...ids], source};
+        }),
+        interactionRef: {
+            refreshOverlay: vi.fn(),
+            refreshLayerGeometry: vi.fn(),
+        },
+    };
+
+    const select = (ids: string[], source: SelectionSource = "canvas") => { selection = {ids, source}; };
 
     beforeEach(() => {
         vi.clearAllMocks();
         vi.useRealTimers();
         layers = createLayers();
-        storeMocks.targetIds = [];
-        storeMocks.selectionSource = "canvas";
-        (window as any).DATAVISOOL_ENV = {
-            currentManager: {
-                layerManager: {
-                    layerConfigs: layers,
-                    controllers: {
-                        childA: {getConfig: () => ({kind: "a"})},
-                        childB: {getConfig: () => ({kind: "b"})},
-                    },
-                    reRenderLayer,
-                    delItem,
-                    layerHeader: "group",
-                    layerTail: "hidden",
-                },
-                bluePrintManager: {
-                    currentPageManager: {bpNodeLayoutMap: {childA: {}}},
-                    delNodeEveryPage,
-                },
+        selection = {ids: [], source: "canvas"};
+        deletedLayerSnapshots = [];
+        sceneChange.rollback.mockClear();
+        sceneChange.undo.mockClear();
+        sceneChange.redo.mockClear();
+
+        scene = {
+            identity,
+            version: 1,
+            isActive: () => true,
+            readLayerConfigs: () => layers,
+            layers: {
+                read: () => ({sceneIdentity: identity, sceneVersion: 1, canvas: {width: 1280, height: 720},
+                    layers, configs: {childA: {kind: "a"}, childB: {kind: "b"}}}),
             },
-        };
+            blueprints: {
+                removeNodes: vi.fn(() => sceneChange),
+            },
+        } as unknown as DesignerEditingScene;
+
+        historyMocks.doClone.mockImplementation(() => {
+            layers.cloneGroup = {id: "cloneGroup", type: "group", order: 7};
+            layers.cloneChild = {id: "cloneChild", type: "rect", pid: "cloneGroup", order: 8};
+            return ["cloneGroup", "cloneChild"];
+        });
+        historyMocks.doDelete.mockImplementation((ids: string[]) => {
+            deletedLayerSnapshots = ids.map(id => ({...layers[id]}));
+            ids.forEach(id => delete layers[id]);
+        });
+
+        commands = createSelectionCommands({
+            eventOperateStore: eventOperateStore as unknown as EventOperateStore,
+            historyProxy: historyMocks as unknown as HistoryRecordOperateProxy,
+            readScene: () => scene,
+            isActive: () => true,
+        });
     });
 
-    afterEach(() => {
-        vi.useRealTimers();
-        delete (window as any).DATAVISOOL_ENV;
-    });
+    afterEach(() => { vi.useRealTimers(); });
 
     test("select all keeps only roots that have a canvas-selectable object", () => {
         layers.childA.lock = true;
         layers.childB.hide = true;
 
-        selectAll();
+        commands.selectAll();
 
-        expect(storeMocks.setTargetIds).toHaveBeenCalledWith(["free"], "canvas");
+        expect(eventOperateStore.setTargetIds).toHaveBeenCalledWith(["free"], "canvas");
+        expect(selection).toEqual({ids: ["free"], source: "canvas"});
     });
 
     test("locked trees require an explicit management selection source", () => {
-        storeMocks.targetIds = ["locked"];
-        expect(resolveSelectedCommandTargetIds()).toEqual([]);
+        select(["locked"]);
+        expect(commands.resolveSelectedCommandTargetIds()).toEqual([]);
 
-        storeMocks.selectionSource = "layer-list";
-        expect(resolveSelectedCommandTargetIds()).toEqual(["locked"]);
+        select(["locked"], "layer-list");
+        expect(commands.resolveSelectedCommandTargetIds()).toEqual(["locked"]);
     });
 
     test("clone, copy, delete and hide all operate on the expanded group tree", async () => {
         vi.useFakeTimers();
-        storeMocks.targetIds = ["group"];
-        storeMocks.selectionSource = "layer-list";
+        select(["group"], "layer-list");
 
-        doClone();
+        commands.doClone();
         expect(historyMocks.doClone).toHaveBeenCalledWith(["group", "childA", "childB"]);
         await vi.advanceTimersByTimeAsync(10);
-        expect(storeMocks.setTargetIds).toHaveBeenCalledWith(["cloneGroup", "cloneChild"], "system");
+        expect(eventOperateStore.setTargetIds).toHaveBeenCalledWith(["cloneGroup", "cloneChild"], "system");
 
-        doCopy();
+        select(["group"], "layer-list");
+        commands.doCopy();
         await Promise.resolve();
         const copied = JSON.parse(externalMocks.copyToClipboard.mock.calls.at(-1)?.[0] as string);
         expect(Object.keys(copied.layers)).toEqual(["group", "childA", "childB"]);
 
-        doHide();
+        commands.doHide();
         expect(historyMocks.doHideUpd).toHaveBeenCalledWith(["group", "childA", "childB"], true);
-        expect(storeMocks.setTargetIds).toHaveBeenLastCalledWith([]);
+        expect(eventOperateStore.setTargetIds).toHaveBeenLastCalledWith([]);
 
-        layers.childB.hide = true;
-        doDelete();
+        select(["group"], "layer-list");
+        commands.doDelete();
         expect(layers.group).toBeUndefined();
         expect(layers.childA).toBeUndefined();
         expect(layers.childB).toBeUndefined();
-        expect(externalMocks.putHistory).toHaveBeenCalledTimes(1);
-        expect(delNodeEveryPage).toHaveBeenCalledWith(["childA"]);
-        expect(externalMocks.unbindFromGv).toHaveBeenCalledWith(["group", "childA", "childB"]);
+        expect(historyMocks.doDelete).toHaveBeenCalledWith(["group", "childA", "childB"]);
+        expect(scene.blueprints.removeNodes).not.toHaveBeenCalled();
+        expect(deletedLayerSnapshots.map(layer => layer.id)).toEqual(["group", "childA", "childB"]);
     });
 
     test("locking expands the tree and retains the canonical selection", () => {
-        storeMocks.targetIds = ["group"];
-        storeMocks.selectionSource = "context-menu";
+        select(["group"], "context-menu");
 
-        doLock();
+        commands.doLock();
 
         expect(historyMocks.doLockUpd).toHaveBeenCalledWith([
             {id: "group", lock: true},
             {id: "childA", lock: true},
             {id: "childB", lock: true},
         ]);
-        expect(storeMocks.setTargetIds).toHaveBeenCalledWith(["group"], "context-menu");
-        expect(storeMocks.refreshOverlay).toHaveBeenCalledTimes(1);
+        expect(eventOperateStore.setTargetIds).toHaveBeenCalledWith(["group"], "context-menu");
+        expect(eventOperateStore.interactionRef.refreshOverlay).toHaveBeenCalledTimes(1);
     });
 
-    test("explicit management deletion removes a hidden layer and records its hidden state", () => {
-        storeMocks.targetIds = ["hidden"];
-        storeMocks.selectionSource = "layer-list";
+    test("explicit management deletion removes a hidden layer and passes its hidden DTO to history", () => {
+        select(["hidden"], "layer-list");
 
-        doDelete();
+        commands.doDelete();
 
         expect(layers.hidden).toBeUndefined();
-        const record = externalMocks.putHistory.mock.calls[0][0];
-        expect(record.actions[0].prev[0].layerConfig.hide).toBe(true);
+        expect(deletedLayerSnapshots).toEqual([expect.objectContaining({id: "hidden", hide: true})]);
+        expect(historyMocks.doDelete).toHaveBeenCalledWith(["hidden"]);
+        expect(scene.blueprints.removeNodes).not.toHaveBeenCalled();
     });
 
     test("alignment treats a group as one object and excludes locked objects", () => {
-        storeMocks.targetIds = ["group", "free", "locked"];
-        storeMocks.selectionSource = "layer-list";
+        select(["group", "free", "locked"], "layer-list");
 
-        groupLeftAligned();
+        commands.groupLeftAligned();
 
         expect(historyMocks.doDrag).toHaveBeenCalledWith([
             {id: "childA", x: 10, y: 10},
@@ -220,6 +197,6 @@ describe("SelectionCommands", () => {
             {id: "free", x: 10, y: 20},
         ]);
         expect(historyMocks.doDrag.mock.calls[0][0].some((item: {id: string}) => item.id === "locked")).toBe(false);
-        expect(storeMocks.refreshLayerGeometry).toHaveBeenCalledWith(["childA", "childB", "free"]);
+        expect(eventOperateStore.interactionRef.refreshLayerGeometry).toHaveBeenCalledWith(["childA", "childB", "free"]);
     });
 });

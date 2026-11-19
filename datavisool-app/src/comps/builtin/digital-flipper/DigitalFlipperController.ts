@@ -7,7 +7,7 @@
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import DigitalFlipperComponent, {DigitalFlipperComponentProps, DigitalFlipperComponentRef} from "./DigitalFlipperComponent";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import {IThemeItem} from "@datavisool/sdk/types";

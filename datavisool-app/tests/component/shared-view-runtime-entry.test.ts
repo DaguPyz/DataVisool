@@ -10,7 +10,7 @@ describe('preview and release component runtime entry', () => {
 
     it('initializes the shared runtime without loading the editor entry', async () => {
         vi.resetModules();
-        await import('@/global/ExportViewGlobalMember');
+        await import('@/plugins/designer-runtime/internal/legacy-global/ExportViewGlobalMember');
         expect(window.DataVisoolSDK.AbstractDesignerController).toBeTypeOf('function');
         expect(window.DataVisoolSDK.ComponentUtil.createAndRender).toBeTypeOf('function');
         expect(window.DataVisoolUI.Button).toBeTypeOf('function');

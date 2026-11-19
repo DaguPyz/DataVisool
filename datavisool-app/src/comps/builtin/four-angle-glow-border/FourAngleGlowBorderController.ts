@@ -7,7 +7,7 @@
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import FourAngleGlowBorder, {FourAngleGlowBorderRef, FourAngleGlowBorderStyle} from "./FourAngleGlowBorder";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import {ComponentInfoType} from "@datavisool/sdk/types";

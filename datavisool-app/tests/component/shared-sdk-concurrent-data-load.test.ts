@@ -2,7 +2,8 @@
 import {waitFor} from '@testing-library/react';
 import {expect, it, vi} from 'vitest';
 import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 class Controller extends AbstractDesignerController<unknown, any> {
     changeData = vi.fn();
@@ -13,9 +14,15 @@ class Controller extends AbstractDesignerController<unknown, any> {
 it('loads data for multiple components that start at the same time', async () => {
     const first = new Controller();
     const second = new Controller();
+    const manager = {isRuntimeEffectActive: () => true} as any;
     const executor = new BPExecutor({} as any);
     await first.create(document.createElement('div'), {data: {sourceType: 'static', staticData: {value: 'first'}}}, executor);
     await second.create(document.createElement('div'), {data: {sourceType: 'static', staticData: {value: 'second'}}}, executor);
+    const attachUpdater = (controller: Controller) => controller.setRuntimeDataAdapter({
+        createUpdater: (success, fail) => new ComponentDataUpdater(success, fail, manager),
+    });
+    attachUpdater(first);
+    attachUpdater(second);
     try {
         first.loadComponentData();
         second.loadComponentData();

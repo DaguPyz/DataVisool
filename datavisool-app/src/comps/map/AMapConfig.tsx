@@ -6,7 +6,7 @@
 
 import React, {useRef} from 'react';
 import {AMapController} from "./AMapController.ts";
-import {ConfigType} from "../../designer/right/ConfigContent.tsx";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";
 

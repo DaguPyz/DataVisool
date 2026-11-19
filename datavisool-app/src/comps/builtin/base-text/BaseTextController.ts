@@ -9,16 +9,24 @@ import AbstractDesignerController from "../../../framework/core/AbstractDesigner
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import BaseTextComponent, {BaseTextComponentProps, BaseTextComponentRef} from "./BaseTextComponent";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {URLUtil} from "@datavisool/sdk";
 import {DesignerMode} from "@datavisool/sdk/types";
 import {IThemeItem} from "@datavisool/sdk/types";
 
 export class BaseTextController extends AbstractDesignerController<BaseTextComponentRef, BaseTextComponentProps> {
+    private baseTextContentAction?: (value: string) => boolean;
+
+    setBaseTextContentAction(action: ((value: string) => boolean) | undefined): void {
+        this.baseTextContentAction = action;
+    }
 
     async create(container: HTMLElement, config: BaseTextComponentProps, bpExecutor: BPExecutor, index?: number): Promise<void> {
         await super.create(container, config, bpExecutor, index);
-        this.instance = await ComponentUtil.createAndRender<BaseTextComponentRef>(container, BaseTextComponent, config);
+        this.instance = await ComponentUtil.createAndRender<BaseTextComponentRef>(container, BaseTextComponent, {
+            ...config,
+            onEditBaseText: (value: string) => this.baseTextContentAction?.(value) ?? false,
+        });
         if (!this.instance || this.container !== container) return;
         const {mode} = URLUtil.parseUrlParams();
         //基础文本在编辑模式下放开事件，以实现双击直接进入编辑状态
@@ -27,6 +35,7 @@ export class BaseTextController extends AbstractDesignerController<BaseTextCompo
     }
 
     destroy(): void {
+        this.baseTextContentAction = undefined;
         this.instance = null;
         this.config = null;
         super.destroy();

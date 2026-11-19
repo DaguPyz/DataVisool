@@ -22,15 +22,14 @@ vi.hoisted(() => {
     }, configurable: true});
 });
 
-import ScreenReferenceComponent from '@/comps/builtin/screen-reference/ScreenReferenceComponent';
-import DesignerLoader from '@/designer/loader/DesignerLoader';
-import ReleaseDesignerLoader from '@/designer/loader/ReleaseDesignerLoader';
-import DesignerManager from '@/designer/manager/DesignerManager';
-import BPGlobalVariableNodeController from '@/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
+import ScreenReferenceComponent from '@/plugins/designer-runtime/internal/builtin/screen-reference/ScreenReferenceComponent';
+import ReleaseDesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/ReleaseDesignerLoader';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
+import BPGlobalVariableNodeController from '@/plugins/designer-runtime/internal/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
-const originalDefinitions = {...DesignerLoader.definitionMap};
-const originalBlueprintControllers = {...DesignerLoader.bpControllerMap};
+let runtimeContext: DesignerRuntimeContext | null = null;
 const output = (source: string, event: string) => `${source}:${event}:${AnchorPointType.OUTPUT}`;
 const input = (node: string, action: string) => `${node}:${action}:${AnchorPointType.INPUT}`;
 
@@ -40,10 +39,8 @@ afterEach(async () => {
         await Promise.resolve();
     });
     state.releaseData = null;
-    Object.keys(DesignerLoader.definitionMap).forEach(key => delete DesignerLoader.definitionMap[key]);
-    Object.assign(DesignerLoader.definitionMap, originalDefinitions);
-    Object.keys(DesignerLoader.bpControllerMap).forEach(key => delete DesignerLoader.bpControllerMap[key]);
-    Object.assign(DesignerLoader.bpControllerMap, originalBlueprintControllers);
+    runtimeContext?.dispose();
+    runtimeContext = null;
     if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
     else delete (window as any).DATAVISOOL_ENV;
     vi.restoreAllMocks();
@@ -51,8 +48,9 @@ afterEach(async () => {
 
 it('runs a published referenced page with its own global variables and blueprint executor', async () => {
     const {default: BaseTextDefinition} = await import('@/comps/builtin/base-text/BaseTextDefinition');
-    DesignerLoader.definitionMap.BaseText = new BaseTextDefinition();
-    DesignerLoader.bpControllerMap.BPGlobalVariableNode = BPGlobalVariableNodeController;
+    runtimeContext = new DesignerRuntimeContext();
+    runtimeContext.registry.definitions.BaseText = new BaseTextDefinition();
+    runtimeContext.registry.blueprintControllers.BPGlobalVariableNode = BPGlobalVariableNodeController as never;
 
     const pageB = {
         id: 'page-b',
@@ -90,22 +88,26 @@ it('runs a published referenced page with its own global variables and blueprint
         dataJson: JSON.stringify({projectJson: JSON.stringify(pageB), dynamicScripts: [], components: [], fonts: []}),
     };
 
-    const pageAManager = new DesignerManager(DesignerScene.DEFAULT);
+    const parentLoader = new ReleaseDesignerLoader(DesignerMode.RELEASE, runtimeContext);
+    const pageAManager = parentLoader.designerManager;
     pageAManager.init({
         globalVariableManager: {globalVariables: {
             'shared-source': {id: 'shared-source', key: 'message', value: 'from parent page A', bindTarget: [], reRender: false},
             result: {id: 'result', key: 'result', value: 'A result initial', bindTarget: [], reRender: false},
         }},
     } as any, DesignerMode.RELEASE);
-    new ReleaseDesignerLoader(DesignerMode.RELEASE).initializeRuntimeEnv('page-a', pageAManager);
+    parentLoader.initializeRuntimeEnv('page-a', pageAManager);
 
     expect(window.DATAVISOOL_ENV.currentManager).toBe(pageAManager);
-    render(<ScreenReferenceComponent base={{id: 'reference-b'} as any} style={{screenId: 'page-b'}}/>);
+    const managerInit = vi.spyOn(DesignerManager.prototype, 'init');
+    render(<ScreenReferenceComponent runtimeContext={runtimeContext} base={{id: 'reference-b'} as any} style={{screenId: 'page-b'}}/>);
 
     await waitFor(() => expect(screen.getByText('from published page B')).toBeInTheDocument());
-    const pageBManager = window.DATAVISOOL_ENV.managers['reference-b'] as DesignerManager;
+    const pageBManager = managerInit.mock.instances.find(manager => manager !== pageAManager) as DesignerManager;
     expect(pageBManager).toBeDefined();
     expect(pageBManager).not.toBe(pageAManager);
+    expect(pageBManager.runtimeContext).toBe(runtimeContext);
+    expect(pageAManager.runtimeContext).toBe(runtimeContext);
     expect(window.DATAVISOOL_ENV.currentManager).toBe(pageAManager);
     await waitFor(() => expect(pageBManager.globalVariableManager.globalVariableInstance.result.value).toBe('from published page B'));
 

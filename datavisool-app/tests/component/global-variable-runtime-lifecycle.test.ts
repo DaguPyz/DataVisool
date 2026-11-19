@@ -6,7 +6,7 @@ const updaterState = vi.hoisted(() => ({
     instances: [] as Array<{run: ReturnType<typeof vi.fn>, destroy: ReturnType<typeof vi.fn>}>,
     runHook: null as null | ((success: (value: unknown) => void, config: any) => void),
 }));
-vi.mock('@/framework/core/tools/ComponentDataUpdater.ts', () => ({
+vi.mock('@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater.ts', () => ({
     default: class {
         success: (value: unknown) => void;
         run = vi.fn((config: any) => updaterState.runHook?.(this.success, config));
@@ -18,9 +18,9 @@ vi.mock('@/framework/core/tools/ComponentDataUpdater.ts', () => ({
     },
 }));
 
-import GlobalVariable from '@/designer/left/global-variable/GlobalVariable';
-import GlobalVariableManager from '@/designer/manager/GlobalVariableManager';
-import EventUtil from '@/designer/blueprint/util/EventUtil';
+import GlobalVariable from '@/plugins/designer-runtime/internal/designer/left/global-variable/GlobalVariable';
+import GlobalVariableManager from '@/plugins/designer-runtime/internal/designer/manager/GlobalVariableManager';
+import EventUtil from '@/plugins/designer-runtime/internal/designer/blueprint/util/EventUtil';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 afterEach(() => {
@@ -41,6 +41,8 @@ it('restarting a manager replaces global-variable updaters and manager destructi
     const globalVariableManager = new GlobalVariableManager();
     globalVariableManager.globalVariableInstance = {'global-1': variable};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {}, controllers: {}},
         bluePrintManager: {bpPageMangers: []},
         globalVariableManager,
@@ -72,10 +74,16 @@ it('does not start later bound targets when an updater synchronously destroys th
     const secondChangeData = vi.fn();
     const firstController = {getConfig: () => ({data: {target: 'first'}}), changeData: firstChangeData};
     const secondController = {getConfig: () => ({data: {target: 'second'}}), changeData: secondChangeData};
+    const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
+        globalVariableManager,
+        layerManager: {controllers: {}},
+    } as any;
     const executor = {triggerComponentEvent: vi.fn()} as any;
     const variable = new GlobalVariable('global-2', 'reading', null, true, ['first', 'second']);
     globalVariableManager.globalVariableInstance = {'global-2': variable};
-    variable.start({controllers: {first: firstController, second: secondController} as any}, executor);
+    variable.start({controllers: {first: firstController, second: secondController} as any, manager}, executor);
     updaterState.runHook = (success, config) => {
         if (config.target === 'first') success('updated');
     };

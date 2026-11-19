@@ -4,10 +4,11 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import type {DesignerSessionFactory} from '@datavisool/sdk/plugin/contracts/designerRuntime';
 import {URLUtil} from "@datavisool/sdk";
-import DesignerView from "../../designer/view/DesignerView.tsx";
+import DesignerView from "./DesignerView.tsx";
 
-export default function DesignerViewPage() {
+export default function DesignerViewPage({createSession}: {createSession: DesignerSessionFactory}) {
     const {id} = URLUtil.parseUrlParams();
-    return <DesignerView id={id}/>
+    return <DesignerView key={id} id={id} createSession={createSession}/>
 }

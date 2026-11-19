@@ -4,7 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {MenuInfo} from "../../../designer/right/MenuType";
+import type {MenuInfo} from "@datavisool/sdk/core";
 import DateTimeImg from './date-time.webp';
 import {DateTimeController} from "./DateTimeController.ts";
 import {DateTimeComponentProps, FormatType} from "./DateTimeComponent.tsx";

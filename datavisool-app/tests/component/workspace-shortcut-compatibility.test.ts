@@ -1,14 +1,14 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, test} from 'vitest';
-import {codeBinding, modifierBinding} from '@/designer/operate-provider/hot-key/ShortcutRegistry.ts';
-import {ShortcutStore} from '@/designer/operate-provider/hot-key/ShortcutStore.ts';
-import type {ShortcutPersistence} from '@/designer/operate-provider/hot-key/ShortcutPersistence.ts';
+import {codeBinding, modifierBinding} from '@/plugins/editor-shortcuts/core/ShortcutRegistry.ts';
+import {ShortcutStore} from '@/plugins/editor-shortcuts/core/ShortcutStore.ts';
+import type {ShortcutPersistence} from '@/plugins/editor-shortcuts/core/ShortcutPersistence.ts';
 import {
     SHORTCUT_ACTION_IDS,
     type ShortcutActionId,
     type ShortcutBinding,
     type ShortcutPreferencesV1,
-} from '@/designer/operate-provider/hot-key/ShortcutTypes.ts';
+} from '@datavisool/sdk/plugin/contracts/editorShortcuts';
 
 class MemoryShortcutPersistence implements ShortcutPersistence {
     constructor(private preferences: ShortcutPreferencesV1 | null = null) {}

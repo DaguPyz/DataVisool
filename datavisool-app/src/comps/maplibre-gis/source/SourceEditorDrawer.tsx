@@ -8,6 +8,10 @@ import {parseJsonOrThrow, safeJsonStringify} from '@/comps/maplibre-gis/layer/la
 import {sourceTypeOptions} from './sourceUtils.ts';
 import {normalizeDataConfigAsync} from '@/util/DataSourceConfigUtil.ts';
 import './SourceEditorDrawer.less';
+import {useEditorScene} from '@/shared/designer/EditorWorkspaceContext.ts';
+
+const passthrough = <T,>(config: T) => config;
+const ignoreTestResult = (_data: unknown) => undefined;
 import {
     MapLibreButton as Button,
     MapLibreDrawer as Drawer,
@@ -50,6 +54,7 @@ const toLineText = (arr?: string[]) => {
 };
 
 const SourceEditorDrawer: React.FC<SourceEditorDrawerProps> = ({open, source, onClose, onSave}) => {
+    const scene = useEditorScene();
     const [draft, setDraft] = useState<StructuredSourceConfig | null>(null);
     const [dataJsonText, setDataJsonText] = useState('');
     const [tilesText, setTilesText] = useState('');
@@ -286,6 +291,14 @@ const SourceEditorDrawer: React.FC<SourceEditorDrawerProps> = ({open, source, on
                                                 staticData: {value: {}},
                                                 value: {}
                                             }) as DataConfigType}
+                                            globalVariableOptions={(scene?.variables.list() ?? []).map(item => ({label: item.key, value: item.id}))}
+                                            readGlobalVariableValue={id => scene?.variables.read(id)?.value}
+                                            apiTestBefore={passthrough} apiTestAfter={ignoreTestResult}
+                                            commonApiTestBefore={passthrough} commonApiTestAfter={ignoreTestResult}
+                                            databaseTestBefore={passthrough} databaseTestAfter={ignoreTestResult}
+                                            globalVariableTestBefore={passthrough} globalVariableTestAfter={ignoreTestResult}
+                                            wsTestBefore={passthrough} wsTestAfter={ignoreTestResult}
+                                            mqttTestBefore={passthrough} mqttTestAfter={ignoreTestResult}
                                             onSave={async (cfg) => {
                                                 const currentDataConfig = (draft as any)?.dataConfig ?? {sourceType: 'static'};
                                                 const normalizedConfig = await normalizeDataConfigAsync(currentDataConfig, cfg as Record<string, any>);

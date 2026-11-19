@@ -666,7 +666,7 @@ export default class ProjectUtil {
      * 计算单个项目 JSON 内的静态资源依赖。
      * 该扫描会递归进入循环容器中的嵌套 managerData。
      */
-    private static collectStaticProjectDependencies(projectData: IDesignerManager) {
+    private static collectStaticProjectDependencies(projectData: IDesignerManager, remoteComponentPaths?: Readonly<Record<string, string>>) {
         const fonts = new Set<string>();
         const images = new Set<string>();
         const components = new Set<string>();
@@ -718,15 +718,11 @@ export default class ProjectUtil {
                     }
                 }
 
-                const definition = window.DATAVISOOL_ENV.definitions && window.DATAVISOOL_ENV.definitions[item.base.type];
-
-                if (definition && definition.getBaseInfo().source === "remote") {
-                    const remoteScript = window.DATAVISOOL_ENV.remoteScripts?.[item.base.type];
-                    if (remoteScript) {
-                        const script = remoteScript.script;
-                        const key = ProjectUtil.extractAfterMarker(script, '/static/components/');
-                        if (key) components.add(key);
-                    }
+                const type = item.base.type;
+                const script = remoteComponentPaths?.[type];
+                if (script) {
+                    const key = ProjectUtil.extractAfterMarker(script, '/static/components/');
+                    if (key) components.add(key);
                 }
 
                 if (item.base.type === "LoopContainer") {
@@ -756,10 +752,11 @@ export default class ProjectUtil {
     public static calculateProjectDependencyByProject(
         projectId: string,
         projectName: string,
-        projectData: IDesignerManager
+        projectData: IDesignerManager,
+        remoteComponentPaths?: Readonly<Record<string, string>>,
     ): ProjectDependencyPayload {
         ProjectUtil.validateProjectResourcePaths(projectData);
-        const staticDeps = ProjectUtil.collectStaticProjectDependencies(projectData);
+        const staticDeps = ProjectUtil.collectStaticProjectDependencies(projectData, remoteComponentPaths);
         return {
             id: projectId,
             name: projectName,
@@ -820,7 +817,7 @@ export default class ProjectUtil {
     public static async calculateProjectGraphDependency(
         entryProjectId: string,
         entryProjectData: IDesignerManager,
-        options: ProjectGraphBuildOptions & {entryProjectName?: string} = {}
+        options: ProjectGraphBuildOptions & {entryProjectName?: string; remoteComponentPaths?: Readonly<Record<string, string>>} = {},
     ): Promise<ProjectGraphDependencyPayload> {
         const normalizedEntryId = ProjectUtil.normalizeProjectId(entryProjectId);
         if (!normalizedEntryId) {
@@ -858,7 +855,7 @@ export default class ProjectUtil {
         const databaseIds = new Set<string>();
 
         const projects = graph.nodes.map((node) => {
-            const dependency = ProjectUtil.calculateProjectDependencyByProject(node.id, node.name, node.data);
+            const dependency = ProjectUtil.calculateProjectDependencyByProject(node.id, node.name, node.data, options.remoteComponentPaths);
             dependency.fonts.forEach((item) => fonts.add(item));
             dependency.images.forEach((item) => images.add(item));
             dependency.videos.forEach((item) => videos.add(item));
@@ -889,22 +886,14 @@ export default class ProjectUtil {
     }
 
     /**
-     * 计算导出项目所需的依赖清单。
-     * 结果既包含静态资源依赖，也包含运行时数据源依赖，供导出接口直接打包使用。
-     */
-    public static calculateProjectDependency(projectData: IDesignerManager) {
-        return ProjectUtil.calculateProjectDependencyByProject(
-            window.DATAVISOOL_ENV.projectId,
-            document.title,
-            projectData
-        );
-    }
-
-    /**
      * 递归计算项目发布所需依赖项。
      * 主要用于大屏引用场景，把被引用项目的静态资源与项目 JSON 一并纳入发布依赖。
      */
-    public static async cyclicBuildReleaseDependencies(project: IProject, dependencies: Array<any>) {
+    public static async cyclicBuildReleaseDependencies(
+        project: IProject,
+        dependencies: ProjectDependencyPayload[],
+        {signal, remoteComponentPaths}: {signal?: AbortSignal; remoteComponentPaths?: Readonly<Record<string, string>>} = {},
+    ) {
         const completed = new Set(dependencies.map(item => ProjectUtil.normalizeProjectId(item?.id)).filter(Boolean));
         const visiting = new Set<string>();
         const pending: Array<any> = [];
@@ -919,7 +908,8 @@ export default class ProjectUtil {
             for (const screenId of screenIds) {
                 if (visiting.has(screenId)) throw new Error(`大屏引用存在循环：${screenId}`);
                 if (completed.has(screenId)) continue;
-                const child = await baseApi.getProjectData(screenId);
+                const child = await baseApi.getProjectData(screenId, {signal});
+                if (signal?.aborted) throw new DOMException('Release dependency loading was aborted.', 'AbortError');
                 if (!child || ProjectUtil.normalizeProjectId(child.id) !== screenId || !child.data)
                     throw new Error(`引用的大屏不存在或无法读取：${screenId}`);
                 await visit(child);
@@ -940,7 +930,7 @@ export default class ProjectUtil {
                 Object.values(item).forEach(replaceReferences);
             };
             replaceReferences(releaseData);
-            pending.push(ProjectUtil.calculateProjectDependencyByProject(id, current.name ?? id, releaseData));
+            pending.push(ProjectUtil.calculateProjectDependencyByProject(id, current.name ?? id, releaseData, remoteComponentPaths));
             visiting.delete(id);
             completed.add(id);
         };

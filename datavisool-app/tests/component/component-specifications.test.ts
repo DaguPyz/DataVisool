@@ -1,13 +1,13 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {beforeEach, describe, expect, test, vi} from "vitest";
 const mocks = vi.hoisted(() => ({catalog: vi.fn(), post: vi.fn()}));
-vi.mock("@/frontend-effect/tools/GetComponentCatalogTool.ts", () => ({
+vi.mock("@/plugins/editor-ai/frontend-effect/tools/GetComponentCatalogTool.ts", () => ({
     runGetComponentCatalogTool: mocks.catalog,
     getLoadedComponentCatalogEntries: () => mocks.catalog().components,
 }));
 vi.mock("@/util/AuthFetchUtil.ts", () => ({default: {postOrThrow: mocks.post}}));
-import {runResolveComponentSpecsTool, runGetComponentDocumentTool, runSearchComponentDocumentsTool} from "@/frontend-effect/tools/ComponentDocumentationTools.ts";
-import {assertComponentDocumentVersions} from "@/frontend-effect/component-docs/ComponentDocumentVersions.ts";
+import {runResolveComponentSpecsTool, runGetComponentDocumentTool, runSearchComponentDocumentsTool} from "@/plugins/editor-ai/frontend-effect/tools/ComponentDocumentationTools.ts";
+import {assertComponentDocumentVersions} from "@/plugins/editor-ai/frontend-effect/component-docs/ComponentDocumentVersions.ts";
 
 const info = {componentType: "BaseText", source: "builtin", componentVersion: "version", sha256: "hash"};
 beforeEach(() => {

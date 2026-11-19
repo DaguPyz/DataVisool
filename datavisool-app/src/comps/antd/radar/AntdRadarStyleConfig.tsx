@@ -4,7 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {ConfigType} from "@/designer/right/ConfigContent.tsx";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {AntdCartesianCoordinateSys} from "@/comps/antd-common/config/AntdFragment.tsx";
 import {LineOptions, ShapeStyle} from "@antv/g2plot";
 import AntdRadarController from "./AntdRadarController.ts";

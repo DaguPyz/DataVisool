@@ -9,7 +9,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {IThemeItem} from "@datavisool/sdk/types";
 
 export class DateTimePickerController extends AbstractDesignerController<DateTimePickerComponentRef, DateTimePickerComponentProps> {

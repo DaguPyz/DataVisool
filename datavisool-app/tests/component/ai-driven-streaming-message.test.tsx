@@ -5,9 +5,11 @@ import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
 vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
 
-import AiDrivenStreamingMessage from "@/designer/ai-driven/AiDrivenStreamingMessage.tsx";
-import AiDrivenProgressTerminal from "@/designer/ai-driven/AiDrivenProgressTerminal.tsx";
-import aiDrivenProgressTerminalStore from "@/designer/ai-driven/AiDrivenProgressTerminalStore.ts";
+import AiDrivenStreamingMessage from "@/plugins/editor-ai/AiDrivenStreamingMessage.tsx";
+import AiDrivenProgressTerminal from "@/plugins/editor-ai/AiDrivenProgressTerminal.tsx";
+import {AiDrivenProgressTerminalStore} from "@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts";
+
+const terminalStore = new AiDrivenProgressTerminalStore();
 
 describe("AI driven streaming message", () => {
     let nextFrameId = 0;
@@ -30,7 +32,7 @@ describe("AI driven streaming message", () => {
 
     afterEach(() => {
         cleanup();
-        aiDrivenProgressTerminalStore.reset();
+        terminalStore.reset();
         requestFrameSpy.mockRestore();
         cancelFrameSpy.mockRestore();
     });
@@ -106,12 +108,12 @@ describe("AI driven streaming message", () => {
             createdAt: 1,
         };
         const message = "同一轮询批次中的完整回复";
-        aiDrivenProgressTerminalStore.applyTaskEvent({
+        terminalStore.applyTaskEvent({
             ...baseEvent,
             kind: "item.delta",
             payload: {itemId: "message-1", itemType: "agentMessage", delta: message},
         });
-        aiDrivenProgressTerminalStore.applyTaskEvent({
+        terminalStore.applyTaskEvent({
             ...baseEvent,
             eventId: "event-2",
             sequence: 2,
@@ -127,9 +129,9 @@ describe("AI driven streaming message", () => {
                 },
             },
         });
-        aiDrivenProgressTerminalStore.setVisible(true);
+        terminalStore.setVisible(true);
 
-        render(<AiDrivenProgressTerminal/>);
+        render(<AiDrivenProgressTerminal store={terminalStore}/>);
 
         expect(screen.getByText("正在回复")).toBeInTheDocument();
         expect(screen.queryByText(message)).toBeNull();

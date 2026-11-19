@@ -9,6 +9,9 @@ export const docsRoot = process.env.DATAVISOOL_COMPONENT_DOCS_ROOT
     ? resolve(process.env.DATAVISOOL_COMPONENT_DOCS_ROOT) : resolve(appRoot, '../datavisool-server/datavisool-service/target/component-docs');
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
 const MAX_DOCUMENT_BYTES = 256 * 1024;
+const defaultComponentSource = join(appRoot, 'src/comps');
+const runtimeComponentSource = join(appRoot, 'src/plugins/designer-runtime/internal/builtin');
+export const componentSourceRoots = Object.freeze([defaultComponentSource, runtimeComponentSource]);
 const excluded = new Set(['G2PlotCustom', 'ECharts', 'AMap', 'MapLibreGis', 'LoopContainer']);
 const walk = dir => readdirSync(dir, {withFileTypes: true}).flatMap(entry =>
     entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)]);
@@ -94,10 +97,16 @@ function atomicWrite(path, value) {
     renameSync(temp, path);
 }
 
-export function generateComponentDocs({sourceRoot = join(appRoot, 'src/comps'), outputRoot = docsRoot,
-    summaryFile = join(appRoot, 'src/designer/ai-driven/generated/component-document-index.json'),
-    fragmentFile = join(appRoot, 'src/frontend-effect/component-docs/G2Plot公共配置分块说明.md')} = {}) {
-    const files = walk(sourceRoot), documents = [];
+export function generateComponentDocs({sourceRoot = defaultComponentSource,
+    additionalSourceRoots = resolve(sourceRoot) === defaultComponentSource ? [runtimeComponentSource] : [], outputRoot = docsRoot,
+    summaryFile = join(appRoot, 'src/plugins/designer-runtime/internal/catalog/generated/component-document-index.json'),
+    fragmentFile = join(appRoot, 'src/plugins/editor-ai/frontend-effect/component-docs/G2Plot公共配置分块说明.md')} = {}) {
+    const fileRoots = new Map();
+    for (const root of new Set([sourceRoot, ...additionalSourceRoots].map(value => resolve(value)))) {
+        if (root !== resolve(sourceRoot) && !existsSync(root)) continue;
+        for (const file of walk(root)) if (!fileRoots.has(file)) fileRoots.set(file, root);
+    }
+    const files = [...fileRoots.keys()], documents = [];
     for (const path of files.filter(p => p.endsWith('.md'))) {
         const content = readFileSync(path, 'utf8');
         if (!/^## 组件标识\s*$/m.test(content)) continue;
@@ -108,7 +117,8 @@ export function generateComponentDocs({sourceRoot = join(appRoot, 'src/comps'), 
             throw new Error(`组件类型与 Definition 不一致：${path}`);
         if (documents.some(d => d.componentType === doc.componentType)) throw new Error(`组件文档类型重复：${doc.componentType}`);
         const implementation = files.filter(p => p.startsWith(dirname(path) + sep) && /\.(tsx?|json|less|css)$/.test(p)).sort();
-        const componentVersion = sha256(implementation.map(p => `${p.slice(sourceRoot.length).replaceAll('\\', '/')}\0${sha256(readFileSync(p))}`).join('\0'));
+        const ownerRoot = fileRoots.get(path);
+        const componentVersion = sha256(implementation.map(p => `${p.slice(ownerRoot.length).replaceAll('\\', '/')}\0${sha256(readFileSync(p))}`).join('\0'));
         documents.push({...doc, content, componentVersion});
     }
     // 向 Agent 开放的注册组件必须有规格；其余组件可以只有选择章节。

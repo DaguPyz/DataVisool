@@ -5,10 +5,11 @@ import {afterEach, expect, it, vi} from 'vitest';
 import {DesignerMode} from '@datavisool/sdk/types';
 
 const state = vi.hoisted(() => ({definitions: {} as Record<string, any>}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
 
-import GroupLayer from '@/comps/group-layer/GroupLayer';
-import GroupLayerController from '@/comps/group-layer/GroupLayerController';
+import GroupLayer from '@/plugins/designer-runtime/internal/builtin/group-layer/GroupLayer';
+import GroupLayerController from '@/plugins/designer-runtime/internal/builtin/group-layer/GroupLayerController';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 afterEach(() => {
@@ -29,6 +30,8 @@ it('cleans up a group unmounted before initialization finishes and retains its c
     const manager: any = {layerManager: {layerConfigs: {'group-1': layer}, elemConfigs: {'group-1': config}, controllers: {}},
         bpExecutor: {triggerComponentEvent: vi.fn()}};
     state.definitions.group = {getInitConfig: () => ({base: {}})};
+    manager.runtimeContext = new DesignerRuntimeContext();
+    Object.assign(manager.runtimeContext.registry.definitions, state.definitions);
     const view = render(<GroupLayer layer={layer as any} designerManager={manager} index={2}/>);
     expect(manager.layerManager.controllers['group-1_2']).toBeDefined();
     view.unmount();
@@ -46,6 +49,8 @@ it('does not remove a replacement controller when the pending group unmounts', (
     const manager: any = {layerManager: {layerConfigs: {'group-2': layer}, elemConfigs: {}, controllers: {}},
         bpExecutor: {triggerComponentEvent: vi.fn()}};
     state.definitions.group = {getInitConfig: () => ({base: {}})};
+    manager.runtimeContext = new DesignerRuntimeContext();
+    Object.assign(manager.runtimeContext.registry.definitions, state.definitions);
     const view = render(<GroupLayer layer={layer as any} designerManager={manager}/>);
     const replacement = {getConfig: () => ({base: {id: 'group-2'}})};
     manager.layerManager.controllers['group-2'] = replacement;
@@ -62,6 +67,8 @@ it('removes the pending controller if group initialization fails', async () => {
     const manager: any = {layerManager: {layerConfigs: {'group-3': layer}, elemConfigs: {}, controllers: {}},
         bpExecutor: {triggerComponentEvent: vi.fn()}};
     state.definitions.group = {getInitConfig: () => ({base: {type: 'group'}})};
+    manager.runtimeContext = new DesignerRuntimeContext();
+    Object.assign(manager.runtimeContext.registry.definitions, state.definitions);
     await act(async () => { render(<GroupLayer layer={layer as any} designerManager={manager}/>); });
     expect(manager.layerManager.controllers).toEqual({});
     expect(manager.layerManager.elemConfigs['group-3'].base.id).toBe('group-3');

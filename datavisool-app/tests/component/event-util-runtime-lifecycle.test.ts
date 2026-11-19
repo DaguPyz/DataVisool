@@ -10,8 +10,8 @@ vi.hoisted(() => {
         terminate() {}
     }, configurable: true});
 });
-import DesignerManager from '@/designer/manager/DesignerManager';
-import EventUtil from '@/designer/blueprint/util/EventUtil';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
+import EventUtil from '@/plugins/designer-runtime/internal/designer/blueprint/util/EventUtil';
 
 afterEach(() => vi.useRealTimers());
 

@@ -5,10 +5,10 @@ import {afterEach, expect, it, vi} from 'vitest';
 import {AnchorPointType, DesignerMode} from '@datavisool/sdk/types';
 import {BaseButtonController} from '@/comps/builtin/base-button/BaseButtonController';
 import {SwitchController} from '@/comps/builtin/base-switch/BaseSwitchController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext.ts';
 
 const state = vi.hoisted(() => ({definitionMap: {} as Record<string, any>, created: [] as any[], instances: [] as any[], createManagers: [] as any[], loadedManagers: [] as any[]}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitionMap}}));
 vi.mock('@datavisool/ui', () => ({
     Dialog: ({children}: any) => <div>{children}</div>,
     DataVisoolUIProvider: ({children}: any) => <div>{children}</div>,
@@ -16,10 +16,23 @@ vi.mock('@datavisool/ui', () => ({
         onClick={() => onChange(!value)}>Toggle</button>,
 }));
 
-import {ModalWrapper} from '@/designer/blueprint/node/core/impl/popup-box/ModalRenderUtil';
+import {ModalWrapper} from '@/plugins/designer-runtime/internal/designer/blueprint/node/core/impl/popup-box/ModalRenderUtil';
+
+const runtimeContexts: DesignerRuntimeContext[] = [];
+
+function withRuntimeContext(manager: any, definitions: Record<string, unknown> = state.definitionMap): any {
+    const runtimeContext = new DesignerRuntimeContext();
+    Object.assign(runtimeContext.registry.definitions, definitions);
+    manager.runtimeContext = runtimeContext;
+    manager.getRuntimeGeneration ??= () => 0;
+    manager.isRuntimeEffectActive ??= () => true;
+    runtimeContexts.push(runtimeContext);
+    return manager;
+}
 
 afterEach(() => {
     cleanup();
+    runtimeContexts.splice(0).reverse().forEach(context => context.dispose());
     state.created.length = 0;
     state.instances.length = 0;
     state.createManagers.length = 0;
@@ -51,23 +64,23 @@ it('loads popup group children and source configs from the owning project manage
     const ownerSubgroup = {id: 'owner-subgroup', type: 'group', pid: 'group', childHeader: 'owner-widget'};
     const ownerWidget = {id: 'owner-widget', type: 'widget', pid: 'owner-subgroup', order: 1, x: 5, y: 6, width: 20, height: 10};
     const ownerController = {config: {base: {id: 'owner-widget'}, data: {sourceType: 'static', value: 'from-owner'}}};
-    const ownerManager = {
+    const ownerManager = withRuntimeContext({
         layerManager: {
             layerConfigs: {group: ownerGroup, 'owner-subgroup': ownerSubgroup, 'owner-widget': ownerWidget},
             controllers: {'owner-widget': ownerController},
         },
-    } as any;
+    });
 
     const ambientGroup = {id: 'group', type: 'group', childHeader: 'ambient-subgroup'};
     const ambientSubgroup = {id: 'ambient-subgroup', type: 'group', pid: 'group', childHeader: 'ambient-widget'};
     const ambientChild = {id: 'ambient-widget', type: 'widget', pid: 'ambient-subgroup', order: 1, x: 100, y: 200, width: 20, height: 10};
     const ambientController = {config: {base: {id: 'ambient-widget'}, data: {sourceType: 'static', value: 'from-ambient'}}};
-    const ambientManager = {
+    const ambientManager = withRuntimeContext({
         layerManager: {
             layerConfigs: {group: ambientGroup, 'ambient-subgroup': ambientSubgroup, 'ambient-widget': ambientChild},
             controllers: {'owner-widget': {config: {data: {sourceType: 'static', value: 'wrong-project'}}}, 'ambient-widget': ambientController},
         },
-    };
+    }, {});
     (window as any).DATAVISOOL_ENV = {currentManager: ambientManager, mode: 'preview'};
 
     render(<ModalWrapper
@@ -101,13 +114,13 @@ it('loads popup component data in edit mode without registering runtime events',
     state.definitionMap.widget = {getController: () => EditModeController};
     const triggerComponentEvent = vi.fn();
     const config = {base: {id: 'widget'}, data: {sourceType: 'static', value: 1}};
-    const manager: any = {
+    const manager = withRuntimeContext({
         layerManager: {
             layerConfigs: {widget: {id: 'widget', type: 'widget', x: 0, y: 0, width: 10, height: 10}},
             controllers: {widget: {config}},
         },
         bpExecutor: {triggerComponentEvent},
-    };
+    });
     (window as any).DATAVISOOL_ENV = {currentManager: manager, mode: DesignerMode.EDIT};
 
     render(<ModalWrapper options={{nodeId: 'widget'}} designerManager={manager}
@@ -140,7 +153,7 @@ it('routes a real popup button click to the owning project blueprint executor an
     const eventNodeId = 'popup-event-node';
     const clickAnchor = `owner-button:click:${AnchorPointType.OUTPUT}`;
     const nextAnchor = `${eventNodeId}:run:${AnchorPointType.INPUT}`;
-    const ownerManager: any = {
+    const ownerManager = withRuntimeContext({
         id: 'owner-project',
         layerManager: {
             layerConfigs: {group: {id: 'group', type: 'group', childHeader: 'owner-button'}, 'owner-button': buttonLayer},
@@ -153,16 +166,16 @@ it('routes a real popup button click to the owning project blueprint executor an
                 execute: (taskInfo: unknown, params: unknown) => executed.push({taskInfo, params}),
             }},
         }]},
-    };
+    });
     ownerManager.bpExecutor = new BPExecutor(ownerManager);
-    const ambientManager: any = {
+    const ambientManager = withRuntimeContext({
         id: 'ambient-project',
         layerManager: {
             layerConfigs: {group: {id: 'group', type: 'group', childHeader: 'ambient-button'}, 'ambient-button': {...buttonLayer, id: 'ambient-button'}},
             controllers: {'owner-button': {config: {...config, style: {...config.style, content: 'Wrong project'}}}},
         },
         bluePrintManager: {bpPageMangers: []},
-    };
+    }, {});
     (window as any).DATAVISOOL_ENV = {currentManager: ambientManager, mode: 'preview'};
 
     const view = render(<ModalWrapper
@@ -202,7 +215,7 @@ it('routes one popup changeData event through the owning blueprint executor with
     const eventNodeId = 'popup-data-change-node';
     const dataChangeAnchor = `owner-switch:dataChange:${AnchorPointType.OUTPUT}`;
     const nextAnchor = `${eventNodeId}:run:${AnchorPointType.INPUT}`;
-    const ownerManager: any = {
+    const ownerManager = withRuntimeContext({
         layerManager: {
             layerConfigs: {group: {id: 'group', type: 'group', childHeader: 'owner-switch'}, 'owner-switch': layer},
             controllers: {'owner-switch': sourceController},
@@ -214,12 +227,12 @@ it('routes one popup changeData event through the owning blueprint executor with
                 execute: (taskInfo: unknown, params: unknown) => executed.push({taskInfo, params}),
             }},
         }]},
-    };
+    });
     ownerManager.bpExecutor = new BPExecutor(ownerManager);
-    const ambientManager: any = {
+    const ambientManager = withRuntimeContext({
         layerManager: {layerConfigs: {}, controllers: {}},
         bluePrintManager: {bpPageMangers: []},
-    };
+    }, {});
     (window as any).DATAVISOOL_ENV = {currentManager: ambientManager, mode: 'preview'};
 
     render(<ModalWrapper options={{nodeId: 'group'}} designerManager={ownerManager}
@@ -252,13 +265,13 @@ it('skips controller creation when the popup unmounts before its creation task s
         getConfig = vi.fn(() => ({}));
     }
     state.definitionMap.widget = {getController: () => DeferredController};
-    const manager: any = {
+    const manager = withRuntimeContext({
         layerManager: {
             layerConfigs: {widget: {id: 'widget', type: 'widget', x: 0, y: 0, width: 10, height: 10}},
             controllers: {widget: {config: {base: {id: 'widget'}}}},
         },
         bpExecutor: {triggerComponentEvent: vi.fn()},
-    };
+    });
     (window as any).DATAVISOOL_ENV = {currentManager: manager, mode: 'preview'};
 
     const view = render(<ModalWrapper options={{nodeId: 'widget'}} designerManager={manager}
@@ -284,13 +297,13 @@ it('destroys a controller after pending creation resolves following popup unmoun
         getConfig = vi.fn(() => ({}));
     }
     state.definitionMap.widget = {getController: () => DeferredController};
-    const manager: any = {
+    const manager = withRuntimeContext({
         layerManager: {
             layerConfigs: {widget: {id: 'widget', type: 'widget', x: 0, y: 0, width: 10, height: 10}},
             controllers: {widget: {config: {base: {id: 'widget'}}}},
         },
         bpExecutor: {triggerComponentEvent: vi.fn()},
-    };
+    });
     (window as any).DATAVISOOL_ENV = {currentManager: manager, mode: 'preview'};
 
     const view = render(<ModalWrapper options={{nodeId: 'widget'}} designerManager={manager}
@@ -316,13 +329,13 @@ it('contains controller destroy errors during popup cleanup', async () => {
         getConfig = vi.fn(() => ({}));
     }
     state.definitionMap.widget = {getController: () => ThrowingDestroyController};
-    const manager: any = {
+    const manager = withRuntimeContext({
         layerManager: {
             layerConfigs: {widget: {id: 'widget', type: 'widget', x: 0, y: 0, width: 10, height: 10}},
             controllers: {widget: {config: {base: {id: 'widget'}}}},
         },
         bpExecutor: {triggerComponentEvent: vi.fn()},
-    };
+    });
     (window as any).DATAVISOOL_ENV = {currentManager: manager, mode: 'preview'};
     const logError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 

@@ -10,7 +10,7 @@ import {EChartsType} from 'echarts';
 import {ObjectUtil} from "@datavisool/sdk";
 import AbstractDesignerController from "../../framework/core/AbstractDesignerController.ts";
 import {debounce} from "lodash";
-import BPExecutor from "../../designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {SafeEvalUtil} from "@/util/SafeEvalUtil.ts";
 
 export interface EChartsStyle {

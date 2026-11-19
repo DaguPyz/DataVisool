@@ -6,13 +6,13 @@ import {
     resolveDefaultBinding,
     shortcutContextsOverlap,
     shortcutDefinitions,
-} from '@/designer/operate-provider/hot-key/ShortcutRegistry.ts';
+} from '@/plugins/editor-shortcuts/core/ShortcutRegistry.ts';
 import {
     getShortcutBindingConflictKey,
     getShortcutDisplayParts,
     shortcutBindingToHotkeys,
-} from '@/designer/operate-provider/hot-key/HotKeyPlatform.ts';
-import {SHORTCUT_ACTION_IDS} from '@/designer/operate-provider/hot-key/ShortcutTypes.ts';
+} from '@/plugins/editor-shortcuts/core/HotKeyPlatform.ts';
+import {SHORTCUT_ACTION_IDS} from '@datavisool/sdk/plugin/contracts/editorShortcuts';
 
 describe('ShortcutRegistry', () => {
     it('完整注册42个命令、6个按住动作和3个只读指南', () => {

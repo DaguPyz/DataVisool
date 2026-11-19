@@ -7,15 +7,15 @@
 import React from "react";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
-import {getDefaultMenuList} from "@/designer/right/util";
+import {getDefaultMenuList} from "@/comps/configMenus.ts";
 
 import AntdCommonRoseController, {AntdRoseProps} from "./AntdCommonRoseController";
 import {AntdCommonDefinition} from "@/comps/antd-common/AntdCommonDefinition";
 
-const AnimationConfig = React.lazy(() => import("@/comps/common-component/animation-config/AnimationConfig"));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
 const AntdRoseCommonStyleConfig = React.lazy(() => import("./AntdRoseCommonConfig"));
 const AntdRoseFieldMapping = React.lazy(() => import("./AntdRoseCommonConfig").then((module) => ({default: module.AntdRoseFieldMapping})));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 abstract class AbstractRoseDefinition extends AntdCommonDefinition<AntdCommonRoseController, AntdRoseProps> {
 

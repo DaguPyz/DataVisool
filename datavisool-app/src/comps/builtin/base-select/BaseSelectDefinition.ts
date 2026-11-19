@@ -4,6 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import {BaseInfo} from '@datavisool/sdk/host';
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
@@ -14,11 +15,10 @@ import {BaseSelectComponentProps} from "./BaseSelectComponent.tsx";
 import React, {lazy} from "react";
 import AbstractDesignerDefinition from "../../../framework/core/AbstractDesignerDefinition.ts";
 
-const BaseInfo = React.lazy(() => import("../../common-component/base-info/BaseInfo"));
-const ThemeConfig = React.lazy(() => import("../../common-component/theme-config/ThemeConfig.tsx"));
-const AnimationConfig = React.lazy(() => import("../../common-component/animation-config/AnimationConfig.tsx"));
-const FilterConfig = React.lazy(() => import("../../common-component/filter-config/FilterConfig.tsx"));
-const DataConfig = React.lazy(() => import("../../common-component/data-config/DataConfig.tsx"));
+const ThemeConfig = React.lazy(() => import("@datavisool/sdk/host").then(({ThemeConfig}) => ({default: ThemeConfig})));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
+const FilterConfig = React.lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 const BaseSelectStyleConfig = lazy(() => import("./BaseSelectConfig.tsx").then((module) => ({default: module.BaseSelectStyleConfig})));
 
 export default class BaseSelectDefinition extends AbstractDesignerDefinition<BaseSelectController, BaseSelectComponentProps> {

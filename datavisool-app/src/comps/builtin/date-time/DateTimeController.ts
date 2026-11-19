@@ -9,7 +9,7 @@ import AbstractDesignerController from "../../../framework/core/AbstractDesigner
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import DateTimeComponent, {DateTimeComponentProps, DateTimeComponentRef,} from "./DateTimeComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {IThemeItem} from "@datavisool/sdk/types";
 
 export class DateTimeController extends AbstractDesignerController<DateTimeComponentRef, DateTimeComponentProps> {

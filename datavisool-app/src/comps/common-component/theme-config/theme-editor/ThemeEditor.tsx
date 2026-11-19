@@ -3,7 +3,7 @@
  * All rights reserved.
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
-import {MouseEvent, useState} from 'react';
+import {MouseEvent, useEffect, useState} from 'react';
 import './ThemeEditor.less';
 import ThemeList from "@/comps/common-component/theme-config/theme-list/ThemeList";
 import {cloneDeep} from "lodash";
@@ -36,12 +36,13 @@ const colorFields: Array<{ key: ThemeColorKey; label: string; desc: string }> = 
     {key: 'supplementSecond', label: '辅助色 2', desc: 'Accent 2'},
 ];
 
-const ThemeEditor = () => {
-    const {themeManager} = window.DATAVISOOL_ENV.currentManager;
-    const [themeList, setThemeList] = useState<IThemeItem[]>(cloneDeep(themeManager?.themeConfig) || []);
+const ThemeEditor = ({data, onChange}: {data: readonly IThemeItem[]; onChange(themes: readonly IThemeItem[]): boolean}) => {
+    const [themeList, setThemeList] = useState<IThemeItem[]>(() => cloneDeep([...data]));
     const [themeConfig, setThemeConfig] = useState<IThemeItem>(cloneDeep(defaultThemeConfig));
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [listRevision, setListRevision] = useState(0);
+
+    useEffect(() => setThemeList(cloneDeep([...data])), [data]);
 
     const doSaveOrUpd = (e: MouseEvent<HTMLElement> | undefined) => {
         e?.preventDefault();
@@ -67,22 +68,22 @@ const ThemeEditor = () => {
             if (!themeList[editingIndex]) return;
             nextThemes = themeList.map((item, i) => i === editingIndex ? {...cloneDeep(themeConfig), name} : item);
         }
-        setThemeList(nextThemes)
+        if (!onChange(nextThemes)) return;
+        setThemeList(nextThemes);
         setThemeConfig(cloneDeep(defaultThemeConfig));
         setEditingIndex(null);
         setListRevision(value => value + 1);
-        //保存到数据库
-        const {updateThemeConfig} = window.DATAVISOOL_ENV.currentManager.themeManager!;
-        updateThemeConfig(nextThemes);
     }
 
     const onDel = (_id: string, index: number) => {
-        const newData = themeList.filter((_, i) => i !== index);
-        setThemeList(newData);
+        const nextThemes = themeList.filter((_, i) => i !== index);
+        if (!onChange(nextThemes)) return false;
+        setThemeList(nextThemes);
         if (editingIndex === index) {
             setEditingIndex(null);
             setThemeConfig(cloneDeep(defaultThemeConfig));
         } else if (editingIndex !== null && editingIndex > index) setEditingIndex(editingIndex - 1);
+        return true;
     }
 
     const onSelected = (data: IThemeItem, index: number) => {
@@ -225,7 +226,7 @@ const ThemeEditor = () => {
                     className="theme-list-card"
                 >
                     <div className="theme-list-scroll">
-                        <ThemeList key={listRevision} showOperator={true} onSelected={onSelected} onDel={onDel}/>
+                        <ThemeList key={listRevision} data={themeList} showOperator={true} onSelected={onSelected} onDel={onDel}/>
                         {themeList.length === 0 && (
                             <div className="theme-list-empty" role="status">
                                 <span>暂无主题</span>
@@ -237,6 +238,6 @@ const ThemeEditor = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ThemeEditor;

@@ -2,7 +2,7 @@
 import {beforeEach, expect, it, vi} from 'vitest';
 const mocks = vi.hoisted(() => ({clients: [] as any[], connect: vi.fn()}));
 vi.mock('mqtt', () => ({default: {connect: mocks.connect}}));
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 beforeEach(() => {
     mocks.clients.length = 0;

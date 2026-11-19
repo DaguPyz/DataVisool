@@ -4,7 +4,7 @@ import {
     FrontendEffectClientError,
     sanitizeFrontendEffectDetails,
     serializeFrontendEffectError,
-} from "@/frontend-effect/FrontendEffectClientError.ts";
+} from "@/plugins/editor-ai/frontend-effect/FrontendEffectClientError.ts";
 
 describe("FrontendEffectClientError", () => {
     test("serializes the stable code and structured diagnostics while masking sensitive paths", () => {

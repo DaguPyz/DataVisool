@@ -4,73 +4,81 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {lazy, Suspense, useEffect, useRef} from 'react';
+import {lazy, Suspense, useEffect, useState} from 'react';
+import type {DesignerProjectSession, DesignerSessionFactory} from '@datavisool/sdk/plugin/contracts/designerRuntime';
 import './DesignerRelease.less';
 import {observer} from "mobx-react";
 import ScaleAction from "@/framework/core/ScaleAction.ts";
-import canvasRender from "@/designer/left/layer-list/CanvasRender.ts";
-import '@/global/ExportViewGlobalMember.ts';
 import {Button, globalMessage, globalModal, Input, Loading} from "@datavisool/ui";
-import ReleaseDesignerLoader from "@/designer/loader/ReleaseDesignerLoader.ts";
-import {DesignerMode} from "@datavisool/sdk/types";
 import FetchUtil from "@/util/FetchUtil.ts";
 
 const ScreenFit = lazy(() => import('@/framework/screen-fit/ScreenFit.tsx'));
 
-const DesignerRelease = observer((props: { id: string }) => {
-
-    const pwdRef = useRef<string | null>(null);
-    const modalRef = useRef<string>();
-    const loaderRef = useRef(new ReleaseDesignerLoader(DesignerMode.RELEASE));
+const DesignerRelease = observer(({id, createSession}: {id: string; createSession: DesignerSessionFactory}) => {
+    const [project, setProject] = useState<DesignerProjectSession>();
 
     useEffect(() => {
-        FetchUtil.get<any>(`/api/release/getReleaseInfo/${props.id}`).then(res => {
-            if (res !== null) {
-                if (res.encrypt) {
-                    modalRef.current = globalModal.modalApi?.confirm({
-                        title: '密码校验',
-                        closable: false,
-                        maskClosable: false,
-                        keyboard: false,
-                        content: <div style={{padding: '10px 0px'}}>
-                            <Input placeholder={'请修输入密码'} type="password"
-                                   onChange={(value) => pwdRef.current = value}/></div>,
-                        footer: [
-                            <div style={{textAlign: 'right'}} key={'confirm'}>
-                                <Button type="primary" onClick={() => {
-                                    if (!pwdRef.current) {
-                                        globalMessage.messageApi?.warning('请输入密码');
-                                    } else {
-                                        loaderRef.current.pwd = pwdRef.current;
-                                        loaderRef.current.load(props.id).then(() => {
-                                            if (loaderRef.current?.projectInfo?.name)
-                                                document.title = loaderRef.current.projectInfo.name
-                                        });
-                                    }
-                                }}>确认</Button>
-                            </div>
-                        ]
-                    });
-                } else {
-                    loaderRef.current.load(props.id);
-                }
+        const controller = new AbortController();
+        const session = createSession();
+        let password = '';
+        let modalId: string | undefined;
+        setProject(session);
+
+        const closeModal = () => {
+            if (modalId) globalModal.modalApi?.destroy(modalId);
+            modalId = undefined;
+        };
+        const load = async (confirmedPassword?: string) => {
+            try {
+                await session.load(id, confirmedPassword);
+                if (controller.signal.aborted || !session.loaded) return;
+                if (confirmedPassword && session.name) document.title = session.name;
+                closeModal();
+            } catch (error) {
+                if (!controller.signal.aborted) console.error('加载发布项目失败', error);
             }
-        })
-    }, [props.id]);
+        };
 
-    if (!loaderRef.current.loaded)
-        return <Loading/>;
+        void FetchUtil.get<{encrypt: boolean} | null>(`/api/release/getReleaseInfo/${id}`, {signal: controller.signal}).then(info => {
+            if (controller.signal.aborted || !info) return;
+            if (!info.encrypt) {
+                void load();
+                return;
+            }
+            modalId = globalModal.modalApi?.confirm({
+                title: '密码校验',
+                closable: false,
+                maskClosable: false,
+                keyboard: false,
+                content: <div style={{padding: '10px 0px'}}>
+                    <Input placeholder="请修输入密码" type="password" onChange={value => { password = value; }}/>
+                </div>,
+                footer: [
+                    <div style={{textAlign: 'right'}} key="confirm">
+                        <Button type="primary" onClick={() => {
+                            if (password) void load(password);
+                            else globalMessage.messageApi?.warning('请输入密码');
+                        }}>确认</Button>
+                    </div>
+                ],
+            });
+        }).catch(error => {
+            if (!controller.signal.aborted) console.error('获取发布项目信息失败', error);
+        });
 
-    if (modalRef.current) {
-        const tempTimer = setTimeout(() => {
-            globalModal.modalApi?.destroy(modalRef.current);
-            clearTimeout(tempTimer)
-        }, 0);
-    }
-    const {canvasConfig: {width, height, adaptationType}} = loaderRef.current.designerManager.canvasManager;
-    const globalFilter = loaderRef.current.designerManager.globalFilterManger.getFilterStyle();
-    const canvasDom = <div className="datavisool-project-release" data-datavisool-i18n-skip="true" style={{width, height, ...globalFilter}}>
-        {canvasRender.buildCanvasComponents(loaderRef.current.designerManager)}</div>;
+        return () => {
+            controller.abort();
+            closeModal();
+            session.close();
+        };
+    }, [createSession, id]);
+
+    if (!project?.loaded) return <Loading/>;
+
+    const {width, height, adaptationType, filterStyle, content} = project.renderCanvas();
+    const canvasDom = <div className="datavisool-project-release" data-datavisool-i18n-skip="true" style={{width, height, ...filterStyle}}>
+        {content}
+    </div>;
     return (
         <Suspense fallback={<Loading/>}>
             {adaptationType && adaptationType === 'none' ? canvasDom :

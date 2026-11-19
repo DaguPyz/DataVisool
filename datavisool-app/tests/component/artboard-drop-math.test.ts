@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, test} from 'vitest';
-import {resolveArtboardDropPoint} from '@/designer/workspace/viewport/ArtboardDropMath.ts';
-import {worldToScreen} from '@/designer/workspace/viewport/ViewportMath.ts';
+import {resolveArtboardDropPoint} from '@/plugins/editor-canvas/viewport/ArtboardDropMath.ts';
+import {worldToScreen} from '@/plugins/editor-canvas/viewport/ViewportMath.ts';
 
 describe('artboard drag-drop coordinates', () => {
     const viewportRect = {left: 180, top: 64};

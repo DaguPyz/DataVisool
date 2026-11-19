@@ -4,29 +4,21 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import {BaseTextController} from "./BaseTextController";
-import {ConfigType} from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
+import type {EditorInspectorController} from '@datavisool/sdk/plugin/contracts/editorInspector';
 import {AlignBottomTwo, AlignHorizontalCenterTwo, AlignLeftTwo, AlignRightTwo, AlignTopTwo, AlignVerticalCenterTwo} from "@icon-park/react";
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";
 
-export const BaseTextStyleConfig: React.FC<ConfigType<BaseTextController>> = ({controller}) => {
+export const BaseTextStyleConfig: React.FC<ConfigType<BaseTextController & Pick<EditorInspectorController, 'renameLayer'>>> = ({controller}) => {
 
     const {data, style, base} = controller.getConfig()!;
 
     const changeContent = (data: string) => {
         controller.update({data: {value: data}});
-        if (!base?.id)
-            return;
-        if (!window.DATAVISOOL_ENV.currentManager.layerManager?.layerConfigs)
-            return;
-        if (window.DATAVISOOL_ENV.currentManager.layerManager?.layerConfigs[base?.id])
-            window.DATAVISOOL_ENV.currentManager.layerManager.layerConfigs[base?.id].name = data;
-        if (!window.DATAVISOOL_ENV.layerInstances)
-            return;
-        const layerInstance = window.DATAVISOOL_ENV.layerInstances[base?.id];
-        layerInstance && (layerInstance as Component).setState({name: data});
+        if (base?.id) controller.renameLayer(data);
     }
 
     const onFieldChange = (fieldChangeData: FieldChangeData) => {

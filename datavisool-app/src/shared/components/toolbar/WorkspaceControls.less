@@ -1,0 +1,117 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.workspace-icon-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary, #aab7d1);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.workspace-icon-button > .i-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.workspace-icon-button:hover {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-hover, #1a2740);
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.workspace-icon-button:focus-visible,
+.workspace-menu-item:focus-visible {
+  outline: 2px solid var(--primary-hover, #4a90ff);
+  outline-offset: 2px;
+}
+
+.workspace-icon-button.is-active {
+  color: #8db7ff;
+  background: var(--bg-active, #1d3155);
+  border-color: var(--border-focus, rgba(59, 130, 246, 0.45));
+}
+
+.workspace-popover {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.workspace-popover-panel {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  min-width: 196px;
+  max-width: ~"min(280px, calc(100vw - 24px))";
+  max-height: calc(100vh - 96px);
+  padding: 6px;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  background: rgba(17, 26, 46, 0.98);
+  box-shadow: var(--datavisool-shadow-panel, 0 12px 32px rgba(0, 0, 0, 0.32));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: workspace-menu-in 160ms ease-out both;
+}
+
+.workspace-popover-right .workspace-popover-panel {
+  right: 0;
+  left: auto;
+}
+
+.workspace-menu-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary, #aab7d1);
+  font: 13px/20px var(--datavisool-font-family, sans-serif);
+  text-align: left;
+  cursor: pointer;
+}
+
+.workspace-menu-item:hover {
+  color: var(--text-primary, #f3f7ff);
+  background: var(--bg-hover, #1a2740);
+}
+
+.workspace-menu-item > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-menu-separator {
+  height: 1px;
+  margin: 5px 6px;
+  background: var(--border-default, rgba(255, 255, 255, 0.08));
+}
+
+@keyframes workspace-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.workspace-popover-panel { animation: none; }
+.workspace-icon-button { transition: none; animation: none; }
+}

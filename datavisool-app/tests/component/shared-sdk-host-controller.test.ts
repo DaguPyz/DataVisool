@@ -3,7 +3,7 @@ import {act, waitFor} from '@testing-library/react';
 import {Component, createElement} from 'react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
 import {BaseButtonController} from '@/comps/builtin/base-button/BaseButtonController';
 import AntdPieController from '@/comps/antd/pie/AntdPieController';
 import {BaseTextController} from '@/comps/builtin/base-text/BaseTextController';
@@ -19,20 +19,28 @@ const updaters = vi.hoisted(() => ({failOnRun: false, instances: [] as Array<{
     destroy: ReturnType<typeof vi.fn>;
 }>}));
 
-vi.mock('@/framework/core/tools/ComponentDataUpdater.ts', () => ({
-    default: class {
-        run = vi.fn(() => { if (updaters.failOnRun) throw new Error('synthetic data load failure'); });
-        destroy = vi.fn();
-        constructor(public success: (value: unknown) => void, public failure: () => void) {
-            updaters.instances.push(this);
-        }
-    }
-}));
-
 class HostController extends AbstractDesignerController<unknown, any> {
     changeData = vi.fn();
     update(config: any) { this.config = config; }
     getConfig() { return this.config; }
+}
+
+function installUpdaterFactory(controller: AbstractDesignerController<any, any>) {
+    controller.setRuntimeDataAdapter({
+        createUpdater(success, failure) {
+            const updater = {
+                success,
+                failure,
+                run: vi.fn(() => { if (updaters.failOnRun) throw new Error('synthetic data load failure'); }),
+                destroy: vi.fn(),
+            };
+            updaters.instances.push(updater);
+            return updater;
+        },
+        isLayerHidden(id) {
+            return Boolean(window.DATAVISOOL_ENV?.currentManager?.layerManager?.layerConfigs?.[id]?.hide);
+        },
+    });
 }
 
 describe('shared SDK Web host controller', () => {
@@ -49,10 +57,11 @@ describe('shared SDK Web host controller', () => {
         const container = document.createElement('div');
         const data = {sourceType: 'static', value: [1]};
         await controller.create(container, {base: {id: 'component'}, data}, new BPExecutor({} as any));
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         const updater = updaters.instances[0];
-        expect(updater.run).toHaveBeenCalledWith(data);
+        expect(updater.run).toHaveBeenCalledWith(data, undefined);
         updater.failure();
         expect(container.querySelector('.view-error-message')).not.toBeNull();
         updater.success([2]);
@@ -73,6 +82,8 @@ describe('shared SDK Web host controller', () => {
         const executor = new BPExecutor({} as any);
         await visible.create(visibleContainer, {base: {id: 'visible'}, data: {}}, executor);
         await hidden.create(hiddenContainer, {base: {id: 'hidden'}, data: {}}, executor);
+        installUpdaterFactory(visible);
+        installUpdaterFactory(hidden);
         visible.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         hidden.loadComponentData();
@@ -87,11 +98,12 @@ describe('shared SDK Web host controller', () => {
         hidden.destroy();
     });
 
-    it('reports a failed request even when the host manager is not available', async () => {
+    it('reports a failed request through an injected host even when the legacy manager is unavailable', async () => {
         window.DATAVISOOL_ENV = {} as any;
         const controller = new HostController();
         const container = document.createElement('div');
         await controller.create(container, {base: {id: 'component'}, data: {}}, new BPExecutor({} as any));
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         expect(() => updaters.instances[0].failure()).not.toThrow();
@@ -107,6 +119,7 @@ describe('shared SDK Web host controller', () => {
         const controller = new HostController();
         const container = document.createElement('div');
         await controller.create(container, {base: {id: 'component'}, data: {}}, new BPExecutor({} as any));
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(container.querySelector('.view-error-message')).not.toBeNull());
         expect(updaters.instances[0].destroy).toHaveBeenCalledOnce();
@@ -114,26 +127,35 @@ describe('shared SDK Web host controller', () => {
         expect(updaters.instances[0].destroy).toHaveBeenCalledOnce();
     });
 
-    it('does not create an updater after the controller is destroyed', async () => {
+    it('destroys a synchronously created updater and ignores its callbacks after controller teardown', async () => {
         const controller = new HostController();
         await controller.create(document.createElement('div'), {data: {sourceType: 'static'}}, new BPExecutor({} as any));
+        installUpdaterFactory(controller);
         controller.loadComponentData();
+        expect(updaters.instances).toHaveLength(1);
+        const updater = updaters.instances[0];
         controller.destroy();
-        await new Promise(resolve => setTimeout(resolve, 0));
-        expect(updaters.instances).toHaveLength(0);
+        expect(updater.destroy).toHaveBeenCalledOnce();
+        updater.success('late');
+        updater.failure();
+        expect(controller.changeData).not.toHaveBeenCalled();
     });
 
-    it('cleans up a built-in controller and ignores an older pending load after recreation', async () => {
+    it('cleans up a built-in controller and ignores a replaced updater callback', async () => {
         const controller = new BaseButtonController();
         controller.container = document.createElement('div');
         controller.config = {data: {sourceType: 'static'}};
+        installUpdaterFactory(controller);
         controller.loadComponentData();
+        const first = updaters.instances[0];
+        controller.loadComponentData();
+        expect(first.destroy).toHaveBeenCalledOnce();
+        first.success('stale');
+        first.failure();
+        expect((controller as any).config).toEqual({data: {sourceType: 'static'}});
+        expect(updaters.instances).toHaveLength(2);
         controller.destroy();
-        controller.container = document.createElement('div');
-        controller.config = {data: {sourceType: 'static'}};
-        await new Promise(resolve => setTimeout(resolve, 0));
-        expect(updaters.instances).toHaveLength(0);
-        controller.destroy();
+        expect(updaters.instances[1].destroy).toHaveBeenCalledOnce();
         expect(controller.container).toBeNull();
         expect(controller.config).toBeNull();
     });
@@ -143,6 +165,7 @@ describe('shared SDK Web host controller', () => {
         const container = document.createElement('div');
         controller.container = container;
         controller.config = {base: {id: 'button'}, data: {sourceType: 'static'}};
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         updaters.instances[0].failure();
@@ -186,11 +209,12 @@ describe('shared SDK Web host controller', () => {
         const controller = new AntdPieController();
         controller.container = document.createElement('div');
         controller.config = {data: {sourceType: 'static'}};
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         expect(() => controller.destroy()).not.toThrow();
         expect(controller.container).toBeNull();
-        await new Promise(resolve => setTimeout(resolve, 0));
-        expect(updaters.instances).toHaveLength(0);
+        expect(updaters.instances).toHaveLength(1);
+        expect(updaters.instances[0].destroy).toHaveBeenCalledOnce();
         expect(() => controller.destroy()).not.toThrow();
     });
 
@@ -200,6 +224,7 @@ describe('shared SDK Web host controller', () => {
         controller.container = document.createElement('div');
         controller.config = {data: {sourceType: 'static'}};
         (controller as any).instance = {destroy: () => { throw new Error('chart cleanup failed'); }};
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         expect(() => controller.destroy()).not.toThrow();
@@ -215,6 +240,7 @@ describe('shared SDK Web host controller', () => {
         const config = {filter: {enable: false}, data: {sourceType: 'static'}};
         const executor = new BPExecutor({} as any);
         await controller.create(container, config, executor, 2);
+        installUpdaterFactory(controller);
         expect(controller.container).toBe(container);
         expect(controller.config).toBe(config);
         expect(controller.bpExecutor).toBe(executor);
@@ -241,6 +267,7 @@ describe('shared SDK Web host controller', () => {
         const controller = new HostController();
         const container = document.createElement('div');
         await controller.create(container, {data: {sourceType: 'static'}}, new BPExecutor({} as any));
+        installUpdaterFactory(controller);
         controller.loadComponentData();
         await waitFor(() => expect(updaters.instances).toHaveLength(1));
         controller.loadComponentData();

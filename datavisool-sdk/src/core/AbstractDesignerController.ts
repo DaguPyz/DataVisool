@@ -8,7 +8,16 @@ import type BPExecutor from './BPExecutor';
 
 export interface ComponentDataUpdater {
     run(config: DataConfigType, singleTrigger?: boolean): void;
+    pauseRuntimeEffects?(): void;
+    resumeRuntimeEffects?(): void;
     destroy(): void;
+}
+
+/** Host-only lifetime options for a component-created data updater. */
+export interface HostDataUpdaterOptions {
+    readonly signal?: AbortSignal;
+    /** Called once when the host destroys this updater, including controller teardown. */
+    readonly onDispose?: () => void;
 }
 
 /** Shared lifecycle; data access is implemented by the host's subclass. */
@@ -17,6 +26,15 @@ export default abstract class AbstractDesignerController<I = any, C = any> exten
     public bpExecutor: BPExecutor | null = null;
     public componentDataUpdater: ComponentDataUpdater | null = null;
     public index?: number;
+
+    /** Create a data updater through the active application host. */
+    public createHostDataUpdater(
+        _success: (data?: any) => void,
+        _fail: () => void,
+        _options?: HostDataUpdaterOptions,
+    ): ComponentDataUpdater | null {
+        return null;
+    }
 
     public async create(container: HTMLElement, config: C, bpExecutor: BPExecutor, index?: number): Promise<void> {
         this.index = index;

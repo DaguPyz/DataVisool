@@ -15,7 +15,7 @@ import {
     resolveTopLevelSelectionIds,
     resolveTransformLeafIds,
     toggleSelectionIds,
-} from "@/designer/operate-provider/selection/SelectionPolicy.ts";
+} from "@/plugins/editor-canvas/selection/SelectionPolicy.ts";
 
 const createLayers = (): Record<string, ILayerItem> => ({
     rootGroup: {id: "rootGroup", type: "group", order: 1},

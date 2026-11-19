@@ -7,7 +7,7 @@ vi.mock('@/util/AuthFetchUtil.ts', () => ({
     default: {get: vi.fn(async () => [{id: 'other-project', name: '另一个项目'}])},
 }));
 
-import {ScreenReferenceConfig} from '@/comps/builtin/screen-reference/ScreenReferenceConfig';
+import {ScreenReferenceConfig} from '@/plugins/designer-runtime/internal/builtin/screen-reference/ScreenReferenceConfig';
 import AuthFetchUtil from '@/util/AuthFetchUtil';
 
 describe('screen reference GUI', () => {

@@ -11,7 +11,7 @@ import {RingProgressOptions, StatisticText} from "@antv/g2plot";
 import {FieldChangeData, DatavisoolGUI, DatavisoolGUIUtil, type Control} from "@datavisool/ui";
 import {ShapeAttrs} from "@antv/g-base";
 import {ObjectUtil} from "@datavisool/sdk";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 
 export class AntdRingProgressStyleConfig extends Component<ConfigType> {

@@ -11,7 +11,8 @@ import CommonApiConfig from '@/comps/common-component/data-source-config/CommonA
 import {GlobalVariableConfig} from '@/comps/common-component/data-source-config/GlobalVariableConfig';
 import {StaticDataConfig} from '@/comps/common-component/data-source-config/StaticDataConfig';
 import DataSourceConfig from '@/comps/common-component/data-source-config/DataSourceConfig';
-import {VisibleNodeConfig} from '@/designer/blueprint/node/core/impl/visible/VisibleNodeConfig';
+import {VisibleNodeConfig} from '@/plugins/editor-blueprint/node/configs/VisibleNodeConfig';
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
 import EChartsCustomDataUpdateConfig from '@/comps/echarts/EChartsCustomDataUpdateConfig';
 import {AxisConfig} from '@/comps/antd-common/config/axis/AxisConfig';
 import {AntdLegend} from '@/comps/antd-common/config/legend/AntdLegend';
@@ -70,9 +71,9 @@ describe('shared GUI data source and blueprint panels', () => {
     });
 
     it('selects and saves a global variable', async () => {
-        window.DATAVISOOL_ENV = {currentManager: {globalVariableManager: {globalVariableInstance: {'item-1': {id: 'item-1', key: '测试变量'}}}}} as never;
         const onSave = vi.fn();
-        render(<GlobalVariableConfig data={{} as never} onSave={onSave}/>);
+        render(<GlobalVariableConfig data={{} as never} onSave={onSave}
+                                    options={[{value: 'item-1', label: '测试变量'}]} readValue={() => '测试值'}/>);
         fireEvent.click(screen.getByRole('combobox'));
         fireEvent.click(await screen.findByText('测试变量'));
         fireEvent.click(screen.getByRole('button', {name: '保存'}));
@@ -97,9 +98,11 @@ describe('shared GUI data source and blueprint panels', () => {
     });
 
     it('updates the visibility node target', async () => {
-        window.DATAVISOOL_ENV = {currentManager: {layerManager: {layerConfigs: {'item-1': {id: 'item-1', name: '测试图层'}}}}} as never;
         const controller = {getConfig: () => ({}), update: vi.fn()};
-        render(<VisibleNodeConfig controller={controller as never}/>);
+        const session = {readLayerConfigs: () => ({'item-1': {id: 'item-1', name: '测试图层'}})};
+        render(<EditorBlueprintSessionProvider value={session as never}>
+            <VisibleNodeConfig controller={controller as never}/>
+        </EditorBlueprintSessionProvider>);
         fireEvent.click(screen.getByRole('combobox'));
         fireEvent.click(await screen.findByText('测试图层'));
         expect(controller.update).toHaveBeenCalledWith({nodeConfig: {nodeIds: ['item-1']}});

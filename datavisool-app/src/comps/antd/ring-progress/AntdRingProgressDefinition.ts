@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import {getDefaultMenuList} from "@/designer/right/util";
+import {getDefaultMenuList} from "@/comps/configMenus.ts";
 import AntdRingProgressController, {AntdRingProgressProps} from "./AntdRingProgressController";
 import ringProgressImg from './ring-progress.webp';
 import {AntdCommonDefinition} from "@/comps/antd-common/AntdCommonDefinition";
@@ -14,8 +14,8 @@ import {EventInfo} from "@datavisool/sdk/types";
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 
-const AnimationConfig = React.lazy(() => import("@/comps/common-component/animation-config/AnimationConfig"));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 const AntdRingProgressStyleConfig = React.lazy(() => import("./AntdRingProgressConfig").then((module) => ({default: module.AntdRingProgressStyleConfig})));
 
 

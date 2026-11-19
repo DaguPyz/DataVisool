@@ -30,6 +30,28 @@ import MapLibreGisLayersConfig from '@/comps/maplibre-gis/layer/MapLibreGisLayer
 import MapLibreGisSourcesConfig from '@/comps/maplibre-gis/source/MapLibreGisSourcesConfig';
 import {buildMapLibreSourceSpec} from '@/comps/maplibre-gis/source/SourceTools';
 
+it('releases remaining map data sources and the host after one source cleanup fails', () => {
+    const controller = new MapLibreGisController();
+    const failed = {destroy: vi.fn(() => { throw new Error('source cleanup failed'); })};
+    const remaining = {destroy: vi.fn()};
+    const errorIndicator = document.createElement('div');
+    document.body.appendChild(errorIndicator);
+    controller.container = document.createElement('div');
+    Object.assign(controller, {
+        layerUpdaters: [{layerId: 'bad-layer', updater: failed}],
+        sourceUpdaters: [{sourceId: 'remaining-source', updater: remaining}],
+        layerErrDom: errorIndicator,
+    });
+
+    expect(() => controller.destroy()).toThrow();
+    expect(remaining.destroy).toHaveBeenCalledOnce();
+    expect(errorIndicator.isConnected).toBe(false);
+    expect(controller.container).toBeNull();
+    expect(() => controller.destroy()).not.toThrow();
+    expect(failed.destroy).toHaveBeenCalledOnce();
+    expect(remaining.destroy).toHaveBeenCalledOnce();
+});
+
 const featureCollection = {
     type: 'FeatureCollection',
     features: [{type: 'Feature', geometry: {type: 'Point', coordinates: [121.5, 31.2]}, properties: {population2026: 1200}}],
@@ -82,6 +104,37 @@ it('saves source clustering options and restores the MapLibre source spec', () =
     }));
 });
 
+it('requests one-shot GeoJSON source data through the controller host capability', () => {
+    const source = {
+        id: 'population-source', name: '人口数据', visible: true, sourceType: 'geojson', dataMode: 'dataConfig',
+        dataConfig: {sourceType: 'static', staticData: {value: featureCollection}, value: featureCollection},
+    } as any;
+    const config: any = {style: {base: {}, sources: [source], layers: []}};
+    const setData = vi.fn();
+    const map = {
+        isStyleLoaded: () => true,
+        getSource: () => ({setData}),
+    };
+    const update = vi.fn((patch: any) => { config.style = {...config.style, ...patch.style}; });
+    const run = vi.fn((_: unknown, __: boolean) => success(featureCollection));
+    const destroy = vi.fn();
+    let success: (data?: unknown) => void = () => undefined;
+    const createHostDataUpdater = vi.fn((onSuccess: (data?: unknown) => void) => {
+        success = onSuccess;
+        return {run, destroy};
+    });
+    const panelController = {getConfig: () => config, update, getMap: () => map, createHostDataUpdater};
+
+    const {container} = render(<MapLibreGisSourcesConfig controller={panelController as any}/>);
+    fireEvent.click(screen.getByRole('button', {name: '编辑'}));
+    fireEvent.click(container.querySelector<HTMLButtonElement>('.mlgis-drawer-save')!);
+
+    expect(createHostDataUpdater).toHaveBeenCalledOnce();
+    expect(run).toHaveBeenCalledWith(source.dataConfig, true);
+    expect(setData).toHaveBeenCalledWith(featureCollection);
+    expect(destroy).toHaveBeenCalledOnce();
+});
+
 it('saves attribute filters and data-driven styles, restores them, and applies dynamic source data at runtime', async () => {
     const source = {
         id: 'population-source', name: '人口数据', visible: true, sourceType: 'geojson', dataMode: 'dataConfig',
@@ -126,6 +179,11 @@ it('saves attribute filters and data-driven styles, restores them, and applies d
     (controller as any).instance = {getMap: () => map};
     (controller as any).container = document.createElement('div');
     controller.update({style} as any);
+    controller.setRuntimeDataAdapter({
+        createUpdater(success) {
+            return {run: vi.fn(() => success(featureCollection)), destroy: vi.fn()};
+        },
+    });
     act(() => controller.loadComponentData());
     await waitFor(() => {
         const runtimeSource = map.getSource('population-source');

@@ -1,7 +1,96 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {test,expect,type Page} from '@playwright/test';
 import {setup,editor,open,shot,layers,save} from './editor-dock/support';
+import ProjectDataCodecUtil from '../../src/util/ProjectDataCodecUtil.ts';
 setup();const panel=(p:Page)=>p.locator('.sub-project');const item=(p:Page,name:string)=>panel(p).locator('.sub-project-item').filter({hasText:name});
+
+async function addSnapshot(page: Page, rootId: string, name: string, content: string) {
+    await page.evaluate(async ({rootId, name, content}) => {
+        const entry = '/src/plugins/editor-project/auto-save/AutoSaveManager.ts';
+        const {singleSave} = await import(/* @vite-ignore */ entry);
+        await singleSave(`DATAVISOOL_${rootId}`, () => content, () => ({id: rootId, name}));
+    }, {rootId, name, content});
+}
+
+async function chooseSnapshot(page: Page, name: string) {
+    await page.getByRole('button', {name: '更多项目操作'}).click();
+    await page.getByRole('menuitem', {name: '本地自动存储恢复'}).click();
+    const dialog = page.locator('.restore-local-storage-modal');
+    await dialog.getByRole('button', {name: new RegExp(name)}).click();
+    await dialog.getByRole('button', {name: '恢复', exact: true}).click();
+    return dialog;
+}
+
+const readWorkspace = (page: Page) => page.evaluate(() => {
+    const manager = window.DATAVISOOL_ENV.currentManager;
+    return {id: manager.id, width: manager.canvasManager.canvasConfig.width};
+});
+
+test('连续选择子项目时取消旧请求，只打开最后选择的项目', async ({page}) => {
+    await editor(page);
+    await open(page, '子项目');
+    const first = await create(page, '先选择');
+    const last = await create(page, '后选择');
+    const dataPath = `**/api/project/getProjectData/${first}`;
+    let release!: () => void;
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    await page.route(dataPath, async route => {
+        await gate;
+        await route.continue().catch(() => {});
+    });
+    try {
+        const started = page.waitForRequest(dataPath);
+        await item(page, '先选择').click();
+        const request = await started;
+        const aborted = page.waitForEvent('requestfailed', {predicate: candidate => candidate === request, timeout: 15_000});
+        await item(page, '后选择').click();
+        expect((await aborted).failure()?.errorText).toContain('ERR_ABORTED');
+        await expect.poll(() => readWorkspace(page)).toMatchObject({id: last});
+        await expect(item(page, '后选择')).toHaveClass(/sub-project-item-active/);
+    } finally {
+        release();
+    }
+});
+
+test('旧格式快照按内容中的项目 ID 恢复，主子画布分别保留', async ({page}) => {
+    const {id} = await editor(page);
+    await open(page, '子项目');
+    const childId = await create(page, '快照子项目');
+    await addSnapshot(page, id, '旧子项目快照', JSON.stringify({
+        id: childId,
+        dataJson: ProjectDataCodecUtil.compress(JSON.stringify({canvasManager: {width: 646, height: 356}})),
+    }));
+    await addSnapshot(page, id, '主项目快照', JSON.stringify({
+        id,
+        dataJson: JSON.stringify({canvasManager: {width: 872, height: 493}}),
+    }));
+
+    const childDialog = await chooseSnapshot(page, '旧子项目快照');
+    await expect(childDialog).toHaveCount(0);
+    await expect.poll(() => readWorkspace(page)).toEqual({id: childId, width: 646});
+    await expect(item(page, '快照子项目')).toHaveClass(/sub-project-item-active/);
+    await save(page);
+
+    const rootDialog = await chooseSnapshot(page, '主项目快照');
+    await expect(rootDialog).toHaveCount(0);
+    await expect.poll(() => readWorkspace(page)).toEqual({id, width: 872});
+    await item(page, '快照子项目').click();
+    await expect.poll(() => readWorkspace(page)).toEqual({id: childId, width: 646});
+    await item(page, '主项目').click();
+    await expect.poll(() => readWorkspace(page)).toEqual({id, width: 872});
+});
+
+test('损坏的本地快照保留当前画布，并允许重新选择', async ({page}) => {
+    const {id} = await editor(page);
+    await page.getByRole('button', {name: '添加基础文本'}).click();
+    await expect.poll(async () => (await layers(page)).length).toBe(1);
+    await addSnapshot(page, id, '损坏快照', JSON.stringify({id, dataJson: 'invalid'}));
+    const dialog = await chooseSnapshot(page, '损坏快照');
+    await expect(dialog).toBeVisible();
+    await expect(page.getByText('备份数据错误，无法恢复')).toBeVisible();
+    await expect.poll(() => readWorkspace(page)).toEqual({id, width: 1920});
+    await expect.poll(async () => (await layers(page)).length).toBe(1);
+});
 async function create(p:Page,name:string){await panel(p).getByRole('button',{name:'新建子项目',exact:true}).first().click();const d=p.locator('.new-project-dialog');await expect(d).toBeVisible();await d.getByPlaceholder('请输入项目名称').fill(name);const response=p.waitForResponse(r=>new URL(r.url()).pathname==='/api/project/createSubProject');await d.getByRole('button',{name:'创建项目'}).click();const body=await(await response).json();expect(body.code).toBe(200);await expect(item(p,name)).toBeVisible();return String(body.data);}
 for(const width of [1440,1024,700,390,320])test(`子项目布局 ${width}px`,async({page})=>{await page.setViewportSize({width,height:900});await editor(page);await open(page,'子项目');await expect(panel(page).getByText('主项目',{exact:true})).toBeVisible();await shot(page,'编辑器子项目',`子项目-${width}`);const box=(await panel(page).boundingBox())!;expect(box.x+box.width).toBeLessThanOrEqual(width+1);});
 test('创建、搜索、取消及真实删除',async({page})=>{const {id,headers}=await editor(page);await open(page,'子项目');const one=`子项目甲-${Date.now()}`,two=`子项目乙-${Date.now()}`;const subId=await create(page,one);await create(page,two);const search=panel(page).getByPlaceholder('搜索项目');await search.fill(`  ${one}  `);await expect(item(page,one)).toBeVisible();await expect(item(page,two)).toHaveCount(0);await search.fill('不存在');await expect(panel(page).getByText('未找到项目')).toBeVisible();await search.fill('');await expect(item(page,two)).toBeVisible();await item(page,one).getByRole('button',{name:`删除子项目「${one}」`}).click();let d=page.getByRole('dialog').last();await d.getByRole('button',{name:'取消'}).click();await expect(item(page,one)).toBeVisible();await item(page,one).getByRole('button',{name:`删除子项目「${one}」`}).click();d=page.getByRole('dialog').last();const deleted=page.waitForResponse(r=>new URL(r.url()).pathname===`/api/project/deleteSubProject/${id}/${subId}`);await d.getByRole('button',{name:'删除',exact:true}).click();expect((await(await deleted).json()).data).toBe(true);await expect(item(page,one)).toHaveCount(0);const res=await page.request.get(`/api/project/getSubProjectList/${id}`,{headers});const data=await res.json();expect(data.data.some((x:{id:string})=>String(x.id)===subId)).toBe(false);});

@@ -4,7 +4,8 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {MenuInfo} from "../../../designer/right/MenuType";
+import {BaseInfo} from '@datavisool/sdk/host';
+import type {MenuInfo} from "@datavisool/sdk/core";
 import fourAngleGlowBorderImg from './four-angle-glow-border.webp';
 import {FourAngleGlowBorderController, FourAngleGlowProps} from "./FourAngleGlowBorderController";
 import React, {lazy} from "react";
@@ -14,10 +15,9 @@ import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import {EventInfo} from "@datavisool/sdk/types";
 
-const BaseInfo = React.lazy(() => import("../../common-component/base-info/BaseInfo"));
-const FilterConfig = React.lazy(() => import("../../common-component/filter-config/FilterConfig.tsx"));
+const FilterConfig = React.lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
 const FourAngleGlowBorderConfig = lazy(() => import("./FourAngleGlowBorderConfig").then((module) => ({default: module.FourAngleGlowBorderConfig})));
-const ThemeConfig = lazy(() => import("../../common-component/theme-config/ThemeConfig.tsx"));
+const ThemeConfig = lazy(() => import("@datavisool/sdk/host").then(({ThemeConfig}) => ({default: ThemeConfig})));
 
 export default class FourAngleGlowBorderDefinition extends AbstractDesignerDefinition<FourAngleGlowBorderController, FourAngleGlowProps> {
     getBaseInfo(): BaseInfoType {

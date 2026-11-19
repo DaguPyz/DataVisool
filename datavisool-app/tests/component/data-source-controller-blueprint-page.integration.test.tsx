@@ -2,11 +2,7 @@
 import React from 'react';
 import {cleanup, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
-import {AnchorPointType, DesignerMode} from '@datavisool/sdk/types';
-
-const state = vi.hoisted(() => ({definitions: {} as Record<string, any>}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
+import {AnchorPointType, DesignerMode, DesignerScene} from '@datavisool/sdk/types';
 vi.hoisted(() => {
     if (!URL.createObjectURL) Object.defineProperty(URL, 'createObjectURL', {value: () => 'blob:data-source-page', configurable: true});
     if (!globalThis.Worker) Object.defineProperty(globalThis, 'Worker', {value: class {
@@ -17,44 +13,58 @@ vi.hoisted(() => {
     }, configurable: true});
 });
 
-import ComponentContainer from '@/framework/core/ComponentContainer';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
-import BPGlobalVariableNodeController from '@/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
+import ComponentContainer from '@/plugins/designer-runtime/internal/framework/core/ComponentContainer';
+import BPGlobalVariableNodeController from '@/plugins/designer-runtime/internal/designer/blueprint/node/core/impl/global-variable/BPGlobalVariableNodeController';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
 import BaseTextDefinition from '@/comps/builtin/base-text/BaseTextDefinition';
-import GlobalVariable from '@/designer/left/global-variable/GlobalVariable';
+import GlobalVariable from '@/plugins/designer-runtime/internal/designer/left/global-variable/GlobalVariable';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 const output = (source: string, event: string) => `${source}:${event}:${AnchorPointType.OUTPUT}`;
 const input = (node: string, action: string) => `${node}:${action}:${AnchorPointType.INPUT}`;
+const runtimeContexts = new Set<DesignerRuntimeContext>();
 
 afterEach(() => {
     cleanup();
-    Object.keys(state.definitions).forEach(key => delete state.definitions[key]);
+    runtimeContexts.forEach(runtime => runtime.dispose());
+    runtimeContexts.clear();
     if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
     else delete (window as any).DATAVISOOL_ENV;
 });
 
 it('loads page-local data into a real component, runs its dataChange blueprint, and updates page state', async () => {
     (window as any).DATAVISOOL_ENV = {mode: DesignerMode.PREVIEW};
-    state.definitions.BaseText = new BaseTextDefinition();
+    const pageRuntime = new DesignerRuntimeContext();
+    const outerRuntime = new DesignerRuntimeContext();
+    runtimeContexts.add(pageRuntime);
+    runtimeContexts.add(outerRuntime);
+    pageRuntime.registry.definitions.BaseText = new BaseTextDefinition();
 
     const outerVariable = new GlobalVariable('shared-source', 'message', '来自 A 页面', false);
     const pageVariable = new GlobalVariable('shared-source', 'message', '来自 B 页面', false);
     const resultVariable = new GlobalVariable('result', 'loadedMessage', null, false);
     const observed: unknown[] = [];
     const observer = {
+        destroy: vi.fn(),
         isEnabled: () => true,
         execute: (_taskInfo: any, value: unknown) => observed.push(value),
     };
     const globalVariableNode = new BPGlobalVariableNodeController({id: 'result'} as any);
     const page = {
+        pageId: 'page-local-data',
+        pageName: 'Page local data',
+        bpNodeLayoutMap: {},
+        bpNodeConfigMap: {},
+        bpAPLineMap: {},
+        bpLines: {},
         bpAPMap: {
             [output('text-1', 'dataChange')]: [input('result', 'gvUpdateData')],
             [output('result', 'gvDataChange')]: [input('observer', 'changed')],
         },
-        bpNodeControllers: {result: globalVariableNode, observer},
     };
-    const pageManager: any = {
+    const pageManager = new DesignerManager(DesignerScene.DEFAULT, pageRuntime);
+    pageManager.init({
         layerManager: {
             layerConfigs: {},
             elemConfigs: {
@@ -63,20 +73,15 @@ it('loads page-local data into a real component, runs its dataChange blueprint, 
                     data: {sourceType: 'globalVariable', value: '初始值', globalVariable: {gvId: 'shared-source'}},
                 },
             },
-            controllers: {},
-            enableEvent: false,
         },
-        globalVariableManager: {
-            globalVariableInstance: {'shared-source': pageVariable, result: resultVariable},
-        },
-        bluePrintManager: {bpPageMangers: [page]},
-    };
-    const outerManager: any = {
-        globalVariableManager: {globalVariableInstance: {'shared-source': outerVariable}},
-        layerManager: {layerConfigs: {}, controllers: {}},
-    };
+        globalVariableManager: {globalVariables: {}},
+        bluePrintManager: [page],
+    }, DesignerMode.PREVIEW, pageRuntime.registry.blueprintControllers);
+    Object.assign(pageManager.globalVariableManager.globalVariableInstance, {'shared-source': pageVariable, result: resultVariable});
+    Object.assign(pageManager.bluePrintManager.bpPageMangers[0]!.bpNodeControllers, {result: globalVariableNode, observer});
+    const outerManager = new DesignerManager(DesignerScene.DEFAULT, outerRuntime);
+    outerManager.globalVariableManager.globalVariableInstance['shared-source'] = outerVariable;
     (window as any).DATAVISOOL_ENV.currentManager = outerManager;
-    pageManager.bpExecutor = new BPExecutor(pageManager);
     resultVariable.start({controllers: {}, manager: pageManager}, pageManager.bpExecutor);
 
     const layer = {id: 'text-1', type: 'BaseText', name: '提示', width: 180, height: 30, x: 0, y: 0, transform: {}};

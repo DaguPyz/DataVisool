@@ -8,7 +8,7 @@ import {WritableGaugeOptions} from "@/comps/antd-common/types";
 import {Gauge} from "@antv/g2plot";
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {ShapeAttrs} from "@antv/g-base";
 import {AntdLineProps} from "@/comps/antd-common/line/AntdCommonLineController.ts";
 import {ComponentBaseProps} from "@datavisool/sdk/types";

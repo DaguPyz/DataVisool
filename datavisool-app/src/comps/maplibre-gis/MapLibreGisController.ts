@@ -1,11 +1,10 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import AbstractDesignerController from "@/framework/core/AbstractDesignerController.ts";
 import MapLibreGisComponent, { MapLibreGisComponentProps, MapLibreGisComponentRef } from "./MapLibreGisComponent.tsx";
-import BPExecutor from "@/designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor, ComponentDataUpdater} from "@datavisool/sdk/core";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import {ObjectUtil} from "@datavisool/sdk";
 import type {UpdateOptions} from "@datavisool/sdk/types";
-import ComponentDataUpdater from "@/framework/core/tools/ComponentDataUpdater.ts";
 import { StructuredLayerConfig, StructuredSourceConfig } from "@datavisool/sdk/types";
 import { GeoJSONSource, Map as MapLibreMap, SourceSpecification } from "maplibre-gl";
 import { DesignerMode } from "@datavisool/sdk/types";
@@ -73,15 +72,29 @@ export default class MapLibreGisController extends AbstractDesignerController<Ma
     }
 
     destroy(): void {
-        this.layerUpdaters.forEach(u => u.updater.destroy());
+        const errors: unknown[] = [];
+        const updaters = new Set([...this.layerUpdaters, ...this.sourceUpdaters].map(item => item.updater));
         this.layerUpdaters = [];
-        this.sourceUpdaters.forEach(u => u.updater.destroy());
         this.sourceUpdaters = [];
-        this.layerErrDom?.remove();
+        updaters.forEach(updater => {
+            try { updater.destroy(); } catch (error) { errors.push(error); }
+        });
+        try { this.layerErrDom?.remove(); } catch (error) { errors.push(error); }
         this.layerErrDom = null;
         this.instance = null;
         this.config = null;
-        super.destroy();
+        try { super.destroy(); } catch (error) { errors.push(error); }
+        if (errors.length) throw new AggregateError(errors, 'Failed to release MapLibre component resources.');
+    }
+
+    pauseRuntimeEffects(): void {
+        this.layerUpdaters.forEach(item => item.updater.pauseRuntimeEffects?.());
+        this.sourceUpdaters.forEach(item => item.updater.pauseRuntimeEffects?.());
+    }
+
+    resumeRuntimeEffects(): void {
+        this.layerUpdaters.forEach(item => item.updater.resumeRuntimeEffects?.());
+        this.sourceUpdaters.forEach(item => item.updater.resumeRuntimeEffects?.());
     }
 
     getConfig(): MapLibreGisComponentProps | null {
@@ -702,7 +715,7 @@ export default class MapLibreGisController extends AbstractDesignerController<Ma
                     return;
             }
 
-            const updater = new ComponentDataUpdater(
+            const updater = this.createHostDataUpdater(
                 (data: any) => {
                     if (this.layerErrDom) {
                         this.layerErrDom.remove();
@@ -718,8 +731,9 @@ export default class MapLibreGisController extends AbstractDesignerController<Ma
                         this.container.appendChild(this.layerErrDom);
                     }
                 },
-                this.designerManager?.variableOwner ?? this.designerManager
             );
+
+            if (!updater) return;
 
             this.sourceUpdaters.push({ sourceId: src.id, updater });
             updater.run((src as any).dataConfig!, isEdit);

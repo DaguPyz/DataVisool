@@ -6,7 +6,7 @@
 
 import React from 'react';
 import {DigitalFlipperController} from "./DigitalFlipperController";
-import {ConfigType} from "../../../designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {AlignBottomTwo, AlignHorizontalCenterTwo, AlignLeftTwo, AlignRightTwo, AlignTopTwo, AlignVerticalCenterTwo} from "@icon-park/react";
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";
 import {Control} from "@datavisool/ui";

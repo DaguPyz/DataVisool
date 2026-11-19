@@ -11,7 +11,7 @@ import BaseColorBlockComponent, {
     BaseColorBlockComponentRef
 } from "./BaseColorBlockComponent";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {IThemeItem} from "@datavisool/sdk/types";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 

@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {afterEach, expect, it, vi} from 'vitest';
-import EventUtil from '@/designer/blueprint/util/EventUtil';
-import {markComponentPending, markComponentReady} from '@/designer/blueprint/util/ComponentLoadTracker';
+import EventUtil from '@/plugins/designer-runtime/internal/designer/blueprint/util/EventUtil';
+import {markComponentPending, markComponentReady} from '@/plugins/designer-runtime/internal/designer/blueprint/util/ComponentLoadTracker';
 
 afterEach(() => vi.useRealTimers());
 
@@ -12,6 +12,8 @@ it('waits for each layer and triggers loaded once per controller with its loop i
     const second = {config: {base: {id: 'second'}}};
     const controllers: Record<string, any> = {first, first_1: first};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {first: {}, second: {}}, controllers},
         bluePrintManager: {bpPageMangers: []},
         bpExecutor: {triggerComponentEvent},
@@ -33,6 +35,8 @@ it('skips controllers whose configuration is unavailable after the wait limit', 
     vi.useFakeTimers();
     const triggerComponentEvent = vi.fn();
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {missing: {}}, controllers: {stale: {config: null}}},
         bluePrintManager: {bpPageMangers: []},
         bpExecutor: {triggerComponentEvent},
@@ -49,6 +53,8 @@ it('waits for an asynchronously initialized controller before emitting loaded', 
     const triggerComponentEvent = vi.fn();
     const controller = {config: {base: {id: 'async'}}, index: 0};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {async: {}}, controllers: {async: controller}},
         bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
         globalVariableManager: {globalVariableInstance: {}},
@@ -67,6 +73,8 @@ it('delivers loaded once when initialization finishes after the global wait limi
     const triggerComponentEvent = vi.fn();
     const controller = {config: {base: {id: 'slow'}}};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {slow: {}}, controllers: {slow: controller}},
         bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
         globalVariableManager: {globalVariableInstance: {}},
@@ -87,6 +95,8 @@ it('waits for every indexed instance, even when the primary controller is ready'
     const first = {config: {base: {id: 'loop-item'}}, index: 0};
     const second = {config: {base: {id: 'loop-item'}}, index: 1};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {'loop-item': {}}, controllers: {'loop-item': second, 'loop-item_0': first, 'loop-item_1': second}},
         bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
         globalVariableManager: {globalVariableInstance: {}},
@@ -109,6 +119,8 @@ it('does not emit global loaded for groups and loop containers that emit it them
     const loop = {config: {base: {id: 'loop', type: 'LoopContainer'}}};
     const normal = {config: {base: {id: 'text', type: 'BaseText'}}};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {group: {}, loop: {}, text: {}}, controllers: {group, loop, text: normal}},
         bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
         globalVariableManager: {globalVariableInstance: {}},
@@ -124,6 +136,8 @@ it('lets an active map emit loaded itself while the empty map placeholder uses t
     const map = {config: {base: {id: 'map', type: 'MapLibreGis'}}, hasActiveMap: () => true};
     const empty = {config: {base: {id: 'empty', type: 'MapLibreGis'}}, hasActiveMap: () => false};
     const manager = {
+        isRuntimeActive: () => true,
+        isRuntimeEffectActive: () => true,
         layerManager: {layerConfigs: {map: {}, empty: {}}, controllers: {map, empty}},
         bluePrintManager: {bpPageMangers: []}, bpExecutor: {triggerComponentEvent},
         globalVariableManager: {globalVariableInstance: {}},

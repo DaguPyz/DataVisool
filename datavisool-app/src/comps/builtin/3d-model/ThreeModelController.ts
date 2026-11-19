@@ -4,7 +4,7 @@ import ComponentUtil from "@/util/ComponentUtil.ts";
 import type {ThreeModelComponentProps, ThreeModelComponentRef} from "./ThreeModelComponent";
 import type {UpdateOptions} from "@datavisool/sdk/types";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 
 export class ThreeModelController extends AbstractDesignerController<ThreeModelComponentRef, ThreeModelComponentProps> {
     private createGeneration = 0;

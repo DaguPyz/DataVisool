@@ -6,7 +6,7 @@ import {
     calculateSelectionAlignmentMoves,
     calculateSelectionObjectBounds,
     calculateSingleLayerResizeToBounds,
-} from "@/designer/operate-provider/selection/SelectionGeometry.ts";
+} from "@/plugins/editor-canvas/selection/SelectionGeometry.ts";
 
 describe("SelectionGeometry", () => {
     test("calculates the axis-aligned boundary of a rotated layer", () => {

@@ -2,26 +2,29 @@
 import React from 'react';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
+import BaseInfo from '@/plugins/editor-inspector/BaseInfoImpl.tsx';
+import {InspectorDomainContext} from '@/plugins/editor-inspector/InspectorDomainContext.ts';
+import {createInspectorStore} from '@/plugins/editor-inspector/InspectorStore.ts';
+import {createInspectorTarget, createInspectorTestDomain} from './support/inspectorDomainFixture.ts';
 
-vi.mock('@/designer/right/RightStore', () => ({default: {activeElem: {id: 'layer-1'}}}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: {sample: {getBaseInfo: () => ({})}}}}));
+describe('inspector base information', () => {
+    afterEach(() => vi.useRealTimers());
 
-import BaseInfo from '@/comps/common-component/base-info/BaseInfo';
-
-describe('shared GUI base information', () => {
-    const previousEnvironment = window.DATAVISOOL_ENV;
-    afterEach(() => { window.DATAVISOOL_ENV = previousEnvironment; });
-
-    it('updates the component and layer names', async () => {
-        const updateLayer = vi.fn();
-        window.DATAVISOOL_ENV = {currentManager: {layerManager: {
-            layerConfigs: {'layer-1': {id: 'layer-1', type: 'sample', name: '原名称', x: 0, y: 0, width: 100, height: 100}},
-            updateLayer,
-        }}} as never;
+    it('sends name edits through the injected canvas domain', async () => {
+        const target = createInspectorTarget('layer-1', 'sample', '原名称');
+        const base = createInspectorTestDomain([target]).domain;
+        const applyLayerEdit = vi.fn(() => true);
+        const domain = {...base, applyLayerEdit};
+        const store = createInspectorStore();
         const controller = {update: vi.fn()};
-        render(<BaseInfo controller={controller as never}/>);
+
+        render(
+            <InspectorDomainContext.Provider value={{domain, target, store, canEdit: () => store.isAccepting, trackTask: task => task}}>
+                <BaseInfo controller={controller as never}/>
+            </InspectorDomainContext.Provider>,
+        );
         fireEvent.change(screen.getByDisplayValue('原名称'), {target: {value: '新名称'}});
-        await waitFor(() => expect(controller.update).toHaveBeenCalledWith({base: {name: '新名称'}}, {reRender: false}));
-        expect(updateLayer).toHaveBeenCalledWith([{id: 'layer-1', name: '新名称'}]);
+        await waitFor(() => expect(applyLayerEdit).toHaveBeenCalledWith('layer-1', {kind: 'rename', name: '新名称'}));
+        expect(controller.update).not.toHaveBeenCalled();
     });
 });

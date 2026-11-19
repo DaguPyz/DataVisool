@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {BaseTableController} from "./BaseTableController";
 import {FieldChangeData, DatavisoolGUI, type Control} from "@datavisool/ui";
 

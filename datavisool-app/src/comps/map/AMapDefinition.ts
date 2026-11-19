@@ -4,10 +4,11 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import {BaseInfo} from '@datavisool/sdk/host';
 import aMapImage from './a-map.webp';
 import {AMapController} from "./AMapController.ts";
 import {AMapComponentProps} from "./AMapComponent.tsx";
-import {MenuInfo} from "../../designer/right/MenuType.ts";
+import type {MenuInfo} from "@datavisool/sdk/core";
 import React, {lazy} from "react";
 import AbstractDesignerDefinition from "../../framework/core/AbstractDesignerDefinition.ts";
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
@@ -15,10 +16,9 @@ import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import {EventInfo} from "@datavisool/sdk/types";
 
-const BaseInfo = React.lazy(() => import("../common-component/base-info/BaseInfo"));
-const ThemeConfig = React.lazy(() => import("../common-component/theme-config/ThemeConfig.tsx"));
-const AnimationConfig = React.lazy(() => import("../common-component/animation-config/AnimationConfig.tsx"));
-const FilterConfig = React.lazy(() => import("../common-component/filter-config/FilterConfig.tsx"));
+const ThemeConfig = React.lazy(() => import("@datavisool/sdk/host").then(({ThemeConfig}) => ({default: ThemeConfig})));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
+const FilterConfig = React.lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
 const AMapConfig = lazy(() => import("./AMapConfig.tsx").then((module) => ({default: module.AMapConfig})));
 
 export default class AMapDefinition extends AbstractDesignerDefinition<AMapController, AMapComponentProps> {

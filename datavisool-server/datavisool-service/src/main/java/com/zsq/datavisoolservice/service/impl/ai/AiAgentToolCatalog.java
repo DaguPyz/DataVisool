@@ -1372,6 +1372,13 @@ public class AiAgentToolCatalog {
         requireMatch(scope, "threadId", context.threadId(), prefix);
         requireMatch(scope, "turnId", context.turnId(), prefix);
         requireMatch(scope, "runId", context.runId(), prefix);
+        Object expectedWorkspaceScope = context.canvasSnapshot().get("workspaceScope");
+        Object suppliedWorkspaceScope = scope.get("workspaceScope");
+        // Tool schemas need not echo server-owned scope; frontend requests receive the persisted scope below.
+        if (scope.containsKey("workspaceScope") && !java.util.Objects.equals(expectedWorkspaceScope, suppliedWorkspaceScope)) {
+            throw new AiAgentErrorFeedback.Failure(403, error("permission_denied", "工具工作空间作用域不匹配", prefix + "workspaceScope", suppliedWorkspaceScope,
+                    Map.of("value", expectedWorkspaceScope == null ? "missing" : expectedWorkspaceScope)));
+        }
     }
 
     private void requireMatch(Map<String, Object> scope, String field, String expected, String prefix) {
@@ -1395,6 +1402,10 @@ public class AiAgentToolCatalog {
         String managerId = text(context.canvasSnapshot().get("managerId"));
         if (managerId != null) {
             scope.put("managerId", managerId);
+        }
+        Object workspaceScope = context.canvasSnapshot().get("workspaceScope");
+        if (workspaceScope instanceof Map<?, ?> map) {
+            scope.put("workspaceScope", castMap(map));
         }
         Object revision = currentRevision(context);
         if (revision != null) {

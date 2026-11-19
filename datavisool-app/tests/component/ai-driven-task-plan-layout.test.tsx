@@ -5,8 +5,10 @@ import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
 vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
 
-import AiDrivenProgressTerminal from "@/designer/ai-driven/AiDrivenProgressTerminal.tsx";
-import store, {type IAiDrivenPlanStep} from "@/designer/ai-driven/AiDrivenProgressTerminalStore.ts";
+import AiDrivenProgressTerminal from "@/plugins/editor-ai/AiDrivenProgressTerminal.tsx";
+import {AiDrivenProgressTerminalStore, type IAiDrivenPlanStep} from "@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts";
+
+const store = new AiDrivenProgressTerminalStore();
 
 const applyPlan = (steps: IAiDrivenPlanStep[]) => store.applyTaskEvent({
     eventId: "plan-event",
@@ -56,7 +58,7 @@ describe("AI task plan layout", () => {
                 store.finishRun(state, "本轮结果");
             }
 
-            render(<AiDrivenProgressTerminal/>);
+            render(<AiDrivenProgressTerminal store={store}/>);
 
             expect(screen.getByRole("main")).toHaveTextContent("执行过程");
             expect(screen.queryByRole("complementary")).toBeNull();
@@ -68,7 +70,7 @@ describe("AI task plan layout", () => {
 
     test("shows arriving plan steps and updates progress, then removes the plan for a new run", () => {
         store.startRun("run-1");
-        render(<AiDrivenProgressTerminal/>);
+        render(<AiDrivenProgressTerminal store={store}/>);
         expect(screen.queryByRole("complementary")).toBeNull();
 
         act(() => applyPlan([
@@ -109,7 +111,7 @@ describe("AI task plan layout", () => {
             {step: "调整布局", status: "completed"},
             {step: "修改颜色", status: "inProgress"},
         ]);
-        render(<AiDrivenProgressTerminal/>);
+        render(<AiDrivenProgressTerminal store={store}/>);
 
         act(() => store.applyTaskEvent({
             eventId: "state-event",

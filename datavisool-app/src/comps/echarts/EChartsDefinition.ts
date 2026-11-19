@@ -4,6 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import {BaseInfo} from '@datavisool/sdk/host';
 import React from "react";
 import echartsImg from './echarts.webp';
 import EChartsController, {EChartsProps} from "./EChartsController.ts";
@@ -14,8 +15,7 @@ import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 
 const EChartsConfig = React.lazy(() => import("./EChartsConfig.tsx"));
-const BaseInfo = React.lazy(() => import("../common-component/base-info/BaseInfo"));
-const DataConfig = React.lazy(() => import("../common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 const EChartsCustomDataUpdateConfig = React.lazy(() => import("./EChartsCustomDataUpdateConfig.tsx"));
 
 class EChartsDefinition extends AbstractDesignerDefinition<EChartsController, EChartsProps> {

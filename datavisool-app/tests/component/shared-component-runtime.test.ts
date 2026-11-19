@@ -11,7 +11,7 @@ import * as UiBasic from '@datavisool/ui/basic';
 import * as UiSchema from '@datavisool/ui/schema';
 import * as UiCodeEditor from '@datavisool/ui/code-editor';
 import * as UiFeedback from '@datavisool/ui/feedback';
-import {exportComponentRuntime} from '@/global/ComponentRuntime';
+import {exportComponentRuntime} from '@/plugins/designer-runtime/internal/legacy-global/ComponentRuntime';
 
 describe('shared component runtime', () => {
     afterEach(() => {

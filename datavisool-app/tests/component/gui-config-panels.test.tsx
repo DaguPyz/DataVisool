@@ -1,19 +1,22 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import React, {Suspense} from 'react';
-import {fireEvent, render, screen} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import BaseImageDefinition from '@/comps/builtin/base-image/BaseImageDefinition';
 import BaseTableDefinition from '@/comps/builtin/base-table/BaseTableDefinition';
 import BaseButtonDefinition from '@/comps/builtin/base-button/BaseButtonDefinition';
-import {TimerNodeConfig} from '@/designer/blueprint/node/core/impl/timer/TimerNodeConfig';
-import {PopupBoxNodeConfig} from '@/designer/blueprint/node/core/impl/popup-box/PopupBoxNodeConfig';
+import {TimerNodeConfig} from '@/plugins/editor-blueprint/node/configs/TimerNodeConfig';
+import {PopupBoxNodeConfig} from '@/plugins/editor-blueprint/node/configs/PopupBoxNodeConfig';
 import {ApiDataConfig} from '@/comps/common-component/data-source-config/ApiDataConfig';
 import {WebSocketConfig} from '@/comps/common-component/data-source-config/WebSocketConfig';
 import MapLibreGisConfig from '@/comps/maplibre-gis/map-base/MapLibreGisConfig';
+import {EditorBlueprintSessionProvider} from '@/plugins/editor-blueprint/session/EditorBlueprintSessionContext.tsx';
+import {createBlueprintSessionFixture} from './support/blueprintSessionFixture.ts';
 
 describe('shared GUI component configuration panels', () => {
     const previousEnvironment = window.DATAVISOOL_ENV;
-    afterEach(() => { window.DATAVISOOL_ENV = previousEnvironment; });
+    let blueprint: ReturnType<typeof createBlueprintSessionFixture> | undefined;
+    afterEach(() => { cleanup(); blueprint?.dispose(); blueprint = undefined; window.DATAVISOOL_ENV = previousEnvironment; });
     it.each([
         ['图片', BaseImageDefinition],
         ['表格', BaseTableDefinition],
@@ -46,9 +49,9 @@ describe('shared GUI component configuration panels', () => {
     });
 
     it('updates a blueprint popup title through the shared GUI', () => {
-        window.DATAVISOOL_ENV = {currentManager: {layerManager: {layerConfigs: {}}}} as never;
+        blueprint = createBlueprintSessionFixture();
         const controller = {getConfig: () => ({title: '原始标题'}), update: vi.fn()};
-        render(<PopupBoxNodeConfig controller={controller as never}/>);
+        render(<EditorBlueprintSessionProvider value={blueprint.session}><PopupBoxNodeConfig controller={controller as never}/></EditorBlueprintSessionProvider>);
         fireEvent.change(screen.getByDisplayValue('原始标题'), {target: {value: '新标题'}});
         expect(controller.update).toHaveBeenCalledWith({title: '新标题'});
     });

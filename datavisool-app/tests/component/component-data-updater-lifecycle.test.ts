@@ -4,7 +4,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 const mqttConnect = vi.hoisted(() => vi.fn());
 vi.mock('mqtt', () => ({default: {connect: mqttConnect}}));
 
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 class FakeWebSocket {
     onmessage?: (event: MessageEvent) => Promise<void>;
@@ -133,6 +133,7 @@ describe('ComponentDataUpdater transport lifecycle', () => {
 
     it('clears the old refresh interval when a new data source replaces it', () => {
         const updater = new ComponentDataUpdater(vi.fn(), vi.fn(), {
+            isRuntimeEffectActive: () => true,
             globalVariableManager: {globalVariableInstance: {}},
         } as any);
         try {

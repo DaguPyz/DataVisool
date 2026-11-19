@@ -4,7 +4,7 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
-import {ConfigType} from "../../designer/right/ConfigContent.tsx";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import EChartsController from "./EChartsController.ts";
 import {useRef} from "react";
 import {FieldChangeData, DatavisoolGUI} from "@datavisool/ui";

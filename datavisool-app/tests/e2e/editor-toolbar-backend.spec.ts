@@ -1,7 +1,8 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {test,expect,type Page} from '@playwright/test';
 import {setup,editor,open,save,layers,shot,login} from './editor-dock/support';
-setup({localToolbarMysql:true});
+import ProjectDataCodecUtil from '../../src/util/ProjectDataCodecUtil.ts';
+setup();
 test.use({viewport:{width:1600,height:900}});
 const tools=(p:Page)=>p.getByRole('toolbar',{name:'画布工具'});
 const button=(p:Page,name:string)=>tools(p).getByRole('button',{name,exact:true});
@@ -45,7 +46,34 @@ test('主题自定义编辑器窄屏完整可见',async({page})=>{await page.set
 test('快捷键帮助窄屏完整可见',async({page})=>{await page.setViewportSize({width:320,height:900});await editor(page);await page.getByRole('button',{name:'更多项目操作'}).click();await page.getByRole('menuitem',{name:'快捷键说明'}).click();const d=hotkey(page);await expect(d).toBeVisible();await shot(page,'编辑器顶部工具栏','快捷键-320');const b=(await d.boundingBox())!;expect.soft(b.x).toBeGreaterThanOrEqual(0);expect.soft(b.x+b.width).toBeLessThanOrEqual(321);});
 test('快捷键帮助修改、冲突提示和恢复',async({page})=>{await editor(page);await button(page,'快捷键帮助').click();const d=hotkey(page);await d.getByRole('searchbox',{name:'搜索快捷键'}).fill('选择工具');const row=d.locator('tbody tr').filter({hasText:'选择工具'}).first();await row.getByRole('button',{name:'修改'}).click();await expect(d.getByRole('group',{name:'快捷键录入'})).toBeVisible();await page.keyboard.press('Meta+s');await expect(d.getByText(/冲突/)).toBeVisible();await page.keyboard.press('Shift+v');await expect(row).toContainText('已修改');await row.getByRole('button',{name:'恢复默认'}).click();await expect(row).toContainText('默认');});
 
-test('蓝图功能节点可搜索拖入并保存重开',async({page})=>{await editor(page);await button(page,'打开蓝图编辑器').click();await page.getByRole('button',{name:'功能节点'}).click();await page.getByPlaceholder('搜索节点').fill('条件判断');const node=page.locator('.bp-node-list-item').filter({hasText:'条件判断'});await expect(node).toBeVisible();const a=(await node.boundingBox())!,b=(await page.locator('.blue-print-canvas').boundingBox())!;await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();await page.mouse.move(b.x+b.width*.6,b.y+b.height*.5,{steps:12});await page.mouse.up();await expect.poll(()=>page.evaluate(()=>Object.keys((window as any).DATAVISOOL_ENV.currentManager.bluePrintManager.currentPageManager.bpNodeLayoutMap).length)).toBeGreaterThan(0);await page.getByRole('button',{name:'返回编辑器'}).click();await save(page);await page.reload();await expect(page.locator('#designer-ds-content')).toBeVisible({timeout:60000});await button(page,'打开蓝图编辑器').click();await expect.poll(()=>page.evaluate(()=>Object.keys((window as any).DATAVISOOL_ENV.currentManager.bluePrintManager.currentPageManager.bpNodeLayoutMap).length)).toBeGreaterThan(0);});
+test('蓝图功能节点可搜索拖入并保存重开', async ({page}) => {
+    const {id, headers} = await editor(page);
+    await button(page, '打开蓝图编辑器').click();
+    await page.getByRole('button', {name: '功能节点'}).click();
+    await page.getByPlaceholder('搜索节点').fill('条件判断');
+    const node = page.locator('.bp-node-list-item').filter({hasText: '条件判断'});
+    await expect(node).toBeVisible();
+    const a = (await node.boundingBox())!, b = (await page.locator('.blue-print-canvas').boundingBox())!;
+    await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(b.x + b.width * .6, b.y + b.height * .5, {steps: 12});
+    await page.mouse.up();
+    await expect(page.locator('.bp-node-container')).toHaveCount(1);
+    await page.getByRole('button', {name: '返回编辑器'}).click();
+    await save(page);
+    const response = await page.request.get(`/api/project/getProjectData/${id}`, {headers});
+    const persisted = await response.json();
+    expect(persisted.code).toBe(200);
+    const data = JSON.parse(ProjectDataCodecUtil.decompressIfNeeded(persisted.data.dataJson));
+    const nodes = (data.bluePrintManager as Array<{bpNodeLayoutMap: Record<string, {type: string}>}>)
+        .flatMap(item => Object.values(item.bpNodeLayoutMap));
+    expect(nodes).toHaveLength(1);
+    expect(nodes[0].type).toBe('BPConditionNode');
+    await page.reload();
+    await expect(page.locator('#designer-ds-content')).toBeVisible({timeout: 60000});
+    await button(page, '打开蓝图编辑器').click();
+    await expect(page.locator('.bp-node-container')).toHaveCount(1);
+});
 test('循环容器新建后撤销不应删除之前的文本',async({page})=>{await editor(page);await button(page,'添加基础文本').click();await expect.poll(async()=>(await layers(page)).some(x=>x.type==='BaseText')).toBe(true);await button(page,'新建循环容器').click();await expect.poll(async()=>(await layers(page)).length).toBe(2);await button(page,'撤销').click();await expect.poll(async()=>(await layers(page)).map(x=>x.type)).toEqual(['BaseText']);});
 test('画布尺寸不允许保存为零',async({page})=>{await editor(page);const d=await settings(page);const width=d.getByRole('spinbutton').first();await width.fill('0');await width.blur();await d.getByRole('button',{name:'确定'}).click();const value=await page.evaluate(()=>(window as any).DATAVISOOL_ENV.currentManager.canvasManager.canvasConfig.width);expect(value).toBeGreaterThan(0);});
 

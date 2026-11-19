@@ -39,9 +39,33 @@
       "types": "./dist/plugin/contracts/brand.d.ts",
       "import": "./dist/plugin/contracts/brand.js"
     },
+    "./plugin/contracts/designerRuntime": {
+      "types": "./dist/plugin/contracts/designerRuntime.d.ts",
+      "import": "./dist/plugin/contracts/designerRuntime.js"
+    },
+    "./plugin/contracts/designerCatalog": {
+      "types": "./dist/plugin/contracts/designerCatalog.d.ts",
+      "import": "./dist/plugin/contracts/designerCatalog.js"
+    },
     "./plugin/contracts/dynamicScripts": {
       "types": "./dist/plugin/contracts/dynamicScripts.d.ts",
       "import": "./dist/plugin/contracts/dynamicScripts.js"
+    },
+    "./plugin/contracts/designerBlueprint": {
+      "types": "./dist/plugin/contracts/designerBlueprint.d.ts",
+      "import": "./dist/plugin/contracts/designerBlueprint.js"
+    },
+    "./plugin/contracts/editorCanvas": {
+      "types": "./dist/plugin/contracts/editorCanvas.d.ts",
+      "import": "./dist/plugin/contracts/editorCanvas.js"
+    },
+    "./plugin/contracts/editorShell": {
+      "types": "./dist/plugin/contracts/editorShell.d.ts",
+      "import": "./dist/plugin/contracts/editorShell.js"
+    },
+    "./plugin/contracts/editorProject": {
+      "types": "./dist/plugin/contracts/editorProject.d.ts",
+      "import": "./dist/plugin/contracts/editorProject.js"
     },
     "./plugin/contracts/errorUi": {
       "types": "./dist/plugin/contracts/errorUi.d.ts",
@@ -74,6 +98,26 @@
     "./plugin/contracts/workbench": {
       "types": "./dist/plugin/contracts/workbench.d.ts",
       "import": "./dist/plugin/contracts/workbench.js"
+    },
+    "./plugin/contracts/editorCommands": {
+      "types": "./dist/plugin/contracts/editorCommands.d.ts",
+      "import": "./dist/plugin/contracts/editorCommands.js"
+    },
+    "./plugin/contracts/editorTemplates": {
+      "types": "./dist/plugin/contracts/editorTemplates.d.ts",
+      "import": "./dist/plugin/contracts/editorTemplates.js"
+    },
+    "./plugin/contracts/editorShortcuts": {
+      "types": "./dist/plugin/contracts/editorShortcuts.d.ts",
+      "import": "./dist/plugin/contracts/editorShortcuts.js"
+    },
+    "./plugin/contracts/editorInspector": {
+      "types": "./dist/plugin/contracts/editorInspector.d.ts",
+      "import": "./dist/plugin/contracts/editorInspector.js"
+    },
+    "./plugin/contracts/editorBlueprint": {
+      "types": "./dist/plugin/contracts/editorBlueprint.d.ts",
+      "import": "./dist/plugin/contracts/editorBlueprint.js"
     }
   },
   "publishConfig": {

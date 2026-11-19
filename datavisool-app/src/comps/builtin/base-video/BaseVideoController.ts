@@ -11,7 +11,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import {ObjectUtil} from "@datavisool/sdk";
 import {ComponentInfoType} from "@datavisool/sdk/types";
 import {IFilterConfigType} from "@datavisool/sdk/types";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 
 export interface BaseVideoComponentProps {
     base?: ComponentInfoType;

@@ -1,0 +1,119 @@
+/* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
+.workspace-publish-button > .i-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.workspace-save-status:focus-visible,
+.workspace-publish-button:focus-visible {
+  outline: 2px solid var(--primary-hover, #4a90ff);
+  outline-offset: 2px;
+}
+
+.workspace-project-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  pointer-events: auto;
+}
+
+.workspace-project-actions .workspace-icon-button,
+.workspace-project-actions .workspace-publish-button,
+.workspace-project-actions .workspace-save-status {
+  height: 40px;
+}
+
+.workspace-save-status {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 190px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-tertiary, #7c8aa5);
+  font: 11px/16px var(--datavisool-font-family, sans-serif);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.workspace-save-failed { color: #ff8b8b; cursor: pointer; }
+
+.workspace-save-saved { color: #83d7ac; }
+
+.workspace-save-saving { color: #9bc1ff; }
+
+.workspace-save-indicator {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.workspace-save-saving .workspace-save-indicator { animation: workspace-save-pulse 1s ease-in-out infinite; }
+
+.workspace-action-preview {
+  width: auto;
+  gap: 7px;
+  padding: 0 10px;
+}
+
+.workspace-action-preview > span:last-child,
+.workspace-publish-button > span:last-child { font-size: 12px; }
+
+.workspace-publish-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid rgba(74, 144, 255, 0.44);
+  border-radius: 9px;
+  background: linear-gradient(135deg, #4c8dff, #3b82f6);
+  color: white;
+  font: 600 12px/20px var(--datavisool-font-family, sans-serif);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.18);
+}
+
+.workspace-publish-button:hover {
+  background: linear-gradient(135deg, #5c9aff, #4a90ff);
+}
+
+.workspace-more-menu .workspace-popover-trigger {
+  border-color: var(--border-default, rgba(255, 255, 255, 0.08));
+  background: rgba(17, 26, 46, 0.96);
+}
+
+@keyframes workspace-save-pulse {
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 1199px) {
+.workspace-save-status { display: none; }
+}
+
+@media (max-width: 959px) {
+.workspace-action-preview > span:last-child,
+.workspace-publish-button > span:last-child { display: none; }
+.workspace-project-actions { gap: 3px; }
+.workspace-publish-button { width: 40px; padding: 0; }
+}
+
+@media (max-width: 700px) {
+.workspace-project-actions { height: 40px; }
+.workspace-project-actions .workspace-icon-button,
+.workspace-project-actions .workspace-publish-button { width: 36px; height: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.workspace-save-saving .workspace-save-indicator { transition: none; animation: none; }
+}

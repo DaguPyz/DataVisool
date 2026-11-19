@@ -5,11 +5,12 @@ import {afterEach, expect, it, vi} from 'vitest';
 import {DesignerMode} from '@datavisool/sdk/types';
 
 const state = vi.hoisted(() => ({definitions: {} as Record<string, any>, controllers: [] as any[]}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
+vi.mock('@/plugins/designer-runtime/internal/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
 
-import ComponentContainer from '@/framework/core/ComponentContainer';
-import LayerManager from '@/designer/manager/LayerManager';
+import ComponentContainer from '@/plugins/designer-runtime/internal/framework/core/ComponentContainer';
+import LayerManager from '@/plugins/designer-runtime/internal/designer/manager/LayerManager';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
 
 afterEach(() => {
     cleanup();
@@ -41,10 +42,12 @@ it('destroys every rendered loop row when its layer is deleted, without touching
     const unrelated = {config: {base: {id: 'childish_0'}}, destroy: vi.fn()};
     layerManager.controllers = {childish_0: unrelated as any};
     const manager = {
+        runtimeContext: new DesignerRuntimeContext(),
         layerManager,
         bpExecutor: {triggerComponentEvent: vi.fn()},
         globalVariableManager: {globalVariableInstance: {}},
     } as any;
+    Object.assign(manager.runtimeContext.registry.definitions, state.definitions);
 
     const view = render(<>
         <ComponentContainer layer={row} designerManager={manager} index={0}/>

@@ -390,6 +390,8 @@ public class AiAgentService {
             if (request.previousRunId() != null && !request.previousRunId().equals(previous.getRunId())) {
                 throw new AppException(409, "任务运行已发生变化，请刷新历史记录");
             }
+            Map<String, Object> resumedCanvasSnapshot = resumeCanvasSnapshot(
+                    mapValue(context.get("canvasSnapshot")), request.canvasSnapshot());
             AiAgentCheckpointPO checkpoint = checkpoint(previous);
             long version = checkpoint == null || checkpoint.getRevision() == null ? 0 : checkpoint.getRevision();
             if (request.expectedCheckpointVersion() != null && request.expectedCheckpointVersion() != version) {
@@ -430,8 +432,8 @@ public class AiAgentService {
             context.put("projectId", thread.getProjectId());
             context.put("requestId", turnRequestId(turn));
             context.put("resumedFromRunId", previous.getRunId());
-            // 浏览器刷新后 Manager 会重建，恢复时绑定当前画布并重新读取实时状态。
-            if (request.canvasSnapshot() != null) context.put("canvasSnapshot", request.canvasSnapshot());
+            // 可刷新 Manager 和实时状态，但稳定工作空间必须仍是任务创建时保存的身份。
+            context.put("canvasSnapshot", resumedCanvasSnapshot);
             turnMapper.update(null, new LambdaUpdateWrapper<AiAgentTurnPO>()
                     .eq(AiAgentTurnPO::getTurnId, turn.getTurnId())
                     .set(AiAgentTurnPO::getStatus, "queued")
@@ -449,6 +451,46 @@ public class AiAgentService {
             startRuntimeAfterCommit(run.getRunId(), userId(user));
             return taskView(turn, run);
         }
+    }
+
+    private static Map<String, Object> resumeCanvasSnapshot(Map<String, Object> persisted,
+                                                              Map<String, Object> requested) {
+        Map<String, Object> persistedScope = normalizedWorkspaceScope(persisted == null ? null : persisted.get("workspaceScope"));
+        Map<String, Object> requestedScope = normalizedWorkspaceScope(requested == null ? null : requested.get("workspaceScope"));
+        if (persistedScope == null || requestedScope == null || !persistedScope.equals(requestedScope)) {
+            throw new AppException(409, "任务工作空间身份缺失或已变化，不能绑定到当前画布");
+        }
+        Map<String, Object> resumed = new LinkedHashMap<>(requested);
+        // Preserve the persisted identity even when the request includes a structurally equivalent map.
+        resumed.put("workspaceScope", persisted.get("workspaceScope"));
+        return resumed;
+    }
+
+    private static Map<String, Object> normalizedWorkspaceScope(Object value) {
+        if (!(value instanceof Map<?, ?> scope)) return null;
+        Object rootId = scope.get("rootId");
+        Object activeId = scope.get("activeId");
+        Object nestedValue = scope.get("nested");
+        Object loopPathValue = scope.get("loopPath");
+        if (!(rootId instanceof String root) || root.isBlank()
+                || !(activeId instanceof String active) || active.isBlank()
+                || !(nestedValue instanceof Boolean nested)) return null;
+        List<?> pathValues;
+        if (loopPathValue == null && !nested) pathValues = List.of();
+        else if (loopPathValue instanceof List<?> list) pathValues = list;
+        else return null;
+        List<String> loopPath = new ArrayList<>(pathValues.size());
+        for (Object part : pathValues) {
+            if (!(part instanceof String id) || id.isBlank()) return null;
+            loopPath.add(id);
+        }
+        if (nested != !loopPath.isEmpty()) return null;
+        Map<String, Object> identity = new LinkedHashMap<>();
+        identity.put("rootId", root);
+        identity.put("activeId", active);
+        identity.put("nested", nested);
+        identity.put("loopPath", loopPath);
+        return identity;
     }
 
     private static List<String> activeStatuses() {

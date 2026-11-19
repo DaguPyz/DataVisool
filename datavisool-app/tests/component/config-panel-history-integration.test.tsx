@@ -3,67 +3,98 @@ import React from 'react';
 import {act, cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {ObjectUtil} from '@datavisool/sdk';
-import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
+import {cloneDeep} from 'lodash';
+import {DesignerMode, DesignerScene} from '@datavisool/sdk/types';
+import type {EditorInspectorDomain, EditorInspectorTarget} from '@datavisool/sdk/plugin/contracts/editorInspector';
 
-vi.mock('@/designer/loader/DesignerLoader', () => ({default: {definitionMap: {}}}));
-vi.mock('@/comps/common-component/base-info/BaseInfo', () => ({default: () => null}));
-vi.mock('@/comps/common-component/theme-config/ThemeConfig', () => ({default: () => null}));
-vi.mock('@/comps/common-component/filter-config/FilterConfig', () => ({default: () => null}));
-vi.mock('@/comps/common-component/data-config/DataConfig', () => ({default: () => null}));
-vi.mock('@/designer/right/status-list/ComponentStatusList', () => ({default: () => null}));
-vi.mock('@/designer/left/global-variable/parse/ComponentDataGvParser', () => ({
-    default: {unbindFromGv: vi.fn(), bindConfigToGv: vi.fn()},
-}));
+vi.mock('@/plugins/editor-inspector/status-list/ComponentStatusList', () => ({default: () => null}));
 
-import ConfigContent from '@/designer/right/ConfigContent';
-import rightStore from '@/designer/right/RightStore';
-import statusListStore from '@/designer/right/status-list/StatusListStore';
-import DesignerLoader from '@/designer/loader/DesignerLoader';
-import {historyOperator} from '@/designer/operate-provider/undo-redo/HistoryOperator';
-import {StyleRollbackImpl} from '@/designer/operate-provider/undo-redo/core/StyleRollbackImpl';
+import ConfigContent from '@/plugins/editor-inspector/ConfigContent';
+import {createInspectorStore} from '@/plugins/editor-inspector/InspectorStore.ts';
+import HistoryOperator from '@/plugins/editor-canvas/history/HistoryOperator';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext.ts';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager.ts';
+import {createEditingScene} from '@/plugins/designer-runtime/editingScene.ts';
+import {createInspectorTarget} from './support/inspectorDomainFixture.ts';
+
+const inspectorStore = createInspectorStore();
+const contexts: DesignerRuntimeContext[] = [];
 
 describe('configuration panel history with an SDK consumer', () => {
-    const previousEnvironment = window.DATAVISOOL_ENV;
     afterEach(() => {
         cleanup();
-        historyOperator.reset();
-        rightStore.activeConfig(null, null);
-        statusListStore.destroy();
-        delete DesignerLoader.definitionMap.sample;
-        window.DATAVISOOL_ENV = previousEnvironment;
+        inspectorStore.clearTarget();
+        contexts.splice(0).forEach(context => context.dispose());
     });
 
-    it('records a panel edit and restores the original and new values', () => {
-        class Controller extends AbstractDesignerController<unknown, any> {
-            #identity = 'sample';
-            constructor() {
-                super();
-                this.config = {base: {id: this.#identity, type: 'sample'}, style: {text: 'before'}};
-            }
-            getConfig() { return this.#identity ? this.config : null; }
-            update(patch: object) { if (this.#identity) ObjectUtil.merge(this.config, patch); }
+    it('records a panel edit through the injected controller facade and restores both values', () => {
+        class Controller {
+            config: Record<string, any> = {base: {id: 'sample', type: 'sample'}, style: {text: 'before'}};
+            getConfig() { return this.config; }
+            update(patch: object) { this.config = ObjectUtil.merge(this.config, patch); }
+            destroy() {}
         }
         const controller = new Controller();
+        const context = new DesignerRuntimeContext();
+        contexts.push(context);
+        const manager = new DesignerManager(DesignerScene.DEFAULT, context);
+        manager.init({
+            canvasManager: {width: 800, height: 600},
+            layerManager: {
+                layerHeader: 'sample', layerTail: 'sample',
+                layerConfigs: {sample: {id: 'sample', type: 'sample', name: 'Test component', x: 0, y: 0, width: 100, height: 30}},
+                elemConfigs: {sample: cloneDeep(controller.config)},
+            },
+        } as never, DesignerMode.EDIT);
+        manager.layerManager.controllers.sample = controller as never;
+        context.managerStore.resetManagerStack(manager, true, DesignerScene.DEFAULT);
+        const scene = createEditingScene(manager, context.managerStore.sceneVersion, () => manager.isRuntimeActive());
+        const history = new HistoryOperator(() => []);
         const Editor = ({controller: target}: {controller: Controller}) => <button onClick={() => target.update({style: {text: 'after'}})}>Edit {target.getConfig()?.style.text}</button>;
-        DesignerLoader.definitionMap.sample = {
-            getBaseInfo: () => ({compName: 'Test component'}),
-            getMenuList: () => [{key: 'style', name: '样式'}],
-            getMenuToConfigContentMap: () => ({style: Editor}),
-        } as never;
-        window.DATAVISOOL_ENV = {currentManager: {layerManager: {controllers: {sample: controller}}}} as never;
-        act(() => { rightStore.activeConfig('sample', 'sample'); });
-        render(<ConfigContent/>);
+        const target = {
+            ...createInspectorTarget('sample', 'sample', 'Test component'),
+            configPanels: {style: Editor},
+        } as EditorInspectorTarget;
+        const facade = {
+            get config() { return cloneDeep(controller.config); },
+            getConfig: () => cloneDeep(controller.getConfig()),
+            update: (patch: object) => {
+                const change = scene.layers.patch(scene.layers.read()!, [{id: 'sample', config: patch as Record<string, unknown>}]);
+                if (!change) throw new Error('Expected the active scene to accept the panel edit');
+                if (!history.recordChange(change)) {
+                    change.rollback();
+                    throw new Error('Expected the canvas history to accept the scene change');
+                }
+            },
+            renameLayer: () => false,
+            changeData: () => undefined,
+            isCurrent: () => true,
+        };
+        const domain: EditorInspectorDomain = {
+            sceneIdentity: scene.identity,
+            sceneVersion: scene.version,
+            isActive: () => true,
+            readTarget: id => id === target.id ? target : undefined,
+            createControllerFacade: () => facade,
+            readStatuses: () => ({items: []}),
+            applyStatusChange: () => true,
+            applyLayerEdit: () => true,
+            resetConfig: () => true,
+            readDataSourceContext: id => ({staticDataSeedKey: id}),
+            prepareDataSourceTest: (_id, _kind, config) => config,
+            applyTheme: () => true,
+            applyFilter: () => true,
+        };
+
+        act(() => inspectorStore.activateTarget(target));
+        render(<ConfigContent domain={domain} store={inspectorStore} trackTask={task => task}/>);
         fireEvent.click(screen.getByRole('button', {name: 'Edit before'}));
         expect(controller.getConfig().style.text).toBe('after');
 
-        const undo = historyOperator.backoff();
-        expect(undo?.actions).toHaveLength(1);
-        const rollback = new StyleRollbackImpl();
-        act(() => rollback.undo(undo!.actions[0]));
+        const unexpectedLegacy = () => { throw new Error('The panel edit must use scene model history'); };
+        act(() => { expect(history.undo(unexpectedLegacy)).toBe(true); });
         expect(controller.getConfig().style.text).toBe('before');
-        const redo = historyOperator.forward();
-        expect(redo?.actions).toHaveLength(1);
-        act(() => rollback.redo(redo!.actions[0]));
+        act(() => { expect(history.redo(unexpectedLegacy)).toBe(true); });
         expect(controller.getConfig().style.text).toBe('after');
     });
 });

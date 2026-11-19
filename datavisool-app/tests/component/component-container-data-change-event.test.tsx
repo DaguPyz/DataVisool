@@ -2,17 +2,18 @@
 import React from 'react';
 import {cleanup, render, waitFor} from '@testing-library/react';
 import {afterEach, expect, it, vi} from 'vitest';
-import {DesignerMode} from '@datavisool/sdk/types';
+import {DesignerMode, DesignerScene} from '@datavisool/sdk/types';
 
-const state = vi.hoisted(() => ({definitions: {} as Record<string, any>}));
-vi.mock('@/designer/loader/DesignerLoader.ts', () => ({default: {definitionMap: state.definitions}}));
-vi.mock('@/designer/store/RuntimeStore.ts', () => ({default: {auxiliaryBorder: false}}));
-
-import ComponentContainer from '@/framework/core/ComponentContainer';
+import ComponentContainer from '@/plugins/designer-runtime/internal/framework/core/ComponentContainer';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
+const runtimes = new Set<DesignerRuntimeContext>();
 afterEach(() => {
     cleanup();
+    runtimes.forEach(runtime => runtime.dispose());
+    runtimes.clear();
     if (originalEnv) Object.defineProperty(window, 'DATAVISOOL_ENV', originalEnv);
     else delete (window as any).DATAVISOOL_ENV;
 });
@@ -31,14 +32,17 @@ it.each([0, 2, undefined])('forwards dataChange with loop index %s', async index
         setVisible() {}
         updateFilter() {}
     }
-    state.definitions.example = {getController: () => Controller, getInitConfig: () => ({base: {}, data: {}})};
+    const runtime = new DesignerRuntimeContext();
+    runtimes.add(runtime);
+    runtime.registry.definitions.example = {getController: () => Controller, getInitConfig: () => ({base: {}, data: {}})} as any;
     const layer = {id: 'component', type: 'example', name: 'Example', width: 100, height: 100, x: 0, y: 0, transform: {}};
     const triggerComponentEvent = vi.fn();
-    const manager = {
-        layerManager: {layerConfigs: {component: layer}, elemConfigs: {}, controllers: {}, enableEvent: false},
-        bpExecutor: {triggerComponentEvent},
-        globalVariableManager: {globalVariableInstance: {}},
-    };
+    const manager = new DesignerManager(DesignerScene.DEFAULT, runtime);
+    manager.layerManager.layerConfigs = {component: layer} as any;
+    manager.layerManager.elemConfigs = {} as any;
+    manager.layerManager.controllers = {} as any;
+    manager.layerManager.enableEvent = false;
+    vi.spyOn(manager.bpExecutor, 'triggerComponentEvent').mockImplementation(triggerComponentEvent);
 
     render(<ComponentContainer layer={layer as any} designerManager={manager as any} index={index}/>);
 

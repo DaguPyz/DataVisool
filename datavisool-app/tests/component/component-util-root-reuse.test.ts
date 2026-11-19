@@ -9,6 +9,9 @@ import {LOCALE_STORAGE_KEY} from '@/i18n/localePreference.ts';
 import {createI18nPlugin} from '@/plugins/i18n/i18nPlugin.ts';
 import ComponentUtil from '@/util/ComponentUtil';
 import {Visloom} from '@/visloom/index.ts';
+import {useMemoryLocalStorage} from './support/localStorageFixture.ts';
+
+useMemoryLocalStorage();
 
 describe('ComponentUtil shared SDK adapter', () => {
     let container: HTMLDivElement;
@@ -93,6 +96,7 @@ describe('ComponentUtil shared SDK adapter', () => {
     });
 
     it('provides and updates the shared UI locale inside a separate component root', async () => {
+        container.setAttribute('data-datavisool-i18n-skip', 'true');
         const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
         localStorage.setItem(LOCALE_STORAGE_KEY, 'zh-CN');
         const runtime = new Visloom();

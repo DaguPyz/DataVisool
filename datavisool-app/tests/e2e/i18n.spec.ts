@@ -22,7 +22,7 @@ test('设置切换语言后，导航、设计器独立组件与旧 DOM 同步更
     await settingsMenu.getByText('通用', {exact: true}).click();
 
     await page.evaluate(async () => {
-        const runtimeModule = '/src/global/ComponentRuntime.ts';
+        const runtimeModule = '/src/plugins/designer-runtime/internal/legacy-global/ComponentRuntime.ts';
         const {componentSdk, componentUI, exportComponentRuntime} = await import(/* @vite-ignore */ runtimeModule);
         exportComponentRuntime();
 

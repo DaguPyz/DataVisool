@@ -6,13 +6,14 @@ vi.hoisted(() => {
         addEventListener() {} removeEventListener() {} postMessage() {} terminate() {}
     }, configurable: true});
 });
-import {AnchorPointType, DesignerMode} from '@datavisool/sdk/types';
-import GroupLayerController from '@/comps/group-layer/GroupLayerController';
+import {AnchorPointType, DesignerMode, DesignerScene} from '@datavisool/sdk/types';
+import GroupLayerController from '@/plugins/designer-runtime/internal/builtin/group-layer/GroupLayerController';
 import {SwitchController} from '@/comps/builtin/base-switch/BaseSwitchController';
 import {AntdBaseDesignerController} from '@/comps/antd-common/AntdBaseDesignerController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
-import BPLayerNodeController from '@/designer/blueprint/node/core/impl/layer/BPLayerNodeController';
-import DesignerLoader from '@/designer/loader/DesignerLoader';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import BPLayerNodeController from '@/plugins/designer-runtime/internal/designer/blueprint/node/core/impl/layer/BPLayerNodeController';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
 
 const originalEnv = Object.getOwnPropertyDescriptor(window, 'DATAVISOOL_ENV');
 afterEach(() => {
@@ -70,30 +71,31 @@ describe('events from components in a loop', () => {
     });
 
     it('executes the blueprint action on the matching loop instance', () => {
-        const oldDefinitions = DesignerLoader.definitionMap;
+        const runtime = new DesignerRuntimeContext();
         try {
             const action = vi.fn();
-            DesignerLoader.definitionMap = {example: {getActionList: () => [{id: 'update', handler: action}]}} as any;
+            runtime.registry.definitions.example = {getActionList: () => [{id: 'update', handler: action}]} as any;
             const node = new BPLayerNodeController();
             vi.spyOn(node, 'isEnabled').mockReturnValue(true);
-            const target0 = {name: 'first'}, target2 = {name: 'third'};
-            const manager = {
-                layerManager: {controllers: {target_0: target0, target_2: target2}, layerConfigs: {target: {type: 'example'}}},
-                bluePrintManager: {bpPageMangers: [{
-                    bpAPMap: {[`switch:change:${AnchorPointType.OUTPUT}`]: [`target:update:${AnchorPointType.INPUT}`]},
-                    bpNodeControllers: {target: node},
-                }]},
-            };
+            const target0 = {name: 'first', destroy: vi.fn()}, target2 = {name: 'third', destroy: vi.fn()};
+            const manager = new DesignerManager(DesignerScene.DEFAULT, runtime);
+            manager.layerManager.controllers = {target_0: target0, target_2: target2} as any;
+            manager.layerManager.layerConfigs = {target: {type: 'example'}} as any;
+            manager.bluePrintManager.bpPageMangers = [{
+                bpAPMap: {[`switch:change:${AnchorPointType.OUTPUT}`]: [`target:update:${AnchorPointType.INPUT}`]},
+                bpNodeControllers: {target: node},
+                destroy: vi.fn(),
+            }] as any;
             const switchController = new SwitchController() as any;
             const instance = {setEventHandler: vi.fn()};
             Object.assign(switchController, {index: 2, config: {base: {id: 'switch'}},
-                bpExecutor: new BPExecutor(manager as any), instance});
+                bpExecutor: new BPExecutor(manager), instance});
             switchController.registerEvent();
             instance.setEventHandler.mock.calls[0][0].change(true);
             expect(action).toHaveBeenCalledOnce();
             expect(action).toHaveBeenCalledWith(target2, true);
         } finally {
-            DesignerLoader.definitionMap = oldDefinitions;
+            runtime.dispose();
         }
     });
 });

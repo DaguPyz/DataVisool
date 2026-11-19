@@ -32,7 +32,7 @@ function deferred<T>() {
 }
 
 function page(id: string) {
-    return {records: [{id, name: `private-${id}`, baseUrl: `https://${id}.example`}], total: 1, size: 6, current: 2};
+    return {records: [{id, name: `private-${id}`, baseUrl: `https://${id}.example`}], total: 7, size: 6, current: 2};
 }
 
 async function flushResponses() {
@@ -103,7 +103,7 @@ describe("resource request isolation", () => {
         earlier.resolve(page("earlier"));
         await flushResponses();
         expect(aiModelStore.pageData.records).toMatchObject([{id: "latest", key: "latest"}]);
-        expect(aiModelStore.pageData).toMatchObject({current: 2, size: 6, total: 1});
+        expect(aiModelStore.pageData).toMatchObject({current: 2, size: 6, total: 7});
     });
 
     test("an old edit response cannot replace the next account's current dialog", async () => {

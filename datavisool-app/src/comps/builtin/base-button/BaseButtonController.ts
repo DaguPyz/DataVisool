@@ -8,7 +8,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import BaseButtonComponent, {BaseButtonComponentProps, BaseButtonComponentRef} from "./BaseButtonComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import {IThemeItem} from "@datavisool/sdk/types";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 

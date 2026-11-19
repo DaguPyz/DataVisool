@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import {getDefaultMenuList} from "@/designer/right/util";
+import {getDefaultMenuList} from "@/comps/configMenus.ts";
 import pieImg from './pie.webp';
 import AntdPieController, {AntdPieProps} from "./AntdPieController";
 import {AntdCommonDefinition} from "@/comps/antd-common/AntdCommonDefinition";
@@ -13,10 +13,10 @@ import {ClazzTemplate} from "@datavisool/sdk/types";
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuInfo, MenuToConfigMappingType} from "@datavisool/sdk/core";
 
-const AnimationConfig = React.lazy(() => import("@/comps/common-component/animation-config/AnimationConfig"));
+const AnimationConfig = React.lazy(() => import("@datavisool/sdk/host").then(({AnimationConfig}) => ({default: AnimationConfig})));
 const AntdPieConfig = React.lazy(() => import("./AntdPieStyleConfig"));
 const AntdPieFieldMapping = React.lazy(() => import("./AntdPieStyleConfig").then((module) => ({default: module.AntdPieFieldMapping})));
-const DataConfig = React.lazy(() => import("@/comps/common-component/data-config/DataConfig"));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 
 class AntdPieDefinition extends AntdCommonDefinition<AntdPieController, AntdPieProps> {
 

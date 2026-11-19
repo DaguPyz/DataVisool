@@ -4,19 +4,19 @@
  * Licensed under the DataVisool License. See the LICENSE file distributed with this software.
  */
 
+import {BaseInfo} from '@datavisool/sdk/host';
 import {BaseInfoType, ComponentAiFeatureInfo} from "@datavisool/sdk/types";
 import type {MenuToConfigMappingType} from "@datavisool/sdk/core";
 import {ClazzTemplate} from "@datavisool/sdk/types";
 import {EventInfo} from "@datavisool/sdk/types";
 import BaseImageController, {BaseImageComponentProps} from "./BaseImageController";
 import baseImage from './baseImage.webp';
-import {MenuInfo} from "../../../designer/right/MenuType";
+import type {MenuInfo} from "@datavisool/sdk/core";
 import React, {lazy} from "react";
 import AbstractDesignerDefinition from "../../../framework/core/AbstractDesignerDefinition.ts";
 
-const BaseInfo = React.lazy(() => import("../../common-component/base-info/BaseInfo"));
-const FilterConfig = React.lazy(() => import("../../common-component/filter-config/FilterConfig.tsx"));
-const DataConfig = React.lazy(() => import("../../common-component/data-config/DataConfig.tsx"));
+const FilterConfig = React.lazy(() => import("@datavisool/sdk/host").then(({FilterConfig}) => ({default: FilterConfig})));
+const DataConfig = React.lazy(() => import("@datavisool/sdk/host").then(({DataConfig}) => ({default: DataConfig})));
 const BaseImageStyleConfig = lazy(() => import("./BaseImageConfig").then((module) => ({default: module.BaseImageStyleConfig})));
 
 export default class BaseImageDefinition extends AbstractDesignerDefinition<BaseImageController, BaseImageComponentProps> {

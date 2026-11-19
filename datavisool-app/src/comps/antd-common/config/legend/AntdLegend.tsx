@@ -6,7 +6,7 @@
 
 import './Legend.less';
 import {FieldChangeData, DatavisoolGUI, type Control} from "@datavisool/ui";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {useState} from "react";
 import {cloneDeep} from "lodash";
 

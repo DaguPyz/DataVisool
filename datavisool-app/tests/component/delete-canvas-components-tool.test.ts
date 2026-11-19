@@ -1,159 +1,117 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
+import {useMemoryLocalStorage} from './support/localStorageFixture.ts';
+useMemoryLocalStorage();
+import {beforeEach, describe, expect, test, vi} from "vitest";
+import {cloneDeep} from "lodash";
+import type {EditorAiEditingSession} from "@datavisool/sdk/plugin/contracts/editorCanvas";
+import {CanvasOperationJournal} from "@/plugins/editor-ai/frontend-effect/CanvasOperationJournal.ts";
+import {serializeFrontendEffectError} from "@/plugins/editor-ai/frontend-effect/FrontendEffectClientError.ts";
+import {runDeleteCanvasComponentsTool} from "@/plugins/editor-ai/frontend-effect/tools/DeleteCanvasComponentsTool.ts";
 
-const deletion = vi.hoisted(() => ({deleteLayersByIds: vi.fn()}));
-vi.mock("@/designer/operate-provider/selection/SelectionCommands.ts", () => ({
-    deleteLayersByIds: deletion.deleteLayersByIds,
-}));
+function makeSession() {
+    const state = new Map([
+        ["first", {id: "first", type: "BaseText", name: "First"}],
+        ["second", {id: "second", type: "BaseText", name: "Second"}],
+    ]);
+    const readComponents = vi.fn((ids: readonly string[]) => ({
+        components: ids.flatMap(id => state.has(id) ? [{id, type: "BaseText", name: state.get(id)?.name, layer: cloneDeep(state.get(id))}] : []),
+        missingComponentIds: ids.filter(id => !state.has(id)),
+    }));
+    const deleteComponents = vi.fn((targets: readonly {componentId: string; componentType: string}[]) => {
+        targets.forEach(target => state.delete(target.componentId));
+        return {applied: targets.map(target => ({componentId: target.componentId, componentType: target.componentType})), failed: []};
+    });
+    const session = {isActive: () => true, readComponents, deleteComponents} as unknown as EditorAiEditingSession;
+    return {session, state, readComponents, deleteComponents};
+}
 
-import {runDeleteCanvasComponentsTool} from "@/frontend-effect/tools/DeleteCanvasComponentsTool.ts";
-import {serializeFrontendEffectError} from "@/frontend-effect/FrontendEffectClientError.ts";
+function payload(targets = ["first", "second"]) {
+    return {
+        operationId: `delete-${crypto.randomUUID()}`,
+        operationFingerprint: "delete-fingerprint",
+        approvalTicket: {approvalId: "approval-delete", nonce: "nonce-delete"},
+        targets: targets.map(componentId => ({componentId, componentType: "BaseText"})),
+        expectedSnapshots: targets.map(componentId => ({componentId, componentType: "BaseText",
+            layer: {id: componentId, type: "BaseText", name: componentId === "first" ? "First" : "Second"}})),
+    };
+}
 
 describe("delete canvas components tool", () => {
-    let layers: Record<string, any>;
+    let session: EditorAiEditingSession;
+    let state: Map<string, {id: string; type: string; name: string}>;
+    let deleteComponents: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
-        vi.resetAllMocks();
-        const storage = new Map<string, string>();
-        Object.defineProperty(window, "localStorage", {
-            configurable: true,
-            value: {
-                getItem: (key: string) => storage.get(key) ?? null,
-                setItem: (key: string, value: string) => storage.set(key, value),
-            },
-        });
-        layers = {
-            first: {id: "first", type: "BaseText", name: "First"},
-            second: {id: "second", type: "BaseText", name: "Second"},
-        };
-        (window as any).DATAVISOOL_ENV = {currentManager: {layerManager: {layerConfigs: layers}}};
+        const fixture = makeSession();
+        session = fixture.session;
+        state = fixture.state;
+        deleteComponents = fixture.deleteComponents;
     });
 
-    afterEach(() => delete (window as any).DATAVISOOL_ENV);
-
-    test("records partial deletion and the original exception, then replays the failed receipt without deleting again", async () => {
-        deletion.deleteLayersByIds.mockImplementationOnce((ids: string[]) => {
-            delete layers[ids[0]];
-            throw Object.assign(new Error("second target cleanup failed"), {code: "layer_cleanup_failed", fieldPath: "layer.second"});
+    test("records a partial deletion and replays the receipt without deleting again", async () => {
+        deleteComponents.mockImplementationOnce((targets: Array<{componentId: string; componentType: string}>) => {
+            state.delete(targets[0].componentId);
+            return {
+                applied: [targets[0]],
+                failed: [{componentId: "second", code: "delete_failed", message: "cleanup failed"}],
+            };
         });
-        const payload = deletionPayload();
+        const request = payload();
+        const journal = new CanvasOperationJournal();
 
-        const first = await runDeleteCanvasComponentsTool(payload);
-        const replay = await runDeleteCanvasComponentsTool(payload);
+        const first = await runDeleteCanvasComponentsTool(request, session, journal);
+        const replay = await runDeleteCanvasComponentsTool(request, session, journal);
 
         expect(first).toMatchObject({
             deletedComponentIds: ["first"],
-            failed: [{
-                componentId: "second",
-                code: "delete_operation_failed",
-                fieldPath: "layer.second",
-                actualState: "present",
-                cause: {code: "layer_cleanup_failed", message: "second target cleanup failed", fieldPath: "layer.second"},
-            }],
+            failed: [{componentId: "second", code: "delete_failed", actualState: "present"}],
             partial: true,
-            actualStateUnknown: true,
-            cleanupStateUnknown: true,
-            actualState: [
-                {componentId: "first", state: "deleted"},
-                {componentId: "second", state: "present"},
-            ],
+            actualStateUnknown: false,
+            actualState: [{componentId: "first", state: "deleted"}, {componentId: "second", state: "present"}],
         });
         expect(replay).toEqual(first);
-        expect(deletion.deleteLayersByIds).toHaveBeenCalledTimes(1);
+        expect(deleteComponents).toHaveBeenCalledTimes(1);
     });
 
-    test("keeps an execution failure failed when all component configs were removed before cleanup threw", async () => {
-        deletion.deleteLayersByIds.mockImplementationOnce((ids: string[]) => {
-            ids.forEach((id) => delete layers[id]);
-            throw new Error("global variable unbind failed");
-        });
-        const payload = deletionPayload();
+    test("requires an approval ticket and reports exact malformed target input", async () => {
+        const emptyTargets = await runDeleteCanvasComponentsTool({approvalTicket: {approvalId: "a", nonce: "n"}, targets: []}, session, new CanvasOperationJournal())
+            .catch(serializeFrontendEffectError);
+        expect(emptyTargets).toMatchObject({fieldPath: "targets", actualValue: [], actualType: "array", actualCount: 0,
+            expectedValue: {type: "array", minItems: 1, maxItems: 100}});
 
-        const first = await runDeleteCanvasComponentsTool(payload);
-        const replay = await runDeleteCanvasComponentsTool(payload);
-
-        expect(first).toMatchObject({
-            deletedComponentIds: ["first", "second"],
-            failed: [{
-                componentId: "$operation",
-                code: "delete_execution_failed",
-                fieldPath: "execution",
-                message: "global variable unbind failed",
-                actualState: "targets deleted; cleanup status unknown",
-                expectedValue: "所有目标删除且关联清理均完成",
-            }],
-            partial: true,
-            actualStateUnknown: true,
-            cleanupStateUnknown: true,
-            operationError: {message: "global variable unbind failed"},
-        });
-        expect(replay).toEqual(first);
-        expect(deletion.deleteLayersByIds).toHaveBeenCalledTimes(1);
+        await expect(runDeleteCanvasComponentsTool(payload(), session, new CanvasOperationJournal()))
+            .resolves.toMatchObject({deletedComponentIds: ["first", "second"]});
     });
 
-    test("returns raw target arrays and missing layer baselines as actual values", async () => {
-        const approvalTicket = {approvalId: "approval-delete", nonce: "nonce-delete"};
-        const emptyTargets = await runDeleteCanvasComponentsTool({approvalTicket, targets: []}).catch(serializeFrontendEffectError);
-        expect(emptyTargets).toMatchObject({
-            fieldPath: "targets", actualValue: [], actualType: "array", actualCount: 0,
-            expectedValue: {type: "array", minItems: 1, maxItems: 100},
+    test("reports cleanup failure even if the model snapshot shows all targets deleted", async () => {
+        deleteComponents.mockImplementationOnce((targets: Array<{componentId: string; componentType: string}>) => {
+            targets.forEach(target => state.delete(target.componentId));
+            throw Object.assign(new Error("global variable cleanup failed"), {code: "cleanup_failed"});
         });
+        const result = await runDeleteCanvasComponentsTool(payload(), session, new CanvasOperationJournal());
 
-        const missingLayer = await runDeleteCanvasComponentsTool({
-            approvalTicket,
-            targets: [{componentId: "first", componentType: "BaseText"}],
-            expectedSnapshots: [{componentId: "first", componentType: "BaseText"}],
-        }).catch(serializeFrontendEffectError);
-        expect(missingLayer).toMatchObject({
-            fieldPath: "expectedSnapshots[0].layer", actualValue: null, actualType: "missing",
-            presentFields: ["componentId", "componentType"], expectedValue: "layer 快照字段",
-        });
+        expect(result.deletedComponentIds).toEqual(["first", "second"]);
+        expect(result.failed).toEqual([expect.objectContaining({componentId: "$operation", code: "delete_execution_failed"})]);
+        expect(result.cleanupStateUnknown).toBe(true);
+        expect(result.operationError).toMatchObject({code: "cleanup_failed", message: "global variable cleanup failed"});
     });
 
-    test("preserves the read-back error when the layer configuration is unavailable after deletion", async () => {
-        deletion.deleteLayersByIds.mockImplementationOnce((ids: string[]) => {
-            ids.forEach((id) => delete layers[id]);
-            (window as any).DATAVISOOL_ENV.currentManager.layerManager = {};
-        });
+    test("rejects a missing layer baseline before asking the canvas to delete", async () => {
+        const request = {...payload(["first"]), expectedSnapshots: [{componentId: "first", componentType: "BaseText"}]};
+        const error = await runDeleteCanvasComponentsTool(request, session, new CanvasOperationJournal()).catch(serializeFrontendEffectError);
 
-        const payload = deletionPayload();
-        payload.targets = payload.targets.slice(0, 1);
-        payload.expectedSnapshots = payload.expectedSnapshots.slice(0, 1);
-        const result = await runDeleteCanvasComponentsTool(payload);
+        expect(error).toMatchObject({fieldPath: "expectedSnapshots[0].layer", actualValue: null,
+            presentFields: ["componentId", "componentType"], expectedValue: "layer 快照字段"});
+        expect(deleteComponents).not.toHaveBeenCalled();
+    });
 
-        expect(result).toMatchObject({
-            deletedComponentIds: [],
-            failed: [{
-                componentId: "first",
-                code: "delete_state_unknown",
-                actualValue: "unknown",
-                expectedValue: null,
-                cause: {
-                    code: "delete_state_unavailable",
-                    fieldPath: "currentManager.layerManager.layerConfigs",
-                    actualValue: null,
-                    actualType: "missing",
-                    expectedValue: "object containing current component configurations",
-                },
-                verificationError: {code: "delete_state_unavailable"},
-            }],
-            actualStateUnknown: true,
-        });
+    test("does not delete a component whose layer changed after the expected snapshot", async () => {
+        const request = payload(["first"]);
+        request.expectedSnapshots[0].layer.name = "stale-name";
+        const result = await runDeleteCanvasComponentsTool(request, session, new CanvasOperationJournal());
+
+        expect(result.deletedComponentIds).toEqual([]);
+        expect(result.failed[0]).toMatchObject({componentId: "first", code: "component_revision_conflict"});
+        expect(deleteComponents).not.toHaveBeenCalled();
     });
 });
-
-function deletionPayload() {
-    return {
-        operationId: `delete-test-${crypto.randomUUID()}`,
-        operationFingerprint: "delete-fingerprint",
-        approvalTicket: {approvalId: "approval-delete", nonce: "nonce-delete"},
-        targets: [
-            {componentId: "first", componentType: "BaseText"},
-            {componentId: "second", componentType: "BaseText"},
-        ],
-        expectedSnapshots: [
-            {componentId: "first", componentType: "BaseText", layer: {id: "first", type: "BaseText", name: "First"}},
-            {componentId: "second", componentType: "BaseText", layer: {id: "second", type: "BaseText", name: "Second"}},
-        ],
-    };
-}

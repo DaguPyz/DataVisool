@@ -11,7 +11,7 @@ import AntdCommonLineController from "./AntdCommonLineController";
 import AntdCommonUtil from "@/comps/antd-common/AntdCommonUtil";
 import {FieldChangeData, Grid, DatavisoolGUI, DatavisoolGUIUtil, type Control} from "@datavisool/ui";
 import {ShapeAttrs} from "@antv/g-base";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {AntdBaseDesignerController} from "@/comps/antd-common/AntdBaseDesignerController.ts";
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 import {g2plotLabelSetSchema} from "@/comps/common-component/schema-fragment/SchemaFragment.ts";

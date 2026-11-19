@@ -2,10 +2,10 @@
 import {beforeEach, describe, expect, test, vi} from "vitest";
 
 const mocks = vi.hoisted(() => ({requestInlineInteraction: vi.fn()}));
-vi.mock("@/designer/ai-driven/AiDrivenProgressTerminalStore.ts", () => ({default: mocks}));
+vi.mock("@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts", () => ({default: mocks}));
 vi.mock("@datavisool/ui", () => ({globalModal: {modalApi: null}, TextArea: () => null}));
 
-import {runUserInputTool} from "@/frontend-effect/tools/UserInputTool.ts";
+import {runUserInputTool} from "@/plugins/editor-ai/frontend-effect/tools/UserInputTool.ts";
 
 const question = {
     id: "style", header: "风格", question: "选择风格", options: [
@@ -19,7 +19,7 @@ describe("用户输入工具契约", () => {
     test("声明的结构可进入交互并按问题ID返回答案", async () => {
         const data = {answers: {style: {answers: ["蓝色"]}}};
         mocks.requestInlineInteraction.mockResolvedValue({action: "submit", data});
-        await expect(runUserInputTool("补充需求", {questions: [question]})).resolves.toEqual(data);
+        await expect(runUserInputTool("补充需求", {questions: [question]}, mocks as any)).resolves.toEqual(data);
         expect(mocks.requestInlineInteraction).toHaveBeenCalledWith({
             kind: "userInput", title: "补充需求", questions: [question],
         }, undefined);
@@ -31,7 +31,7 @@ describe("用户输入工具契约", () => {
         {questions: [question, question]},
         {questions: [{...question, options: [question.options[0], question.options[0]]}]},
     ])("错误结构不会进入用户等待", (payload) => {
-        expect(() => runUserInputTool("补充需求", payload)).toThrow();
+        expect(() => runUserInputTool("补充需求", payload, mocks as any)).toThrow();
         expect(mocks.requestInlineInteraction).not.toHaveBeenCalled();
     });
 });

@@ -8,19 +8,21 @@ vi.hoisted(() => {
     }, configurable: true});
 });
 
-import DesignerLoader from '@/designer/loader/DesignerLoader';
+import DesignerLoader from '@/plugins/designer-runtime/internal/designer/loader/DesignerLoader';
 import AbstractDesignerDefinition from '@/framework/core/AbstractDesignerDefinition';
-import {componentCategorize} from '@/designer/left/compoent-lib/ComponentCategorize';
+import DesignerRuntimeContext from '@/plugins/designer-runtime/internal/DesignerRuntimeContext.ts';
+import {DesignerMode} from '@datavisool/sdk/types';
 
 it('registers each built-in definition under its own default component type', () => {
-    const originalDefinitions = DesignerLoader.definitionMap;
-    const originalCategories = [...componentCategorize];
+    const runtime = new DesignerRuntimeContext();
     try {
-        DesignerLoader.definitionMap = {};
-        new DesignerLoader().scanComponents();
-        const definitions = Object.entries(DesignerLoader.definitionMap);
+        new DesignerLoader(DesignerMode.EDIT, runtime).scanComponents();
+        const definitions = Object.entries(runtime.registry.definitions);
         expect(definitions.length).toBeGreaterThan(40);
-        const modules = import.meta.glob('/src/comps/**/*.ts', {eager: true}) as Record<string, {default?: any}>;
+        const modules = {
+            ...import.meta.glob('/src/comps/**/*.ts', {eager: true}),
+            ...import.meta.glob('/src/plugins/designer-runtime/internal/builtin/**/*.ts', {eager: true}),
+        } as Record<string, {default?: any}>;
         const sourcesByType = new Map<string, string[]>();
         for (const [path, module] of Object.entries(modules)) {
             const Definition = module.default;
@@ -40,7 +42,6 @@ it('registers each built-in definition under its own default component type', ()
         });
         expect(mismatches).toEqual([]);
     } finally {
-        DesignerLoader.definitionMap = originalDefinitions;
-        componentCategorize.splice(0, componentCategorize.length, ...originalCategories);
+        runtime.dispose();
     }
 });

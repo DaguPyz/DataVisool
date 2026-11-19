@@ -1,7 +1,7 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import React, {useMemo, useState} from 'react';
 import {Tag} from '@datavisool/ui';
-import {ConfigType} from '@/designer/right/ConfigContent.tsx';
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {IdGenerate} from '@datavisool/sdk';
 import MapLibreGisController from '@/comps/maplibre-gis/MapLibreGisController.ts';
 import {DataConfigType} from '@datavisool/sdk/types';
@@ -17,7 +17,7 @@ import {
     normalizeStructuredLayers,
     removeMapLibreLayer
 } from "@/comps/maplibre-gis/layer/LayerTools.ts";
-import ComponentDataUpdater from "@/framework/core/tools/ComponentDataUpdater.ts";
+import type {ComponentDataUpdater} from "@datavisool/sdk/core";
 import {globalMessage} from "@datavisool/ui";
 import {MapLibreActionButton, MapLibreButton as Button, MapLibreSelect as Select, MapLibreSwitch as Switch} from '@/comps/maplibre-gis/comm/MapLibreGisConfigUI.tsx';
 
@@ -54,47 +54,89 @@ const MapLibreGisSourcesConfig: React.FC<ConfigType<MapLibreGisController>> = ({
         const dataConfig = (src as any).dataConfig as DataConfigType | undefined;
         if (!dataConfig)
             return;
+        let expectedDataConfig: string | undefined;
+        try {
+            expectedDataConfig = JSON.stringify(dataConfig);
+        } catch {
+            return;
+        }
+        if (typeof expectedDataConfig !== 'string') return;
 
         const map = controller.getMap();
         if (!map)
             return;
 
         let done = false;
-        const updater = new ComponentDataUpdater((data) => {
-            if (done)
-                return;
+        let timeout: number | undefined;
+        let updater: ComponentDataUpdater | null = null;
+        const requestController = new AbortController();
+        const clearTimer = () => {
+            if (timeout === undefined) return;
+            window.clearTimeout(timeout);
+            timeout = undefined;
+        };
+        const onDispose = () => {
             done = true;
-            try {
-                setGeoJsonSourceData(map as any, sourceId, data);
-            } catch (e) {
-                console.error(`[MapLibreGisSourcesConfig] setGeoJsonSourceData failed: ${sourceId}`, e);
+            clearTimer();
+        };
+        const finish = (warning?: string, data?: unknown, hasData = false) => {
+            if (done) return;
+            done = true;
+            clearTimer();
+            const currentUpdater = updater;
+            updater = null;
+            try { currentUpdater?.destroy(); } catch (error) {
+                console.error('[MapLibreGisSourcesConfig] dispose dynamic data updater failed', error);
             }
-            clearTimeout(timeout);
-            updater.destroy();
-        }, () => {
-            if (done)
-                return;
-            done = true;
-            clearTimeout(timeout);
-            updater.destroy();
-            globalMessage.messageApi?.warning('动态数据源请求失败');
-        });
+            if (hasData) {
+                const currentConfig = controller.getConfig();
+                const currentSource = normalizeSources((currentConfig as any)?.style?.sources)
+                    .find(source => source.id === sourceId);
+                let sameRequest = false;
+                try {
+                    sameRequest = currentSource?.sourceType === 'geojson'
+                        && (currentSource as any)?.dataMode === 'dataConfig'
+                        && JSON.stringify((currentSource as any)?.dataConfig) === expectedDataConfig;
+                } catch {
+                    sameRequest = false;
+                }
+                if (sameRequest && controller.getMap() === map) {
+                    try {
+                        setGeoJsonSourceData(map as any, sourceId, data);
+                    } catch (error) {
+                        console.error(`[MapLibreGisSourcesConfig] setGeoJsonSourceData failed: ${sourceId}`, error);
+                    }
+                }
+            }
+            if (warning) globalMessage.messageApi?.warning(warning);
+        };
 
-        const timeout = window.setTimeout(() => {
-            if (done)
-                return;
+        try {
+            updater = controller.createHostDataUpdater(
+                data => finish(undefined, data, true),
+                () => finish('动态数据源请求失败'),
+                {signal: requestController.signal, onDispose},
+            );
+        } catch (error) {
+            onDispose();
+            console.error('[MapLibreGisSourcesConfig] create dynamic data updater failed', error);
+            globalMessage.messageApi?.warning('动态数据源请求失败');
+            return;
+        }
+        if (!updater) {
             done = true;
-            updater.destroy();
-            globalMessage.messageApi?.warning('动态数据源请求超时');
-        }, 10000);
+            onDispose();
+            globalMessage.messageApi?.warning('动态数据源请求失败');
+            return;
+        }
+
+        timeout = window.setTimeout(() => finish('动态数据源请求超时'), 10000);
 
         try {
             updater.run(dataConfig, true);
         } catch (e) {
-            clearTimeout(timeout);
-            updater.destroy();
+            finish('动态数据源请求失败');
             console.error('[MapLibreGisSourcesConfig] request dynamic data failed', e);
-            globalMessage.messageApi?.warning('动态数据源请求失败');
         }
     };
 

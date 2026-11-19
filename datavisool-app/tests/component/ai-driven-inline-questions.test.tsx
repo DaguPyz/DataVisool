@@ -4,8 +4,8 @@ import {describe, expect, test, vi} from 'vitest';
 
 vi.mock('@/i18n/miniI18n.ts', () => ({tx: (value: string) => value}));
 
-import AiDrivenInlineInteraction from '@/designer/ai-driven/AiDrivenInlineInteraction.tsx';
-import type {IAiDrivenInlineInteraction} from '@/designer/ai-driven/AiDrivenProgressTerminalStore.ts';
+import AiDrivenInlineInteraction from '@/plugins/editor-ai/AiDrivenInlineInteraction.tsx';
+import type {IAiDrivenInlineInteraction} from '@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts';
 
 const interaction: IAiDrivenInlineInteraction = {
     id: 'questions-1',

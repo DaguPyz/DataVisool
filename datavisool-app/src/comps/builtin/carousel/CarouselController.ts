@@ -9,7 +9,7 @@ import AbstractDesignerController from "../../../framework/core/AbstractDesigner
 import ComponentUtil from "@/util/ComponentUtil.ts";
 import CarouselComponent, {CarouselComponentProps, CarouselComponentRef} from "./CarouselComponent.tsx";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 
 export class CarouselController extends AbstractDesignerController<CarouselComponentRef, CarouselComponentProps> {
 

@@ -8,7 +8,10 @@ vi.mock('@tauri-apps/api/core', () => ({
 import {act, render, screen, waitFor} from '@testing-library/react';
 import BaseImageComponent from '@/comps/builtin/base-image/BaseImageComponent.tsx';
 import BaseImageController from '@/comps/builtin/base-image/BaseImageController.ts';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
+import DesignerManager from '@/plugins/designer-runtime/internal/designer/manager/DesignerManager';
+import {DesignerScene} from '@datavisool/sdk/types';
 
 describe('BaseImageComponent data source support', () => {
     it('uses the data source value before the style source', () => {
@@ -72,6 +75,8 @@ describe('BaseImageComponent data source support', () => {
         const container = document.createElement('div');
         document.body.appendChild(container);
         const controller = new BaseImageController();
+        const manager = new DesignerManager(DesignerScene.DEFAULT);
+        controller.setRuntimeDataAdapter({createUpdater: (success, fail) => new ComponentDataUpdater(success, fail, manager)});
         const config = {base: {id: 'image'}, data: {sourceType: 'static', staticData: {value: {data: {url: 'images/imported.png'}}}}};
         try {
             let creation!: Promise<void>;

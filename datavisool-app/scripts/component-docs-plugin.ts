@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import type {Plugin} from 'vite';
-import {generateComponentDocs, appRoot} from './component-docs.mjs';
+import {generateComponentDocs, componentSourceRoots} from './component-docs.mjs';
 
 /** 开发与发布共用生成规则；正文仅输出到后端资料目录。 */
 export default function componentDocsPlugin(): Plugin {
@@ -11,7 +11,8 @@ export default function componentDocsPlugin(): Plugin {
         configureServer(server) {
             const changed = (path: string) => {
                 const normalized = path.replace(/\\/g, '/');
-                if (!normalized.startsWith(`${appRoot.replace(/\\/g, '/')}/src/comps/`) && !normalized.endsWith('G2Plot公共配置分块说明.md')) return;
+                if (!componentSourceRoots.some(root => normalized.startsWith(`${root.replace(/\\/g, '/')}/`))
+                    && !normalized.endsWith('G2Plot公共配置分块说明.md')) return;
                 if (!/\.(md|tsx?|json|less|css)$/.test(path)) return;
                 clearTimeout(timer);
                 timer = setTimeout(() => {

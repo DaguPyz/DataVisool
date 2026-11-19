@@ -8,7 +8,7 @@ import AMapComponent, {AMapComponentProps, AMapComponentRef} from "./AMapCompone
 import AbstractDesignerController from "../../framework/core/AbstractDesignerController.ts";
 import {ObjectUtil} from "@datavisool/sdk";
 import type {UpdateOptions} from "@datavisool/sdk/types";
-import BPExecutor from "../../designer/blueprint/core/BPExecutor.ts";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 
 export class AMapController extends AbstractDesignerController<AMapComponentRef, AMapComponentProps> {

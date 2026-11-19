@@ -11,6 +11,9 @@ import {createUserManagementPlugin} from "@/plugins/user-management/userManageme
 import type {Plugin} from "@datavisool/sdk/plugin";
 import {Visloom} from "@/visloom/index.ts";
 import {createI18nPlugin} from "@/plugins/i18n/i18nPlugin.ts";
+import {useMemoryLocalStorage} from './support/localStorageFixture.ts';
+
+useMemoryLocalStorage();
 
 const mocks = vi.hoisted(() => ({navigate: vi.fn(async () => {})}));
 vi.mock("@datavisool/ui", () => ({
@@ -51,6 +54,7 @@ async function renderMenus(role: RoleType) {
     await runtime.start([services, createI18nPlugin(), createNavigationPlugin(), createAiModelManagementPlugin(),
         createUserManagementPlugin(), createSettingsPlugin()]);
     runtimes.push(runtime);
+    runtime.get('i18n').setLocale('zh-CN');
     location = {key: "fixture", pathname: "/home/console", hash: "", search: "", matchedRouteIds: ["app:console"]};
     const {Navigation} = runtime.get('navigation');
     render(<Suspense fallback={null}><Navigation/></Suspense>);

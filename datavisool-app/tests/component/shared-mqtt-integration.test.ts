@@ -3,12 +3,19 @@ import {createRequire} from 'node:module';
 import {waitFor} from '@testing-library/react';
 import {expect, it, vi} from 'vitest';
 import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 class Controller extends AbstractDesignerController<unknown, any> {
     changeData = vi.fn();
     update(config: any) { this.config = config; }
     getConfig() { return this.config; }
+}
+
+function attachRuntimeDataUpdater(controller: Controller): void {
+    controller.setRuntimeDataAdapter({
+        createUpdater: (success, fail) => new ComponentDataUpdater(success, fail, {isRuntimeEffectActive: () => true} as any),
+    });
 }
 
 it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('receives a subscribed MQTT message and disconnects on destroy', async () => {
@@ -44,6 +51,7 @@ it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('receives a subscribed MQ
         await controller.create(document.createElement('div'), {
             data: {sourceType: 'mqtt', mqtt: {host: 'ws://127.0.0.1', port: address.port, path: '/mqtt', topics: '  test/data , floor 1/temperature , x\\s/y  ', keepalive: 0}},
         }, new BPExecutor({} as any));
+        attachRuntimeDataUpdater(controller);
         controller.loadComponentData();
         await waitFor(() => expect(controller.changeData).toHaveBeenCalledWith({topic: 'test/data', message: 'mqtt-data'}));
         expect(subscribed).toHaveBeenCalledWith(['test/data', 'floor 1/temperature', 'x\\s/y']);
@@ -97,6 +105,7 @@ it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('authenticates and resubs
         await controller.create(document.createElement('div'), {
             data: {sourceType: 'mqtt', mqtt: {host: 'ws://127.0.0.1', port: address.port, path: '/mqtt', topics: 'test/reconnect', keepalive: 0, reconnectPeriod: 50, username: 'test-user', password: 'test-password'}},
         }, new BPExecutor({} as any));
+        attachRuntimeDataUpdater(controller);
         controller.loadComponentData();
         await waitFor(() => expect(controller.changeData).toHaveBeenCalledWith({topic: 'test/reconnect', message: 'after-reconnect'}), {timeout: 8000});
         expect(connected).toHaveBeenCalledTimes(2);

@@ -1,7 +1,12 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
-import {fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render as testingRender, screen} from '@testing-library/react';
 import {describe, expect, it, vi} from 'vitest';
-import {ShortcutRecorder} from '@/designer/footer/hotkey-des/ShortcutRecorder.tsx';
+import type {ReactNode} from 'react';
+import {ShortcutContext} from '@/plugins/editor-shortcuts/ShortcutContext.ts';
+import {createShortcutEffects} from '@/plugins/editor-shortcuts/shortcutEffects.ts';
+import {ShortcutStore} from '@/plugins/editor-shortcuts/core/ShortcutStore.ts';
+const render = (ui: ReactNode) => testingRender(<ShortcutContext.Provider value={{store: new ShortcutStore(), effects: createShortcutEffects(), readCanvasInput: () => ({pointerTarget: null, contextMenuOpen: false})}}>{ui}</ShortcutContext.Provider>);
+import {ShortcutRecorder} from '@/plugins/editor-shortcuts/help/ShortcutRecorder.tsx';
 
 describe('ShortcutRecorder', () => {
     it('在 macOS 上松开 Option 后提交按住动作', () => {

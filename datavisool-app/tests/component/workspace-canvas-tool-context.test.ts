@@ -1,6 +1,6 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {describe, expect, it} from 'vitest';
-import {isCanvasToolShortcutTarget, shouldFocusWorkspaceCanvas} from '@/designer/operate-provider/hot-key/CanvasToolContext.ts';
+import {isCanvasToolShortcutTarget, shouldFocusWorkspaceCanvas} from '@/shared/designer/CanvasToolContext.ts';
 
 const createWorkspace = () => {
     const ruler = document.createElement('div');

@@ -12,7 +12,7 @@ vi.mock("@datavisool/ui", () => ({
     Spin: ({children}: any) => <>{children}</>,
     globalMessage: {success: vi.fn()},
 }));
-import Panel from "@/designer/ai-driven/AiDrivenSettingsPanel.tsx";
+import Panel from "@/plugins/editor-ai/AiDrivenSettingsPanel.tsx";
 
 beforeEach(() => {
     vi.clearAllMocks();

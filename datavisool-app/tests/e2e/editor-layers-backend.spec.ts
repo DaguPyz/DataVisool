@@ -18,6 +18,62 @@ test('多选编组、展开折叠与解除编组',async({page})=>{
     await group.locator('.group-header').click();await page.keyboard.press('Meta+Shift+g');await expect(group).toHaveCount(0);await expect(rows(page)).toHaveCount(2);
 });
 test('图层条目可通过键盘聚焦与选择',async({page})=>{await editor(page);await addTwo(page);const row=rows(page).first();expect(await row.evaluate(e=>(e as HTMLElement).tabIndex)).toBeGreaterThanOrEqual(0);await row.focus();await page.keyboard.press('Enter');await expect(row).toHaveClass(/layer-selected/);});
+
+test('属性面板随多选、取消选择和搜索定位更新', async ({page}) => {
+    await page.setViewportSize({width: 1440, height: 900});
+    await editor(page);
+    await addTwo(page);
+    const text = rows(page).filter({hasText: '基础文本'});
+    const block = rows(page).filter({hasText: '基础色块'});
+    const inspector = page.getByRole('region', {name: '组件属性'});
+    const inspectedComponent = inspector.locator('.component-info-name');
+
+    await text.click();
+    await expect(inspectedComponent).toHaveText('基础文本');
+    await block.click({modifiers: ['Meta']});
+    await expect(inspectedComponent).toHaveText('基础色块');
+    await block.click({modifiers: ['Meta']});
+    await expect(inspectedComponent).toHaveText('基础文本');
+    await text.click({modifiers: ['Meta']});
+    await expect(inspector).toHaveCount(0);
+
+    await page.keyboard.press('Meta+f');
+    const search = page.getByPlaceholder('请输入图层名、组件名或组件 Key');
+    await search.fill('基础色块');
+    await page.locator('.search-layer-layer-item').filter({hasText: '基础色块'}).click();
+    await expect(block).toHaveClass(/layer-selected/);
+    await expect(inspectedComponent).toHaveText('基础色块');
+});
+
+test('窄屏选图层保留列表，双击画布打开属性并保留当前菜单', async ({page}) => {
+    await page.setViewportSize({width: 900, height: 900});
+    await editor(page);
+    await page.getByRole('button', {name: '添加基础文本'}).click();
+    await open(page, '图层');
+    const text = rows(page).filter({hasText: '基础文本'});
+    await text.click();
+    await expect(text).toHaveClass(/layer-selected/);
+    const filter = page.locator('.datavisool-config-menu').getByRole('button', {name: '滤镜'});
+    await expect(filter).toBeVisible();
+    const inspector = page.getByRole('region', {name: '组件属性'});
+    await expect(inspector).toHaveCount(0);
+
+    const [layer] = await layers(page);
+    const canvasLayer = page.locator(`[data-layer-transform="${layer.id}"]`);
+    const bounds = await canvasLayer.boundingBox();
+    expect(bounds).not.toBeNull();
+    const {x, y, width, height} = bounds!;
+    await page.mouse.dblclick(x + width / 2, y + height / 2);
+    await expect(inspector).toBeVisible();
+    await expect(panel(page)).toHaveCount(0);
+
+    await filter.click();
+    await expect(inspector).toHaveAttribute('data-config-menu', 'filter');
+    await filter.press('Escape');
+    await expect(inspector).toHaveCount(0);
+    await page.mouse.dblclick(x + width / 2, y + height / 2);
+    await expect(inspector).toHaveAttribute('data-config-menu', 'filter');
+});
 test('菜单全部展开和折叠分组',async({page})=>{await editor(page);await addTwo(page);await rows(page).first().click();await rows(page).last().click({modifiers:['Meta']});await expect(panel(page).locator('.layer-selected')).toHaveCount(2);await page.keyboard.press('Meta+g');const group=panel(page).locator('.layer-group');await expect(group).toHaveCount(1);await panel(page).getByRole('button',{name:'更多操作'}).click();await page.getByText('全部展开',{exact:true}).click();await expect(group.locator('.layer-item')).toHaveCount(2);await panel(page).getByRole('button',{name:'更多操作'}).click();await page.getByText('全部折叠',{exact:true}).click();await expect(group.locator('.layer-item')).toHaveCount(0);});
 test('删除所选图层并持久化',async({page})=>{await editor(page);await addTwo(page);const selected=rows(page).filter({hasText:'基础文本'});await selected.click();await expect(selected).toHaveClass(/layer-selected/);await page.keyboard.press('Meta+Backspace');await expect(selected).toHaveCount(0);await expect.poll(async()=>(await layers(page)).length).toBe(1);await save(page);await page.reload();await expect(page.locator('#designer-ds-content')).toBeVisible({timeout:60000});await expect.poll(async()=>(await layers(page)).length).toBe(1);await open(page,'图层');await expect(rows(page)).toHaveCount(1);});
 test('分组重命名、隐藏和锁定作用于子图层并保存',async({page})=>{await editor(page);await addTwo(page);await rows(page).first().click();await rows(page).last().click({modifiers:['Meta']});await expect(panel(page).locator('.layer-selected')).toHaveCount(2);await page.keyboard.press('Meta+g');const group=panel(page).locator('.layer-group');await expect(group).toHaveCount(1);const header=group.locator('.group-header');await header.dblclick();const input=header.locator('input');await input.fill('测试分组');await input.press('Enter');await expect(header).toHaveAttribute('title','测试分组');await header.hover();await header.locator('.group-operator').nth(1).click();await expect.poll(async()=>(await layers(page)).find(x=>x.type==='group')?.hide).toBe(true);await expect(page.locator('.component-group')).not.toBeVisible();await header.locator('.group-operator').nth(2).click();await expect.poll(async()=>(await layers(page)).every(x=>x.lock)).toBe(true);await save(page);await page.reload();await expect(page.locator('#designer-ds-content')).toBeVisible({timeout:60000});await expect.poll(async()=>(await layers(page)).find(x=>x.type==='group')).toMatchObject({name:'测试分组',hide:true,lock:true});});

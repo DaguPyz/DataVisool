@@ -1,11 +1,13 @@
 /* Licensed under the DataVisool License. See the LICENSE file distributed with this software. */
 import {act, cleanup, fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
-import type {IAiDrivenTaskEvent} from "@/designer/ai-driven/types/AiDrivenTaskSubmitTypes.ts";
+import type {IAiDrivenTaskEvent} from "@/plugins/editor-ai/types/AiDrivenTaskSubmitTypes.ts";
 vi.mock("@/i18n/miniI18n.ts", () => ({tx: (value: string) => value}));
 vi.mock("@/i18n/useLocaleVersion.ts", () => ({useLocaleVersion: () => 0}));
-import Terminal from "@/designer/ai-driven/AiDrivenProgressTerminal.tsx";
-import store from "@/designer/ai-driven/AiDrivenProgressTerminalStore.ts";
+import Terminal from "@/plugins/editor-ai/AiDrivenProgressTerminal.tsx";
+import {AiDrivenProgressTerminalStore} from "@/plugins/editor-ai/AiDrivenProgressTerminalStore.ts";
+
+const store = new AiDrivenProgressTerminalStore();
 
 const event = (kind: string, payload: Record<string, unknown> = {}): IAiDrivenTaskEvent => ({
     eventId: "event", threadId: "thread", turnId: "turn", runId: "run", projectId: "project", requestId: "request",
@@ -30,7 +32,7 @@ describe("desktop aligned runtime information", () => {
             remainingModelCalls: 3, remainingToolCalls: 5, remainingWriteCalls: 2,
             remainingFrontendInteractions: 1, remainingDurationMs: 60000,
             threadUsage: {inputTokens: 1000, outputTokens: 200, totalTokens: 1200, cachedInputTokens: 600}}}));
-        render(<Terminal/>);
+        render(<Terminal store={store}/>);
         const trigger = screen.getByRole("button", {name: "查看 Token 消耗明细"});
         expect(within(trigger).getByText("本轮")).toBeInTheDocument();
         expect(within(trigger).getByText("120")).toBeInTheDocument();
@@ -58,7 +60,7 @@ describe("desktop aligned runtime information", () => {
         store.setTokenUsage({...usage, tokenBudgetEnabled: false, callBudgetEnabled: false,
             durationBudgetEnabled: false, remainingTotalTokens: null, remainingModelCalls: null,
             remainingToolCalls: null, remainingDurationMs: null});
-        render(<Terminal/>);
+        render(<Terminal store={store}/>);
         fireEvent.click(screen.getByRole("button", {name: "查看 Token 消耗明细"}));
         await screen.findByRole("dialog", {name: "Token 消耗明细"});
         expect(screen.queryByText("剩余 Token")).toBeNull();
@@ -69,7 +71,7 @@ describe("desktop aligned runtime information", () => {
 
     test("hover and keyboard focus can reveal details, and outside clicks dismiss them", async () => {
         store.setTokenUsage(usage);
-        render(<Terminal/>);
+        render(<Terminal store={store}/>);
         const trigger = screen.getByRole("button", {name: "查看 Token 消耗明细"});
         // 缺少后端会话统计时不把本轮数字冒充会话总量。
         expect(within(trigger).getByText("—")).toBeInTheDocument();
@@ -130,7 +132,7 @@ describe("desktop aligned runtime information", () => {
     ])("renders %s notices and clears them when execution resumes", (kind, payload, message, expectedKind) => {
         store.applyTaskEvent(event(kind as string, payload as Record<string, unknown>));
         expect(store.runNotice?.kind).toBe(expectedKind);
-        render(<Terminal/>);
+        render(<Terminal store={store}/>);
         expect(screen.getByText(message as string)).toBeInTheDocument();
         act(() => store.applyTaskEvent(event("agent.resumed")));
         expect(screen.queryByText(message as string)).toBeNull();

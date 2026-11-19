@@ -6,13 +6,19 @@ import type {Socket} from 'node:net';
 import {waitFor} from '@testing-library/react';
 import {expect, it, vi} from 'vitest';
 import AbstractDesignerController from '@/framework/core/AbstractDesignerController';
-import BPExecutor from '@/designer/blueprint/core/BPExecutor';
-import ComponentDataUpdater from '@/framework/core/tools/ComponentDataUpdater';
+import BPExecutor from '@/plugins/designer-runtime/internal/designer/blueprint/core/BPExecutor';
+import ComponentDataUpdater from '@/plugins/designer-runtime/internal/framework/core/tools/ComponentDataUpdater';
 
 class Controller extends AbstractDesignerController<unknown, any> {
     changeData = vi.fn();
     update(config: any) { this.config = config; }
     getConfig() { return this.config; }
+}
+
+function attachRuntimeDataUpdater(controller: Controller): void {
+    controller.setRuntimeDataAdapter({
+        createUpdater: (success, fail) => new ComponentDataUpdater(success, fail, {isRuntimeEffectActive: () => true} as any),
+    });
 }
 
 it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('loads data from a local WebSocket server and closes the connection on destroy', async () => {
@@ -44,6 +50,7 @@ it.runIf(process.env.DATAVISOOL_NETWORK_TESTS === '1')('loads data from a local 
         await controller.create(document.createElement('div'), {
             data: {sourceType: 'webSocket', webSocket: {url: `ws://127.0.0.1:${address.port}`}},
         }, new BPExecutor({} as any));
+        attachRuntimeDataUpdater(controller);
         controller.loadComponentData();
         await waitFor(() => expect(controller.changeData).toHaveBeenCalledWith('local-data'));
         controller.destroy();

@@ -8,7 +8,7 @@ import type {UpdateOptions} from "@datavisool/sdk/types";
 import AbstractDesignerController from "../../../framework/core/AbstractDesignerController";
 import BaseIframeComponent, {BaseIframeComponentProps} from "./BaseIframeComponent";
 import {ObjectUtil} from "@datavisool/sdk";
-import BPExecutor from "../../../designer/blueprint/core/BPExecutor";
+import type {BPExecutor} from "@datavisool/sdk/core";
 import ComponentUtil from "@/util/ComponentUtil.ts";
 
 export class BaseIframeController extends AbstractDesignerController<BaseIframeComponent, BaseIframeComponentProps> {

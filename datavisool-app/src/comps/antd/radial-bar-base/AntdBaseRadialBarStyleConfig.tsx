@@ -8,7 +8,7 @@ import React from 'react';
 import AntdBaseRadialBarController from "./AntdBaseRadialBarController.ts";
 import {FieldChangeData, DatavisoolGUI, DatavisoolGUIUtil, type Control} from "@datavisool/ui";
 import AntdCommonUtil from "@/comps/antd-common/AntdCommonUtil";
-import {ConfigType} from "@/designer/right/ConfigContent";
+import type {ConfigType} from '@/shared/designer/ComponentConfigProps.ts';
 import {ShapeAttrs} from "@antv/g-base";
 import G2ColorUtil from "@/comps/antd-common/util/G2ColorUtil.ts";
 
